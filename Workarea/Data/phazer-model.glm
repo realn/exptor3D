@@ -1,0 +1,49 @@
+GLM	100
+HEADER
+
+TEXCOUNT	2
+LISTCOUNT	1
+ANIMATION	0
+END HEADER
+TEXLIST
+Data/metal8c.tga
+Data/metal.tga
+END TEXLIST
+MODEL	0
+	glPushMatrix()
+
+	glBindTexture( 0 )
+	glTranslate( 0.0, 0.0, 1.2 ) 
+	gluSphere( 0.3, 16, 16 )
+
+	glTranslate( 0.0, 0.0, -1.2 )
+	gluCylinder( 0.5, 0.3, 1.2, 16, 1 )
+	glRotate( 180.0, 0.0, 1.0, 0.0 )
+	gluDisk( 0.0, 0.5, 16, 1 )
+	glRotate( 180.0, 0.0, 1.0, 0.0 )
+
+	glPushMatrix()
+	glTranslate( 0, 0, 0.4 )
+	gluPartialDisk( 0, 0.65, 16, 1, -20, -60 )
+	gluQuadricOrientation( GLU_INSIDE )
+	gluPartialDisk( 0, 0.65, 16, 1, -20, -60 )
+	gluQuadricOrientation( GLU_OUTSIDE )
+	glRotate( -90, 0, 1, 0 )
+	glRotate( 30, 1, 0, 0 )
+	gluCylinder( 0.15, 0.15, 1.2, 8, 1 )
+	glTranslate( 0, 0, 1.2 )
+	gluDisk( 0.0, 0.15, 8, 1 )
+	glPopMatrix()
+
+	glTranslate( 0.0, 0.0, -2.0 )
+
+	glBindTexture( 1 )
+	gluCylinder( 0.35, 0.35, 2, 4, 1 )
+	gluQuadricOrientation( GLU_INSIDE )
+	gluCylinder( 0.35, 0.35, 2, 4, 1 )
+	gluQuadricOrientation( GLU_OUTSIDE )
+
+	glPopMatrix()
+
+END MODEL
+END GLM

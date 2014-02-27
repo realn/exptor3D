@@ -1,0 +1,48 @@
+GLM	100
+HEADER
+
+TEXCOUNT	2
+LISTCOUNT	1
+ANIMATION	0
+END HEADER
+TEXLIST
+Data/metal8c.tga
+Data/metal1c.tga
+END TEXLIST
+
+MODEL	0
+glRotate( 180, 0, 1, 0 )
+glBindTexture( 0 )
+glPushMatrix()
+
+gluCylinder( 0.3, 0.3, 1.2, 4, 1 )
+gluQuadricOrientation( GLU_INSIDE )
+gluCylinder( 0.3, 0.3, 1.2, 4, 1 )
+gluQuadricOrientation( GLU_OUTSIDE )
+
+glPopMatrix()
+
+//==========KONIEC LUFY=============
+
+glBindTexture(1)	
+
+//==========KOLBA============
+
+gluSphere( 0.4, 12, 12 )
+
+glTranslate( 0, 0, -0.3 )
+
+gluSphere( 0.4, 12, 12 )
+
+glRotate( 120, 1.0, 0.0, 0.0 )
+
+gluCylinder( 0.2, 0.2, 0.8, 12, 1 )
+
+glTranslate( 0, 0, 0.8 )
+
+gluDisk( 0, 0.2, 12, 1 )
+
+
+END MODEL
+
+END GLM

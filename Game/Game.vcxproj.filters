@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{31300e7d-855d-4b06-9a86-9a4c22657e05}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\3dMath.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glm.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inifile.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Special.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Timer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Weapon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\3dMath.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\defines.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glm.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inifile.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Level.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\main.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Special.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Timer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Weapon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+GLM	100
+HEADER
+TEXCOUNT	1
+LISTCOUNT	1
+ANIMATION	0
+END HEADER
+TEXLIST
+Data/metal1c.tga
+END TEXLIST
+MODEL	0
+glPushMatrix()
+glBindTexture( 0 )
+gluSphere( 2, 32, 32 )
+gluCylinder( 2, 3, 2, 32, 1 )
+glPopMatrix()
+END MODEL
+END GLM
