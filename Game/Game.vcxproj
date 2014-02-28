@@ -89,6 +89,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Special.cpp" />
+    <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
@@ -105,6 +106,7 @@
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Special.h" />
+    <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Weapon.h" />

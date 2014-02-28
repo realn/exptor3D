@@ -45,6 +45,9 @@
     <ClCompile Include="src\Weapon.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\StrEx.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -87,6 +90,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\Weapon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StrEx.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
