@@ -1,52 +1,44 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 Plik:	Log.cpp
-Autor:	Real_Noname (real_noname@wp.pl)
+Autor:	Real_Noname (realnoname@coderulers.info)
 (C):	CODE RULERS (Real_Noname)
-WWW:	www.coderulers.prv.pl
+WWW:	www.coderulers.info
 Opis:	Patrz -> Log.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "Log.h"
+#include <windows.h>
 
-Logger::Logger()
+Logger::Logger() :
+	inited(false),
+	firstTick(0)
 {
-	inited = false;
+}
+
+Logger::~Logger(){
 }
 
 void Logger::Init( std::string filename, std::string str )
 {
-	FileName = filename;
-	FirstTick = GetTickCount();
-	FILE* fp = 0;
-	fopen_s(&fp, FileName.c_str(), "wt" );
-	fputs( "", fp );
-	fclose( fp );
-	SaveToFile( "======LOG START" + str + "======", FirstTick );
+	fileName = filename;
+	firstTick = GetTickCount();
+	outStream.open(filename, std::ios::out | std::ios::trunc);
+
+	SaveToFile( "======LOG START" + str + "======", firstTick );
+
 	inited = true;
 }
 
 void Logger::SaveToFile( std::string str, unsigned int time )
 {
 	char temp[36];
+	memset(temp, 0, sizeof(char) * 36);
 	_itoa_s( time, temp, 36 * sizeof(char), 10 );
-	std::string save = "[";
-	save += temp;
-	save += "]" + str + "\n";
 
-	FILE* fp = 0;
-	fopen_s( &fp, FileName.c_str(), "at" );
-
-	if( !fp )
-	{
-		MessageBox( NULL, "NIE MO¯NA ZAPISAÆ DO PLIKU!", "LOG - ERROR", MB_OK | MB_ICONEXCLAMATION );
-		return;
-	}
-
-	fputs( save.c_str(), fp );
-
-	fclose( fp );
+	outStream << "[" << temp << "]" << str << std::endl;
+	outStream.flush();
 }
 
 void Logger::Log( std::string str )
@@ -54,7 +46,7 @@ void Logger::Log( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - FirstTick;
+	unsigned int time = GetTickCount() - firstTick;
 	SaveToFile( str, time );
 }
 
@@ -63,7 +55,7 @@ void Logger::Report( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - FirstTick;
+	unsigned int time = GetTickCount() - firstTick;
 	SaveToFile( "[R]" + str, time );	
 }
 
@@ -72,7 +64,7 @@ void Logger::Error( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - FirstTick;
+	unsigned int time = GetTickCount() - firstTick;
 	SaveToFile( "[!]" + str, time );
 }
 
@@ -81,7 +73,7 @@ void Logger::FatalError( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - FirstTick;
+	unsigned int time = GetTickCount() - firstTick;
 	SaveToFile( "[!!!]" + str, time );
 	MessageBox( NULL, str.c_str(), "FATAL ERROR", MB_OK | MB_ICONEXCLAMATION );
 }
@@ -91,7 +83,7 @@ void Logger::Note( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - FirstTick;
+	unsigned int time = GetTickCount() - firstTick;
 	SaveToFile( "[N]" + str, time );
 }
 

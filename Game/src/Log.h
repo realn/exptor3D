@@ -1,38 +1,43 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 Plik:	Log.h
-Autor:	Real_Noname (real_noname@wp.pl)
+Autor:	Real_Noname (realnoname@coderulers.info)
 (C):	CODE RULERS (Real_Noname)
-WWW:	www.coderulers.prv.pl
+WWW:	www.coderulers.info
 Opis:	Klasa odpowiedzialna za mechanizm "logowania" czyli
 		zapisywaniu stanu programu.
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _LOG_H_
-#define _LOG_H_
+#pragma once
 
-#include <windows.h>
-#include <stdio.h>
 #include <string>
+#include <fstream>
 
+/// <summary>
+/// 
+/// </summary>
 class Logger
 {
 private:
-	bool inited;
-	unsigned int FirstTick;
-	std::string FileName;
-	void SaveToFile( std::string str, unsigned int time );
+	bool			inited;
+	unsigned int	firstTick;
+	std::string		fileName;
+	std::ofstream	outStream;
+
 public:
 	Logger();
-	void Init( std::string filename, std::string str = "" );
-	void Report( std::string str );
-	void Log( std::string str );
-	void Note( std::string str );
-	void Error( std::string str );
-	void FatalError( std::string str );
+	~Logger();
+
+	void	Init( std::string filename, std::string str = "" );
+	void	Report( std::string str );
+	void	Log( std::string str );
+	void	Note( std::string str );
+	void	Error( std::string str );
+	void	FatalError( std::string str );
+
+private:
+	void SaveToFile( std::string str, unsigned int time );
 };
 
 extern Logger Log;
-
-#endif
