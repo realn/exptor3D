@@ -85,15 +85,30 @@ bool Init()    //Inicjalizacja OpenGL
 	return true; //zwracamy, ¿e wszystko OK
 }
 
-void DoEngine()	// Logika gry
+float	menuModelRot = 0.0f;
+
+void Update(const float fTD)	// Logika gry
 {
+	GUI.ParseKeys( Keys );
+	GUI.DoGUIEngine(fTD);
+
+	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
+	{
+		menuModelRot += fTD;
+	}
+
+	if( !GUI.CanDoMainEng() )
+		return;
+
 	if( GUI.IsShowingWLScr() )
 		return;
 
 	Mouse();
+
 	GLevel.CheckWLFlags();
-	MainPlayer.DoEngine( Keys );
-	ThingManager.DoEngine();
+	MainPlayer.DoEngine( Keys, fTD );
+	ThingManager.DoEngine( fTD );
+
 	if( GUI.GetCliping() )
 	{
 		MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
@@ -101,6 +116,7 @@ void DoEngine()	// Logika gry
 		BonusMan.DoEngine( &MainPlayer );
 	}
 	MainPlayer.ApplyNextPos();
+
 	SEManager.DoEngine();
 	SMBlur.DoEngine();
 	BManager.DoEngine();
@@ -175,29 +191,18 @@ void DoDraw()	// Wizualizacja gry
 
 bool Render()		//G³ówna funkcja renderuj¹ca
 {
-	unsigned int i;
-	static float rot = 0.0f;
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
-	GUI.ParseKeys( Keys );
-	GUI.DoGUIEngine();
-	if( GUI.CanDoMainEng() )
-		for( i = 0; i < GUI.GetEPFTimes(); i++ )
-			DoEngine();
 
 	if( GUI.CanDoMainDraw() )
 		DoDraw();
+
 	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
 	{
 		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
-		for( i = 0; i < GUI.GetEPFTimes(); i++ )
-			rot += 0.01f;
-
 		glTranslatef( 0.0f, 0.0f, -10.0f );
-		MenuModel->CallObject( 1 );
-		glRotatef( rot, 0.5f, 0.5f, 1.0f );
+		glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
 		MenuModel->CallObject( 0 );
 	}
 	GUI.DoGUIDraw();
@@ -375,8 +380,13 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 		return 0;
 	}
 
+	const float	TIME_STEP = 0.005f;
+	float	frameTime = 0.0f;
+	CTimer	timer;
 	while(!done)									// Pêtla g³ówna (dopuki done nie jest true)
 	{
+		frameTime += timer.GetDT();
+
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Czy otrzymano komunikat?
 		{
 			if (msg.message==WM_QUIT)				// Czy to komunikat wyjœcia?
@@ -389,31 +399,36 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 				DispatchMessage(&msg);				// Wykonaj komunikat
 			}
 		}
-		//else										// Je¿eli nie ma komunikatów
-		//{
-			GUI.UpdateCounter();
-			// Rysujemy scene
-			if (active)								// Program jest aktywny?
+
+		GUI.UpdateCounter();
+		// Rysujemy scene
+		if (active)								// Program jest aktywny?
+		{
+			if ( GUI.GetQuit() )				// Czy by³ wciœniêty ESC?
 			{
-				if ( GUI.GetQuit() )				// Czy by³ wciœniêty ESC?
+				done = true;						// Je¿eli tak to wychodzimy z pêtli
+			}
+			else								// Je¿eli nie to rysujemy
+			{
+				Render();						// Rysujemy scene
+
+				while(frameTime > TIME_STEP)
 				{
-					done = true;						// Je¿eli tak to wychodzimy z pêtli
-				}
-				else								// Je¿eli nie to rysujemy
-				{
-					Render();						// Rysujemy scene
-					GLRender.SwapBuffers();				// Prze³anczamy bufory
+					Update(TIME_STEP);
+					frameTime -= TIME_STEP;
 				}
 
+				GLRender.SwapBuffers();				// Prze³anczamy bufory
 			}
-			else
-			{
-				//WaitMessage();
-			}
-		//}
+
+		}
+		else
+			WaitMessage();
+
+		timer.Update();
 	}
 
-	// Wy³anczanie
+	// Deinicjalizacja
 	Log.Log( "Koniec pracy Aplikacji" );
 	GLRender.GLDestroyWindow();// Zniszcz okno
 	if( Timer ) delete Timer;

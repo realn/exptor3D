@@ -126,19 +126,22 @@ public:
 class Dummy
 {
 public:
-	Dummy(){ R = 3.0f; };
 	Vector3f	Pos;
 	Vector3f	NextPos;
 	Vector3f	Vector;
 	float R;
 
+public:
+	Dummy() : R(3.0f){};
+	virtual ~Dummy(){}
+
 	Vector3f GetBlockPos();
 };
 
-extern float mathDist( const Vector3f& V1, const Vector3f& V2 );
-extern float mathDistSq( const Vector3f& V1, const Vector3f& V2 );
-extern Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
-extern float GetAngle( const Vector3f &V1, const Vector3f &V2 );
-extern float SwapAngle( const float &Angle );
+extern float	mathDist( const Vector3f& V1, const Vector3f& V2 );
+extern float	mathDistSq( const Vector3f& V1, const Vector3f& V2 );
+extern Vector3f	ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
+extern float	GetAngle( const Vector3f &V1, const Vector3f &V2 );
+extern float	SwapAngle( const float &Angle );
 
 #endif

@@ -1,40 +1,58 @@
 #include "Timer.h"
+#include <Windows.h>
 
 CTimer* Timer = NULL;
 
-bool CTimer::Init()
+CTimer::CTimer() :
+	bWinClock(false),
+	uFreq(0),
+	uFirstTick(0),
+	uLastTick(0),
+	ulMMFirstTick(0),
+	ulMMLastTick(0),
+	fDT(0.0f),
+	fFPS(0.0f)
 {
-	if(!QueryPerformanceFrequency( (LARGE_INTEGER*)&this->iFraq ) )
+	if(!QueryPerformanceFrequency( (LARGE_INTEGER*)&this->uFreq ) )
 	{
 		this->bWinClock = true;
 		this->ulMMFirstTick = this->ulMMLastTick = GetTickCount();
-		this->iFraq = 1000;
+		this->uFreq = 1000;
 	}
 	else
 	{
-		QueryPerformanceCounter( (LARGE_INTEGER*)&this->iFirstTick);
-		this->iLastTick = this->iFirstTick;
+		QueryPerformanceCounter( (LARGE_INTEGER*)&this->uFirstTick);
+		this->uLastTick = this->uFirstTick;
 		this->bWinClock = false;
 	}
+}
+
+CTimer::~CTimer()
+{
+
+}
+
+bool CTimer::Init()
+{
 	return true;
 }
 
 void CTimer::Update()
 {
-	unsigned long MMThisTick = 0;
-	__int64 ThisTick = 0;
-
 	if( bWinClock )
 	{
-		MMThisTick = GetTickCount();
-		fDT = float(((double)MMThisTick-(double)this->ulMMLastTick) / double(iFraq) );
+		unsigned long MMThisTick = GetTickCount();
+		fDT = float(((double)MMThisTick-(double)this->ulMMLastTick) / double(uFreq) );
 		ulMMLastTick = MMThisTick;
 	}
 	else
 	{
-		QueryPerformanceCounter((LARGE_INTEGER *)&ThisTick);
-		fDT = float( ( (double)ThisTick - (double)this->iLastTick ) / double(iFraq) );
-		iLastTick = ThisTick;
+		unsigned __int64 ThisTick = 0;
+		if(QueryPerformanceCounter((LARGE_INTEGER *)&ThisTick))
+		{
+			fDT = float( ( (double)ThisTick - (double)this->uLastTick ) / double(uFreq) );
+			uLastTick = ThisTick;
+		}
 	}
 	if( fDT != 0.0f )
 		fFPS = 1.0f / fDT;

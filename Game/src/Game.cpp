@@ -52,33 +52,42 @@ void gameThing::Init()
 Vector3f gameThing::CreatePos( float ang )
 {
 	Vector3f zwrot;
-	zwrot.X = sinf( ang * PIOVER180 ) * Speed;
-	zwrot.Z = -cosf( ang * PIOVER180 ) * Speed;
-	return zwrot * GUI.GetSpeed();
+
+	zwrot.X = sinf( ang * PIOVER180 );
+	zwrot.Z = -cosf( ang * PIOVER180 );
+
+	return zwrot;
 }
 
-void gameThing::Move( unsigned int flags )
+void gameThing::Move( unsigned int flags, const float fTD )
 {
 	Vector3f temp;
 
 	if( flags & GAME_MOVE_FORWARD )
-		temp += CreatePos( -Angle );
+		temp += CreatePos( Angle );
 
 	if( flags & GAME_MOVE_BACK )
-		temp += CreatePos( -Angle - 180 );
+		temp += CreatePos( Angle - 180 );
 
 	if( flags & GAME_MOVE_STRAFE_L )
-		temp += CreatePos( -Angle - 90 );
+		temp += CreatePos( Angle - 90 );
 
 	if( flags & GAME_MOVE_STRAFE_R )
-		temp += CreatePos( -Angle + 90 );
+		temp += CreatePos( Angle + 90 );
 
-	NextPos = Pos + temp;
-	MoveVector = CreatePos( -Angle );
+	if(temp.X == 0.0f && temp.Y == 0.0f && temp.Z == 0.0f)
+		NextPos = Pos;
+	else
+	{
+		temp.Normalize();
+		NextPos = Pos + temp * Speed * GUI.GetSpeed() * fTD;
+	}
+
+	MoveVector = CreatePos( Angle );
 	MoveVector.Normalize();
 }
 
-void gameThing::DoEngine()
+void gameThing::DoEngine( const float fTD )
 {
 	if( Dead )
 		return;
@@ -90,7 +99,7 @@ void gameThing::DoEngine()
 	}
 
 	if( Dying && !Dead )
-		ThisDTime += 1.0f;
+		ThisDTime += 1.0f * fTD;
 
 	if( ThisDTime >= DyingTime && !Dead)
 	{
@@ -100,7 +109,7 @@ void gameThing::DoEngine()
 
 	DoAI();
 
-	Move( Actions );
+	Move( Actions, fTD );
 
 	Actions = 0;
 
@@ -469,8 +478,8 @@ gamePlayer::gamePlayer()
 {
 	run = true;
 	Angle = 0.0f;
-	WalkStep = 0.1f;
-	RunStep = 0.4f;
+	WalkStep = 1.1f;
+	RunStep = 1.4f;
 	R = 3.0f;
 	Pos.Set( 5.0f, 0.0f, -5.0f );
 	AIflags = AI_NO_AI;
@@ -501,31 +510,6 @@ gamePlayer::~gamePlayer()
 	delete Weapon[GAME_WEAP_ATOM_BOMB];
 }
 
-void gamePlayer::Move( unsigned int flags )
-{
-	Vector3f temp;
-
-	if( flags & GAME_MOVE_FORWARD )
-		temp += CreatePos( Angle );
-
-	if( flags & GAME_MOVE_BACK )
-		temp += CreatePos( Angle - 180 );
-
-	if( flags & GAME_MOVE_STRAFE_L )
-		temp += CreatePos( Angle - 90 );
-
-	if( flags & GAME_MOVE_STRAFE_R )
-		temp += CreatePos( Angle + 90 );
-
-	if( flags & GAME_DO_FIREWEAPON )
-		Weapon[CurrWeap]->Shot();
-
-
-	NextPos = Pos + temp;
-	Vector = CreatePos( Angle );
-	Vector.Normalize();
-}
-
 void gamePlayer::ApplyNextPos()
 {
 	Pos = NextPos;
@@ -537,12 +521,12 @@ void gamePlayer::DoDraw()
 		Weapon[CurrWeap]->DoDraw();
 }
 
-void gamePlayer::DoEngine()
+void gamePlayer::DoEngine( const float fTD )
 {
 
 }
 
-void gamePlayer::DoEngine( bool* Keys )
+void gamePlayer::DoEngine( bool* Keys, const float fTD )
 {
 	Actions = 0;
 	if( Keys['W'] || Keys[VK_UP] )
@@ -612,7 +596,7 @@ void gamePlayer::DoEngine( bool* Keys )
 		Speed = RunStep;
 	else Speed = WalkStep;
 
-	Move( Actions );
+	Move( Actions, fTD );
 
 	float an = Angle;
 	switch( GUI.GetHandPos() )
@@ -1003,7 +987,7 @@ std::string gameStatObj::GetStr( FILE* fp )
 	return buf;
 }
 
-void gameStatObj::DoEngine()
+void gameStatObj::DoEngine( const float fTD )
 {
 	AIflags = AI_NO_AI;
 	TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
@@ -1130,7 +1114,7 @@ gameBlockInfo* gameThingManager::GetThingBlock( unsigned int index )
 	return GLevel.GetBlock( List[index]->GetBlockPos() );
 }
 
-void gameThingManager::DoEngine()
+void gameThingManager::DoEngine( const float fTD )
 {
 	gameThing* Thing;
 	this->all = List.size();
@@ -1153,7 +1137,7 @@ void gameThingManager::DoEngine()
 
 		Thing->ModHealth( -BManager.DoTest( Thing, Thing->GetArmor() ) );
 
-		Thing->DoEngine();
+		Thing->DoEngine( fTD );
 
 		if( Thing->GetType() != GAME_THING_PLAYER )
 			this->life++;

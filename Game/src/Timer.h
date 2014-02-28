@@ -1,15 +1,12 @@
-#ifndef _FLEX_TIMER_H_
-#define _FLEX_TIMER_H_
-
-#include <windows.h>
+#pragma once
 
 class CTimer
 {
 protected:
 	bool bWinClock;
-	__int64 iFirstTick;
-	__int64 iLastTick;
-	__int64 iFraq;
+	unsigned __int64 uFirstTick;
+	unsigned __int64 uLastTick;
+	unsigned __int64 uFreq;
 	
 	unsigned long ulMMFirstTick;
 	unsigned long ulMMLastTick;
@@ -18,21 +15,15 @@ protected:
 	float fFPS;
 
 public:
-	CTimer()
-	{ bWinClock = false;	};
-	virtual ~CTimer()
-	{	Free();	};
+	CTimer();
+	~CTimer();
 	
-	virtual bool Init();
-	virtual void Update();
-	virtual void Free();
+	bool Init();
+	void Update();
+	void Free();
 
-	virtual float GetFPS()
-	{	return fFPS;	};
-	virtual float GetDT()
-	{	return fDT;	};
+	float GetFPS(){	return fFPS;	}
+	float GetDT(){	return fDT;		}
 };
 
 extern CTimer* Timer;
-
-#endif

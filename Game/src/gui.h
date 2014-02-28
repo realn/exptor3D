@@ -261,15 +261,15 @@ private:
 
 	void	GetParams( std::string str, unsigned int from, std::string* param, unsigned int Count );
 	void	ParseConMsg( std::string msg );
-	void	ScrMsgEng();
+	void	ScrMsgEng( const float fTD );
 	void	ScrMsgDraw();
-	void	ConsoleEng();
+	void	ConsoleEng( const float fTD );
 	void	ConsoleDraw();
 	void	ConExecute( bool hist = true );
 	void	ConAddChar( char key );
 	void	ConCreatePFL( bool AutoRep = true );
 	void	DrawWLScr();
-	void	EngineWLScr();
+	void	EngineWLScr( const float fTD );
 
 public:
 	ioTexture *Cursor;
@@ -331,7 +331,7 @@ public:
 	void	ParseKey( char Key );
 	unsigned int	GetHandPos();
 
-	void	DoGUIEngine();
+	void	DoGUIEngine(const float fTD);
 	void	DoGUIDraw();
 
 	void	UpdateCounter();

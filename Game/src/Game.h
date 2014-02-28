@@ -72,13 +72,13 @@ public:
 
 	virtual void Init();
 
-	virtual void DoEngine();
+	virtual void DoEngine( const float fTD );
 	virtual void DoDraw();
 
 	virtual void OnDie();
 	virtual void OnDead();
 
-	virtual void Move( unsigned int flags );
+	virtual void Move( unsigned int flags, const float fTD );
 	virtual void DoAI();
 
 	bool IsDead();
@@ -139,13 +139,12 @@ public:
 	~gamePlayer();
 
 	void DoDraw();
-	void DoEngine();
-	void DoEngine( bool* Keys );
+	void DoEngine( const float fTD ) override;
+	void DoEngine( bool* Keys, const float fTD );
 	void SwichWeap( unsigned int index );
 
 	unsigned int GetHand();
 
-	void Move( unsigned int flags );
 	void TestWeapon( weWeapon* Weap );
 	void TestBonus( weBonus* Bonus );
 	void ApplyNextPos();
@@ -202,7 +201,7 @@ public:
 	gameStatObj()
 	{	file = "-";	};
 
-	void DoEngine();
+	void DoEngine( const float fTD ) override;
 	void DoDraw();
 
 	bool LoadObj( std::string filename );
@@ -224,7 +223,7 @@ public:
 	gameThingManager();
 	~gameThingManager();
 
-	void DoEngine();
+	void DoEngine( const float fTD );
 	void DoDraw();
 
 	void ReCountStats();

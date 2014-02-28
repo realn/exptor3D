@@ -279,14 +279,14 @@ void guiMain::DrawWLScr()
 	TText.EndPrint();
 }
 
-void guiMain::EngineWLScr()
+void guiMain::EngineWLScr( const float fTD )
 {
 	if( !CanShowWinScr && !CanShowLoseScr )
 		return;
 
 	this->MainEngineEnabled = false;
 
-	this->ThisWLScrTime += 1.0f * Speed;
+	this->ThisWLScrTime += fTD * Speed;
 
 	this->WLScrColor[3] = ( 1.0f / ShowWLScrTime ) * this->ThisWLScrTime;
 
@@ -445,7 +445,7 @@ void guiMain::SetSpeed( float speed )
 
 float guiMain::GetSpeed()
 {
-	return Speed * Timer->GetDT();
+	return Speed;// * Timer->GetDT();
 }
 
 /*	Jakby to powiedzieæ - tu mo¿na uzyskaæ efekt rybiego oka, jak i 
@@ -502,35 +502,26 @@ unsigned int guiMain::GetEPFTimes()
 /*	Pierwsza metoda wykonuje w³aœciwy silnik GUI, a druga renderuje GUI.
 	W³aœciwego silnika nie da siê wy³¹czyæ
 */
-void guiMain::DoGUIEngine()
+void guiMain::DoGUIEngine(const float fTD)
 {
 	Timer->Update();
 
 	if( !ConsoleOn && !Menu.IsEnabled() )
 	{
-		if( Frame % EngPerFrame == 0 )
-			DoMainEngine = true;
-		else DoMainEngine = false;
+		DoMainEngine = true;
 	}
 	else DoMainEngine = false;
 
 	DoMainDraw = true;
 
-	if( EngPerFrame == 0 )
-		EngPerFrame = 1;
-	if( Frame % EngPerFrame == 0 )
-	{
-		for( unsigned int i = 0; i < this->GetEPFTimes(); i++ )
-		{
-			this->ScrMsgEng();
-			this->ConsoleEng();
-			this->Menu.DoEngine();
-			this->EngineWLScr();
-			if( FScrColor[3] > 0.0f )
-				FScrColor[3] -= 0.01f;
-			else FScrColor[3] = 0.0f;
-		}
-	}
+	this->ScrMsgEng( fTD );
+	this->ConsoleEng( fTD );
+	this->Menu.DoEngine();
+	this->EngineWLScr( fTD );
+
+	if( FScrColor[3] > 0.0f )
+		FScrColor[3] -= 0.1f * fTD;
+	else FScrColor[3] = 0.0f;
 }
 
 void guiMain::DoGUIDraw()
@@ -691,7 +682,7 @@ void guiMain::InitGUI()
 }
 
 // Silnik widomoœci ekranowych wysy³anych przez silnik gry
-void guiMain::ScrMsgEng()
+void guiMain::ScrMsgEng( const float fTD )
 {
 	guiScrMsg* msg;
 	for( int i = ScrMsg.size()-1; i >= 0; i-- )
@@ -1182,17 +1173,18 @@ void guiMain::ConCreatePFL( bool AutoRep )
 }
 
 // Silnik w³aœciwy konsoli
-void guiMain::ConsoleEng()
+void	guiMain::ConsoleEng( const float fTD )
 {
 	if( ConsoleOn )
 	{
 		if( this->ConsoleScroll < 1.0f )
-			ConsoleScroll += 0.01f;
+			ConsoleScroll += 0.1f * fTD;
+		else ConsoleScroll = 1.0f;
 	}
 	else
 	{
 		if( this->ConsoleScroll > 0.0f )
-			ConsoleScroll -= 0.01f;
+			ConsoleScroll -= 0.1f * fTD;
 		else ConsoleScroll = 0.0f;
 	}
 }
