@@ -10,40 +10,26 @@ Opis:	Patrz -> Render.h
 ///////////////////////////////////////////////////////*/
 #include "Render.h"
 
-UIRender GLRender;
+CRender GLRender;
+
+const std::string	WINDOW_CLASS_NAME = "OpenGLWindowClass";
+
 /* KONSTRUKTOR
 	Inicjalizacja zmienych, czyli
 	ustalenie poczatkowych wartosci
 */
-UIRender::UIRender()
-{
-	hDC = NULL; // Przeciez na razie nia ma
-	hRC = NULL; // ¿adnego kontekstu, dlatego
-	hWnd = NULL;// zerujemy te zmienne
-	hInstance = NULL;
-	
-	IsPers = false; // Na poczatku nie potrzebujemy perspektywy
-	fullS = true;	// Na pocz¹tku lepiej ustawiæ pe³ny ekran
-	IsWin = false;	// Przecie¿ na pocz¹tku nie mamy okna!
-	ColBits = -1;	// Domyœlna wartoœæ dla bitów kolorów
-
+CRender::CRender() :
+	hDC(0),
+	hRC(0),
+	hWnd(0),
+	hInstance(0),
+	fullScreen(false),
+	isWindowCreated(false),
+	colorBits(0)
+{	
 	// Domyœlne wartoœci dla rozmiaru okna ( patrz->deklaracja )
-	ScrSize[0] = 1;
-	ScrSize[1] = 1;
-
-	// Domyslne wartosci dla perspektywy ( patrz->deklaracja tablicy )
-	PerConf[0] = 45.0f;
-	PerConf[1] = 1.0f;
-	PerConf[2] = 1.0f;
-	PerConf[3] = 100.0f;
-
-	// Domyslne wartosci dla rzutowania prostokatnego ( patrz->deklaracja tablicy )
-	OrthoConf[0] = -1.0f;
-	OrthoConf[1] = 1.0f;
-	OrthoConf[2] = -1.0f;
-	OrthoConf[3] = 1.0f;
-	OrthoConf[4] = -1.0f;
-	OrthoConf[5] = 1.0f;
+	screenSize[0] = 640;
+	screenSize[1] = 480;
 
 	/*
 		RndInfo domyœlnie s¹ puste, bo informacje otrzymamy
@@ -54,9 +40,10 @@ UIRender::UIRender()
 }
 
 /*	DESTRUKTOR	*/
-UIRender::~UIRender()
+CRender::~CRender()
 {
-
+	DisableGL();
+	GLDestroyWindow();
 }
 
 /*	TWORZENIE OKNA
@@ -67,8 +54,14 @@ UIRender::~UIRender()
 	FullScr	- Czy ma byæ na pe³nym ekranie
 	WndProc	- Funkcja obs³ugi komunikatów Windowsa ( musi byæ z zewn¹trz, takie zasady C++ :P )
 */
-bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, bool FullScr, WNDPROC WndProc )
+bool CRender::GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullScreen, WNDPROC wndProc, bool initGL )
 {
+	if(isWindowCreated)
+	{
+		DisableGL();
+		GLDestroyWindow();
+	}
+
 	Log.Log( "Tworzenie Okna" );
 	/* Na pocz¹tku musimy ustawiæ zmienne pomocnicze */
 
@@ -76,37 +69,36 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 		a tak¹ mo¿emy przekazaæ, przez strukture typu
 		WNDCLASS.
 	*/
-	WNDCLASS	wc;				//Struktura klasy okna
+	WNDCLASSEX	wc;				//Struktura klasy okna
+	memset(&wc, 0, sizeof(WNDCLASSEX));
+	wc.cbSize = sizeof(WNDCLASSEX);
 
 	/*	Dalej s¹ tzw. style okna. dwStyle trzyma
 		bezwzglêdny styl ( taki jak, czy to okno jest wyskakuj¹ce, czy zewnêrzne )
 		dwExStyle trzyma wygl¹d okna ( np. czy ma krawêdzie i belkê tytu³ow¹ ).
 		Oba typy s¹ DWORD ( czyli unsigned int, jakby ktoœ pyta³ )
 	*/
-	DWORD		dwExStyle;				//Zewnêtrzny styl okna
-	DWORD		dwStyle;				//Styl Okna
+	DWORD		dwExStyle = 0;	//Zewnêtrzny styl okna
+	DWORD		dwStyle = 0;	//Styl Okna
 
 	/*	Potrzebny jest jeszcze tylko prostok¹t. Jest potrzebny
 		By okreœliæ rozmiar i po³orzenie okna. Jest to po prostu
 		struktura z 4 zmiennymi typu long int.
 	*/
-	RECT		WindowRect;				//Wielkoœæ okna (struktura czworoboku)
+	RECT		WindowRect;		//Wielkoœæ okna (struktura czworoboku)
 
 	/*	Na pocz¹tku ustawiamy prostok¹t okna. */
-	WindowRect.left		= (long)0;			//Lewa krawêdŸ na 0
-	WindowRect.right	= (long)Szerokosc;	//Prawa krawêdŸ na wartoœæ Szerokosc
-	WindowRect.top		= (long)0;			//Górna krawêdŸ na 0
-	WindowRect.bottom	= (long)Wysokosc;	//Dolna krawêdŸ na wartoœæ Wysokosc
+	WindowRect.left		= (long)0;		//Lewa krawêdŸ na 0
+	WindowRect.right	= (long)width;	//Prawa krawêdŸ na wartoœæ Szerokosc
+	WindowRect.top		= (long)0;		//Górna krawêdŸ na 0
+	WindowRect.bottom	= (long)height;	//Dolna krawêdŸ na wartoœæ Wysokosc
 
 	// Przy okazji ustawiamy tablice z rozmiarem, by potem by³ ³atwiejszy dostêp w ca³ej klasie
-	ScrSize[0] = Szerokosc;
-	ScrSize[1] = Wysokosc;
-
-	// Oraz ustawiamy czy wszystko jest w pe³nym ekranie
-	fullS = FullScr;
+	screenSize[0] = width;
+	screenSize[1] = height;
 
 	// £apiemy instancje ( jest potrzebna do wiêkszoœci zadañ z oknem )
-	hInstance			= GetModuleHandle(NULL);
+	hInstance	= GetModuleHandle(NULL);
 
 	// Okreœlamy paramerty okna dziêki strukturze WNDCLASS
 
@@ -118,7 +110,7 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	
 
 	// Tu podajemy funkcje obs³ugi komunikatów tego okna.
-	wc.lpfnWndProc		= WndProc;	
+	wc.lpfnWndProc		= wndProc;	
 
 	// wtf? Lepiej zostawic w spokoju...
 	wc.cbClsExtra		= 0;	// ?
@@ -136,7 +128,7 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 	wc.lpszMenuName		= NULL;	//Bez menu okna
 
 	// Jeszcze potrzebna nazwa tej klasy okna
-	wc.lpszClassName	= "OpenGL";	//Nazwa klasy okna
+	wc.lpszClassName	= WINDOW_CLASS_NAME.c_str();	//Nazwa klasy okna
 
 	/*	Teraz rejestrujemy klasê okna.
 		Windows posiada swój w³asny rejestr klas okna
@@ -145,70 +137,27 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 		niestandardowe okno ( z OpenGL ) to musimy
 		zarejestrowaæ w³asn¹ klasê okna.
 	*/
-	if (!RegisterClass(&wc)) //Próba rejestracji okna
+	if (!RegisterClassEx(&wc)) //Próba rejestracji okna
 	{
 	    //Gdy nieudana, wyœwietlamy odpowieni komunikat
 		Log.FatalError( "Nie mo¿na zarejestrowaæ klasy okna!" );
 		return false;	//przerwij i zwróæ, ¿e inicjalizacja nie udana.
 	}
+
+	if(fullScreen)
+		EnableFullScreen();
 	
-	/*	Teraz ustwiamy pe³ny ekran.
-		Mamy ju¿ do tego wszystkie potrzebne informacje
-		( oczywiœcie je¿eli chcemy pe³ny ekran.
-	*/
-	if (fullS)
-	{
-		// struktura trzymaj¹ca konfiguracje zmiany parametrów ekranu			
-		DEVMODE dmScreenSettings;
-
-        // Musimy t¹ strukturê przeczyœciæ (nadpisaæ zerami), by nie mieæ ¿adnych niespodzianek					
-		memset(&dmScreenSettings,0,sizeof(dmScreenSettings));	
-		dmScreenSettings.dmSize=sizeof(dmScreenSettings);
-		
-        //ustawiamy strukture	
-		dmScreenSettings.dmPelsWidth	= ScrSize[0];	//Szerokoœæ ekranu
-		dmScreenSettings.dmPelsHeight	= ScrSize[1];	//Wysokoœæ ekranu
-		dmScreenSettings.dmBitsPerPel	= 32;		//G³êbia kolorów
-
-		// Ostatnie ustawienie mówi, co zrobiæ z Pixelami
-		dmScreenSettings.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
-
-		/*	Próba zmiany rozdzielczoœci (CDS_FULLSCREEN usuwa 
-			panel startu, oraz przywraca star¹ konfiguracje ekranu
-			przy kolejnej próbie zmiany rozdzielczoœæ )
-		*/
-		Log.Log( "Zmiana rozdzielczoœci" );
-		if (ChangeDisplaySettings(&dmScreenSettings,CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-		{
-			Log.Error( "Nie mo¿na zmieniæ rozdzielczoœci!" );
-			//Je¿eli nieudana, proponujemy dzia³anie okienkowe
-			if (MessageBox(NULL,"Nie mo¿na zmieniæ rozdzielczoœci. Prawdopodobnie\ntwoja karta graficzna nie obs³uguje trybu Pe³noekranowego.\nU¿yæ trybu okienkowego?","OpenGL",MB_YESNO|MB_ICONEXCLAMATION)==IDYES)
-			{
-				Log.Report( "Zmiana trybu na Okienkowy" );
-                //Je¿eli tak to wykonujemy
-				fullS = false;
-			}
-			else
-			{
-				//Je¿eli nie to koñczymy dzia³anie (dajemy komunikat, ¿e progam zostanie zamkniêty)
-				MessageBox(NULL,"Program zostanie zamkniêty.","B£¥D",MB_OK|MB_ICONSTOP);
-				Log.Report( "Wy³¹czenie aplikacji" );
-				return false;	//przerywamy dzia³anie aplikacji
-			}
-		}
-	}
-
 	//Ustawiamy styl okna w zale¿noœci, czy jest ustawiony pe³ny ekran
-	if( fullS )	
+	if( fullScreen )	
 	{
-		dwExStyle=WS_EX_APPWINDOW;	// ? 
-		dwStyle=WS_POPUP;			// Okienko bez niczego ( tylko œrodek okna )
-		ShowCursor( false );		// Schowaj kursor myszy
+		dwExStyle = WS_EX_APPWINDOW;	// ? 
+		dwStyle = WS_POPUP;				// Okienko bez niczego ( tylko œrodek okna )
+		ShowCursor( false );			// Schowaj kursor myszy
 	}
 	else
 	{
-		dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;	// ?
-		dwStyle=WS_OVERLAPPEDWINDOW;	/*	Okno z belk¹ (która ma wszystkie przyciski typu
+		dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;	// ?
+		dwStyle = WS_OVERLAPPEDWINDOW;	/*	Okno z belk¹ (która ma wszystkie przyciski typu
 											Minimalizuj, itp ), z krawêdzi¹ i tytu³em
 										*/
 	}
@@ -217,15 +166,15 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 	AdjustWindowRectEx( &WindowRect, dwStyle, false, dwExStyle );		
 
 	// Ostatecznie tworzymy okno
-	if (!(hWnd=CreateWindowEx(	dwExStyle,							//Styl zewnêtrzny okna
-								"OpenGL",							//Nazwa klasy okna
-								Tytul.c_str(),						//Tytu³ okna (na belce)
+	if (!(hWnd = CreateWindowEx(	dwExStyle,						//Styl zewnêtrzny okna
+								WINDOW_CLASS_NAME.c_str(),			//Nazwa klasy okna
+								title.c_str(),						//Tytu³ okna (na belce)
 								dwStyle |							//Definicja stylu
 								WS_CLIPSIBLINGS |					
 								WS_CLIPCHILDREN,					
 								0, 0,								//Pozycja okna
-								WindowRect.right-WindowRect.left,	//Szerokoœæ okna (z obliczeñ)
-								WindowRect.bottom-WindowRect.top,	//Wysokoœæ okna (z obliczeñ)
+								WindowRect.right - WindowRect.left,	//Szerokoœæ okna (z obliczeñ)
+								WindowRect.bottom - WindowRect.top,	//Wysokoœæ okna (z obliczeñ)
 								NULL,								//Brak okna-matki
 								NULL,								//Bez Menu
 								hInstance,							//Uchwyt pamiêci
@@ -237,13 +186,20 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 		return false;	//koñczymy dzia³anie
 	}
 
-	IsWin = true;
+	isWindowCreated = true;
 
-	if( !EnableGL() )
+	if(initGL)
 	{
-		GLDestroyWindow();
-		return false;
+		if( !EnableGL() )
+		{
+			GLDestroyWindow();
+			return false;
+		}
 	}
+
+	ShowWindow( hWnd, SW_SHOW );
+	SetForegroundWindow( hWnd );
+	SetFocus( hWnd );
 	
 	Log.Log( "Tworzenie okna zakoñczone." );
 	return true;
@@ -255,39 +211,72 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 	uchwytu do okna i inicjalizacja na nim, poprzez
 	rêczne wywo³anie tej metody.
 */
-bool UIRender::EnableGL()
+bool CRender::EnableGL(unsigned colorBits, unsigned depthBits, unsigned stencilBits)
 {
 	Log.Log( "Inicjalizacja OpenGL" );
 	/*	Na pocz¹tku zmienna trzymaj¹ca wynik
 		wyszukiwania ustawieñ dla danego
 		formatu ustawieñ (dziwnie brzmi, ale jest potrzebne :P )
 	*/
-	unsigned int   PixelFormat;			//Wynik wyszukiwania
+	unsigned	pixelFormat = 0;
+	unsigned	setColorBits = 0;
+	unsigned	setDepthBits = 0;
+	unsigned	setStencilBits = 0;
 
-	/*	Najperw musimy wyci¹gn¹æ z Windows aktualn¹ paletê kolorów.
-		Dlaczego? Nie wiadomo, ale na niektóreych windowsach na pe³nym
-		ekranie, gdy ustawiamy inn¹ palete ni¿ jest na pulpicie
-		to siê dziej¹ ró¿ne nieprzyjemne rzeczy :P. Najproœciej
-		t¹ informacje wyci¹gn¹æ przez PixelFormat. Do tego jest
-		potrzebny kontekst (DC), z którego wyci¹gamy informacje, a
-		do tego z kolei potrzebny jest uchwyt okna ( bo windows
-		traktuje pulpit jak jedno ogromne okno ).
-	*/
-	if( ColBits == -1 ) // sprawdzamy, czy casem informacja nie zosta³a ju¿ wyci¹gniêta
+	if(colorBits == 0)
 	{
-		HDC deskDC = GetWindowDC( GetDesktopWindow() );
-		PixelFormat = GetPixelFormat( deskDC );
+		if(this->colorBits == 0)
+		{
+			/*	Najperw musimy wyci¹gn¹æ z Windows aktualn¹ paletê kolorów.
+				Dlaczego? Nie wiadomo, ale na niektóreych windowsach na pe³nym
+				ekranie, gdy ustawiamy inn¹ palete ni¿ jest na pulpicie
+				to siê dziej¹ ró¿ne nieprzyjemne rzeczy :P. Najproœciej
+				t¹ informacje wyci¹gn¹æ przez PixelFormat. Do tego jest
+				potrzebny kontekst (DC), z którego wyci¹gamy informacje, a
+				do tego z kolei potrzebny jest uchwyt okna ( bo windows
+				traktuje pulpit jak jedno ogromne okno ).
+			*/
+			HDC deskDC = GetWindowDC( GetDesktopWindow() );
+			pixelFormat = GetPixelFormat( deskDC );
 
-		// Teraz rozpisujemy otrzyman¹ informacje
-		PIXELFORMATDESCRIPTOR tempPFD;
-		DescribePixelFormat( deskDC, PixelFormat, sizeof( PIXELFORMATDESCRIPTOR ), &tempPFD );
+			// Teraz rozpisujemy otrzyman¹ informacje
+			PIXELFORMATDESCRIPTOR tempPFD = { 0 };
+			tempPFD.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+			tempPFD.nVersion = 1;
 
-		// Wreszcie pobieramy upragnion¹ informacje
-		ColBits = tempPFD.cColorBits;
+			DescribePixelFormat( deskDC, pixelFormat, sizeof( PIXELFORMATDESCRIPTOR ), &tempPFD );
+
+			// Wreszcie pobieramy upragnion¹ informacje
+			this->colorBits = tempPFD.cColorBits;
+		}
+	}
+	else
+	{
+		this->colorBits = colorBits;
+	}
+
+	if(depthBits == 0)
+	{
+		if(this->depthBits == 0)
+			this->depthBits = 24;
+	}
+	else
+	{
+		this->depthBits = depthBits;
+	}
+
+	if(stencilBits == 0)
+	{
+		if(this->stencilBits == 0)
+			this->stencilBits = 8;
+	}
+	else
+	{
+		this->stencilBits = 8;
 	}
 
 	// Teraz ustwaiamy format pixeli ( jednorazowo, st¹d static )
-	static	PIXELFORMATDESCRIPTOR pfd=
+	PIXELFORMATDESCRIPTOR pfd =
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),	// Rozmiar
 		1,								// Numer wersji
@@ -295,14 +284,14 @@ bool UIRender::EnableGL()
 		PFD_SUPPORT_OPENGL |			// Musi wspieraæ OpenGL
 		PFD_DOUBLEBUFFER,				// Musi wspieraæ podwójne buforowanie
 		PFD_TYPE_RGBA,					// Tryb kolorów RGBA
-		ColBits,						// G³êgia kolorów
+		this->colorBits,				// G³êgia kolorów
 		0, 0, 0, 0, 0, 0,				// Ignorowane bity kolorów (¿adne)
 		0,								// Bez bufora kana³u Alfa
 		0,								// Shift Bit Ignored
 		0,								// No Accumulation Buffer
 		0, 0, 0, 0,						// Accumulation Bits Ignored
-		16,								// Wielkoœæ bufora g³êbokoœci (16bit) 
-		0,								// Bufor Stencil (W³¹czony, na wszelki wypadek)
+		this->depthBits,				// Wielkoœæ bufora g³êbokoœci 
+		this->stencilBits,				// Bufor Stencil
 		0,								// Bufor Aux'a
 		PFD_MAIN_PLANE,					// Gdzie rysowaæ
 		0,								// Zarezerwowane
@@ -310,7 +299,7 @@ bool UIRender::EnableGL()
 	};
 	
 	// Pobieramy kontekst dla okna z uchwytu (* jest dodane, by uzyskaæ sam uchwyt, nie wskaŸnik )
-	if (!(hDC=GetDC(hWnd)))
+	if (!(hDC = GetDC(hWnd)))
 	{
 		// Je¿eli siê nie udaje
 		Log.FatalError( "Nie mo¿na stworzyæ kontekstu GL!." );
@@ -318,14 +307,14 @@ bool UIRender::EnableGL()
 	}
 
 	// Teraz szukamy odpowiednich ustawieñ w dostêpnych
-	if (!(PixelFormat = ChoosePixelFormat( hDC, &pfd )))
+	if (!(pixelFormat = ChoosePixelFormat( hDC, &pfd )))
 	{
 		Log.FatalError( "Nie mo¿na znaleŸæ odpowiedniego PixelFormat'u." );
 		return false;								
 	}
 
 	// Spróbujmy teraz wprowadziæ nasze ustawienia
-	if(!SetPixelFormat(hDC,PixelFormat,&pfd))
+	if(!SetPixelFormat( hDC, pixelFormat, &pfd ))
 	{
 		Log.FatalError( "Nie mo¿na ustawic Pixel Formatu." );
 		return false;								
@@ -336,7 +325,7 @@ bool UIRender::EnableGL()
 		funkcji w OpenGL ( w ka¿dym razie - nie 
 		ma sensu go nie tworzyæ ).]
 	*/
-	if (!(hRC=wglCreateContext(hDC)))
+	if (!(hRC = wglCreateContext( hDC )))
 	{
 		Log.FatalError( "Nie mo¿na stworzyæ kontekstu renderuj¹cego!." );
 		return false;								
@@ -347,7 +336,7 @@ bool UIRender::EnableGL()
 		i siê prze³¹nczaæ miêdzy nimi, ale my mamy tylko
 		jeden :P ( proste nie? )
 	*/
-	if(!wglMakeCurrent(hDC,hRC))
+	if(!wglMakeCurrent( hDC, hRC ))
 	{
 		Log.FatalError( "Nie mo¿na aktywowaæ kontekstu." );
 		return false;								
@@ -363,10 +352,8 @@ bool UIRender::EnableGL()
 		Resize().
 	*/
 	Log.Log( "Koñczenie okna..." );
-	ShowWindow( hWnd, SW_SHOW );
-	SetForegroundWindow( hWnd );
-	SetFocus( hWnd );
-	Resize( ScrSize[0], ScrSize[1] );
+
+	Resize( screenSize[0], screenSize[1] );
 
 	/*	I na koñcu, kiedy kontekst jest ju¿ ustawiony
 		wreszcie mo¿na pobraæ dane do RndInfo.
@@ -376,50 +363,54 @@ bool UIRender::EnableGL()
 		tê funkcje, ale konwersja pomaga :)
 	*/
 	Log.Log( "Pobieranie Informacji o sprzêcie..." );
-	RndInfo[0] = (char*)glGetString( GL_VERSION );
-	RndInfo[1] = (char*)glGetString( GL_RENDERER );
-	RndInfo[2] = (char*)glGetString( GL_VENDOR );
-	RndInfo[3] = (char*)glGetString( GL_EXTENSIONS );
-	Log.Report( "Wersja OpenGL: " + RndInfo[0] );
-	Log.Report( "Sterownik: " + RndInfo[1] );
-	Log.Report( "Dostawca: " + RndInfo[2] );
+	rndInfo[0] = (char*)glGetString( GL_VERSION );
+	rndInfo[1] = (char*)glGetString( GL_RENDERER );
+	rndInfo[2] = (char*)glGetString( GL_VENDOR );
+	rndInfo[3] = (char*)glGetString( GL_EXTENSIONS );
+
+	Log.Report( "Wersja OpenGL: " + rndInfo[0] );
+	Log.Report( "Sterownik: " + rndInfo[1] );
+	Log.Report( "Dostawca: " + rndInfo[2] );
 
 	// Hura! Sukces, nic siê nie sypne³o :)
 	return true;
 }
 
-void UIRender::DisableGL()
+void CRender::DisableGL()
 {
 	/*	Je¿eli mamy kontekst OpenGL i nie jest
 		on zerowy, to wypada³o by go skasowaæ,
 		ale najpierw trzeba zresetowaæ aktywny
 		kontekst.
 	*/
-	if (hRC)
+	if (hRC != 0)
 	{
 		/*	btw: mo¿na by³o by przywróciæ kontekst jaki by³ poprzednio
 			aktywny, ale to za du¿o roboty :P	*/
-		if (!wglMakeCurrent(NULL,NULL))
+		if (!wglMakeCurrent( 0, 0 ))
 		{
 			// wtf?
 			Log.FatalError( "Nie mo¿na od³¹czyæ kontekstu!" );
 		}
 
 		// Usuwamy kontekst OpenGL
-		if (!wglDeleteContext(hRC))
+		if (!wglDeleteContext( hRC ))
 		{
 		    // Chyba nie chce :P
 			Log.FatalError( "Nie mo¿na usun¹æ kontekstu OpenGL!" );
 		}
-		hRC=NULL; // Zerujemy kontekst ( wtedy if go nie wychwyci przy nastêpnym wywo³aniu metody )
+		hRC = 0; // Zerujemy kontekst ( wtedy if go nie wychwyci przy nastêpnym wywo³aniu metody )
 	}
 
 	// Teraz usuwamy konteks aplikacji - wystarczy go tylko "puœciæ" i ju¿ bêdzie wolny.
-	if (hDC && !ReleaseDC(hWnd,hDC))
+	if (hDC != 0)
 	{
-	    // Znowu???
-		Log.FatalError( "Nie mo¿na usun¹æ kontekstu aplikacji!" );
-		hDC=NULL;	//Zerujemy kontekst
+		if(!ReleaseDC( hWnd, hDC ))
+		{
+			// Znowu???
+			Log.FatalError( "Nie mo¿na usun¹æ kontekstu aplikacji!" );
+		}
+		hDC = 0;	//Zerujemy kontekst
 	}
 }
 
@@ -430,9 +421,38 @@ void UIRender::DisableGL()
 	wszytkie tekstury, list'y, itp. wiêc u¿ywaæ z
 	rozwag¹!
 */
-void UIRender::GLDestroyWindow()
+void CRender::GLDestroyWindow(bool deinitGL)
 {
 	Log.Log( "Niszczenie Okna" );
+
+	if(deinitGL)
+	{
+		DisableGL();
+	}
+
+	// Teraz potrzeba usun¹æ okno
+	if (hWnd != 0)
+	{
+		if(!DestroyWindow(hWnd))
+		{
+			// alala kotki dwa
+			Log.FatalError( "Nie mo¿na usun¹æ okna!" );
+		}
+		hWnd = 0;	//Zerujemy uchwyt okna
+
+		// wypada³oby jeszcze odrejestrowaæ klasê okna
+		if (!UnregisterClass(WINDOW_CLASS_NAME.c_str(), hInstance))
+		{
+			// zgadnijnie co?
+			Log.FatalError( "Nie mo¿na odrejestrowaæ klasy!" );
+			hInstance = 0;
+		}
+	}
+
+
+	isWindowCreated = false;
+	Log.Log( "Niszczenie okna zakoñczone." );
+
 	/*	Je¿eli ustawiliœmy pe³ny ekran, to teraz
 		Wypada³o by go przywróciæ do normalnych
 		ustawieñ. Dziêki wczeœniej wprowadzonej
@@ -440,47 +460,21 @@ void UIRender::GLDestroyWindow()
 		wprowadziæ dowoln¹ wartoœæ by ekran
 		wróci³ do porz¹dku.
 	*/
-	if (fullS)
+	if (fullScreen)
 	{
 		Log.Report( "Przywracanie rozdzielczoœci..." );
-		ChangeDisplaySettings(NULL,0);	
+		ChangeDisplaySettings(0, 0);	
 		ShowCursor( true ); // Pokazujemy te¿ kursor
 	}
-
-	DisableGL();
-
-	// Teraz potrzeba usun¹æ okno
-	if (hWnd && !DestroyWindow(hWnd))
-	{
-	    // alala kotki dwa
-		Log.FatalError( "Nie mo¿na usun¹æ okna!" );
-		hWnd=NULL;	//Zerujemy uchwyt okna
-	}
-
-	// wypada³oby jeszcze odrejestrowaæ klasê okna
-	if (!UnregisterClass("OpenGL",hInstance))
-	{
-	    // zgadnijnie co?
-		Log.FatalError( "Nie mo¿na odrejestrowaæ klasy!" );
-		hInstance=NULL;
-	}
-
-	IsWin = false;
-	Log.Log( "Niszczenie okna zakoñczone." );
 }
 
-void UIRender::Resize( unsigned int szerokosc, unsigned int wysokosc )
+void CRender::Resize( unsigned int width, unsigned int height )
 {
-	if( wysokosc == 0 )	// Ma³e zabezpieczenie 
-		wysokosc = 1;	// przed dzieleniem przez zero
+	if( height == 0 )	// Ma³e zabezpieczenie 
+		height = 1;		// przed dzieleniem przez zero
 
 	// Ustawiamy Viewport ( taki kwadrat, przez który bêdziemy widzieli co OpenGL wykombinuje )
-	glViewport( 0, 0, szerokosc, wysokosc);
-
-	// W zale¿noœci czy mamy widok perspektywy, czy prostok¹tny, to musimy zresetowaæ matrix
-	if( IsPers )
-		SetPerspective( PerConf[0], szerokosc, wysokosc, PerConf[2], PerConf[3] );
-	else SetOrtho();
+	glViewport( 0, 0, width, height );
 }
 
 /*	FUNKCJE USTAWIANIA PERSPEKTYWY
@@ -492,30 +486,16 @@ void UIRender::Resize( unsigned int szerokosc, unsigned int wysokosc )
 	zostaje zresetowany aktualny uk³ad
 	wspó³rzêdnych!
 */
-void UIRender::SetPerspective( float kat, int szerokosc, int wysokosc, float blisko, float daleko )
+void CRender::SetPerspective( float fov, float width, float height, float znear, float zfar )
 {
-	if( wysokosc == 0 )	// Zabezpieczenie, przed 
-		wysokosc = 1;	// dzieleniem przez zero
+	if( height == 0 )	// Zabezpieczenie, przed 
+		height = 1;	// dzieleniem przez zero
 
-	SetPerspective( kat, ( (float)szerokosc / (float)wysokosc ), blisko, daleko );
+	SetPerspective( fov, ( width / height ), znear, zfar );
 }
 
-void UIRender::SetPerspective( float kat, float wspl, float blisko, float daleko )
+void CRender::SetPerspective( float fov, float aspect, float znear, float zfar )
 {
-	// Zapisanie do wartoœci domyœlnych, by ³atwo mo¿na by³o
-	// Prze³anczaæ siê miêdzy typami rzutów
-	PerConf[0] = kat;
-	PerConf[1] = wspl;
-	PerConf[2] = blisko;
-	PerConf[3] = daleko;
-
-	SetPerspective();
-}
-
-void UIRender::SetPerspective()
-{
-	// A tu jest ta regu³ka ;)
-
 	// Przestawienie trybu matrix'a
 	glMatrixMode( GL_PROJECTION );
 
@@ -523,13 +503,15 @@ void UIRender::SetPerspective()
 	glLoadIdentity();	
 
 	//Ustawienie Perspektywy ( K¹t widzenia, Rozmiar ekranu, Min widocznoœci, Max widocznoœci )
-	gluPerspective( PerConf[0], PerConf[1], PerConf[2], PerConf[3] );
+	gluPerspective( fov, aspect, znear, zfar );
 
 	//Znowu zmiana Matrix'a
-	glMatrixMode(GL_MODELVIEW);	
-	
-	//I reset uk³adu
-	glLoadIdentity();
+	glMatrixMode( GL_MODELVIEW );	
+}
+
+void	CRender::SetPerspective()
+{
+	SetPerspective(60.0f, (float)screenSize[0], (float)screenSize[1], 0.1f, 1000.0f);
 }
 
 /*	FUNKCJE USTAWIANIA RZUT. PROSTOK¥TNEGO
@@ -544,21 +526,7 @@ void UIRender::SetPerspective()
 	ostatnie dwa maj¹ wartoœci domyœlne,
 	bo praktycznie s¹ rzadko u¿ywane.
 */
-void UIRender::SetOrtho( float lewo, float prawo, float dol, float gora, float blisko, float daleko )
-{
-	// Przypisanie nowych wartoœci do tablicy
-	OrthoConf[0] = lewo;
-	OrthoConf[1] = prawo;
-	OrthoConf[2] = dol;
-	OrthoConf[3] = gora;
-	OrthoConf[4] = blisko;
-	OrthoConf[5] = daleko;
-
-	// Wywo³anie w³aœciwej funkcji
-	SetOrtho();
-}
-
-void UIRender::SetOrtho()
+void CRender::SetOrtho( float left, float right, float bottom, float top, float znear, float zfar )
 {
 	/*	Jak widaæ, ta funkcja niewiele siê ró¿ni
 		od funkcji perspektywy. Dla czytelnoœci
@@ -571,11 +539,14 @@ void UIRender::SetOrtho()
 	glLoadIdentity();	
 
 	//Ustawienie Rzut. Prostok¹tnego ( dla rozszyfrowania parametrów patrz -> deklaracja tablicy OrthoConf )
-	glOrtho( OrthoConf[0], OrthoConf[1], OrthoConf[2], OrthoConf[3], OrthoConf[4], OrthoConf[5] ); 
+	glOrtho( left, right, bottom, top, znear, zfar); 
 
-	glMatrixMode(GL_MODELVIEW);	
-	
-	glLoadIdentity();
+	glMatrixMode( GL_MODELVIEW );	
+}
+
+void	CRender::SetOrtho()
+{
+	SetOrtho(0.0f, (float)screenSize[0], 0.0f, (float)screenSize[1]);
 }
 
 /*	ZAMIANA BUFORÓW
@@ -592,64 +563,60 @@ void UIRender::SetOrtho()
 	dla w³aœciwej funkcji podmiany buforów
 	( dla prostoty ).
 */
-void UIRender::SwitchBuf()
+void CRender::SwapBuffers()
 {
-	SwapBuffers(hDC);
+	::SwapBuffers( hDC );
 }
 
 /*	FUNKCJE DO KOMUNIKACJI POZA KLAS¥	*/
-const int UIRender::GetWidth()
+const unsigned CRender::GetWidth()
 {
-	return ScrSize[0];
+	return screenSize[0];
 }
 
-const int UIRender::GetHeight()
+const unsigned CRender::GetHeight()
 {
-	return ScrSize[1];
+	return screenSize[1];
 }
 
-std::string UIRender::GetRndInfo( unsigned int info )
+std::string CRender::GetRndInfo( RENDER_INFO info )
 {
-	if( info > 3 )
-		return "INVALID INFO";
-
-	return RndInfo[info];
+	return rndInfo[(unsigned)info];
 }
 
-bool UIRender::GetFullScreen()
+bool CRender::IsFullScreen()
 {
-	return fullS;
+	return fullScreen;
 }
 
-void UIRender::EnableFullScreen()
+void CRender::EnableFullScreen()
 {
-	if( fullS )
+	if( fullScreen )
 		return;
 
-	SetWindowLong( hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-	SetWindowLong( hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW );
 	ShowCursor( false );
+
 	// struktura trzymaj¹ca konfiguracje zmiany parametrów ekranu			
 	DEVMODE dmScreenSettings;
 
     // Musimy t¹ strukturê przeczyœciæ (nadpisaæ zerami), by nie mieæ ¿adnych niespodzianek					
-	memset(&dmScreenSettings,0,sizeof(dmScreenSettings));	
-	dmScreenSettings.dmSize=sizeof(dmScreenSettings);
+	memset( &dmScreenSettings, 0, sizeof(dmScreenSettings) );	
+	dmScreenSettings.dmSize = sizeof(dmScreenSettings);
 	
     //ustawiamy strukture	
-	dmScreenSettings.dmPelsWidth	= ScrSize[0];	//Szerokoœæ ekranu
-	dmScreenSettings.dmPelsHeight	= ScrSize[1];	//Wysokoœæ ekranu
-	dmScreenSettings.dmBitsPerPel	= 32;		//G³êbia kolorów
+	dmScreenSettings.dmPelsWidth	= screenSize[0];	//Szerokoœæ ekranu
+	dmScreenSettings.dmPelsHeight	= screenSize[1];	//Wysokoœæ ekranu
+	dmScreenSettings.dmBitsPerPel	= this->colorBits;		//G³êbia kolorów
 
 	// Ostatnie ustawienie mówi, co zrobiæ z Pixelami
-	dmScreenSettings.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
+	dmScreenSettings.dmFields = (this->colorBits != 0 ? DM_BITSPERPEL : 0) | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 	/*	Próba zmiany rozdzielczoœci (CDS_FULLSCREEN usuwa 
 		panel startu, oraz przywraca star¹ konfiguracje ekranu
 		przy kolejnej próbie zmiany rozdzielczoœæ )
 	*/
 	Log.Log( "Zmiana rozdzielczoœci" );
-	if (ChangeDisplaySettings(&dmScreenSettings,CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+	if (ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL)
 	{
 		Log.Error( "Nie mo¿na zmieniæ rozdzielczoœci!" );
 		//Je¿eli nieudana, proponujemy dzia³anie okienkowe
@@ -657,57 +624,67 @@ void UIRender::EnableFullScreen()
 		{
 			Log.Report( "Zmiana trybu na Okienkowy" );
             //Je¿eli tak to wykonujemy
-			fullS = false;
+			fullScreen = false;
 		}
 		else
 		{
 			//Je¿eli nie to koñczymy dzia³anie (dajemy komunikat, ¿e progam zostanie zamkniêty)
-			MessageBox(NULL,"Program zostanie zamkniêty.","B£¥D",MB_OK|MB_ICONSTOP);
+			MessageBox( NULL, "Program zostanie zamkniêty.", "B£¥D", MB_OK | MB_ICONSTOP);
 			Log.Report( "Wy³¹czenie aplikacji" );
 			return;	//przerywamy dzia³anie aplikacji
 		}
 	}
 
-	RECT		WindowRect;				//Wielkoœæ okna (struktura czworoboku)
-	WindowRect.left		= (long)0;			//Lewa krawêdŸ na 0
-	WindowRect.right	= (long)ScrSize[0];	//Prawa krawêdŸ na wartoœæ Szerokosc
-	WindowRect.top		= (long)0;			//Górna krawêdŸ na 0
-	WindowRect.bottom	= (long)ScrSize[1];	//Dolna krawêdŸ na wartoœæ Wysokosc
+	if(isWindowCreated)
+	{
+		SetWindowLong( hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+		SetWindowLong( hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW );
 
-	AdjustWindowRectEx( &WindowRect, WS_POPUP, false, WS_EX_APPWINDOW );		
+		RECT		WindowRect;				//Wielkoœæ okna (struktura czworoboku)
+		WindowRect.left		= (long)0;				//Lewa krawêdŸ na 0
+		WindowRect.right	= (long)screenSize[0];	//Prawa krawêdŸ na wartoœæ Szerokosc
+		WindowRect.top		= (long)0;				//Górna krawêdŸ na 0
+		WindowRect.bottom	= (long)screenSize[1];	//Dolna krawêdŸ na wartoœæ Wysokosc
 
-	SetWindowPos( hWnd, HWND_TOP, WindowRect.left, WindowRect.top, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
-	ShowWindow( hWnd, SW_SHOW );
+		AdjustWindowRectEx( &WindowRect, WS_POPUP, false, WS_EX_APPWINDOW );		
 
-	fullS = true;
+		SetWindowPos( hWnd, HWND_TOP, WindowRect.left, WindowRect.top, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
+		ShowWindow( hWnd, SW_SHOW );
+	}
+
+	fullScreen = true;
 }
 
-void UIRender::DisableFullScreen()
+void CRender::DisableFullScreen()
 {
-	if( !fullS )
+	if( !fullScreen )
 		return;
 
-	SetWindowLong( hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-	SetWindowLong( hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );
-	ShowCursor( true );
-	RECT		WindowRect;				//Wielkoœæ okna (struktura czworoboku)
-	WindowRect.left		= (long)0;			//Lewa krawêdŸ na 0
-	WindowRect.right	= (long)ScrSize[0];	//Prawa krawêdŸ na wartoœæ Szerokosc
-	WindowRect.top		= (long)0;			//Górna krawêdŸ na 0
-	WindowRect.bottom	= (long)ScrSize[1];	//Dolna krawêdŸ na wartoœæ Wysokosc
-
-	AdjustWindowRectEx( &WindowRect, WS_OVERLAPPEDWINDOW, false, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );		
-
-	SetWindowPos( hWnd, HWND_TOP, 0, 0, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
-
 	Log.Report( "Przywracanie rozdzielczoœci..." );
+	ShowCursor( true );
 	ChangeDisplaySettings(NULL,0);	
-	ShowWindow( hWnd, SW_SHOW );
 
-	fullS = false;
+	if(isWindowCreated)
+	{
+		SetWindowLong( hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+		SetWindowLong( hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );
+
+		RECT		WindowRect;				//Wielkoœæ okna (struktura czworoboku)
+		WindowRect.left		= (long)0;				//Lewa krawêdŸ na 0
+		WindowRect.right	= (long)screenSize[0];	//Prawa krawêdŸ na wartoœæ Szerokosc
+		WindowRect.top		= (long)0;				//Górna krawêdŸ na 0
+		WindowRect.bottom	= (long)screenSize[1];	//Dolna krawêdŸ na wartoœæ Wysokosc
+
+		AdjustWindowRectEx( &WindowRect, WS_OVERLAPPEDWINDOW, false, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );		
+
+		SetWindowPos( hWnd, HWND_TOP, 0, 0, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
+		ShowWindow( hWnd, SW_SHOW );
+	}
+
+	fullScreen = false;
 }
 
-void UIRender::VSync( unsigned int set )
+void CRender::VSync( unsigned int set )
 {
 /*	PFNWGLSWAPINTERVALPROC   wglSwapIntervalEXT; 
 	wglSwapIntervalEXT    = (PFNWGLSWAPINTERVALPROC) wglGetProcAddress("wglSwapIntervalEXT"); 

@@ -16,41 +16,29 @@
 #include <string>		// Nag³owek do mainpulacji ³añcuchem znaków
 #include "Log.h"
 
-#define RENDER_VERSION	0
-#define RENDER_RENDERER	1
-#define RENDER_VENDOR	2
-#define RENDER_EXTLIST	3
+enum RENDER_INFO{
+	RENDER_VERSION	= 0,
+	RENDER_RENDERER	= 1,
+	RENDER_VENDOR	= 2,
+	RENDER_EXTLIST	= 3,
+};
 
-class UIRender
+class CRender
 {
 private:
-	HGLRC	hRC;	// Kontekst Renderuj¹cy
-	HDC		hDC;	// Kontekst Urz¹dzenia
-	HWND	hWnd;	// Wskaznik na uchwyt okna	
+	HGLRC		hRC;	// Kontekst Renderuj¹cy
+	HDC			hDC;	// Kontekst Urz¹dzenia
+	HWND		hWnd;	// Wskaznik na uchwyt okna	
 	HINSTANCE	hInstance;	// Instancja
 
-	bool IsPers; // Do sprawdzania, czy jest ustawiona perspektywa
-	bool fullS; // Do sprawdzania, czy jest w³¹czony pe³ny Ekran
-	bool IsWin;	// Do sprawdzenia, czy okno ju¿ jest postawione
-	int	 ScrSize[2]; // Trzyma rozmiar okna. ( 0 - szerokoœæ, 1 - wysokoœæ )
-	int	 ColBits; // Bity kolorów
+	bool	fullScreen;		// Do sprawdzania, czy jest w³¹czony pe³ny Ekran
+	bool	isWindowCreated;	// Do sprawdzenia, czy okno ju¿ jest postawione
+	int		screenSize[2];		// Trzyma rozmiar okna. ( 0 - szerokoœæ, 1 - wysokoœæ )
+	int		colorBits;			// Bity kolorów
+	int		depthBits;
+	int		stencilBits;
 
-	float PerConf[4]; // Trzyma konfiguracje perspektywy
-	/*	PerConf[0] - Kat
-		PerConf[1] - Wspó³czynik pomiêdzy wysokoscia/szerokoscia
-		PerConf[2] - Minimalna odleglosc
-		PerConf[3] - Maksymalna odleglosc*/
-
-	float OrthoConf[6]; // Trzyma konfiguracje rzutowania prostok¹tnego
-	/*	OrthoConf[0] - krawedz lewa bryly obcinania
-		OrthoConf[1] - prawa
-		OrthoConf[2] - dolna
-		OrthoConf[3] - górna
-		OrthoConf[4] - bliska ( do ciebie od ekranu )
-		OrthoConf[5] - daleka ( za ekranem )
-	*/
-
-	std::string RndInfo[4];	// Trzyma informacje o danej Maszynie
+	std::string rndInfo[4];	// Trzyma informacje o danej Maszynie
 	/*	RndInfo[0] - Wersja OpenGL
 		RndInfo[1] - Sterownik Karty Grafiki
 		RndInfo[2] - Firma, która wmontowa³a OpenGL do karty ( np. NVDIA, ATI )
@@ -58,45 +46,45 @@ private:
 	*/
 
 public:
-	UIRender();		// Konstruktor Klasy
-	~UIRender();	// Destruktor Klasy
+	CRender();		// Konstruktor Klasy
+	~CRender();	// Destruktor Klasy
 
 	// Skalowanie ViewPortu ( tego kwadratu, wktórym wyœwietlana jest grafika ).
-	void Resize( unsigned int szerokosc, unsigned int wysokosc );
+	void Resize( unsigned int width, unsigned int height );
 
 	// Tworzenie Okna ( zwraca true, jezeli udane lub false, jezeli sie nie powiod³o )
-	bool GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, bool FullScr, WNDPROC WndProc );
-	bool EnableGL();
+	bool GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullscreen, WNDPROC wndProc, bool initGL = true );
+	bool EnableGL(unsigned colorBits = 0, unsigned depthBits = 0, unsigned stencilBits = 0);
 
 	// Niszczenie Okna ( nic nie zwraca, bo i tak jak siê coœ zwali, to nic nie zaszkodzi )
-	void GLDestroyWindow();
+	void GLDestroyWindow(bool deinitGL = true);
 	void DisableGL();
 
 	// Ustawianie perspektywy
-	void SetPerspective( float kat, int szerokosc, int wysokosc, float blisko, float daleko );
-	void SetPerspective( float kat, float wspl, float blisko, float daleko );
-	void SetPerspective();
+	static void SetPerspective( float fov, float width, float height, float znear, float zfar );
+	static void SetPerspective( float fov, float aspect, float znear, float zfar );
+	void	SetPerspective();
 
 	// Ustawianie rzut. prostok¹tnego
-	void SetOrtho( float lewo, float prawo, float dol, float gora, float blisko = -1, float daleko = 1 );
-	void SetOrtho();
+	static void SetOrtho( float left, float right, float bottom, float top, float blisko = -1.0f, float daleko = 1.0f );
+	void	SetOrtho();
 
 	// Zamiana buforów
-	void SwitchBuf();
+	void SwapBuffers();
 
 	// Funkcje by pobraæ szerokoœæ i wysokoœæ okna
-	const int GetWidth();
-	const int GetHeight();
+	const unsigned GetWidth();
+	const unsigned GetHeight();
 
-	bool GetFullScreen();
+	bool IsFullScreen();
 	void EnableFullScreen();
 	void DisableFullScreen();
 
 	void VSync( unsigned int set );
 
-	std::string GetRndInfo( unsigned int info );
+	std::string GetRndInfo( RENDER_INFO info );
 };
 
-extern UIRender GLRender;
+extern CRender GLRender;
 
 #endif

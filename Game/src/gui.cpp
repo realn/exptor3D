@@ -573,8 +573,9 @@ void guiMain::DoGUIDraw()
 
 		TText.EndPrint();
 
-		GLRender.SetOrtho();
+		GLRender.SetOrtho( -2.0f, 2.0f, -2.0f, 2.0f );
 		CH[0].Activate( TexDetailLevel );
+		{
 			glBlendFunc( GL_ONE, GL_ONE );
 			glEnable( GL_BLEND );
 			glBegin( GL_TRIANGLE_STRIP );
@@ -601,7 +602,7 @@ void guiMain::DoGUIDraw()
 				glEnable( GL_TEXTURE_2D );
 			}
 			glDisable( GL_BLEND );
-
+		}
 	}
 
 	if( this->IsShowingWLScr() )
@@ -1103,7 +1104,7 @@ void guiMain::SendConMsg( std::string msg, bool parse, bool hist )
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		//this->ConsoleEng();
 		this->ConsoleDraw();
-		GLRender.SwitchBuf();
+		GLRender.SwapBuffers();
 	}
 }
 

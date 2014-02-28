@@ -402,7 +402,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 				else								// Je¿eli nie to rysujemy
 				{
 					Render();						// Rysujemy scene
-					GLRender.SwitchBuf();				// Prze³anczamy bufory
+					GLRender.SwapBuffers();				// Prze³anczamy bufory
 				}
 
 			}
