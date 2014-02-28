@@ -59,21 +59,6 @@ UIRender::~UIRender()
 
 }
 
-/*	USTAWIENIE WSKAèNIKA
-	By wogÛle zainicjalizowaÊ okno i kontekst
-	musimy mieÊ uchwyt na okno. Mog≥em go wkodowaÊ
-	juø w klasie, ale to utrudni niektÛre rzeczy,
-	dlatego postanowi≥em ustawiÊ tylko wskaünik.
-*/
-void UIRender::SetWinHandle( HWND* Uchwyt )
-{
-	if( IsWin ) return; // Jeøeli okno jest stworzone, to stracenie wskaünika
-						// by≥o by katastrofπ! Dlatego przerywamy metodÍ.
-
-	Log.Log( "Ustawianie uchwytu Okna" );
-	hWnd = Uchwyt; // Ustawiamy uchwyt, przez przekazanie adresu ( najproúciej )
-}
-
 /*	TWORZENIE OKNA
 	Majπc Uchwyt moøemu juø stworzyÊ okno... No prawie :)
 	Potrzebne jeszcze dane to:
@@ -232,7 +217,7 @@ bool UIRender::GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, b
 	AdjustWindowRectEx( &WindowRect, dwStyle, false, dwExStyle );		
 
 	// Ostatecznie tworzymy okno
-	if (!(*hWnd=CreateWindowEx(	dwExStyle,							//Styl zewnÍtrzny okna
+	if (!(hWnd=CreateWindowEx(	dwExStyle,							//Styl zewnÍtrzny okna
 								"OpenGL",							//Nazwa klasy okna
 								Tytul.c_str(),						//Tytu≥ okna (na belce)
 								dwStyle |							//Definicja stylu
@@ -325,7 +310,7 @@ bool UIRender::EnableGL()
 	};
 	
 	// Pobieramy kontekst dla okna z uchwytu (* jest dodane, by uzyskaÊ sam uchwyt, nie wskaünik )
-	if (!(hDC=GetDC(*hWnd)))
+	if (!(hDC=GetDC(hWnd)))
 	{
 		// Jeøeli siÍ nie udaje
 		Log.FatalError( "Nie moøna stworzyÊ kontekstu GL!." );
@@ -378,9 +363,9 @@ bool UIRender::EnableGL()
 		Resize().
 	*/
 	Log.Log( "KoÒczenie okna..." );
-	ShowWindow( *hWnd, SW_SHOW );
-	SetForegroundWindow( *hWnd );
-	SetFocus( *hWnd );
+	ShowWindow( hWnd, SW_SHOW );
+	SetForegroundWindow( hWnd );
+	SetFocus( hWnd );
 	Resize( ScrSize[0], ScrSize[1] );
 
 	/*	I na koÒcu, kiedy kontekst jest juø ustawiony
@@ -430,7 +415,7 @@ void UIRender::DisableGL()
 	}
 
 	// Teraz usuwamy konteks aplikacji - wystarczy go tylko "puúciÊ" i juø bÍdzie wolny.
-	if (hDC && !ReleaseDC(*hWnd,hDC))
+	if (hDC && !ReleaseDC(hWnd,hDC))
 	{
 	    // Znowu???
 		Log.FatalError( "Nie moøna usunπÊ kontekstu aplikacji!" );
@@ -465,11 +450,11 @@ void UIRender::GLDestroyWindow()
 	DisableGL();
 
 	// Teraz potrzeba usunπÊ okno
-	if (*hWnd && !DestroyWindow(*hWnd))
+	if (hWnd && !DestroyWindow(hWnd))
 	{
 	    // alala kotki dwa
 		Log.FatalError( "Nie moøna usunπÊ okna!" );
-		*hWnd=NULL;	//Zerujemy uchwyt okna
+		hWnd=NULL;	//Zerujemy uchwyt okna
 	}
 
 	// wypada≥oby jeszcze odrejestrowaÊ klasÍ okna
@@ -641,8 +626,8 @@ void UIRender::EnableFullScreen()
 	if( fullS )
 		return;
 
-	SetWindowLong( *hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-	SetWindowLong( *hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW );
+	SetWindowLong( hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+	SetWindowLong( hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW );
 	ShowCursor( false );
 	// struktura trzymajπca konfiguracje zmiany parametrÛw ekranu			
 	DEVMODE dmScreenSettings;
@@ -691,8 +676,8 @@ void UIRender::EnableFullScreen()
 
 	AdjustWindowRectEx( &WindowRect, WS_POPUP, false, WS_EX_APPWINDOW );		
 
-	SetWindowPos( *hWnd, HWND_TOP, WindowRect.left, WindowRect.top, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
-	ShowWindow( *hWnd, SW_SHOW );
+	SetWindowPos( hWnd, HWND_TOP, WindowRect.left, WindowRect.top, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
+	ShowWindow( hWnd, SW_SHOW );
 
 	fullS = true;
 }
@@ -702,8 +687,8 @@ void UIRender::DisableFullScreen()
 	if( !fullS )
 		return;
 
-	SetWindowLong( *hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-	SetWindowLong( *hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );
+	SetWindowLong( hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+	SetWindowLong( hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );
 	ShowCursor( true );
 	RECT		WindowRect;				//WielkoúÊ okna (struktura czworoboku)
 	WindowRect.left		= (long)0;			//Lewa krawÍdü na 0
@@ -713,11 +698,11 @@ void UIRender::DisableFullScreen()
 
 	AdjustWindowRectEx( &WindowRect, WS_OVERLAPPEDWINDOW, false, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE );		
 
-	SetWindowPos( *hWnd, HWND_TOP, 0, 0, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
+	SetWindowPos( hWnd, HWND_TOP, 0, 0, WindowRect.right, WindowRect.bottom, SWP_SHOWWINDOW );
 
 	Log.Report( "Przywracanie rozdzielczoúci..." );
 	ChangeDisplaySettings(NULL,0);	
-	ShowWindow( *hWnd, SW_SHOW );
+	ShowWindow( hWnd, SW_SHOW );
 
 	fullS = false;
 }

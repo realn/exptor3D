@@ -24,7 +24,6 @@
 #include	"glm.h"
 #include	"inifile.h"
 
-HWND        hWnd=NULL;      //Uchwyt Okna
 HINSTANCE   hInstance;      //Uchwyt instancji
 ioTexture font[1];
 

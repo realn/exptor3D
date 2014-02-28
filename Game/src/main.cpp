@@ -362,8 +362,6 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	GUI.SetCanSmoke( ini.ReadBool( "SPECIAL", "SMOKE", true ) );
 	ini.Close();
 
-	GLRender.SetWinHandle( &hWnd );
-
 	// Stwórz okno
 	if ( !GLRender.GLCreateWindow( "Expert 3D Tournament", Szer, Wys, fullscreen, (WNDPROC)WndProc ) )
 	{

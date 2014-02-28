@@ -26,7 +26,7 @@ class UIRender
 private:
 	HGLRC	hRC;	// Kontekst Renderuj¹cy
 	HDC		hDC;	// Kontekst Urz¹dzenia
-	HWND*	hWnd;	// Wskaznik na uchwyt okna	
+	HWND	hWnd;	// Wskaznik na uchwyt okna	
 	HINSTANCE	hInstance;	// Instancja
 
 	bool IsPers; // Do sprawdzania, czy jest ustawiona perspektywa
@@ -63,9 +63,6 @@ public:
 
 	// Skalowanie ViewPortu ( tego kwadratu, wktórym wyœwietlana jest grafika ).
 	void Resize( unsigned int szerokosc, unsigned int wysokosc );
-
-	// Ustawianie uchwytu do okna ( W¥¯NE: Nale¿y wykonaæ PRZED stworzeniem okna )
-	void SetWinHandle( HWND* Uchwyt );
 
 	// Tworzenie Okna ( zwraca true, jezeli udane lub false, jezeli sie nie powiod³o )
 	bool GLCreateWindow( std::string Tytul, int Szerokosc, int Wysokosc, bool FullScr, WNDPROC WndProc );
