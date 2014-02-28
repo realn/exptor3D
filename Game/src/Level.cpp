@@ -10,9 +10,6 @@ Opis:	Patrz -> Level.h
 ///////////////////////////////////////////////////////*/
 #include "Level.h"
 
-gameLevel GLevel;
-gameLevel* pGLevel = &GLevel;
-
 /*	KLASA gameWLFlags
 	S³u¿y do sprawdzania warunków wygranej jak i przegranej.
 	w klasie level'u wystêpuj¹ dwa takei obiekty.
@@ -126,7 +123,9 @@ bool gameWLFlags::CheckOneFlag()
 	Patrz -> definicja klasy
 */
 /*	KONSTRUKTOR	*/
-gameLevel::gameLevel()
+gameLevel::gameLevel(GLModelManager& mdlManager, ioTexManager& texManager) :
+	mdlManager(mdlManager),
+	texManager(texManager)
 {
 	// Zerujemy wskaŸnik (który bêdzie do tablicy)
 	block = NULL;
@@ -593,33 +592,33 @@ bool gameLevel::LoadLevel( const std::string &filename )
 			switch( k )
 			{
 			case GAME_WEAP_SAW :
-				Weap = new weSaw;
+				Weap = new weSaw(mdlManager);
 				break;
 
 			case GAME_WEAP_PISTOL :
-				Weap = new wePistol;
+				Weap = new wePistol(mdlManager);
 				break;
 
 			case GAME_WEAP_MINIPZR :
-				Weap = new weMiniPhazer;
+				Weap = new weMiniPhazer(mdlManager);
 				break;
 
 			case GAME_WEAP_MINIGUN :
-				Weap = new weMiniGun;
+				Weap = new weMiniGun(mdlManager);
 				break;
 
 			case GAME_WEAP_ROCKETLUN :
-				Weap = new weRocketLuncher;
+				Weap = new weRocketLuncher(mdlManager);
 				break;
 
 			//case GAME_WEAP_PICKABOO	:
 			case GAME_WEAP_PHAZER :
-				Weap = new wePhazer;
+				Weap = new wePhazer(mdlManager);
 				break;
 
 			//case GAME_WEAP_MINE :
 			case GAME_WEAP_ATOM_BOMB :
-				Weap = new weAtomBomb;
+				Weap = new weAtomBomb(mdlManager);
 				break;
 			default:
 				continue;
@@ -687,7 +686,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 
 			sscanf_s( str.c_str(), "%d=%d,%d", &j, &k, &l );
 
-			gameEnemy* Enemy = new gameEnemy;
+			gameEnemy* Enemy = new gameEnemy(mdlManager);
 			Enemy->SetStartPos( this->GetBlockPos( j ) );
 			Enemy->SetStartAngle( (float)l );
 			Enemy->LoadEnemy( EnemyType[k] );
@@ -723,7 +722,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 
 			sscanf_s( str.c_str(), "%d,%d=", &k, &l );
 
-			gameStatObj *obj = new gameStatObj;
+			gameStatObj *obj = new gameStatObj(mdlManager);
 			obj->LoadObj( GetParamStr( str ) );
 			obj->Pos = this->GetBlockPos( k );
 			obj->SetAngle( l );
@@ -763,17 +762,17 @@ bool gameLevel::LoadLevel( const std::string &filename )
 			{
 			case BONUS_TYPE_AMMO :
 				sscanf_s( str.c_str(), "%d,%d/%d,%d=", &k, &l, &a, &b );
-				Bonus = new weAmmo;
+				Bonus = new weAmmo(mdlManager);
 				((weAmmo*)Bonus)->Init( a, b, GetParamStr( str ) );
 				break;
 			case BONUS_TYPE_HEALTH :
 				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new weHealth;
+				Bonus = new weHealth(mdlManager);
 				((weHealth*)Bonus)->Init( a, GetParamStr( str ) );
 				break;
 			case BONUS_TYPE_ARMOR :
 				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new weArmor;
+				Bonus = new weArmor(mdlManager);
 				((weArmor*)Bonus)->Init( a, GetParamStr( str ) );
 				break;
 			case BONUS_TYPE_UNKNOWN :

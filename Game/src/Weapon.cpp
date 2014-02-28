@@ -16,7 +16,8 @@ Opis:	Patrz -> Weapon.h
 	podstawa do 
 	reszty pocisków.
 ====================*/
-weBullet::weBullet()
+weBullet::weBullet( GLModelManager& mdlManager) :
+	mdlManager(mdlManager)
 {
 	CanDelete = false;
 	DoDelete = false;
@@ -89,6 +90,11 @@ void weBullet::OnDelete()
 	KLASA weBullRay
 	promieñ phazer'a
 ====================*/
+weBullRay::weBullRay( GLModelManager& mdlManager ) :
+	weBullet(mdlManager)
+{
+}
+
 void weBullRay::Init( Vector3f pos, Vector3f veloc, float speed )
 {
 	Pos = pos + ( veloc * 1.5f );
@@ -142,6 +148,11 @@ void weBullRay::DoDraw()
 	KLASA weBullRocked
 	Rakieta z wyrzutni
 ====================*/
+weBullRocket::weBullRocket( GLModelManager& mdlManager ) :
+	weBullet(mdlManager)
+{
+}
+
 void weBullRocket::Init( Vector3f pos, Vector3f veloc, float speed )
 {
 	Pos = pos + ( veloc * 3.0f );
@@ -152,7 +163,7 @@ void weBullRocket::Init( Vector3f pos, Vector3f veloc, float speed )
 	R = 0.3f;
 	glEnable( GL_LIGHT0 );
 
-	Model = GLMManager.Get( "Data/Missle.glm" );
+	Model = mdlManager.Get( "Data/Missle.glm" );
 
 	Type = BULLET_TYPE_ROCKET;
 }
@@ -176,7 +187,7 @@ void weBullRocket::DoDraw()
 void weBullRocket::OnDelete()
 {
 	CanDelete = true;
-	weBullExplode *Bull = new weBullExplode;
+	weBullExplode *Bull = new weBullExplode(mdlManager);
 	Bull->Owner = NULL;
 	Bull->Damage = this->Damage / 10.0f;
 	Bull->Power = 15.0f;
@@ -216,6 +227,11 @@ void weBullRocket::DoEngine()
 	KLASA weBullExplode
 	eksplozja
 ====================*/
+weBullExplode::weBullExplode( GLModelManager& mdlManager ) :
+	weBullet( mdlManager )
+{
+}
+
 void weBullExplode::Init( Vector3f pos, Vector3f veloc, float speed )
 {
 	thisPower = 0.0f;
@@ -270,6 +286,11 @@ void weBullExplode::DoDraw()
 /*====================
 	KLASA weBullSaw
 ====================*/
+weBullSaw::weBullSaw( GLModelManager& mdlManager ) :
+	weBullet(mdlManager)
+{
+}
+
 void weBullSaw::Init( Vector3f pos, Vector3f veloc, float speed )
 {
 	weBullet::Init( pos, veloc, speed);
@@ -299,12 +320,17 @@ float weBullSaw::DoTest( Dummy* Dum, float Armor )
 	KLASA weBullBomb
 	Jest to bomba
 ====================*/
+weBullBomb::weBullBomb( GLModelManager& mdlManager ) :
+	weBullet( mdlManager )
+{
+}
+
 void weBullBomb::Init( Vector3f pos, Vector3f veloc, float speed )
 {
 	Pos = NextPos = pos;
 	BoomTime = speed;
 	ThisTime = 0.0f;
-	Model = GLMManager.Get( "Data/bomb-model.glm" );
+	Model = mdlManager.Get( "Data/bomb-model.glm" );
 	Type = BULLET_TYPE_BOMB;
 }
 
@@ -320,7 +346,7 @@ void weBullBomb::DoEngine()
 	if( ThisTime >= BoomTime )
 	{
 		CanDelete = true;
-		weBullExplode* bull = new weBullExplode;
+		weBullExplode* bull = new weBullExplode(mdlManager);
 		bull->Power = 60.0f;
 		bull->Init( Pos, Veloc, 0.5f );
 		bull->Damage = this->Damage;
@@ -430,7 +456,8 @@ void weBulletManager::Clear()
 weBulletManager BManager;
 
 /*	KLASA BONUSÓW	*/
-weBonus::weBonus()
+weBonus::weBonus(GLModelManager& mdlManager) :
+	mdlManager(mdlManager)
 {
 	CanDelete = false;
 	Model = NULL;
@@ -455,12 +482,18 @@ unsigned int weBonus::GetType()
 {
 	return type;
 }
+
 /*	BONUS - AMUNICJA	*/
+weAmmo::weAmmo( GLModelManager& mdlManager ) :
+	weBonus( mdlManager )
+{
+}
+
 void weAmmo::Init(unsigned int weaptype, unsigned int ammocount, std::string modelfile) 
 {
 	WeapType = weaptype;
 	AmmoCount = ammocount;
-	Model = GLMManager.Get( modelfile );
+	Model = mdlManager.Get( modelfile );
 	type = BONUS_TYPE_AMMO;
 }
 
@@ -475,10 +508,15 @@ unsigned int weAmmo::GetAmmoCount()
 }
 
 /*	BONUS - ZDROWIE	*/
+weHealth::weHealth( GLModelManager& mdlManager ) :
+	weBonus(mdlManager)
+{
+}
+
 void weHealth::Init(float health, std::string modelfile)
 {
 	HealthAdd = health;
-	Model = GLMManager.Get( modelfile );
+	Model = mdlManager.Get( modelfile );
 	type = BONUS_TYPE_HEALTH;
 }
 
@@ -488,10 +526,15 @@ float weHealth::GetHealth()
 }
 
 /*	BONUS - PANCERZ	*/
+weArmor::weArmor( GLModelManager& mdlManager ) :
+	weBonus( mdlManager )
+{
+}
+
 void weArmor::Init(float armor, std::string modelfile)
 {
 	ArmorAdd = armor;
-	Model = GLMManager.Get( modelfile );
+	Model = mdlManager.Get( modelfile );
 	type = BONUS_TYPE_ARMOR;
 }
 
@@ -614,7 +657,8 @@ weBonusManager BonusMan;
 */
 
 /*	KONSTRUKTOR	*/
-weWeapon::weWeapon()
+weWeapon::weWeapon(GLModelManager& mdlManager) :
+	mdlManager(mdlManager)
 {
 	Damage[0] = 0.0f;
 	Damage[1] = 1.0f;
@@ -782,16 +826,17 @@ void weWeapon::Free()
 	pi³a tarczowa ;D
 */
 
-weSaw::weSaw()
-{
-}
-
 /*	Metoda inicjuje pi³e, czyli
 	Przypisuje wartoœci i tworzy jej
 	wygl¹d. Mog³em zrobiæ jakiœ loader
 	plików, ale to by siê zesz³o zbyt
 	d³ugo :P 
 */
+weSaw::weSaw( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void weSaw::Init()
 {
 	if( inited ) 
@@ -820,7 +865,7 @@ void weSaw::Init()
 
 	Name = "SAW";
 
-	Model = GLMManager.Get( "Data/saw-model.glm" );
+	Model = mdlManager.Get( "Data/saw-model.glm" );
 
 	inited = true;
 }
@@ -856,7 +901,7 @@ void weSaw::DoEngine()
 			ReloadTime -= 0.2f;
 		Shake[0] = 0.0f;
 		Shake[1] = 0.0f;
-		weBullSaw* bull = new weBullSaw;
+		weBullSaw* bull = new weBullSaw(mdlManager);
 		bull->Init( Owner->NextPos, Owner->Vector, 0.0f );
 		bull->Damage = 0.5f;
 		bull->Owner = Owner;
@@ -940,6 +985,11 @@ void weSaw::Shot()
 }
 
 /*	PISTOLET	*/
+wePistol::wePistol( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void wePistol::Init()
 {
 	if( inited ) 
@@ -966,7 +1016,7 @@ void wePistol::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/pistol-model.glm" );
+	Model = mdlManager.Get( "Data/pistol-model.glm" );
 
 	inited = true;
 }
@@ -998,7 +1048,7 @@ void wePistol::DoEngine()
 				Time = 0.0f;
 				Ammo--;
 				CurrClip--;
-				weBullet* Bull = new weBullet;
+				weBullet* Bull = new weBullet(mdlManager);
 				Vector3f temp;
 				temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
 				temp = temp - Pos;
@@ -1075,6 +1125,11 @@ void wePistol::Shot()
 }
 
 /*	MINIPHAZER	*/
+weMiniPhazer::weMiniPhazer( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void weMiniPhazer::Init()
 {
 	if( inited ) 
@@ -1100,7 +1155,7 @@ void weMiniPhazer::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/miniphazer-model.glm" );
+	Model = mdlManager.Get( "Data/miniphazer-model.glm" );
 
 	inited = true;
 }
@@ -1123,7 +1178,7 @@ void weMiniPhazer::DoEngine()
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullRay;
+				weBullet* Bull = new weBullRay(mdlManager);
 				Bull->Init( Pos, temp, 0 );
 				Bull->Owner = this->Owner;
 				Bull->Damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
@@ -1212,6 +1267,11 @@ void weMiniPhazer::Shot()
 
 
 /*	PHAZER	*/
+wePhazer::wePhazer( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void wePhazer::Init()
 {
 	if( inited ) 
@@ -1237,7 +1297,7 @@ void wePhazer::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/phazer-model.glm" );
+	Model = mdlManager.Get( "Data/phazer-model.glm" );
 
 	inited = true;
 }
@@ -1260,7 +1320,7 @@ void wePhazer::DoEngine()
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullRay;
+				weBullet* Bull = new weBullRay(mdlManager);
 				Bull->Init( Pos, temp, 0 );
 				Bull->Owner = this->Owner;
 				Bull->Damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
@@ -1346,6 +1406,11 @@ void wePhazer::Shot()
 }
 
 /*	MINIGUN	*/
+weMiniGun::weMiniGun( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void weMiniGun::Init()
 {
 	if( inited ) 
@@ -1372,7 +1437,7 @@ void weMiniGun::Init()
 	BackA = 0.0f;
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/minigun-model.glm" );
+	Model = mdlManager.Get( "Data/minigun-model.glm" );
 
 	inited = true;
 }
@@ -1403,7 +1468,7 @@ void weMiniGun::DoEngine()
 				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullet; 
+				weBullet* Bull = new weBullet(mdlManager); 
 				Bull->Visible = false;;
 				Bull->Init( Pos, temp, 4.0f );
 				Bull->Owner = this->Owner;
@@ -1496,6 +1561,11 @@ void weMiniGun::Shot()
 
 
 /*	ROCKET LUNCHER	*/
+weRocketLuncher::weRocketLuncher( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void weRocketLuncher::Init()
 {
 	if( inited ) 
@@ -1521,7 +1591,7 @@ void weRocketLuncher::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/rocketlun-model.glm" );
+	Model = mdlManager.Get( "Data/rocketlun-model.glm" );
 
 	inited = true;
 }
@@ -1544,7 +1614,7 @@ void weRocketLuncher::DoEngine()
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullRocket;
+				weBullet* Bull = new weBullRocket(mdlManager);
 				Bull->Init( Pos, temp, 0.5f );
 				Bull->Owner = this->Owner;
 				Bull->Damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
@@ -1633,6 +1703,11 @@ void weRocketLuncher::Shot()
 
 
 /*	ATOM BOMB	*/
+weAtomBomb::weAtomBomb( GLModelManager& mdlManager ) :
+	weWeapon( mdlManager )
+{
+}
+
 void weAtomBomb::Init()
 {
 	if( inited )
@@ -1653,7 +1728,7 @@ void weAtomBomb::Init()
 
 	Name = "NUKE";
 
-	Model = GLMManager.Get( "Data/atombomb-model.glm" );
+	Model = mdlManager.Get( "Data/atombomb-model.glm" );
 
 	inited = true;
 }
@@ -1675,7 +1750,7 @@ void weAtomBomb::DoEngine()
 			if( Ammo == 0 )
 				return;
 
-			weBullBomb* Bull = new weBullBomb;
+			weBullBomb* Bull = new weBullBomb(mdlManager);
 			Bull->Init( Owner->NextPos, Owner->Vector, 300.0f );
 			Bull->Damage = 10.0f;
 			BManager.AddBullet( Bull );

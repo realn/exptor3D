@@ -14,13 +14,13 @@ Opis:	Patrz -> glm.h
 const unsigned BUFFER_SIZE = 1024;
 
 /*=====KONSTRUKTOR=====*/
-GLModel::GLModel() :
+GLModel::GLModel( ioTexManager& texManager ) :
+	texManager(texManager),
 	List(0),
 	ListCount(0),
 	Frame(0),
 	FrameCount(0),
 	loaded(false),
-	file("-"),
 	CurrFrame(0),
 	FromFrame(0),
 	ToFrame(0),
@@ -28,6 +28,7 @@ GLModel::GLModel() :
 	playing(false),
 	obj(0)
 {
+	file = "-";
 }
 
 /*=====DESTRUKTOR=====*/
@@ -35,6 +36,7 @@ GLModel::~GLModel()
 {
 	// Zwolnienie pamiêci
 	Free();
+	file.clear();
 }
 
 bool	IsWhiteSpace(char Character)
@@ -751,7 +753,7 @@ bool GLModel::LoadModel( std::string filename )
 			{
 				str = GetString( fileStream );
 
-				if( !( Textures[i] = TManager.Get( str ) ) )
+				if( !( Textures[i] = texManager.Get( str ) ) )
 				{
 					Log.Error( "GLMODEL( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
 				}
@@ -976,10 +978,8 @@ void GLModel::DoDrawAnim( unsigned int index )
 	glCallList( Frame + CurrFrame );
 }
 
-
-GLModelManager GLMManager;
-
-GLModelManager::GLModelManager()
+GLModelManager::GLModelManager( ioTexManager& texManager ) :
+	texManager(texManager)
 {
 }
 
@@ -1005,7 +1005,7 @@ GLModel* GLModelManager::Get( std::string filename )
 			return Model;
 	}
 
-	Model = new GLModel;
+	Model = new GLModel(texManager);
 	if( !Model->LoadModel( filename ) )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );

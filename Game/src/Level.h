@@ -17,11 +17,13 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Log.h"
 #include "gui.h"
 #include "Render.h"	// patrz-> nag³ówek Render.h i plik Render.cpp
-#include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 #include "Game.h"
 #include <string>	// Nag³ówek od klasy ³añcucha znaków
 #include <stdio.h>	// Nag³ówek od operacji we/wy.
+
+#include "glm.h"
+#include "Texture.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -94,6 +96,9 @@ public:
 class gameLevel
 {
 private:
+	GLModelManager& mdlManager;
+	ioTexManager&	texManager;
+
 	ioTexture *Tex[3];
 	
 	// Informacje o liczbie wierszy i kolumn w poziomie gry
@@ -148,7 +153,7 @@ private:
 	void BuildPhisic();
 public:
 	// Konstruktor i destruktor
-	gameLevel();
+	gameLevel( GLModelManager& mdlManager, ioTexManager& texManager );
 	~gameLevel();
 
 	std::string GetLevelName();
@@ -186,8 +191,5 @@ extern bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing = fa
 extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level );
 extern bool TestCollDum( Dummy* Dum, Dummy* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
-
-extern gameLevel GLevel;
-extern gameLevel* pGLevel;
 
 #endif

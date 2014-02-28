@@ -14,14 +14,16 @@
 class weBullet : public Dummy
 {
 protected:
+	GLModelManager&	mdlManager;
 	unsigned int Type;
 	Vector3f Veloc;
 	bool DoDelete;
+
 public:
 	float Damage;
 	gameThing* Owner;
 
-	weBullet();
+	weBullet( GLModelManager& mdlManager );
 
 	virtual void Init( Vector3f pos, Vector3f veloc, float speed );
 
@@ -39,10 +41,13 @@ class weBullSaw : public weBullet
 {
 private:
 public:
+	weBullSaw( GLModelManager& mdlManager );
+
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void DoEngine();
 	float DoTest( Dummy* Dum, float Armor = 0.0f );
 };
+
 // Promieñ
 class weBullRay : public weBullet
 {
@@ -50,8 +55,9 @@ private:
 	Vector3f Temp;
 	float Time;
 public:
+	weBullRay( GLModelManager& mdlManager );
+
 	void Init( Vector3f pos, Vector3f veloc, float speed );
-	
 	void DoEngine();
 	float DoTest( Dummy* Dum, float Armor = 0.0f );
 	void DoDraw();
@@ -65,8 +71,9 @@ private:
 	float Angle;
 	float Sec;
 public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
+	weBullRocket( GLModelManager& mdlManager );
 
+	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void DoEngine();
 	void DoDraw();
 	void OnDelete();
@@ -79,10 +86,11 @@ private:
 	float thisPower;
 	float Step;
 public:
+	weBullExplode( GLModelManager& mdlManager );
+
 	float Power;
 
 	void Init( Vector3f pos, Vector3f veloc, float speed );
-
 	void DoEngine();
 	float DoTest( Dummy* Dum, float Armor = 0.0f );
 	void DoDraw();
@@ -96,11 +104,14 @@ private:
 	float ThisTime;
 	GLModel* Model;
 public:
+	weBullBomb( GLModelManager& mdlManager );
+
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void DoEngine();
 	float DoTest( Dummy* Dum, float Armor = 0.0f );
 	void DoDraw();
 };
+
 // Menager pocisków
 class weBulletManager
 {
@@ -124,11 +135,14 @@ extern weBulletManager BManager;
 class weBonus : public Dummy
 {
 protected:
+	GLModelManager& mdlManager;
 	float rot;
 	unsigned int type;
 	GLModel* Model;
+
 public:
-	weBonus();
+	weBonus(GLModelManager& mdlManager);
+
 	bool CanDelete;
 	virtual void DoDraw();
 	virtual void DoEngine();
@@ -141,6 +155,8 @@ private:
 	unsigned int WeapType;
 	unsigned int AmmoCount;
 public:
+	weAmmo( GLModelManager& mdlManager );
+
 	void Init( unsigned int weaptype, unsigned int ammocount, std::string modelfile );
 	unsigned int GetWeapType();
 	unsigned int GetAmmoCount();
@@ -151,6 +167,8 @@ class weHealth : public weBonus
 private:
 	float HealthAdd;
 public:
+	weHealth( GLModelManager& mdlManager );
+
 	void Init( float health, std::string modelfile );
 	float GetHealth();
 };
@@ -160,6 +178,8 @@ class weArmor : public weBonus
 private:
 	float ArmorAdd;
 public:
+	weArmor( GLModelManager& mdlManager );
+
 	void Init( float armor, std::string modelfile );
 	float GetArmor();
 };
@@ -198,6 +218,8 @@ class weWeapon : public Dummy
 		je w grupie protected.
 	*/
 protected:	
+	GLModelManager& mdlManager;
+
 	// To jest stopieñ obrotu, kiedy broñ le¿y na ziemi
 	float Rot;
 	// To jest stopieñ dr¿enia w rêkach broni
@@ -243,7 +265,7 @@ protected:
 public:
 	std::string Name;
 	// Konstruktor i destruktor
-	weWeapon();
+	weWeapon(GLModelManager& mdlManager);
 	~weWeapon();
 
 	// Funkcja podnoszenia broni
@@ -273,7 +295,8 @@ class weSaw : public weWeapon
 {
 private:
 public:
-	weSaw();
+	weSaw( GLModelManager& mdlManager );
+
 	// Funckja inicjuj¹ca
 	void Init();
 	void DoEngine();
@@ -292,6 +315,8 @@ private:
 	bool	back;
 	float	BackA;
 public:
+	wePistol( GLModelManager& mdlManager );
+
 	// Inicjalizacja
 	void Init();
 	void DoEngine();
@@ -309,6 +334,8 @@ private:
 	bool back;
 	float BackA;
 public:
+	weMiniPhazer( GLModelManager& mdlManager );
+
 	// Inicjalizacja
 	void Init();
 	void DoEngine();
@@ -325,6 +352,8 @@ private:
 	bool back;
 	float BackA;
 public:
+	wePhazer( GLModelManager& mdlManager );
+
 	// Inicjalizacja
 	void Init();
 	void DoEngine();
@@ -341,6 +370,8 @@ private:
 	float BackA;
 	float Time;
 public:
+	weMiniGun( GLModelManager& mdlManager );
+
 	void Init();
 	void DoEngine();
 	void DoDraw();
@@ -353,7 +384,10 @@ private:
 	float Time;
 	bool back;
 	float BackA;
+
 public:
+	weRocketLuncher( GLModelManager& mdlManager );
+
 	void Init();
 	void DoEngine();
 	void DoDraw();
@@ -368,7 +402,10 @@ private:
 	bool armed;
 	bool puted;
 	Vector3f PutPos;
+
 public:
+	weAtomBomb( GLModelManager& mdlManager );
+
 	void Init();
 	void DoEngine();
 	void DoDraw();

@@ -140,14 +140,10 @@ class ioTexture;
 class ioTexManager;
 
 extern weBulletManager	BManager;
-extern gameLevel		GLevel;
-extern gameLevel*		pGLevel;
-extern ioTexManager		TManager;
 extern specManager		SEManager;
 extern ioTexture		Part;
 extern specMotionBlur	SMBlur;
 extern guiMain			GUI;
-extern gamePlayer		MainPlayer;
 extern gameWeaponManager WManager;
 extern gameThingManager ThingManager;
 extern weBonusManager	BonusMan;

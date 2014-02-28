@@ -15,7 +15,9 @@ Opis:	Patrz -> Game.h
 
 
 =========================*/
-gameThing::gameThing()
+gameThing::gameThing(GLModelManager& mdlManager, gameLevel& level) :
+	mdlManager(mdlManager),
+	level(level)
 {
 	AIflags = AI_MOVE_AROUND;
 	Health = 100.0f;
@@ -465,7 +467,8 @@ void gameThing::Free()
 
 
 =========================*/
-gamePlayer::gamePlayer()
+gamePlayer::gamePlayer( GLModelManager& mdlManager ) :
+	gameThing(mdlManager)
 {
 	run = true;
 	Angle = 0.0f;
@@ -481,13 +484,14 @@ gamePlayer::gamePlayer()
 	Armor = 0.0f;
 	MaxArmor = 150.0f;
 	CurrWeap = GAME_WEAP_PHAZER;
-	Weapon[GAME_WEAP_SAW] = new weSaw();
-	Weapon[GAME_WEAP_PISTOL] = new wePistol();
-	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer();
-	Weapon[GAME_WEAP_MINIGUN] = new weMiniGun();
-	Weapon[GAME_WEAP_ROCKETLUN] = new weRocketLuncher();
-	Weapon[GAME_WEAP_PHAZER] = new wePhazer();
-	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb();
+
+	Weapon[GAME_WEAP_SAW] = new weSaw(mdlManager);
+	Weapon[GAME_WEAP_PISTOL] = new wePistol(mdlManager);
+	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer(mdlManager);
+	Weapon[GAME_WEAP_MINIGUN] = new weMiniGun(mdlManager);
+	Weapon[GAME_WEAP_ROCKETLUN] = new weRocketLuncher(mdlManager);
+	Weapon[GAME_WEAP_PHAZER] = new wePhazer(mdlManager);
+	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb(mdlManager);
 }
 
 gamePlayer::~gamePlayer()
@@ -722,18 +726,15 @@ void gamePlayer::Reset()
 	{
 		delete Weapon[i];
 	}
-	Weapon[GAME_WEAP_SAW] = new weSaw();
-	Weapon[GAME_WEAP_PISTOL] = new wePistol();
-	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer();
-	Weapon[GAME_WEAP_MINIGUN] = new weMiniGun();
-	Weapon[GAME_WEAP_ROCKETLUN] = new weRocketLuncher();
-	Weapon[GAME_WEAP_PHAZER] = new wePhazer();
-	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb();
+	Weapon[GAME_WEAP_SAW] = new weSaw(mdlManager);
+	Weapon[GAME_WEAP_PISTOL] = new wePistol(mdlManager);
+	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer(mdlManager);
+	Weapon[GAME_WEAP_MINIGUN] = new weMiniGun(mdlManager);
+	Weapon[GAME_WEAP_ROCKETLUN] = new weRocketLuncher(mdlManager);
+	Weapon[GAME_WEAP_PHAZER] = new wePhazer(mdlManager);
+	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb(mdlManager);
 	GUI.PInfo.FRAGS = 0;
 }
-
-gamePlayer MainPlayer;
-
 
 /*=========================
 	KLASA gameEnemy
@@ -827,7 +828,7 @@ bool gameEnemy::LoadEnemy( std::string filename )
 
 	// przypisujemy model
 	str = GetStr( fp );
-	Model = GLMManager.Get( str );
+	Model = mdlManager.Get( str );
 
 	str = GetStr( fp );
 	FireTime = FirePause = atof( str.c_str() );
@@ -944,7 +945,7 @@ void gameEnemy::Fire( Vector3f FireTarget )
 	{
 	case GAME_WEAP_PISTOL :
 		{
-			weBullet* Bull = new weBullet();
+			weBullet* Bull = new weBullet(mdlManager);
 			Bull->Init( temp, FireVeloc, 1.0f );
 			Bull->Owner = this;
 			Bull->Damage = 1.0f;
@@ -954,7 +955,7 @@ void gameEnemy::Fire( Vector3f FireTarget )
 	case GAME_WEAP_MINIPZR:
 	case GAME_WEAP_PHAZER :
 		{
-			weBullet* Bull = new weBullRay();
+			weBullet* Bull = new weBullRay(mdlManager);
 			Bull->Init( temp, FireVeloc, 0 );
 			Bull->Owner = this;
 			Bull->Damage = 50.0f;
@@ -963,7 +964,7 @@ void gameEnemy::Fire( Vector3f FireTarget )
 		}
 	case GAME_WEAP_ROCKETLUN :
 		{
-			weBullet* Bull = new weBullRocket();
+			weBullet* Bull = new weBullRocket(mdlManager);
 			Bull->Init( temp, FireVeloc, 0.2f );
 			Bull->Owner = this;
 			Bull->Damage = 10.0f;
@@ -1043,7 +1044,7 @@ bool gameStatObj::LoadObj( std::string filename )
 	}
 
 	str = GetStr( fp );
-	Model = GLMManager.Get( str );
+	Model = mdlManager.Get( str );
 	if( !Model )
 	{
 		Log.Error( "STATOBJ( " + file + " ): Nieudane wczytanie modelu: " + str );

@@ -300,5 +300,3 @@ void ioTexManager::Clear()
 	}
 	List.clear();
 }
-
-ioTexManager TManager;

@@ -23,6 +23,8 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 class GLModel
 {
 private:
+	ioTexManager& texManager;
+
 	// Lista tekstur
 	std::vector<ioTexture*>	Textures;
 	// Lista obiektów
@@ -52,11 +54,11 @@ private:
 
 
 public:
-	GLModel();
+	GLModel( ioTexManager& texManager );
 	~GLModel();
 
 	bool LoadModel( std::string filename );
-	virtual void Free();
+	void Free();
 	std::string GetFile();
 	unsigned int GetObjCount();
 
@@ -80,10 +82,11 @@ private:
 class GLModelManager
 {
 private:
+	ioTexManager&	texManager;
 	std::vector<GLModel*> List;
 
 public:
-	GLModelManager();
+	GLModelManager( ioTexManager& texManager );
 	~GLModelManager();
 
 	GLModel* Get( std::string filename );
@@ -92,7 +95,5 @@ public:
 	void DeleteModel( unsigned int index );
 	void Clear();
 };
-
-extern GLModelManager GLMManager;
 
 #endif

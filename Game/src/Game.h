@@ -19,6 +19,7 @@ Opis:	Zawiera definicje klas obiektów poruszaj¹cych siê
 #include "3dMath.h"
 #include "Level.h"
 #include "Weapon.h"
+#include "glm.h"
 #include <vector>
 
 /*	KLASA gameThing
@@ -31,6 +32,9 @@ Opis:	Zawiera definicje klas obiektów poruszaj¹cych siê
 class gameThing : public Dummy
 {
 protected:
+	GLModelManager& mdlManager;
+	gameLevel&		level;
+
 	float Health;
 	float MaxHealth;
 	float Armor;
@@ -67,7 +71,7 @@ protected:
 	virtual bool IsEnemyInFront();
 public:
 	float ToAngle;
-	gameThing();
+	gameThing(GLModelManager& mdlManager, gameLevel& level);
 	~gameThing();
 
 	virtual void Init();
@@ -135,7 +139,7 @@ private:
 public:
 	weWeapon* Weapon[10];
 
-	gamePlayer();
+	gamePlayer(GLModelManager& mdlManager);
 	~gamePlayer();
 
 	void DoDraw();
@@ -177,7 +181,8 @@ private:
 
 	std::string GetStr( FILE* fp );
 public:
-	gameEnemy()
+	gameEnemy(GLModelManager& mdlManager) :
+		gameThing(mdlManager)
 	{	Type = GAME_THING_ENEMY; file = "-";	};
 
 	bool LoadEnemy( std::string filename );
@@ -199,7 +204,8 @@ private:
 
 	std::string GetStr( FILE* fp );
 public:
-	gameStatObj()
+	gameStatObj(GLModelManager& mdlManager) :
+		gameThing(mdlManager)
 	{	file = "-";	};
 
 	void DoEngine();
@@ -287,6 +293,5 @@ public:
 */
 extern gameThingManager ThingManager;
 extern gameWeaponManager WManager;
-extern gamePlayer MainPlayer;
 
 #endif

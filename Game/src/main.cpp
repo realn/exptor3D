@@ -14,10 +14,11 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 #include "main.h"
 bool CanDoWLScr = true;
 
-bool Init()    //Inicjalizacja OpenGL
+bool Init(GLModelManager& mdlManager)    //Inicjalizacja OpenGL
 {
 	glDepthFunc( GL_LEQUAL );				//Metoda testowania G³êbokoœci (ta jest lepsza)
 	glEnable( GL_TEXTURE_2D );
+
 	GUI.InitGUI();
 	GUI.SetLoadLevelFunc( LoadLevel );
 	GUI.SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
@@ -72,7 +73,7 @@ bool Init()    //Inicjalizacja OpenGL
 	GUI.SendConMsg( "Inicjalizacja silnika...", false );
 	SMBlur.Init();
 	Part.LoadTGA( "Data/Part.tga" );
-	MenuModel = GLMManager.Get( "Data/menumodel.glm" );
+	MenuModel = mdlManager.Get( "Data/menumodel.glm" );
 	MainPlayer.SetArmor( 100.0f );
 	GUI.Menu.LoadMenu( "Data/menu.mnu" );
 	SEManager.MaxSpec = 100;
@@ -347,7 +348,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 					LPSTR		lpCmdLine,			// Parametry
 					int			nCmdShow)			// Tryb widocznoœci okna
 {
-	MSG		msg;									// Struktura komunikatów windowsa
+	MSG		msg;			// Struktura komunikatów windowsa
 	bool	done = false;	// bool do wyjœcia z pêtli
 
 	Log.Init( "main.log", " - Expert 3D Tournament Log" );
@@ -367,54 +368,63 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	{
 		return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
 	}
-
-	Log.Log( "Inicjalizacja OpenGL" );
-	if( !Init() )
 	{
-		Log.Error( "B³¹d inicjalizacji" );
-		return 0;
-	}
+		ioTexManager	texManager;
+		GLModelManager	mdlManager(texManager);
+		gameLevel		level(mdlManager, texManager);
 
-	while(!done)									// Pêtla g³ówna (dopuki done nie jest true)
-	{
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Czy otrzymano komunikat?
+		Log.Log( "Inicjalizacja OpenGL" );
+		if( !Init(mdlManager) )
 		{
-			if (msg.message==WM_QUIT)				// Czy to komunikat wyjœcia?
-			{
-				done = true;							// Je¿eli tak to wychodzimy z pêtli
-			}
-			else									// Je¿eli nie to zajmij siê komunikatami
-			{
-				TranslateMessage(&msg);				// T³umacz komunikat
-				DispatchMessage(&msg);				// Wykonaj komunikat
-			}
+			Log.Error( "B³¹d inicjalizacji" );
+			return 0;
 		}
-		//else										// Je¿eli nie ma komunikatów
-		//{
-			GUI.UpdateCounter();
-			// Rysujemy scene
-			if (active)								// Program jest aktywny?
-			{
-				if ( GUI.GetQuit() )				// Czy by³ wciœniêty ESC?
-				{
-					done = true;						// Je¿eli tak to wychodzimy z pêtli
-				}
-				else								// Je¿eli nie to rysujemy
-				{
-					Render();						// Rysujemy scene
-					GLRender.SwapBuffers();				// Prze³anczamy bufory
-				}
 
-			}
-			else
+		while(!done)									// Pêtla g³ówna (dopuki done nie jest true)
+		{
+			if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Czy otrzymano komunikat?
 			{
-				//WaitMessage();
+				if (msg.message==WM_QUIT)				// Czy to komunikat wyjœcia?
+				{
+					done = true;							// Je¿eli tak to wychodzimy z pêtli
+				}
+				else									// Je¿eli nie to zajmij siê komunikatami
+				{
+					TranslateMessage(&msg);				// T³umacz komunikat
+					DispatchMessage(&msg);				// Wykonaj komunikat
+				}
 			}
-		//}
+			//else										// Je¿eli nie ma komunikatów
+			//{
+				GUI.UpdateCounter();
+				// Rysujemy scene
+				if (active)								// Program jest aktywny?
+				{
+					if ( GUI.GetQuit() )				// Czy by³ wciœniêty ESC?
+					{
+						done = true;						// Je¿eli tak to wychodzimy z pêtli
+					}
+					else								// Je¿eli nie to rysujemy
+					{
+						Render();						// Rysujemy scene
+						GLRender.SwapBuffers();				// Prze³anczamy bufory
+					}
+
+				}
+				else
+				{
+					//WaitMessage();
+				}
+			//}
+		}
+
+		// Wy³anczanie
+		Log.Log( "Koniec pracy Aplikacji" );
+
+		texManager.Clear();
+		mdlManager.Clear();
 	}
 
-	// Wy³anczanie
-	Log.Log( "Koniec pracy Aplikacji" );
 	GLRender.GLDestroyWindow();// Zniszcz okno
 	if( Timer ) delete Timer;
 	return (msg.wParam);							// WyjdŸ z programu

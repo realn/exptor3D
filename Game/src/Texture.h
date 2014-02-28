@@ -67,5 +67,3 @@ public:
 	ioTexture* GetTexture( unsigned int index );
 	void Clear();
 };
-
-extern ioTexManager TManager;
