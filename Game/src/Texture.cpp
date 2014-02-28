@@ -73,14 +73,14 @@ bool	ioTexture::LoadTGA( std::string filename )
 
 
 	// Otwieramy plik
-	std::fstream fileStream(filename, std::ios::in);
-
+	std::fstream fileStream(filename, std::ios::in | std::ios::binary);
+	
 	Log.Log("TGATEX( " + file + " ): £adowanie pliku " + filename + "...");
 	// Teraz sprawdzamy pare rzeczy
 	if(	fileStream.bad() || // Czy otwarcie pliku siê uda³o
-		fileStream.read( (char*)TGAcompare, sizeof(char) * 12 ) ||	// Czy mo¿na odczytaæ 12 bajtów nag³ówka
+		!fileStream.read( (char*)TGAcompare, sizeof(char) * 12 ) ||	// Czy mo¿na odczytaæ 12 bajtów nag³ówka
 		memcmp( TGAheader, TGAcompare, sizeof( TGAheader ) ) != 0 ||                    // Czy to jest nag³ówek którego szukamy?
-		fileStream.read( (char*)header, sizeof(char) * 6 ) )			// Je¿eli tak, to czytamy nastêpne 6 bajtów
+		!fileStream.read( (char*)header, sizeof(char) * 6 ) )			// Je¿eli tak, to czytamy nastêpne 6 bajtów
 	{
 		// Na wypadek gdyby coœ siê nie uda³o, to zwracamy false
 		if ( fileStream.bad() )
@@ -124,7 +124,8 @@ bool	ioTexture::LoadTGA( std::string filename )
 	imageSize = width * height * bytesPerPixel;
 
 	// I zarezerwuj tyle miejsca
-	imageData = (unsigned char *)malloc( imageSize );
+	imageData = new unsigned char[imageSize];
+	memset(imageData, 0, sizeof(unsigned char) * imageSize);
 
 	/*	Teraz trochê teorii
 		¯eby zrobiæ teksture dla OpenGL
@@ -135,7 +136,7 @@ bool	ioTexture::LoadTGA( std::string filename )
 	*/
 	
 	if(	imageData == NULL ||	// SprawdŸ czy pamiêæ jest zarezerwowana
-		fileStream.read( (char*)imageData, imageSize * sizeof(char) ))	// SprawdŸ czy NA PEWNO odczytaliœmy tyle z pliku ile chcieliœmy
+		!fileStream.read( (char*)imageData, imageSize * sizeof(char) ))	// SprawdŸ czy NA PEWNO odczytaliœmy tyle z pliku ile chcieliœmy
 	{
 		// Je¿eli coœ siê nie zgadza, to przerywamy
 		if( imageData != NULL)
@@ -144,6 +145,7 @@ bool	ioTexture::LoadTGA( std::string filename )
 		Log.Error( "TGATEX( " + file + " ): B³¹d pamiêci!" );
 		return false;	
 	}
+	;
 
 	/*	A teraz ma³y kruczek. Jak zapewne
 		wiadomo, s¹ trzy kolory sk³adowe:
@@ -186,9 +188,13 @@ bool	ioTexture::LoadTGA( std::string filename )
 
 	//===================Najwy¿sza jakoœæ MipMapingu====================
 	glBindTexture( GL_TEXTURE_2D, texture );			// Bind Our Texture
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR ); 
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-	gluBuild2DMipmaps(GL_TEXTURE_2D, type, width, height, type, GL_UNSIGNED_BYTE, imageData );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); 
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, type, GL_UNSIGNED_BYTE, imageData);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, width, height, type, GL_UNSIGNED_BYTE, imageData );
+	glBindTexture( GL_TEXTURE_2D, 0 );
 
 	// Po wszystkim, te dane s¹ ju¿ niepotrzebne
 	delete[] imageData;
