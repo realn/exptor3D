@@ -1,45 +1,42 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 Plik:	inifile.h
-Autor:	Real_Noname (real_noname@wp.pl)
+Autor:	Real_Noname (realnoname@coderulers.info)
 (C):	CODE RULERS (Real_Noname)
-WWW:	www.coderulers.prv.pl
+WWW:	www.coderulers.info
 Opis:	Zawiera definicje klasy do odczytu pliku INI.
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _INIFILE_H_
-#define _INIFILE_H_
+#pragma once
 
-#include "Log.h"
 #include <string>
-#include <stdio.h>
+#include <fstream>
 
-class MyIniFile
+class IniFile
 {
 private:
 	std::string file;
-	FILE* fp;
 	bool opened;
-	unsigned int ReadedValues;
-	unsigned int Errors;
+	std::fstream fileStream;
+	unsigned int readedValues;
+	unsigned int errors;
 
-	std::string GetStr();
-	std::string GetItemName( std::string str );
-	std::string GetItemValue( std::string str );
 public:
-	MyIniFile();
-	MyIniFile( std::string filename );
-	~MyIniFile();
+	IniFile();
+	IniFile( std::string filename );
+	~IniFile();
 
 	bool Open( std::string filename );
+	void Close();
 
-	int ReadInt( std::string Section, std::string Item, int DefInt );
-	float ReadFloat( std::string Section, std::string Item, float DefFloat );
-	bool ReadBool( std::string Section, std::string Item, bool DefBool );
+	int		ReadInt( std::string Section, std::string Item, int DefInt );
+	float	ReadFloat( std::string Section, std::string Item, float DefFloat );
+	bool	ReadBool( std::string Section, std::string Item, bool DefBool );
 	std::string ReadStr( std::string Section, std::string Item, std::string DefStr );
 
-	void Close();
+private:
+	std::string	GetStr();
+	std::string GetItemName( std::string str );
+	std::string GetItemValue( std::string str );
 };
-
-#endif

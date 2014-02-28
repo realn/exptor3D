@@ -1,133 +1,121 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 Plik:	inifile.cpp
-Autor:	Real_Noname (real_noname@wp.pl)
+Autor:	Real_Noname (realnoname@coderulers.info)
 (C):	CODE RULERS (Real_Noname)
-WWW:	www.coderulers.prv.pl
+WWW:	www.coderulers.info
 Opis:	Patrz -> inifile.h.
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "inifile.h"
-#include "gui.h"
+#include "Log.h"
+#include "StrEx.h"
 
-MyIniFile::MyIniFile()
+const unsigned MAX_BUFFER_SIZE = 512;
+
+IniFile::IniFile() :
+	file("-"),
+	readedValues(0),
+	errors(0),
+	opened(false)
 {
-	file = "-";
-	ReadedValues = 0;
-	Errors = 0;
-	fp = NULL;
-	opened = false;
 }
 
-MyIniFile::MyIniFile( std::string filename )
+IniFile::IniFile( std::string filename ) :
+	file(filename),
+	readedValues(0),
+	errors(0),
+	opened(false)
 {
-	MyIniFile();
 	Open( filename );
 }
 
-MyIniFile::~MyIniFile()
+IniFile::~IniFile()
 {
-	if( opened )
-		Close();
+	Close();
 }
 
-bool MyIniFile::Open( std::string filename )
+bool IniFile::Open( std::string filename )
 {
 	if( filename.empty() )
 	{
-		Log.Error( "MYINIFILE( " + file + " ): Pusty ci¹g znaków." );
+		Log.Error( "IniFile( " + file + " ): Pusty ci¹g znaków." );
 		return false;
 	}
+	Close();
 
-	if( opened )
-		Close();
-
-	fopen_s(&fp, filename.c_str(), "r+t" );
-
-	if( !fp )
+	fileStream.open(filename, std::ios::in);
+	if( !fileStream.is_open() )
 	{
-		Log.Error( "MYINIFILE( " + file + " ): Œcie¿ka niew³aœciwa lub plik nie istnieje: " + filename );
+		Log.Error( "IniFile( " + file + " ): Œcie¿ka niew³aœciwa lub plik nie istnieje: " + filename );
 		return false;
 	}
 
 	file = filename;
 	opened = true;
-	ReadedValues = 0;
-	Errors = 0;
+	readedValues = 0;
+	errors = 0;
 
 	return true;
 }
 
-void MyIniFile::Close()
+void IniFile::Close()
 {
 	if( !opened )
 		return;
 
-	Log.Report( "MYINIFILE( " + file + " ): Zakoñczono parsowanie pliku: " + file + ", odczytano " + guiIntToStr( ReadedValues ) + " wartoœci, przy " + guiIntToStr( Errors ) + " b³êdach." );
+	Log.Report( "IniFile( " + file + " ): Zakoñczono parsowanie pliku: " + file + ", odczytano " + IntToStr( readedValues ) + " wartoœci, przy " + IntToStr( errors ) + " b³êdach." );
 
-	fclose( fp );
-	opened = true;
+	fileStream.close();
+	opened = false;
 }
 
-std::string MyIniFile::GetStr()
+std::string IniFile::GetStr()
 {
 	if( !opened )
 		return "";
 
-	char buf[512];
-	fgets( buf, 512, fp );
-	if( buf[strlen( buf )-1] == '\n' ) buf[strlen( buf )-1] = 0;
+	char buf[MAX_BUFFER_SIZE + 1];
+	memset(buf, 0, MAX_BUFFER_SIZE + 1);
+	fileStream.getline(buf, MAX_BUFFER_SIZE);
+
 	return buf;
 }
 
-std::string MyIniFile::GetItemName( std::string str )
+std::string IniFile::GetItemName( std::string str )
 {
-	unsigned int i;
-	for( i = 0; i < str.length(); i++ )
+	auto i = str.find('=');
+	if( i == std::string::npos )
 	{
-		if( str[i] == '=' )
-			break;
-	}
-
-	if( i >= str.length() )
-	{
-		Log.Error( "MYINIFILE( " + file + " ): B³¹d, brak znaku równoœci: " + str );
-		Errors++;
+		Log.Error( "IniFile( " + file + " ): B³¹d, brak znaku równoœci: " + str );
+		errors++;
 		return "ERROR";
 	}
-
 	return str.substr( 0, i );
 }
 
-std::string MyIniFile::GetItemValue( std::string str )
+std::string IniFile::GetItemValue( std::string str )
 {
-	unsigned int i;
-	for( i = 0; i < str.length(); i++ )
+	auto i = str.find('=');
+	if( i == std::string::npos )
 	{
-		if( str[i] == '=' )
-			break;
-	}
-
-	if( i >= str.length() )
-	{
-		Log.Error( "MYINIFILE( " + file + " ): B³¹d, brak znaku równoœci: " + str );
-		Errors++;
+		Log.Error( "IniFile( " + file + " ): B³¹d, brak znaku równoœci: " + str );
+		errors++;
 		return "ERROR";
 	}
-
-	return str.substr( i+1, str.length() - i );
+	return str.substr( i+1 );
 }
 
-std::string MyIniFile::ReadStr( std::string Section, std::string Item, std::string DefStr )
+std::string IniFile::ReadStr( std::string Section, std::string Item, std::string DefStr )
 {
 	if( !opened )
 		return DefStr;
 
-	fseek( fp, 0, 0 );
+	fileStream.seekg(0);
 	std::string str;
 
-	while( !feof( fp ) )
+	while( !fileStream.eof() )
 	{
 		str = GetStr();
 		
@@ -139,106 +127,47 @@ std::string MyIniFile::ReadStr( std::string Section, std::string Item, std::stri
 
 				if( GetItemName( str ) == Item )
 				{
-					ReadedValues++;
+					readedValues++;
 					return GetItemValue( str );
 				}
 			}
-			while( !feof( fp ) && str[0] != '[' );
+			while( !fileStream.eof() && str[0] != '[' );
 		}
 	}
 
 	return DefStr;
 }
 
-int MyIniFile::ReadInt( std::string Section, std::string Item, int DefInt )
+int IniFile::ReadInt( std::string Section, std::string Item, int DefInt )
 {
 	if( !opened )
 		return DefInt;
 
-	fseek( fp, 0, 0 );
-	std::string str;
+	auto str = ReadStr(Section, Item, IntToStr(DefInt));
 
-	while( !feof( fp ) )
-	{
-		str = GetStr();
-		
-		if( str == "[" + Section + "]" )
-		{
-			do
-			{
-				str = GetStr();
-
-				if( GetItemName( str ) == Item )
-				{
-					ReadedValues++;
-					return atoi( GetItemValue( str ).c_str() );
-				}
-			}
-			while( !feof( fp ) && str[0] != '[' );
-		}
-	}
-
-	return DefInt;
+	return atoi(str.c_str());
 }
 
-float MyIniFile::ReadFloat( std::string Section, std::string Item, float DefFloat )
+float IniFile::ReadFloat( std::string Section, std::string Item, float DefFloat )
 {
 	if( !opened )
 		return DefFloat;
 
-	fseek( fp, 0, 0 );
-	std::string str;
-
-	while( !feof( fp ) )
-	{
-		str = GetStr();
-		
-		if( str == "[" + Section + "]" )
-		{
-			do
-			{
-				str = GetStr();
-
-				if( GetItemName( str ) == Item )
-				{
-					ReadedValues++;
-					return (float)atof( GetItemValue( str ).c_str() );
-				}
-			}
-			while( !feof( fp ) && str[0] != '[' );
-		}
-	}
-
-	return DefFloat;
+	auto str = ReadStr(Section, Item, FloatToStr(DefFloat));
+	return (float)atof(str.c_str());
 }
 
-bool MyIniFile::ReadBool( std::string Section, std::string Item, bool DefBool )
+bool IniFile::ReadBool( std::string Section, std::string Item, bool DefBool )
 {
 	if( !opened )
 		return DefBool;
 
-	fseek( fp, 0, 0 );
-	std::string str;
-
-	while( !feof( fp ) )
-	{
-		str = GetStr();
-		
-		if( str == "[" + Section + "]" )
-		{
-			do
-			{
-				str = GetStr();
-
-				if( GetItemName( str ) == Item )
-				{
-					ReadedValues++;
-					return (bool)atoi( GetItemValue( str ).c_str() );
-				}
-			}
-			while( !feof( fp ) && str[0] != '[' );
-		}
-	}
+	auto str = ReadStr(Section, Item, BoolToStr(DefBool));
+	
+	if(str == "TRUE" || str == "1")
+		return true;
+	if(str == "FALSE" || str == "0")
+		return false;
 
 	return DefBool;
 }

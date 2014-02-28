@@ -353,7 +353,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	Log.Init( "main.log", " - Expert 3D Tournament Log" );
 
 	// Czytamy plik ini, by odpowiednio wszystko ustawiæ
-	MyIniFile ini;
+	IniFile ini;
 	ini.Open( "config.ini" );
 	int Szer = ini.ReadInt( "GRAPHIC", "WIDTH", 640 );
 	int Wys = ini.ReadInt( "GRAPHIC", "HEIGHT", 480 );
