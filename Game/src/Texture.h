@@ -12,27 +12,25 @@ Opis:	Zawiera definicje klas odpowiedzalnych za tekstury.
 	¯eby nie by³o konfliktów z
 	nag³ówkiem ekspert'a :)
 */
-#ifndef	_TEXTURE_SPC_H
-#define	_TEXTURE_SPC_H
+#pragma once
 
 #include <windows.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
-#include <stdio.h>	// Nag³ówek od operacji na plikach
 #include <string>	// Nag³ówek od klasy ³añcucha znaków
 #include <vector>
-#include "Log.h"
 
 // Klasa do zarz¹dzania jedn¹ tekstur¹
 class ioTexture
 {
 private:
 	// tablica trzymaj¹ca adresy pamiêci tekstury ( jest 5 poziomów jakoœci )
-	unsigned int texture[3];
-	std::string file;
+	unsigned int texture;
 
+	std::string file;
 	// zmienna dla oriêtacji czy tektrura jest gotowa
 	bool loaded;
+
 public:
 	// Konstruktor i Destruktor
 	ioTexture();
@@ -58,9 +56,11 @@ class ioTexManager
 {
 private:
 	std::vector<ioTexture*> List;
+
 public:
 	ioTexManager();
 	~ioTexManager();
+
 	ioTexture* Get( std::string filename );
 	void AddTexture( ioTexture* Tex );
 	void DeleteTexture( unsigned int index );
@@ -69,5 +69,3 @@ public:
 };
 
 extern ioTexManager TManager;
-
-#endif

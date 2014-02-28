@@ -9,16 +9,23 @@ Opis:	Patrz -> Texture.h
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "Texture.h"
+#include "Log.h"
+#include <fstream>
 
-ioTexture::ioTexture()
+ioTexture::ioTexture() :
+	loaded(false),
+	file("-"),
+	texture(0)
 {
 	loaded = false;
 	file = "-";
 }
 
-ioTexture::ioTexture( std::string filename )
+ioTexture::ioTexture( std::string filename ) :
+	loaded(false),
+	file("-"),
+	texture(0)
 {
-	ioTexture();
 	LoadTGA( filename );
 }
 
@@ -27,7 +34,7 @@ ioTexture::~ioTexture()
 	Free();
 }
 
-bool ioTexture::LoadTGA( std::string filename )
+bool	ioTexture::LoadTGA( std::string filename )
 {
 	/*	¯eby odczytaæ plik TGA
 		potrzebne s¹ odpowiednie
@@ -64,18 +71,19 @@ bool ioTexture::LoadTGA( std::string filename )
 	unsigned int width;
 	unsigned int height;
 
-	// Otwieramy plik
-	FILE *fp = 0;
-	fopen_s( &fp, filename.c_str(), "rb" );
 
+	// Otwieramy plik
+	std::fstream fileStream(filename, std::ios::in);
+
+	Log.Log("TGATEX( " + file + " ): £adowanie pliku " + filename + "...");
 	// Teraz sprawdzamy pare rzeczy
-	if(	!fp || // Czy otwarcie pliku siê uda³o
-		fread( TGAcompare, 1, sizeof(TGAcompare), fp) != sizeof(TGAcompare) ||	// Czy mo¿na odczytaæ 12 bajtów nag³ówka
+	if(	fileStream.bad() || // Czy otwarcie pliku siê uda³o
+		fileStream.read( (char*)TGAcompare, sizeof(char) * 12 ) ||	// Czy mo¿na odczytaæ 12 bajtów nag³ówka
 		memcmp( TGAheader, TGAcompare, sizeof( TGAheader ) ) != 0 ||                    // Czy to jest nag³ówek którego szukamy?
-		fread( header, 1, sizeof(header), fp ) != sizeof( header ) )			// Je¿eli tak, to czytamy nastêpne 6 bajtów
+		fileStream.read( (char*)header, sizeof(char) * 6 ) )			// Je¿eli tak, to czytamy nastêpne 6 bajtów
 	{
 		// Na wypadek gdyby coœ siê nie uda³o, to zwracamy false
-		if ( !fp )
+		if ( fileStream.bad() )
 		{
 			Log.Error( "TGATEX( " + file + " ): Nieprawid³owa œcie¿ka lub plik nie istnieje!" );
 			return false;
@@ -83,17 +91,15 @@ bool ioTexture::LoadTGA( std::string filename )
 		else
 		{
 			Log.Error( "TGATEX( " + file + " ): B³¹d z nag³ówkiem pliku!" );
-			fclose( fp );	
 			return false;
 		}
 	}
 	
 	if( loaded )
 	{
+		Free();
 		Log.Report( "TGATEX( " + file + " ): Prze³adowanie tekstury na " + filename );
-
 	}
-	Log.Log( "TGATEX( " + file + " ): £adowanie pliku: " + filename );
 	file = filename;
 
 	width  = header[1] * 256 + header[0];		// Opracuj szerokoœæ obrazka
@@ -105,7 +111,6 @@ bool ioTexture::LoadTGA( std::string filename )
 	{
 		// To zatrzymaj
 		Log.Error( "TGATEX( " + file + " ): Nieprawid³owy obraz w pliku TGA!" );
-		fclose( fp );	
 		return false;
 	}
 
@@ -130,14 +135,13 @@ bool ioTexture::LoadTGA( std::string filename )
 	*/
 	
 	if(	imageData == NULL ||	// SprawdŸ czy pamiêæ jest zarezerwowana
-		fread( imageData, 1, imageSize, fp ) != imageSize)	// SprawdŸ czy NA PEWNO odczytaliœmy tyle z pliku ile chcieliœmy
+		fileStream.read( (char*)imageData, imageSize * sizeof(char) ))	// SprawdŸ czy NA PEWNO odczytaliœmy tyle z pliku ile chcieliœmy
 	{
 		// Je¿eli coœ siê nie zgadza, to przerywamy
 		if( imageData != NULL)
 			free( imageData );
 
 		Log.Error( "TGATEX( " + file + " ): B³¹d pamiêci!" );
-		fclose( fp );			
 		return false;	
 	}
 
@@ -157,7 +161,7 @@ bool ioTexture::LoadTGA( std::string filename )
 	}
 
 	// Zamykamy plik
-	fclose( fp );							
+	fileStream.close();
 
 	// Musimy jeszcze zmieniæ format je¿eli to nie jest obraz 32 Bity, tylko 24 Bity
 	if ( bpp == 24 )
@@ -176,29 +180,14 @@ bool ioTexture::LoadTGA( std::string filename )
 	*/
 
 	// Stwórz piêæ niezdefinowanych tekstur
-	glGenTextures( 3, &texture[0] );
+	glGenTextures( 1, &texture );
 
 	// I same tekstury
 
-	//===========Najgorsza jakoœæ, bez MipMapingu==========
-	glBindTexture( GL_TEXTURE_2D, texture[0] );			
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	
-	glTexImage2D( GL_TEXTURE_2D, 0, type, width, height, 0, type, GL_UNSIGNED_BYTE, imageData );
-
-	//===========Najlepsza jakoœæ zwyk³a, bez MipMapingu=====
-	glBindTexture( GL_TEXTURE_2D, texture[1] );			
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );  
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );	
-	
-	glTexImage2D( GL_TEXTURE_2D, 0, type, width, height, 0, type, GL_UNSIGNED_BYTE, imageData );
-
 	//===================Najwy¿sza jakoœæ MipMapingu====================
-	glBindTexture( GL_TEXTURE_2D, texture[2] );			// Bind Our Texture
+	glBindTexture( GL_TEXTURE_2D, texture );			// Bind Our Texture
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR ); 
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-	
 	gluBuild2DMipmaps(GL_TEXTURE_2D, type, width, height, type, GL_UNSIGNED_BYTE, imageData );
 
 	// Po wszystkim, te dane s¹ ju¿ niepotrzebne
@@ -211,10 +200,10 @@ bool ioTexture::LoadTGA( std::string filename )
 
 void ioTexture::Activate( unsigned int tex )
 {
-	if( !loaded || tex > 2 )
+	if( !loaded )
 		return;
 
-	glBindTexture( GL_TEXTURE_2D, texture[tex] );
+	glBindTexture( GL_TEXTURE_2D, texture );
 }
 
 std::string ioTexture::GetFile()
@@ -227,10 +216,12 @@ void ioTexture::Free()
 	if( !loaded )
 		return;
 
-	glDeleteTextures( 3, &texture[0] );
+	glDeleteTextures( 1, &texture );
 
 	loaded = false;
 }
+
+
 
 
 ioTexManager::ioTexManager()
@@ -247,7 +238,7 @@ ioTexture* ioTexManager::Get( std::string filename )
 	if( filename == "" )
 	{
 		Log.Error( "TEXMANAGER(): Pusty ci¹g znaków!" );
-		return NULL;
+		return 0;
 	}
 
 	unsigned int i;
@@ -264,10 +255,12 @@ ioTexture* ioTexManager::Get( std::string filename )
 	{
 		Log.Error( "TEXMANAGER(): Nieudane za³adowanie tekstury: " + filename );
 		delete NewTex;
-		return NULL;
+		return 0;
 	}
+
 	AddTexture( NewTex );
 	Log.Log( "TEXMANAGER(): Dodano now¹ teksture: " + filename );
+	
 	return NewTex;
 }
 
@@ -288,17 +281,16 @@ void ioTexManager::DeleteTexture( unsigned int index )
 ioTexture* ioTexManager::GetTexture( unsigned int index )
 {
 	if( index >= List.size() )
-		return NULL;
+		return 0;
 
 	return List[index];
 }
 
 void ioTexManager::Clear()
 {
-	int i;
-	for( i = List.size()-1; i >= 0; i-- )
+	for(unsigned i = 0; i < List.size(); i++)
 	{
-		DeleteTexture( i );
+		delete List[i];
 	}
 	List.clear();
 }
