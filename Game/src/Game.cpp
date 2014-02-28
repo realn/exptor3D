@@ -629,6 +629,14 @@ void gamePlayer::DoEngine( bool* Keys, const float fTD )
 	ApplyNextPos();
 }
 
+void	gamePlayer::Move(unsigned uFlags, const float fTD)
+{
+	if( uFlags & GAME_DO_FIREWEAPON )
+		this->Weapon[this->CurrWeap]->Shot();
+
+	gameThing::Move(uFlags, fTD);
+}
+
 unsigned int gamePlayer::GetHand()
 {
 	return Hand;

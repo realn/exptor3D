@@ -141,6 +141,7 @@ public:
 	void DoDraw();
 	void DoEngine( const float fTD ) override;
 	void DoEngine( bool* Keys, const float fTD );
+	void Move(unsigned uFlags, const float fTD ) override;
 	void SwichWeap( unsigned int index );
 
 	unsigned int GetHand();
