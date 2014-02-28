@@ -9,20 +9,25 @@ Opis:	Patrz -> glm.h
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "glm.h"
+#include "Log.h"
+
+const unsigned BUFFER_SIZE = 1024;
 
 /*=====KONSTRUKTOR=====*/
-GLModel::GLModel()
+GLModel::GLModel() :
+	List(0),
+	ListCount(0),
+	Frame(0),
+	FrameCount(0),
+	loaded(false),
+	file("-"),
+	CurrFrame(0),
+	FromFrame(0),
+	ToFrame(0),
+	animation(false),
+	playing(false),
+	obj(0)
 {
-	// Zerowanie wartoœci i przypisywanie wartoœci domyœlnych
-	Tex = NULL;
-	TexCount = 0;
-	List = 0;
-	ListCount = 0;
-	Frame = 0;
-	FrameCount = 0;
-	loaded = false;
-	file = "-";
-	Tex = NULL;
 }
 
 /*=====DESTRUKTOR=====*/
@@ -32,6 +37,11 @@ GLModel::~GLModel()
 	Free();
 }
 
+bool	IsWhiteSpace(char Character)
+{
+	return Character == ' ' || Character == '\t' || Character == '\r' || Character == '\n';
+}
+
 /*=====METODA GetString=====
 	Metoda pobiera jedn¹ linie z pliku
 	i j¹ modyfikuje. Pozbywa siê pustej
@@ -39,50 +49,65 @@ GLModel::~GLModel()
 	rozpoczêciem w³aœciwych poleceñ, oraz
 	czyœci z komentarzy.
 */
-std::string GLModel::GetString( FILE* fp )
+std::string	GLModel::GetString( std::fstream& fileStream )
 {
-	char buf[1024];
-	std::string zwrot;
-	int len = 0;
-	bool repeat = false;
-	bool wfchar = false;
+	char	buf[BUFFER_SIZE + 1];
+	int		len = 0;
+	bool	repeat = false;
+	bool	wfchar = false;
+
+	unsigned pos = 0;
+	std::string line;
+	std::string result;
 
 	do
 	{
-		len = 0;
 		repeat = false;
 		wfchar = false;
-		fgets( buf, 1024, fp );
-	
-		len = strlen( buf );
-		zwrot = "";
 
-		if( buf[0] == '\n' )
+		memset(buf, 0, BUFFER_SIZE + 1);
+		fileStream.getline(buf, BUFFER_SIZE);
+		line = buf;
+
+		if(line.empty() && fileStream)
 		{
 			repeat = true;
 			continue;
 		}
-
-		for( int i = 0; i < len; i++ )
+	
+		pos = 0;
+		for( ; pos < line.length(); pos++ )
 		{
-			if( ( buf[i] == '#' || buf[i] == '/' ) && !wfchar )
+			if(!IsWhiteSpace(line[pos]))
+				break;
+		}
+
+		for( ; pos < line.length(); pos++ )
+		{
+			if( line[pos] == '#' )
 			{
 				repeat = true;
 				break;
 			}
 
-			if( buf[i] != ' ' && buf[i] != '\t' && buf[i] != '\n' )
-				wfchar = true;
+			if(IsWhiteSpace(line[pos]))
+			{
+				if(!wfchar)
+				{
+					wfchar = true;
+					result += ' ';
+				}
+				continue;
+			}
+			else
+				wfchar = false;
 
-			zwrot += buf[i];
+			result += line[pos];
 		}
 	}
 	while( repeat );
 
-	if( zwrot[zwrot.length()-1] == '\n' )
-		zwrot = zwrot.substr( 0, zwrot.length() - 1 );
-
-	return zwrot;
+	return result;
 }
 
 /*=====METODA NoSpace=====
@@ -91,17 +116,17 @@ std::string GLModel::GetString( FILE* fp )
 */
 std::string GLModel::NoSpace( const std::string &str )
 {
-	std::string zwrot = "";
+	std::string result = "";
 
 	for( unsigned int i = 0; i < str.length(); i++ )
 	{
-		if( str[i] == ' ' || str[i] == '\t' || str[i] == '\n' )
+		if(IsWhiteSpace(str[i]))
 			continue;
 
-		zwrot += str[i];
+		result += str[i];
 	}
 
-	return zwrot;
+	return result;
 }
 
 /*=====METODA GetParams=====
@@ -109,14 +134,13 @@ std::string GLModel::NoSpace( const std::string &str )
 	nawiasami ( ) odzielonymi przecinkiem i je
 	wpisuje do podanej tablicy.
 */
-bool GLModel::GetParams( const std::string &str, const int from, std::string* param, const int paramCount, const std::string &Com )
+bool GLModel::GetParams( const std::string &str, const int from, std::vector<std::string>& param, const std::string &Com )
 {
-	if( paramCount <= 0 )
+	if( param.size() == 0 )
 		return true;
 
-	int curparam = 0;
-	unsigned int i;
-	for( i = from; i < str.length(); i++ )
+	unsigned curparam = 0;
+	for( unsigned i = from; i < str.length(); i++ )
 	{
 		if( str[i] == ')' )
 			break;
@@ -126,18 +150,19 @@ bool GLModel::GetParams( const std::string &str, const int from, std::string* pa
 			curparam++;
 			i++;
 
-			if( curparam > paramCount )
+			if( curparam >= param.size() )
 				break;
 		}
 
 		param[curparam] += str[i];
 	}
-	if( curparam > paramCount )
+
+	if( curparam > param.size() )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Za du¿o parametrów polecenia: " + Com );
 		return false;
 	}
-	else if( curparam != paramCount-1 )
+	else if( curparam != param.size() - 1 )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Za ma³o parametrów polecenia: " + Com );	
 		return false;
@@ -145,6 +170,7 @@ bool GLModel::GetParams( const std::string &str, const int from, std::string* pa
 
 	return true;
 }
+
 /*=====METODA GetConst=====
 	Metoda zwraca sta³¹ z OpenGL, w zale¿noœci od nazwy
 	i nazwy polecenia, do jakiej jest potrzebna.
@@ -279,8 +305,19 @@ int GLModel::GetConst( const std::string &str, const std::string &Com )
 		if( str == "GL_FALSE" )
 			return GL_FALSE;
 	}
+
 	Log.Error( "GLMODEL( " + file + " ): Nieznana sta³a ( " + str + " ) w poleceniu: " + Com );
 	return atoi( str.c_str() );
+}
+
+bool	CheckParams(std::vector<std::string>& param)
+{
+	for(unsigned i = 0; i < param.size(); i++)
+	{
+		if(param[i] == "" || param.empty())
+			return false;
+	}
+	return true;
 }
 
 /*=====METODA ParseGLCommand=====
@@ -306,39 +343,34 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 
 	if( Com == "glBindTexture" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			k = atoi( param[0].c_str() );
-			if( k >= TexCount || k < 0 )
-			{
+			if( k >= 0 && k < Textures.size() )
+				Textures[k]->Activate();
+			else 
 				Log.Error( "GLMODEL( " + file + " ): B³êdny parametr polecenia: " + Com );
-			}
-			else Tex[k]->Activate( GUI.GetTexDLevel() );
 			return;
 		}
 	}
 	if( Com == "glCallList" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			k = atoi( param[0].c_str() );
-			if( k >= ListCount || k < 0 )
-			{
+			if( k >= 0 && k < ListCount )
+				glCallList( List + k );
+			else 
 				Log.Error( "GLMODEL( " + file + " ): B³êdny parametr polecenia: " + Com );
-			}
-			else glCallList( List + k );
 			return;
 		}
 	}
 	if( Com == "glRotate" )
 	{
-		presult = GetParams( str, i+1, param, 4, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" && param[3] != "" )
+		std::vector<std::string> param(4);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glRotatef( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ), atof( param[3].c_str() ) );
 			return;
@@ -346,9 +378,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glTranslate" )
 	{
-		presult = GetParams( str, i+1, param, 3, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" )
+		std::vector<std::string> param(3);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glTranslatef( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ) );
 			return;
@@ -356,9 +387,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glScale" )
 	{
-		presult = GetParams( str, i+1, param, 3, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" )
+		std::vector<std::string> param(3);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glScalef( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ) );
 			return;
@@ -366,9 +396,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glBegin" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glBegin( GetConst( param[0], Com ) );
 			return;
@@ -376,9 +405,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glEnable" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glEnable( GetConst( param[0], Com ) );
 			return;
@@ -386,9 +414,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glDisable" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glDisable( GetConst( param[0], Com ) );
 			return;
@@ -396,9 +423,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glEnd" )
 	{
-		presult = GetParams( str, i+1, param, 0, Com );
-
-		if( presult )
+		std::vector<std::string> param;
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glEnd();
 			return;
@@ -406,9 +432,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glPushMatrix" )
 	{
-		presult = GetParams( str, i+1, param, 0, Com );
-
-		if( presult )
+		std::vector<std::string> param;
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glPushMatrix();
 			return;
@@ -416,9 +441,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glPopMatrix" )
 	{
-		presult = GetParams( str, i+1, param, 0, Com );
-
-		if( presult )
+		std::vector<std::string> param;
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glPopMatrix();
 			return;
@@ -426,9 +450,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glColor3" )
 	{
-		presult = GetParams( str, i+1, param, 3, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" )
+		std::vector<std::string> param(3);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glColor3f( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ) );
 			return;
@@ -436,9 +459,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glColor4" )
 	{
-		presult = GetParams( str, i+1, param, 4, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" && param[3] != "" )
+		std::vector<std::string> param(4);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glColor4f( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ), atof( param[3].c_str() ) );
 			return;
@@ -446,9 +468,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glNormal3" )
 	{
-		presult = GetParams( str, i+1, param, 3, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" )
+		std::vector<std::string> param(3);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glNormal3f( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ) );
 			return;
@@ -456,9 +477,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glTexCoord2" )
 	{
-		presult = GetParams( str, i+1, param, 2, Com );
-
-		if( presult && param[0] != "" && param[1] != "" )
+		std::vector<std::string> param(2);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glTexCoord2f( atof( param[0].c_str() ), atof( param[1].c_str() ) );
 			return;
@@ -466,9 +486,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glVertex3" )
 	{
-		presult = GetParams( str, i+1, param, 3, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" )
+		std::vector<std::string> param(3);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glVertex3f( atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ) );
 			return;
@@ -476,9 +495,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glBlendFunc" )
 	{
-		presult = GetParams( str, i+1, param, 2, Com );
-
-		if( presult && param[0] != "" && param[1] != "" )
+		std::vector<std::string> param(2);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glBlendFunc( GetConst( param[0], Com ), GetConst( param[1], Com ) );
 			return;
@@ -486,9 +504,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "glFrontFace" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			glFrontFace( GetConst( param[0], Com ) );
 			return;
@@ -496,9 +513,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluQuadricDrawStyle" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluQuadricDrawStyle( obj, GetConst( param[0], Com ) );
 			return;
@@ -506,9 +522,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluQuadricNormals" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluQuadricNormals( obj, GetConst( param[0], Com ) );
 			return;
@@ -516,9 +531,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluQuadricOrientation" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluQuadricOrientation( obj, GetConst( param[0], Com ) );
 			return;
@@ -526,9 +540,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluQuadricTexture" )
 	{
-		presult = GetParams( str, i+1, param, 1, Com );
-
-		if( presult && param[0] != "" )
+		std::vector<std::string> param(1);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluQuadricTexture( obj, GetConst( param[0], Com ) );
 			return;
@@ -536,9 +549,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluSphere" )
 	{
-		presult = GetParams( str, i+1, param, 3, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" )
+		std::vector<std::string> param(3);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluSphere( obj, atof( param[0].c_str() ), atoi( param[1].c_str() ), atoi( param[2].c_str() ) );
 			return;
@@ -546,9 +558,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluCylinder" )
 	{
-		presult = GetParams( str, i+1, param, 5, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" && param[3] != "" && param[4] != "" )
+		std::vector<std::string> param(5);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluCylinder( obj, atof( param[0].c_str() ), atof( param[1].c_str() ), atof( param[2].c_str() ), atoi( param[3].c_str() ), atoi( param[4].c_str() ) );
 			return;
@@ -556,9 +567,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluDisk" )
 	{
-		presult = GetParams( str, i+1, param, 4, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" && param[3] != "" )
+		std::vector<std::string> param(4);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluDisk( obj, atof( param[0].c_str() ), atof( param[1].c_str() ), atoi( param[2].c_str() ), atoi( param[3].c_str() ) );
 			return;
@@ -566,9 +576,8 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 	}
 	if( Com == "gluPartialDisk" )
 	{
-		presult = GetParams( str, i+1, param, 6, Com );
-
-		if( presult && param[0] != "" && param[1] != "" && param[2] != "" && param[3] != "" && param[4] != "" && param[5] != "" )
+		std::vector<std::string> param(6);
+		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
 			gluPartialDisk( obj, atof( param[0].c_str() ), atof( param[1].c_str() ), atoi( param[2].c_str() ), atoi( param[3].c_str() ), atof( param[4].c_str() ), atof( param[5].c_str() ) );
 			return;
@@ -583,6 +592,7 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 */
 void GLModel::CallObject( unsigned int index )
 {
+
 	if( !loaded )
 		return;
 
@@ -595,36 +605,36 @@ void GLModel::CallObject( unsigned int index )
 /*=====METODA ReadHeader=====
 	Czyta nag³ówek pliku GLM.
 */
-bool GLModel::ReadHeader( FILE* fp )
+bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 {
 	std::string str;
 
 	// Pobieramy liczbê tekstur
-	str = GetString( fp );
-	if( !sscanf_s( str.c_str(), "TEXCOUNT\t%u", &TexCount ) )
+	str = GetString( fileStream );
+	if( !sscanf_s( str.c_str(), "TEXCOUNT %u", &texCount ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby tekstur!" );
 		return false;
 	}
 
 	// Pobieramy liczbê obiektów
-	str = GetString( fp );
-	if( !sscanf_s( str.c_str(), "LISTCOUNT\t%u", &ListCount ) )
+	str = GetString( fileStream );
+	if( !sscanf_s( str.c_str(), "LISTCOUNT %u", &ListCount ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby obiektów!" );
 		return false;
 	}
 
 	// Pobieramy, czy plik ma zapisan¹ animacjê
-	str = GetString( fp );
-	if( !sscanf_s( str.c_str(), "ANIMATION\t%u", &Animation ) )
+	str = GetString( fileStream );
+	if( !sscanf_s( str.c_str(), "ANIMATION %u", &animation ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ animacji!" );
 		return false;
 	}
 
 	// Sprawdzamy czy to koniec nag³ówka
-	str = GetString( fp );
+	str = GetString( fileStream );
 	if( str != "END HEADER" )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Brak koñca nag³ówka!" );
@@ -637,7 +647,7 @@ bool GLModel::ReadHeader( FILE* fp )
 bool GLModel::LoadModel( std::string filename )
 {
 	// Sprawdzamy czy ³añcuch nie jest pusty
-	if( filename == "" )
+	if( filename.empty() )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Pusty ci¹g nazwy pliku!" );
 		return false;
@@ -652,24 +662,22 @@ bool GLModel::LoadModel( std::string filename )
 	int i;
 
 	// Próbujemy otworzyæ plik
-	FILE* fp = 0;
-	fopen_s( &fp, filename.c_str(), "rt" );
+	std::fstream fileStream(filename, std::ios::in);
 
 	// Sprawdzamy po³¹czenie
-	if( !fp )
+	if( !fileStream )
 	{
 		Log.Error( "GLMODEL( " + file + " ): plik " + filename + " nie istnieje lub œcie¿ka niew³aœciwa." );
 		return false;
 	}
 
 	// Pobieramy pierwsz¹ linie
-	str = GetString( fp );
+	str = GetString( fileStream );
 
 	// Skanujemy liniê w poszukiwaniu numeru wersji
-	if( !sscanf_s( str.c_str(), "GLM\t%d", &Version ) )
+	if( !sscanf_s( str.c_str(), "GLM %d", &Version ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nieprawid³owa pierwsza linia pliku " + filename + "!" );
-		fclose( fp );
 		return false;
 	}
 
@@ -677,7 +685,6 @@ bool GLModel::LoadModel( std::string filename )
 	if( Version > GLM_VERSION )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Zbyt wysoka wersja pliku!" );
-		fclose( fp );
 		return false;
 	}
 
@@ -691,61 +698,60 @@ bool GLModel::LoadModel( std::string filename )
 	Log.Log( "GLMODEL( " + file + " ): £adowanie modelu z pliku " + filename );
 	file = filename;
 
-	str = GetString( fp );
+	str = GetString( fileStream );
+
+	unsigned texCount = 0;
 
 	// Czytamy nag³ówek
 	if( str == "HEADER" )
 	{
-		if( !ReadHeader( fp ) )
+		if( !ReadHeader( fileStream, texCount ) )
 		{
 			Log.Error( "GLMODEL( " + file + " ): B³¹d w nag³ówku!" );
-			fclose( fp );
 			return false;
 		}
 	}
 	else
 	{
 		Log.Error( "GLMODEL( " + file + " ): Brak nag³ówka!" );
-		fclose( fp );
 		return false;
 	}
 
-	if( Animation )
+	if( animation )
 	{
-		str = GetString( fp );
+		str = GetString( fileStream );
 
 		// Czytamy nag³ówek
 		if( str == "ANIMHEADER" )
 		{
-			if( !ReadAnimHeader( fp ) )
+			if( !ReadAnimHeader( fileStream ) )
 			{
 				Log.Error( "GLMODEL( " + file + " ): B³¹d w nag³ówku animacji!" );
-				fclose( fp );
 				return false;
 			}
 		}
 		else
 		{
 			Log.Error( "GLMODEL( " + file + " ): Brak nag³ówka animacji!" );
-			fclose( fp );
 			return false;
 		}
 	}
 	
 	// Czytamy tekstury
-	if( TexCount > 0 )
+	if( texCount > 0 )
 	{
-		Tex = new ioTexture*[TexCount];
+		Textures.resize(texCount);
+		memset(&Textures[0], 0, sizeof(ioTexture*) * texCount);
 
-		str = GetString( fp );
+		str = GetString( fileStream );
 
 		if( str == "TEXLIST" )
 		{
-			for( i = 0; i < TexCount; i++ )
+			for( i = 0; i < Textures.size(); i++ )
 			{
-				str = GetString( fp );
+				str = GetString( fileStream );
 
-				if( !( Tex[i] = TManager.Get( str ) ) )
+				if( !( Textures[i] = TManager.Get( str ) ) )
 				{
 					Log.Error( "GLMODEL( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
 				}
@@ -759,12 +765,11 @@ bool GLModel::LoadModel( std::string filename )
 			
 			if( str != "END TEXLIST" )
 			{
-				str = GetString( fp );
+				str = GetString( fileStream );
 				if( str != "END TEXLIST" )
 				{
 					Log.Error( "GLMODEL( " + file + " ): Brak koñca listy tekstur!" );
 					Free();
-					fclose( fp );
 					return false;
 				}
 			}
@@ -773,31 +778,30 @@ bool GLModel::LoadModel( std::string filename )
 		{
 			Log.Error( "GLMODEL( " + file + " ): Brak listy tekstur!" );
 			Free();
-			fclose( fp );
 			return false;
 		}
 	}
+
+	obj = gluNewQuadric();
+	gluQuadricTexture( obj, GL_TRUE );
 
 	// Czytamy modele
 	if( ListCount > 0 )
 	{
 		List = glGenLists( ListCount );
-		obj = gluNewQuadric();
-		gluQuadricTexture( obj, GL_TRUE );
 
 		for( i = 0; i < ListCount; i++ )
 		{
-			str = GetString( fp );
+			str = GetString( fileStream );
 
 			int j;
 
-			sscanf_s( str.c_str(), "MODEL\t%d", &j );
+			sscanf_s( str.c_str(), "MODEL %d", &j );
 			
 			if( i != j )
 			{
 				Log.Error( "GLMODEL( " + file + " ): B³¹d, z³a kolejnoœæ modeli!" );
 				Free();
-				fclose( fp );
 				return false;
 			}
 
@@ -805,7 +809,7 @@ bool GLModel::LoadModel( std::string filename )
 
 			do
 			{
-				str = GetString( fp );
+				str = GetString( fileStream );
 
 				if( str != "END MODEL" )
 				{
@@ -816,31 +820,26 @@ bool GLModel::LoadModel( std::string filename )
 
 			glEndList();
 		}
-
-		gluDeleteQuadric( obj );
 	}
 
-	if( Animation )
+	if( animation )
 	{
 		if( FrameCount > 0 )
 		{
 			Frame = glGenLists( FrameCount );
-			obj = gluNewQuadric();
-			gluQuadricTexture( obj, GL_TRUE );
 
 			for( i = 0; i < FrameCount; i++ )
 			{
-				str = GetString( fp );
+				str = GetString( fileStream );
 
 				int j;
 
-				sscanf_s( str.c_str(), "FRAME\t%d", &j );
+				sscanf_s( str.c_str(), "FRAME %d", &j );
 				
 				if( i != j )
 				{
 					Log.Error( "GLMODEL( " + file + " ): B³¹d, z³a kolejnoœæ klatek!" );
 					Free();
-					fclose( fp );
 					return false;				
 				}
 
@@ -848,7 +847,7 @@ bool GLModel::LoadModel( std::string filename )
 
 				do
 				{
-					str = GetString( fp );
+					str = GetString( fileStream );
 
 					if( str != "END FRAME" )
 					{
@@ -859,18 +858,14 @@ bool GLModel::LoadModel( std::string filename )
 
 				glEndList();
 			}
-
-			gluDeleteQuadric( obj );
-		}
-	
+		}	
 	}
 
-	str = GetString( fp );
+	str = GetString( fileStream );
 
 	if( str == "END GLM" )
 	{
 		loaded = true;
-		fclose( fp );
 		return true;
 	}
 
@@ -880,24 +875,29 @@ bool GLModel::LoadModel( std::string filename )
 
 void GLModel::Free()
 {
-	if( Tex != NULL )
+	if( Textures.size() > 0 )
 	{
-		Tex = NULL;
-		TexCount = 0;
+		Textures.clear();
 	}
 
-	if( glIsList( List ) )
+	if( List != 0 && ListCount > 0 )
 	{
 		glDeleteLists( List, ListCount );
 		List = 0;
 		ListCount = 0;
 	}
 
-	if( glIsList( Frame ) )
+	if( Frame != 0 && FrameCount > 0 )
 	{
 		glDeleteLists( Frame, FrameCount );
 		Frame = 0;
 		FrameCount = 0;
+	}
+
+	if(obj != 0)
+	{
+		gluDeleteQuadric( obj );
+		obj = 0;
 	}
 
 	loaded = false;
@@ -914,20 +914,20 @@ unsigned int GLModel::GetObjCount()
 }
 
 //===========METODY NIETESTOWANE!!!============
-bool GLModel::ReadAnimHeader( FILE* fp )
+bool GLModel::ReadAnimHeader( std::fstream& fileStream )
 {
 	std::string str;
 
 	// Pobieramy liczbê tekstur
-	str = GetString( fp );
-	if( !sscanf_s( str.c_str(), "FRAMECOUNT\t%u", &FrameCount ) )
+	str = GetString( fileStream );
+	if( !sscanf_s( str.c_str(), "FRAMECOUNT %u", &FrameCount ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby klatek animacji!" );
 		return false;
 	}
 
 	// Sprawdzamy czy to koniec nag³ówka
-	str = GetString( fp );
+	str = GetString( fileStream );
 	if( str != "END ANIMHEADER" )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Brak koñca nag³ówka animacji!" );
@@ -939,7 +939,7 @@ bool GLModel::ReadAnimHeader( FILE* fp )
 
 void GLModel::PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip )
 {
-	if( !Animation )
+	if( !animation )
 		return;
 
 	if( fromframe >= FrameCount || toframe < fromframe || toframe > FrameCount )
@@ -967,7 +967,7 @@ void GLModel::DoEngineAnim()
 
 void GLModel::DoDrawAnim( unsigned int index )
 {
-	if( !Animation || !playing )
+	if( !animation || !playing )
 	{
 		CallObject( index );
 		return;
@@ -977,6 +977,7 @@ void GLModel::DoDrawAnim( unsigned int index )
 }
 
 
+GLModelManager GLMManager;
 
 GLModelManager::GLModelManager()
 {
@@ -989,10 +990,10 @@ GLModelManager::~GLModelManager()
 
 GLModel* GLModelManager::Get( std::string filename )
 {
-	if( filename == "" )
+	if( filename.empty() )
 	{
 		Log.Error( "MODELMANAGER(): Pusty ci¹g znaków!" );
-		return NULL;
+		return 0;
 	}
 
 	int i;
@@ -1009,8 +1010,9 @@ GLModel* GLModelManager::Get( std::string filename )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
 		delete Model;
-		return NULL;
+		return 0;
 	}
+
 	AddModel( Model );
 	Log.Log( "MODELMANAGER(): Dodano nowy model: " + filename );
 	return Model;
@@ -1033,19 +1035,17 @@ void GLModelManager::DeleteModel( unsigned int index )
 GLModel* GLModelManager::GetModel( unsigned int index )
 {
 	if( index >= List.size() )
-		return NULL;
+		return 0;
 
 	return List[index];
 }
 
 void GLModelManager::Clear()
 {
-	int i;
-	for( i = List.size()-1; i >= 0; i-- )
+	for(unsigned i = 0; i < List.size(); i++)
 	{
-		DeleteModel( i );
+		delete List[i];
 	}
 	List.clear();
 }
 
-GLModelManager GLMManager;

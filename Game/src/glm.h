@@ -12,8 +12,8 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 #ifndef _GLM_H_
 #define _GLM_H_
 
-#include "gui.h"		// Nag³ówek z dostêpem do klast Logger
 #include "Texture.h"	// Naglówek z klasa ioTexture
+#include <fstream>
 
 // Numer wersji loader'a
 #define		GLM_VERSION		100
@@ -22,11 +22,9 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 */
 class GLModel
 {
-protected:
+private:
 	// Lista tekstur
-	ioTexture** Tex;
-	// Liczba tekstur
-	unsigned int TexCount;
+	std::vector<ioTexture*>	Textures;
 	// Lista obiektów
 	unsigned int List;
 	// Liczba obiektów
@@ -44,7 +42,7 @@ protected:
 	// Czy model jest za³adowany?
 	bool loaded;
 	// Czy ma animacje?
-	bool Animation;
+	bool animation;
 	// Czy aktualnie trwa animacja
 	bool playing;
 	// Ostatni za³adowany plik
@@ -52,14 +50,7 @@ protected:
 	// Obiekt do rysowania kwadryk ( tymczasowy, ale jest tu, by by³ dostêpny w ca³ej klasie )
 	GLUquadric* obj;
 
-	std::string GetString( FILE* fp );
-	std::string NoSpace( const std::string &str );
-	void ParseGLCommand( const std::string &fullstr );
-	bool GetParams( const std::string &str, int from, std::string* param, const int paramCount, const std::string &Com );
-	int GetConst( const std::string &str, const std::string &Com );
 
-	bool ReadHeader( FILE* fp );
-	bool ReadAnimHeader( FILE* fp );
 public:
 	GLModel();
 	~GLModel();
@@ -73,6 +64,16 @@ public:
 	void DoDrawAnim( unsigned int index );
 	void DoEngineAnim();
 	void PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip = false );
+
+private:
+	std::string GetString( std::fstream& fileStream );
+	std::string NoSpace( const std::string &str );
+	void ParseGLCommand( const std::string &fullstr );
+	bool GetParams( const std::string &str, int from, std::vector<std::string>& param, const std::string &Com );
+	int GetConst( const std::string &str, const std::string &Com );
+
+	bool ReadHeader( std::fstream& fileStream, unsigned& texCount );
+	bool ReadAnimHeader( std::fstream& fileStream );
 };
 
 
@@ -80,9 +81,11 @@ class GLModelManager
 {
 private:
 	std::vector<GLModel*> List;
+
 public:
 	GLModelManager();
 	~GLModelManager();
+
 	GLModel* Get( std::string filename );
 	void AddModel( GLModel* Model );
 	GLModel* GetModel( unsigned int index );
