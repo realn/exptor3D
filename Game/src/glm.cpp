@@ -985,7 +985,7 @@ GLModelManager::GLModelManager()
 
 GLModelManager::~GLModelManager()
 {
-	Clear();
+	//Clear();
 }
 
 GLModel* GLModelManager::Get( std::string filename )

@@ -21,28 +21,64 @@ Opis:	Zawiera definicje klas obiektów poruszaj¹cych siê
 #include "Weapon.h"
 #include <vector>
 
-/*	KLASA gameThing
-	Jest to klasa wyjœciowa dla wiêkszoœci
-	obiektów "¿ywych" -  w tym tak¿e dla gracza.
-	Posiada odpowiednie metody, by odpowiednio
-	zarz¹dzaæ dan¹ postaci¹, oraz gotowe algorytmy
-	sztucznej inteligencji.
-*/
-class gameThing : public Dummy
+enum class ACTOR_STATE
+{
+	ALIVE = 0,
+	DISABLED,
+	DYING,
+	DEAD,
+};
+
+class CActorStats
 {
 protected:
 	float Health;
 	float MaxHealth;
 	float Armor;
 	float MaxArmor;
-	float Angle;
+	ACTOR_STATE	State;
+	float TimeUntilDead;
+	float DyingTime;
+
+public:
+	CActorStats();
+	CActorStats(const float health, const float armor);
+	virtual ~CActorStats(){}
+
+	virtual void OnDie() = 0;
+	virtual void OnDead() = 0;
+
+	void	UpdateStats(const float fTD);
+
+	const bool IsDead() const;
+	const bool IsDying() const;
+	virtual void Reset();
+	const ACTOR_STATE	GetState() const;
+
+	const float GetHealth() const;
+	virtual void ModHealth( const float mod );
+	virtual void SetHealth( const float set );
+
+	const float GetArmor() const;
+	virtual void ModArmor( const float mod );
+	virtual void SetArmor( const float set );
+};
+
+/*	KLASA CActor
+	Jest to klasa wyjœciowa dla wiêkszoœci
+	obiektów "¿ywych" -  w tym tak¿e dla gracza.
+	Posiada odpowiednie metody, by odpowiednio
+	zarz¹dzaæ dan¹ postaci¹, oraz gotowe algorytmy
+	sztucznej inteligencji.
+*/
+class CActor : 
+	public CEntity,
+	public CActorStats
+{
+protected:
 	float StartAngle;
 	float Speed;
 	float RotSpeed;
-	float DyingTime;
-	float ThisDTime;
-	bool Dead;
-	bool Dying;
 	bool HasTarget;
 	unsigned int AIflags;
 	unsigned int AIState;
@@ -51,11 +87,10 @@ protected:
 
 	GLModel*	Model;
 
-	Vector3f MoveVector;
 	Vector3f StartPos;
 	Vector3f Target;
 
-	gameThing* Enemy;
+	CActor* Enemy;
 
 	virtual Vector3f CreatePos( float ang );
 
@@ -67,37 +102,24 @@ protected:
 	virtual bool IsEnemyInFront();
 public:
 	float ToAngle;
-	gameThing();
-	~gameThing();
+	CActor();
+	~CActor();
 
 	virtual void Init();
 
 	virtual void DoEngine( const float fTD );
 	virtual void DoDraw();
 
-	virtual void OnDie();
-	virtual void OnDead();
+	virtual void Reset() override;
 
 	virtual void Move( unsigned int flags, const float fTD );
 	virtual void DoAI();
-
-	bool IsDead();
-	bool IsDying();
-	virtual void Reset();
-
-	float GetHealth();
-	virtual void ModHealth( float mod );
-	virtual void SetHealth( float set );
-
-	float GetArmor();
-	virtual void ModArmor( float mod );
-	virtual void SetArmor( float set );
 
 	virtual void Fire( Vector3f FireTarget );
 
 	float GetAng();
 	void ModAngle( float mod );
-	void SetAngle( float set );
+	void SetAngle( const float set ) override;
 	void GoToAngle( float ang );
 
 	void SetStartAngle( float set );
@@ -117,7 +139,8 @@ public:
 	mo¿na ³atwo sterowaæ i wp³ywaæ na ich
 	zachowanie.
 */
-class gamePlayer : public gameThing
+class CPlayer : 
+	public CActor
 {
 private:
 	// Postaæ biega?
@@ -135,13 +158,18 @@ private:
 public:
 	weWeapon* Weapon[10];
 
-	gamePlayer();
-	~gamePlayer();
+	CPlayer();
+	~CPlayer();
+
+	void	OnDie() override;
+	void	OnDead() override;
 
 	void DoDraw();
 	void DoEngine( const float fTD ) override;
 	void DoEngine( bool* Keys, const float fTD );
+
 	void Move(unsigned uFlags, const float fTD ) override;
+
 	void SwichWeap( unsigned int index );
 
 	unsigned int GetHand();
@@ -150,17 +178,18 @@ public:
 	void TestBonus( weBonus* Bonus );
 	void ApplyNextPos();
 
-	void ModHealth( float mod );
-	void Reset();
+	void ModHealth( const float mod ) override;
+	void Reset() override;
 };
 
 /*	KLASA PRZECIWNIKÓW
-	Powsta³a na bazie gameThing i zadaniem
+	Powsta³a na bazie CActor i zadaniem
 	tego typu postaci jest walka. Posiada
 	odpowiednie wartoœci by precyzyjnie umieœciæ
 	broñ oraz swoje imie i nazwe identyfikacyjn¹.
 */
-class gameEnemy : public gameThing
+class CEnemy : 
+	public CActor
 {
 private:
 	std::string		file;
@@ -175,54 +204,56 @@ private:
 	float	FireTime;
 	bool loaded;
 
-	std::string GetStr( FILE* fp );
+	const std::string GetStr( std::fstream& fileStream );
 public:
-	gameEnemy()
+	CEnemy()
 	{	Type = GAME_THING_ENEMY; file = "-";	};
 
-	bool LoadEnemy( std::string filename );
+	const bool LoadEnemy( const std::string filename );
 
 	void DoDraw();
 	void Fire( Vector3f FireTarget );
 
-	void OnDie();
-	void OnDead();
+	void OnDie() override;
+	void OnDead() override;
 	std::string GetID();
 };
 
 /*	KLASA gameStatObj
 */
-class gameStatObj : public gameThing
+class gameStatObj : 
+	public CObject
 {
 private:
-	std::string		file;
+	GLModel*	Model;
+	std::string	file;
 
 	std::string GetStr( FILE* fp );
 public:
 	gameStatObj()
 	{	file = "-";	};
 
-	void DoEngine( const float fTD ) override;
+	void DoEngine( const float fTD );
 	void DoDraw();
 
 	bool LoadObj( std::string filename );
 };
 
 
-/*	KLASA gameThingManager
+/*	KLASA CActorManager
 	Jest to klasa zarz¹daj¹ca wszystkimi
 	obiektami na scenie ( poza broni¹, amunicj¹ i bonusami )
 */
-class gameThingManager
+class CActorManager
 {
 private:
-	std::vector<gameThing*> List;
+	std::vector<CActor*> List;
 	unsigned int dead;
 	unsigned int life;
 	unsigned int all;
 public:
-	gameThingManager();
-	~gameThingManager();
+	CActorManager();
+	~CActorManager();
 
 	void DoEngine( const float fTD );
 	void DoDraw();
@@ -230,10 +261,10 @@ public:
 	void ReCountStats();
 	void ResetAll();
 
-	void AddThing( gameThing* Thing );
+	void AddThing( CActor* Thing );
 	void DeleteThing( unsigned int index );
-	gameThing* GetThing( unsigned int index );
-	gameEnemy* GetEnemyByID( std::string ID );
+	CActor* GetThing( unsigned int index );
+	CEnemy* GetEnemyByID( std::string ID );
 	Vector3f GetThingPos( unsigned int index );
 	Vector3f GetThingBlockPos( unsigned int index );
 	gameBlockInfo* GetThingBlock( unsigned int index );
@@ -258,7 +289,7 @@ private:
 public:
 	gameWeaponManager();
 	~gameWeaponManager();
-	void DoEngine( gamePlayer* Players, int PlayerCount );
+	void DoEngine( CPlayer* Players, int PlayerCount );
 	void DoDraw();
 
 	void AddWeapon( weWeapon* weapon );
@@ -269,7 +300,7 @@ public:
 };
 
 /*
-class gameStatObj : public Dummy
+class gameStatObj : public CEntity
 {
 private:
 	float rot;
@@ -285,8 +316,8 @@ public:
 	void DoDraw();
 };
 */
-extern gameThingManager ThingManager;
+extern CActorManager ThingManager;
 extern gameWeaponManager WManager;
-extern gamePlayer MainPlayer;
+extern CPlayer MainPlayer;
 
 #endif

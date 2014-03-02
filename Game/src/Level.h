@@ -52,7 +52,7 @@ public:
 	unsigned int	BlockID;
 	gameBlockInfo*	Block;
 	std::string		EnemyID;
-	gameEnemy*		Enemy;
+	CEnemy*		Enemy;
 	unsigned int	WeapID;
 	std::string		Text;
 	float			Color[3];
@@ -182,9 +182,9 @@ public:
 	void Free();
 };
 
-extern bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing = false );
+extern bool TestCollBlock( CEntity* Dum, gameBlockInfo* Block, bool testthing = false );
 extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level );
-extern bool TestCollDum( Dummy* Dum, Dummy* Dum2 );
+extern bool TestCollDum( CEntity* Dum, CEntity* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
 extern gameLevel GLevel;

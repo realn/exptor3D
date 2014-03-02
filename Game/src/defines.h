@@ -101,14 +101,14 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 
 class guiMain;
 
-class gameThing;
-class gamePlayer;
-class gameEnemy;
+class CActor;
+class CPlayer;
+class CEnemy;
 class gameLevel;
 class gameBlockInfo;
 class gameWeaponManager;
 class gameStatObj;
-class gameThingManager;
+class CActorManager;
 
 class weWeapon;
 class weSaw;
@@ -147,9 +147,9 @@ extern specManager		SEManager;
 extern ioTexture		Part;
 extern specMotionBlur	SMBlur;
 extern guiMain			GUI;
-extern gamePlayer		MainPlayer;
+extern CPlayer		MainPlayer;
 extern gameWeaponManager WManager;
-extern gameThingManager ThingManager;
+extern CActorManager ThingManager;
 extern weBonusManager	BonusMan;
 extern bool	CanDoWLScr;
 

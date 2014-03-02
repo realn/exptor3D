@@ -11,7 +11,7 @@
 #include	"Game.h"
 
 /*	KLASY POCISKÓW	*/
-class weBullet : public Dummy
+class weBullet : public CEntity
 {
 protected:
 	unsigned int Type;
@@ -19,14 +19,14 @@ protected:
 	bool DoDelete;
 public:
 	float Damage;
-	gameThing* Owner;
+	CActor* Owner;
 
 	weBullet();
 
 	virtual void Init( Vector3f pos, Vector3f veloc, float speed );
 
 	virtual void DoEngine();
-	virtual float DoTest( Dummy* Dum, float Armor = 0.0f );
+	virtual float DoTest( CEntity* Dum, float Armor = 0.0f );
 	virtual void DoDraw();
 
 	virtual void OnDelete();
@@ -41,7 +41,7 @@ private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void DoEngine();
-	float DoTest( Dummy* Dum, float Armor = 0.0f );
+	float DoTest( CEntity* Dum, float Armor = 0.0f );
 };
 // Promieñ
 class weBullRay : public weBullet
@@ -53,7 +53,7 @@ public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	
 	void DoEngine();
-	float DoTest( Dummy* Dum, float Armor = 0.0f );
+	float DoTest( CEntity* Dum, float Armor = 0.0f );
 	void DoDraw();
 };
 
@@ -84,7 +84,7 @@ public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 
 	void DoEngine();
-	float DoTest( Dummy* Dum, float Armor = 0.0f );
+	float DoTest( CEntity* Dum, float Armor = 0.0f );
 	void DoDraw();
 };
 
@@ -98,7 +98,7 @@ private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void DoEngine();
-	float DoTest( Dummy* Dum, float Armor = 0.0f );
+	float DoTest( CEntity* Dum, float Armor = 0.0f );
 	void DoDraw();
 };
 // Menager pocisków
@@ -111,7 +111,7 @@ public:
 	void DeleteBullet( unsigned int index );
 	weBullet* GetBullet( unsigned int index );
 
-	float DoTest( Dummy* Dum, float Armor = 0.0f );
+	float DoTest( CEntity* Dum, float Armor = 0.0f );
 	void DoEngine();
 	void DoDraw();
 
@@ -121,7 +121,7 @@ public:
 
 extern weBulletManager BManager;
 
-class weBonus : public Dummy
+class weBonus : public CEntity
 {
 protected:
 	float rot;
@@ -176,7 +176,7 @@ public:
 	weBonus* GetBonus( unsigned int index );
 	void DeleteBonus( unsigned int index );
 
-	void DoEngine( gamePlayer* Player );
+	void DoEngine( CPlayer* Player );
 	void DoDraw();
 
 	unsigned int Count();
@@ -191,7 +191,7 @@ extern weBonusManager BonusMan;
 	elementy wspólne dla
 	wszystkich klas.
 */
-class weWeapon : public Dummy
+class weWeapon : public CEntity
 {
 	/*	¯eby by³ dostêp do tych zmiennych
 		w klasach dziedzicz¹czych, umieœci³em
@@ -214,7 +214,7 @@ protected:
 	// Lista wyœwietlania, gdy broñ le¿y na ziemi.
 	GLModel	*Model;
 
-	gamePlayer* Owner;
+	CPlayer* Owner;
 
 	//	Amunicja ogólna ( -1 dla nieskoñczonej liczby naboi )
 	int Ammo;
@@ -247,7 +247,7 @@ public:
 	~weWeapon();
 
 	// Funkcja podnoszenia broni
-	void PickUp( weWeapon* Weapon, gamePlayer* Player );
+	void PickUp( weWeapon* Weapon, CPlayer* Player );
 
 	virtual void Init();
 	virtual void DoEngine();

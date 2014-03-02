@@ -118,22 +118,46 @@ public:
 	float D;
 };
 
-/*	KLASA KUK£ :)
-	S³u¿¹ mi do wykrywania kolizji miêdzy
-	obiektami ró¿nych klas. Wiêkszoœæ
-	obiektów sceny z niej dzidziczy.
-*/
-class Dummy
+/// <summary>
+/// Klasa obiektów 
+///	Fizyczny obiekt opsiadaj¹cy pozycjê 
+/// oraz promieñ objêtoœci.
+/// </summary>
+class CObject
 {
-public:
-	Vector3f	Pos;
-	Vector3f	NextPos;
-	Vector3f	Vector;
-	float R;
+protected:
+	float		Angle;
 
 public:
-	Dummy() : R(3.0f){};
-	virtual ~Dummy(){}
+	Vector3f	Pos;
+	float		Radius;
+
+public:
+	CObject() : Radius(1.0f), Angle(0.0f){}
+	CObject(const float radius) : Radius(radius){}
+	virtual ~CObject(){}
+
+	virtual void		SetAngle(const float angle){ Angle = angle; }
+	virtual const float	GetAngle() const { return Angle; }
+};
+
+/// <summary>
+/// Klasa jednostek
+///	Jest to rodzaj obiektów posiadaj¹cych dynamikê.
+///	Objawia siê ona zwrotem/kierunkiem w który mog¹
+/// byæ zwrócone oraz pozycj¹ w której chc¹ siê znaleŸæ.
+/// </summary>
+class CEntity : 
+	public CObject
+{
+public:
+	Vector3f	NextPos;
+	Vector3f	Vector;
+
+public:
+	CEntity() : CObject(3.0f){};
+	CEntity(const float radius) : CObject(radius){}
+	virtual ~CEntity(){}
 
 	Vector3f GetBlockPos();
 };

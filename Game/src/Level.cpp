@@ -687,7 +687,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 
 			sscanf_s( str.c_str(), "%d=%d,%d", &j, &k, &l );
 
-			gameEnemy* Enemy = new gameEnemy;
+			CEnemy* Enemy = new CEnemy;
 			Enemy->SetStartPos( this->GetBlockPos( j ) );
 			Enemy->SetStartAngle( (float)l );
 			Enemy->LoadEnemy( EnemyType[k] );
@@ -723,11 +723,11 @@ bool gameLevel::LoadLevel( const std::string &filename )
 
 			sscanf_s( str.c_str(), "%d,%d=", &k, &l );
 
-			gameStatObj *obj = new gameStatObj;
-			obj->LoadObj( GetParamStr( str ) );
-			obj->Pos = this->GetBlockPos( k );
-			obj->SetAngle( l );
-			ThingManager.AddThing( obj );
+			//gameStatObj *obj = new gameStatObj;
+			//obj->LoadObj( GetParamStr( str ) );
+			//obj->Pos = this->GetBlockPos( k );
+			//obj->SetAngle( l );
+			//ThingManager.AddThing( obj );
 		}
 
 		str = GetString( fp );
@@ -1383,11 +1383,11 @@ void gameLevel::Free()
 }
 
 /*	To jest odzielna funkcja sprawdzaj¹ca kolizje
-	obiektu Dummy, ze œcianami podanego bloku.
+	obiektu CEntity, ze œcianami podanego bloku.
 	Jest to samodzielna funkcja, by mo¿na by³o j¹ wygonie
 	u¿yæ, nie korzystaj¹c z klasy gameLevel.
 */
-bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
+bool TestCollBlock( CEntity* Dum, gameBlockInfo* Block, bool testthing )
 {
 	if( Block == NULL )
 		return false;
@@ -1436,7 +1436,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 		// Aktualna pozycja
 		A = Dum->Pos;// + Normal.Reverse() * R;
 		// Nastêpna pozycja
-		B = Dum->NextPos + Normal.Reverse() * Dum->R;
+		B = Dum->NextPos + Normal.Reverse() * Dum->Radius;
 
 		// Wyra¿enie liczy, gdzie s¹ punkty wzglêdem p³aszczyzny
 		wynik = ( Normal.Dot( A ) + D ) * ( Normal.Dot( B ) + D );
@@ -1459,7 +1459,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 
 		is = true;
 		// i tworzymy now¹ pozycjê.
-		Dum->NextPos = P + Normal * Dum->R;
+		Dum->NextPos = P + Normal * Dum->Radius;
 	}
 
 	/*	No dobra, wykrywamy kolizje na œcianach, ale
@@ -1474,7 +1474,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 	
 	for( i = 0; i < Block->CornerCount; i++ )
 	{
-		if( mathDistSq( Dum->NextPos, Block->TCorner[i] ) > POW(Dum->R) )
+		if( mathDistSq( Dum->NextPos, Block->TCorner[i] ) > POW(Dum->Radius) )
 			continue;
 	
 		// liczymy wektor od rogu, do pozycji
@@ -1487,7 +1487,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 		// Aktualna pozycja
 		A = Dum->Pos;// + Normal.Reverse() * R;
 		// Nastêpna pozycja
-		B = Dum->NextPos + Normal.Reverse() * Dum->R;
+		B = Dum->NextPos + Normal.Reverse() * Dum->Radius;
 
 		// Powtarzamy poprzedni¹ regu³ke...
 		wynik = ( Normal.Dot( A ) + D ) * ( Normal.Dot( B ) + D );
@@ -1499,7 +1499,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 
 		is = true;
 		// i tworzymy now¹ pozycjê.
-		Dum->NextPos = P + Normal * Dum->R;
+		Dum->NextPos = P + Normal * Dum->Radius;
 	}
 
 	if( !testthing )
@@ -1514,7 +1514,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 		Kiedy ju¿ stwierdzimy wyst¹pienie kolizji, to oddalamy kuk³e na odleg³oœæ sumy promieni pomno¿onej
 		przez wektor normalny. I tyle :)
 	*/
-	gameThing* Thing;
+	CActor* Thing;
 	for( i = 0; i < ThingManager.Count(); i++ )
 	{
 		Thing = ThingManager.GetThing( i );
@@ -1527,19 +1527,19 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 		if( Dum != &MainPlayer && Thing->GetType() == GAME_THING_ENEMY )
 			continue;
 		// Sprawdzamy odleg³oœæ ( ja jeszcze doda³em dwie jednostki, by sprawdzanie rozpocze³o siê wczeœniej )
-		if( mathDistSq( Thing->Pos, Dum->NextPos ) > POW( Thing->R + Dum->R + 2.0f ) )
+		if( mathDistSq( Thing->Pos, Dum->NextPos ) > POW( Thing->Radius + Dum->Radius + 2.0f ) )
 			continue;
 
 		// Tworzymy p³aszczyzne i punkt przeciêcia.
 		Normal = Dum->NextPos - Thing->NextPos;
 		Normal.Normalize();
-		V = Thing->Pos + Normal * Thing->R;
+		V = Thing->Pos + Normal * Thing->Radius;
 		D = -V.Dot( Normal );
 
 		// Aktualna pozycja
 		A = Dum->Pos;// + Normal.Reverse() * R;
 		// Nastêpna pozycja
-		B = Dum->NextPos + Normal.Reverse() * Dum->R;
+		B = Dum->NextPos + Normal.Reverse() * Dum->Radius;
 
 		// Powtarzamy poprzedni¹ regu³ke...
 		wynik = ( Normal.Dot( A ) + D ) * ( Normal.Dot( B ) + D );
@@ -1551,7 +1551,7 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 
 		is = true;
 		// i tworzymy now¹ pozycjê.
-		Dum->NextPos = P + Normal * Dum->R;
+		Dum->NextPos = P + Normal * Dum->Radius;
 	}
 	
 	return is;
@@ -1566,8 +1566,11 @@ bool TestCollBlock( Dummy* Dum, gameBlockInfo* Block, bool testthing )
 */
 Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level )
 {
-	Dummy Dum;
-	Dum.R = 0.1f;
+	if(Veloc.LeangthSq() == 0.0f)
+		return Pos;
+
+	CEntity Dum;
+	Dum.Radius = 0.1f;
 	Dum.NextPos = Pos;
 	gameBlockInfo* Block = NULL;
 
@@ -1597,11 +1600,11 @@ Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level )
 	sprawdza ona odleg³oœæ miêdzy dwoma kuk³ami i
 	zwraca czy siê zde¿y³y, czy nie.
 */
-bool TestCollDum( Dummy* Dum, Dummy* Dum2 )
+bool TestCollDum( CEntity* Dum, CEntity* Dum2 )
 {
 	Vector3f V1 = ClosestPoint( Dum2->Pos, Dum2->NextPos, Dum->NextPos );
 
-	if( mathDistSq( V1, Dum->NextPos ) < POW(Dum->R) )
+	if( mathDistSq( V1, Dum->NextPos ) < POW(Dum->Radius) )
 		return true;
 	else return false;
 }
@@ -1614,8 +1617,8 @@ bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps )
 {
 	Vector3f Veloc = V2 - V1;
 	Vector3f Step = Veloc / (float)Steps;
-	Dummy Dum;
-	Dum.R = 0.1f;
+	CEntity Dum;
+	Dum.Radius = 0.1f;
 	Dum.NextPos = V1;
 	gameBlockInfo* Block = NULL;
 

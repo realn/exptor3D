@@ -11,45 +11,40 @@ Opis:	Patrz -> Game.h
 #include "Game.h"
 
 /*=========================	
-	KLASA gameThing
+	KLASA CActor
 
 
 =========================*/
-gameThing::gameThing()
+CActor::CActor() : 
+	CEntity(2.0f),
+	CActorStats(100.0f, 100.0f),
+	Model(0),
+	Enemy(0)
 {
-	AIflags = AI_MOVE_AROUND;
-	Health = 100.0f;
-	MaxHealth = 100.0f;
 	Armor = 0.0f;
-	MaxArmor = 0.0f;
-	Dead = false;
-	Dying = false;
+
+	AIflags = AI_MOVE_AROUND;
 	Speed = 0.1f;
 	RotSpeed = 1.0f;
 	Angle = 180.0f;
 	StartAngle = 180.0f;
 	ToAngle = 180.0f;
 	Pos.Set( 5.0f, 0.0f, -25.0f );
-	R = 2.0f;
 	Type = GAME_THING_OTHER;
-	Model = NULL;
-	Enemy = NULL;
-	DyingTime = 60.0f;
-	ThisDTime = 0.0f;
 	AIState = AI_STATE_NOTHING;
 }
 
-gameThing::~gameThing()
+CActor::~CActor()
 {
 	Free();
 	Model = NULL;
 }
 
-void gameThing::Init()
+void CActor::Init()
 {
 }
 
-Vector3f gameThing::CreatePos( float ang )
+Vector3f CActor::CreatePos( float ang )
 {
 	Vector3f zwrot;
 
@@ -59,7 +54,7 @@ Vector3f gameThing::CreatePos( float ang )
 	return zwrot;
 }
 
-void gameThing::Move( unsigned int flags, const float fTD )
+void CActor::Move( unsigned int flags, const float fTD )
 {
 	Vector3f temp;
 
@@ -83,29 +78,16 @@ void gameThing::Move( unsigned int flags, const float fTD )
 		NextPos = Pos + temp * Speed * GUI.GetSpeed() * fTD;
 	}
 
-	MoveVector = CreatePos( Angle );
-	MoveVector.Normalize();
+	Vector = CreatePos( Angle );
+	Vector.Normalize();
 }
 
-void gameThing::DoEngine( const float fTD )
+void CActor::DoEngine( const float fTD )
 {
-	if( Dead )
+	UpdateStats( fTD );
+
+	if( State == ACTOR_STATE::DEAD )
 		return;
-
-	if( Health <= 0.0f && !Dying)
-	{
-		this->OnDie();
-		this->Dying = true;
-	}
-
-	if( Dying && !Dead )
-		ThisDTime += 1.0f * fTD;
-
-	if( ThisDTime >= DyingTime && !Dead)
-	{
-		this->OnDead();
-		Dead = true;
-	}
 
 	DoAI();
 
@@ -114,36 +96,27 @@ void gameThing::DoEngine( const float fTD )
 	Actions = 0;
 
 	TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
+
 	Pos = NextPos;
 }
 
-void gameThing::DoDraw()
+void CActor::DoDraw()
 {
 	// Dla niezdefiniowanych obiektów to pole pozostaje puste
 }
 
-void gameThing::OnDie()
-{
-	// Nic
-}
-
-void gameThing::OnDead()
-{
-	// Nic
-}
-
-bool gameThing::IsEnemyInFront()
+bool CActor::IsEnemyInFront()
 {
 	if( Enemy == NULL )
 		return false;
 
-	if( fabsf( GetAngle( Enemy->NextPos, Pos )- Angle )  < 3.0f )
+	if( fabsf( ::GetAngle( Enemy->NextPos, Pos )- Angle )  < 3.0f )
 		return true;
 
 	return false;
 }
 
-void gameThing::DoAI()
+void CActor::DoAI()
 {
 	if( this->AIflags == AI_NO_AI )
 		return;
@@ -188,7 +161,7 @@ void gameThing::DoAI()
 		AIStand();
 }
 
-bool gameThing::AIFindTarget()
+bool CActor::AIFindTarget()
 {
 	if( this->AIflags & AI_PLAYER_ENEMY )
 	{
@@ -221,7 +194,7 @@ bool gameThing::AIFindTarget()
 	return false;
 }
 
-Vector3f gameThing::AIFindWalkTarget()
+Vector3f CActor::AIFindWalkTarget()
 {
 	gameBlockInfo* Block = GLevel.GetBlock( this->GetBlockPos() );
 	if( Block == NULL )
@@ -275,7 +248,7 @@ Vector3f gameThing::AIFindWalkTarget()
 	while( true );
 }
 
-void gameThing::AIWalk()
+void CActor::AIWalk()
 {
 	if( !HasTarget )
 	{
@@ -291,7 +264,7 @@ void gameThing::AIWalk()
 
 	AIState = AI_STATE_WALK;
 
-	float Ang = SwapAngle( GetAngle( Target, NextPos ) );
+	float Ang = SwapAngle( ::GetAngle( Target, NextPos ) );
 
 	this->GoToAngle( Ang );
 
@@ -308,12 +281,12 @@ void gameThing::AIWalk()
 
 }
 
-void gameThing::AIStand()
+void CActor::AIStand()
 {
 	AIState = AI_STATE_STAND;
 }
 
-void gameThing::AIAttackTarget()
+void CActor::AIAttackTarget()
 {
 	if( IsEnemyInFront() )
 	{
@@ -324,44 +297,34 @@ void gameThing::AIAttackTarget()
 	{
 		if( Enemy != NULL )
 		{
-			GoToAngle( GetAngle( Enemy->NextPos, Pos ) );
+			GoToAngle( ::GetAngle( Enemy->NextPos, Pos ) );
 		}
 	}
 }
 
-bool gameThing::IsDying()
-{
-	return Dying;
-}
-
-bool gameThing::IsDead()
-{
-	return Dead;
-}
-
-void gameThing::Fire( Vector3f Target )
+void CActor::Fire( Vector3f Target )
 {
 	// Dla niezdefiniwanych obiektów to pole jest puste
 }
 
-float gameThing::GetAng()
+float CActor::GetAng()
 {
 	return Angle;
 }
 
-void gameThing::ModAngle( float mod )
+void CActor::ModAngle( float mod )
 {
 	Angle += mod;
 	Angle = SwapAngle( Angle );
 }
 
-void gameThing::SetAngle( float set )
+void CActor::SetAngle( float set )
 {
 	Angle = set;
 	Angle = SwapAngle( Angle );
 }
 
-void gameThing::GoToAngle( float ang )
+void CActor::GoToAngle( float ang )
 {
 	ang = SwapAngle( ang );
 	if( ang > Angle )
@@ -388,81 +351,43 @@ void gameThing::GoToAngle( float ang )
 	}
 }
 
-void gameThing::SetStartAngle( float set )
+void CActor::SetStartAngle( float set )
 {
 	StartAngle = set;
 }
 
-float gameThing::GetStartAngle()
+float CActor::GetStartAngle()
 {
 	return StartAngle;
 }
 
-float gameThing::GetHealth()
-{
-	return Health;
-}
-
-void gameThing::ModHealth( float mod )
-{
-	Health += mod;
-	if( Health > MaxHealth )
-		Health = MaxHealth;
-}
-
-void gameThing::SetHealth( float set )
-{
-	Health = set;
-}
-
-float gameThing::GetArmor()
-{
-	return Armor;
-}
-
-void gameThing::ModArmor( float mod )
-{
-	Armor += mod;
-	if( Armor > MaxArmor )
-		Armor = MaxArmor;
-	if( Armor < 0.0f )
-		Armor = 0.0f;
-}
-
-void gameThing::SetArmor( float set )
-{
-	Armor = set;
-}
-
-void gameThing::SetStartPos( Vector3f set )
+void CActor::SetStartPos( Vector3f set )
 {
 	StartPos = set;
 }
 
-Vector3f gameThing::GetStartPos()
+Vector3f CActor::GetStartPos()
 {
 	return StartPos;
 }
 
-unsigned int gameThing::GetType()
+unsigned int CActor::GetType()
 {
 	return Type;
 }
 
-void gameThing::Reset()
+void CActor::Reset()
 {
+	CActorStats::Reset();
 	Pos = StartPos;
 	NextPos = StartPos;
 	Angle = StartAngle;
-	Health = MaxHealth;
-	//Armor = MaxArmor;
-	Dying = false;
-	Dead = false;
+	Armor = 0.0f;
 	Enemy = NULL;
 	HasTarget = false;
 }
 
-void gameThing::Free()
+void CActor::Free()
 {
 
 }
@@ -470,26 +395,25 @@ void gameThing::Free()
 
 
 /*=========================	
-	KLASA gamePlayer
+	KLASA CPlayer
 
 
 =========================*/
-gamePlayer::gamePlayer()
+CPlayer::CPlayer()
 {
 	run = true;
 	Angle = 0.0f;
-	WalkStep = 1.1f;
-	RunStep = 1.4f;
-	R = 3.0f;
+	WalkStep = 2.5f;
+	RunStep = 5.0f;
+	Radius = 3.0f;
 	Pos.Set( 5.0f, 0.0f, -5.0f );
 	AIflags = AI_NO_AI;
 	Type = GAME_THING_PLAYER;
 
-	Health = 100.0f;
-	MaxHealth = 100.0f;
 	Armor = 0.0f;
 	MaxArmor = 150.0f;
 	CurrWeap = GAME_WEAP_PHAZER;
+
 	Weapon[GAME_WEAP_SAW] = new weSaw();
 	Weapon[GAME_WEAP_PISTOL] = new wePistol();
 	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer();
@@ -499,7 +423,7 @@ gamePlayer::gamePlayer()
 	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb();
 }
 
-gamePlayer::~gamePlayer()
+CPlayer::~CPlayer()
 {
 	delete Weapon[GAME_WEAP_SAW];
 	delete Weapon[GAME_WEAP_PISTOL];
@@ -510,23 +434,31 @@ gamePlayer::~gamePlayer()
 	delete Weapon[GAME_WEAP_ATOM_BOMB];
 }
 
-void gamePlayer::ApplyNextPos()
+void	CPlayer::OnDie()
+{
+}
+
+void	CPlayer::OnDead()
+{
+}
+
+void CPlayer::ApplyNextPos()
 {
 	Pos = NextPos;
 }
 
-void gamePlayer::DoDraw()
+void CPlayer::DoDraw()
 {
 	if( Weapon[CurrWeap]->GetHave() )
 		Weapon[CurrWeap]->DoDraw();
 }
 
-void gamePlayer::DoEngine( const float fTD )
+void CPlayer::DoEngine( const float fTD )
 {
 
 }
 
-void gamePlayer::DoEngine( bool* Keys, const float fTD )
+void CPlayer::DoEngine( bool* Keys, const float fTD )
 {
 	Actions = 0;
 	if( Keys['W'] || Keys[VK_UP] )
@@ -626,25 +558,26 @@ void gamePlayer::DoEngine( bool* Keys, const float fTD )
 		GUI.PInfo.WeapName = Weapon[CurrWeap]->Name;
 	}
 	TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
+
 	ApplyNextPos();
 }
 
-void	gamePlayer::Move(unsigned uFlags, const float fTD)
+void	CPlayer::Move(unsigned uFlags, const float fTD)
 {
 	if( uFlags & GAME_DO_FIREWEAPON )
 		this->Weapon[this->CurrWeap]->Shot();
 
-	gameThing::Move(uFlags, fTD);
+	CActor::Move(uFlags, fTD);
 }
 
-unsigned int gamePlayer::GetHand()
+unsigned int CPlayer::GetHand()
 {
 	return Hand;
 }
 
-void gamePlayer::TestWeapon( weWeapon* Weap )
+void CPlayer::TestWeapon( weWeapon* Weap )
 {
-	if( mathDistSq( Pos, Weap->Pos ) <= POW(R + Weap->R) )
+	if( mathDistSq( Pos, Weap->Pos ) <= POW(Radius + Weap->Radius) )
 	{
 		if( !Weapon[Weap->GetType()]->GetInited() )
 			this->SwichWeap( Weap->GetType() );
@@ -653,9 +586,9 @@ void gamePlayer::TestWeapon( weWeapon* Weap )
 	}
 }
 
-void gamePlayer::TestBonus( weBonus* Bonus )
+void CPlayer::TestBonus( weBonus* Bonus )
 {
-	if( mathDistSq( Bonus->Pos, this->NextPos ) < POW( R ) )
+	if( mathDistSq( Bonus->Pos, this->NextPos ) < POW( Radius ) )
 	{
 		switch( Bonus->GetType() )
 		{
@@ -685,12 +618,12 @@ void gamePlayer::TestBonus( weBonus* Bonus )
 		}
 	}
 }
-void gamePlayer::SwichWeap( unsigned int index )
+void CPlayer::SwichWeap( unsigned int index )
 {
 	CurrWeap = index;
 }
 
-void gamePlayer::ModHealth( float mod )
+void CPlayer::ModHealth( const float mod )
 {
 	if( mod < 0.0f )
 	{
@@ -700,16 +633,13 @@ void gamePlayer::ModHealth( float mod )
 	else if( mod > 0.0f )
 	{
 		GUI.ActiveFScrColor( 1.0f, 1.0f, 0.0f );
-	}
-	
-	gameThing::ModHealth( mod );
-	if( Health <= 0 )
-		Dead = true;
+	}	
+	CActor::ModHealth( mod );
 }
 
-void gamePlayer::Reset()
+void CPlayer::Reset()
 {
-	gameThing::Reset();
+	CActor::Reset();
 	for( int i = 0; i < 10; i++ )
 	{
 		delete Weapon[i];
@@ -724,47 +654,42 @@ void gamePlayer::Reset()
 	GUI.PInfo.FRAGS = 0;
 }
 
-gamePlayer MainPlayer;
+CPlayer MainPlayer;
 
 
 /*=========================
-	KLASA gameEnemy
+	KLASA CEnemy
 
 
 =========================*/
-std::string gameEnemy::GetStr( FILE* fp )
+const std::string CEnemy::GetStr( std::fstream& fileStream )
 {
-	char buf[256];
-	std::string zwrot;
+	const unsigned BUFFER_SIZE = 256;
+	char buf[BUFFER_SIZE + 1];
+	memset(buf, 0, sizeof(char) * (BUFFER_SIZE + 1));
 
-	fgets( buf, 256, fp );
+	fileStream.getline(buf, BUFFER_SIZE);
 
-	zwrot = buf;
-
-	if( zwrot[zwrot.length()-1] == '\n' )
-		zwrot = zwrot.substr( 0, zwrot.length()-1 );
-
-	return  zwrot;
+	return  buf;
 }
 
-bool gameEnemy::LoadEnemy( std::string filename )
+const bool CEnemy::LoadEnemy( const std::string filename )
 {
 	// Sprawdzamy, czy argument nie jest pusty
-	if( filename == "" )
+	if( filename.empty() )
 	{
 		Log.Error( "ENEMY( " + file + " ): Ci¹g znaków jest pusty" );
 		return false;
 	}
 
 	// Otwieramy plik
-	FILE* fp = 0;
-	fopen_s( &fp, filename.c_str(), "rt" );
+	std::fstream fileStream(filename, std::ios::in);
 
 	// zmienna pomocnicza
 	std::string str;
 
 	// Sprawdzamy czy otwarcie siê uda³o
-	if( !fp )
+	if( !fileStream )
 	{
 		Log.Error( "ENEMY( " + file + " ): Niew³aœciwa œcie¿ka, lub plik nie istnieje" );
 		return false;
@@ -780,68 +705,67 @@ bool gameEnemy::LoadEnemy( std::string filename )
 	file = filename;
 
 	// przypisujemy identyfikator
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	ID = str;
 
 	// przypisujemy nazwê wroga
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	name = str;
 
 	// przypisujemy, która czêœæ modelu ma siê obracaæ
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	RotObj = atoi( str.c_str() );
 
 	// przypisujemy promieñ kolizyjny
-	str = GetStr( fp );
-	R = atof( str.c_str() );
+	str = GetStr( fileStream );
+	Radius = atof( str.c_str() );
 	
 	// przypisujemy typ broni
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	WeapType = atoi( str.c_str() );
 
 	// przypisujemy korekcje pozycji broni
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	WeapR = atof( str.c_str() );
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	WeapY = atof( str.c_str() );
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	WeapAngle = atof( str.c_str() );
 
 	// przypisujemy statystyki
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	Health = atof( str.c_str() );
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	Armor = atof( str.c_str() );
 
 	// przypisujemy AI
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	AIflags = atoi( str.c_str() );
 
 	// przypisujemy model
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	Model = GLMManager.Get( str );
 
-	str = GetStr( fp );
+	str = GetStr( fileStream );
 	FireTime = FirePause = atof( str.c_str() );
 
-	fclose( fp );
 	loaded = true;
 
 	return true;
 }
 
-void gameEnemy::DoDraw()
+void CEnemy::DoDraw()
 {
-	if( Dead )
+	if( IsDead() )
 		return;
 
 	unsigned int i;
 	glPushMatrix();
-	if( Dying )
+	if( IsDying() )
 	{
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 		glEnable( GL_BLEND );
-		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f - ( ThisDTime * ( 1.0f / DyingTime ) ) );
+		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f - ( DyingTime * ( 1.0f / TimeUntilDead ) ) );
 	}
 
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
@@ -886,7 +810,7 @@ void gameEnemy::DoDraw()
 		glEnable( GL_CLIP_PLANE0 );
 		glPopMatrix();
 	}
-	if( Dying )
+	if( IsDying() )
 	{
 		glDisable( GL_BLEND );
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -908,9 +832,9 @@ void gameEnemy::DoDraw()
 	gluDeleteQuadric( obj );
 }
 
-void gameEnemy::Fire( Vector3f FireTarget )
+void CEnemy::Fire( Vector3f FireTarget )
 {
-	if( Dying )
+	if( IsDying() )
 		return;
 
 	FireTime += 1.0f * GUI.GetSpeed();
@@ -965,19 +889,19 @@ void gameEnemy::Fire( Vector3f FireTarget )
 	}
 }
 
-void gameEnemy::OnDie()
+void CEnemy::OnDie()
 {
 	specExplode* spec = new specExplode;
 	spec->Create( Pos, 5.0f, 0.1f );
 	SEManager.AddEffect( spec );
 }
 
-void gameEnemy::OnDead()
+void CEnemy::OnDead()
 {
 	GUI.PInfo.FRAGS++;
 }
 
-std::string gameEnemy::GetID()
+std::string CEnemy::GetID()
 {
 	return ID;
 }
@@ -997,8 +921,7 @@ std::string gameStatObj::GetStr( FILE* fp )
 
 void gameStatObj::DoEngine( const float fTD )
 {
-	AIflags = AI_NO_AI;
-	TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
+	//TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
 }
 
 void gameStatObj::DoDraw()
@@ -1043,7 +966,7 @@ bool gameStatObj::LoadObj( std::string filename )
 	}
 
 	str = GetStr( fp );
-	R = atof( GetStr( fp ).c_str() );
+	Radius = atof( GetStr( fp ).c_str() );
 
 	fclose( fp );
 	return true;
@@ -1051,22 +974,22 @@ bool gameStatObj::LoadObj( std::string filename )
 
 
 
-gameThingManager::gameThingManager()
+CActorManager::CActorManager()
 {
 	
 }
 
-gameThingManager::~gameThingManager()
+CActorManager::~CActorManager()
 {
 	Clear();
 }
 
-void gameThingManager::AddThing( gameThing* Thing )
+void CActorManager::AddThing( CActor* Thing )
 {
 	List.push_back( Thing );
 }
 
-void gameThingManager::DeleteThing( unsigned int index )
+void CActorManager::DeleteThing( unsigned int index )
 {
 	if( index >= List.size() )
 		return;
@@ -1075,7 +998,7 @@ void gameThingManager::DeleteThing( unsigned int index )
 	List.erase( List.begin() + index );
 }
 
-gameThing* gameThingManager::GetThing( unsigned int index )
+CActor* CActorManager::GetThing( unsigned int index )
 {
 	if( index >= List.size() )
 		return NULL;
@@ -1083,22 +1006,22 @@ gameThing* gameThingManager::GetThing( unsigned int index )
 	return List[index];
 }
 
-gameEnemy* gameThingManager::GetEnemyByID( std::string ID )
+CEnemy* CActorManager::GetEnemyByID( std::string ID )
 {
-	gameEnemy* Enemy;
+	CEnemy* Enemy;
 	for( unsigned int i = 0; i < List.size(); i++ )
 	{
 		if( GetThing( i )->GetType() != GAME_THING_ENEMY )
 			continue;
 
-		Enemy = (gameEnemy*)GetThing( i );
+		Enemy = (CEnemy*)GetThing( i );
 		if( Enemy->GetID() == ID )
 			return Enemy;
 	}
 	return NULL;
 }
 
-Vector3f gameThingManager::GetThingPos( unsigned int index )
+Vector3f CActorManager::GetThingPos( unsigned int index )
 {
 	if( index >= List.size() )
 		return Vector3f( 0.0f, 0.0f, 0.0f );
@@ -1106,7 +1029,7 @@ Vector3f gameThingManager::GetThingPos( unsigned int index )
 	return List[index]->NextPos;	
 }
 
-Vector3f gameThingManager::GetThingBlockPos( unsigned int index )
+Vector3f CActorManager::GetThingBlockPos( unsigned int index )
 {
 	if( index >= List.size() )
 		return Vector3f( 0.0f, 0.0f, 0.0f );
@@ -1114,7 +1037,7 @@ Vector3f gameThingManager::GetThingBlockPos( unsigned int index )
 	return List[index]->GetBlockPos();	
 }
 
-gameBlockInfo* gameThingManager::GetThingBlock( unsigned int index )
+gameBlockInfo* CActorManager::GetThingBlock( unsigned int index )
 {
 	if( index >= List.size() )
 		return NULL;
@@ -1122,9 +1045,9 @@ gameBlockInfo* gameThingManager::GetThingBlock( unsigned int index )
 	return GLevel.GetBlock( List[index]->GetBlockPos() );
 }
 
-void gameThingManager::DoEngine( const float fTD )
+void CActorManager::DoEngine( const float fTD )
 {
-	gameThing* Thing;
+	CActor* Thing;
 	this->all = List.size();
 	this->dead = 0;
 	this->life = 0;
@@ -1153,9 +1076,9 @@ void gameThingManager::DoEngine( const float fTD )
 	}
 }
 
-void gameThingManager::DoDraw()
+void CActorManager::DoDraw()
 {
-	gameThing* Thing;
+	CActor* Thing;
 	unsigned int i;
 
 	for( i = 0; i < List.size(); i++ )
@@ -1169,10 +1092,10 @@ void gameThingManager::DoDraw()
 	}
 }
 
-void gameThingManager::ResetAll()
+void CActorManager::ResetAll()
 {
 	unsigned int i;
-	gameThing* Thing;
+	CActor* Thing;
 
 	for( i = 0; i < List.size(); i++ )
 	{
@@ -1181,12 +1104,12 @@ void gameThingManager::ResetAll()
 	}
 }
 
-void gameThingManager::ReCountStats()
+void CActorManager::ReCountStats()
 {
 	this->all = List.size();
 	this->dead = 0;
 	this->life = 0;
-	gameThing* Thing;
+	CActor* Thing;
 	unsigned int i;
 
 	for( i = 0; i < List.size(); i++ )
@@ -1200,27 +1123,27 @@ void gameThingManager::ReCountStats()
 	}
 }
 
-unsigned int gameThingManager::Count()
+unsigned int CActorManager::Count()
 {
 	return List.size();
 }
 
-unsigned int gameThingManager::GetAllCount()
+unsigned int CActorManager::GetAllCount()
 {
 	return all;
 }
 
-unsigned int gameThingManager::GetLifeCount()
+unsigned int CActorManager::GetLifeCount()
 {
 	return life;
 }
 
-unsigned int gameThingManager::GetDeadCount()
+unsigned int CActorManager::GetDeadCount()
 {
 	return dead;
 }
 
-void gameThingManager::Clear()
+void CActorManager::Clear()
 {
 	int i;
 
@@ -1233,7 +1156,7 @@ void gameThingManager::Clear()
 	}
 }
 
-gameThingManager ThingManager;
+CActorManager ThingManager;
 
 /*=========================	
 	KLASA gameWeaponManager
@@ -1250,7 +1173,7 @@ gameWeaponManager::~gameWeaponManager()
 	Clear();
 }
 
-void gameWeaponManager::DoEngine( gamePlayer* Players, int PlayerCount )
+void gameWeaponManager::DoEngine( CPlayer* Players, int PlayerCount )
 {
 	unsigned int i;
 	int j;

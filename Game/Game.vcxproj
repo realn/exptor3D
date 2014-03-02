@@ -80,6 +80,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp" />
+    <ClCompile Include="src\ActorStats.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\glm.cpp" />
     <ClCompile Include="src\gui.cpp" />

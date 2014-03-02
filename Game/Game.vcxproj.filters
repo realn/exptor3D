@@ -48,6 +48,9 @@
     <ClCompile Include="src\StrEx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\ActorStats.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">

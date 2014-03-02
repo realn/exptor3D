@@ -28,7 +28,7 @@ void weBullet::Init( Vector3f pos, Vector3f veloc, float speed )
 	Veloc = veloc * speed;
 	Pos = pos + ( veloc * 1.5f );
 	NextPos = Pos;
-	R = 0.1f;
+	Radius = 0.1f;
 
 	Type = BULLET_TYPE_NORMAL;
 }
@@ -48,7 +48,7 @@ void weBullet::DoEngine()
 		OnDelete();
 }
 
-float weBullet::DoTest( Dummy* Dum, float Armor )
+float weBullet::DoTest( CEntity* Dum, float Armor )
 {
 	if( Dum != NULL && Dum != Owner && TestCollDum( Dum, this ) )
 	{
@@ -93,7 +93,7 @@ void weBullRay::Init( Vector3f pos, Vector3f veloc, float speed )
 {
 	Pos = pos + ( veloc * 1.5f );
 	Time = 1.0f;
-	R = 0.1f;
+	Radius = 0.1f;
 	Veloc = veloc;
 	Type = BULLET_TYPE_RAY;
 	CanDelete = false;
@@ -111,7 +111,7 @@ void weBullRay::Init( Vector3f pos, Vector3f veloc, float speed )
 	SEManager.AddEffect( Spr );
 }
 
-float weBullRay::DoTest( Dummy* Dum, float Armor )
+float weBullRay::DoTest( CEntity* Dum, float Armor )
 {
 	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
 	if( Dum != NULL && Dum != Owner )
@@ -147,9 +147,9 @@ void weBullRocket::Init( Vector3f pos, Vector3f veloc, float speed )
 	Pos = pos + ( veloc * 3.0f );
 	Veloc = veloc * speed;
 	NextPos = pos + Veloc;
-	Angle = GetAngle( Pos, NextPos );
+	Angle = ::GetAngle( Pos, NextPos );
 	Sec = 0.0f;
-	R = 0.3f;
+	Radius = 0.3f;
 	glEnable( GL_LIGHT0 );
 
 	Model = GLMManager.Get( "Data/Missle.glm" );
@@ -228,7 +228,7 @@ void weBullExplode::Init( Vector3f pos, Vector3f veloc, float speed )
 	SEManager.AddEffect( spec );
 }
 
-float weBullExplode::DoTest( Dummy *Dum, float Armor )
+float weBullExplode::DoTest( CEntity *Dum, float Armor )
 {
 	if( Dum == NULL || Dum == Owner )
 		return 0.0f;
@@ -236,9 +236,9 @@ float weBullExplode::DoTest( Dummy *Dum, float Armor )
 	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
 	float dist = mathDist( Pos, Dum->NextPos );
 
-	if( dist < Dum->R + this->thisPower )
+	if( dist < Dum->Radius + this->thisPower )
 	{
-		if( dist < Dum->R + ( this->thisPower / 2.0f ) )
+		if( dist < Dum->Radius + ( this->thisPower / 2.0f ) )
 			ArmorMod *= 2.0f;
 
 		return Damage * ArmorMod * GUI.GetSpeed();
@@ -275,7 +275,7 @@ void weBullSaw::Init( Vector3f pos, Vector3f veloc, float speed )
 	weBullet::Init( pos, veloc, speed);
 	Pos = pos;
 	NextPos = pos + veloc;
-	R = 0.5f;
+	Radius = 0.5f;
 	Type = BULLET_TYPE_SAW;
 }
 
@@ -284,7 +284,7 @@ void weBullSaw::DoEngine()
 	CanDelete = true;
 }
 
-float weBullSaw::DoTest( Dummy* Dum, float Armor )
+float weBullSaw::DoTest( CEntity* Dum, float Armor )
 {
 	if( Dum != NULL && Dum != Owner && mathDistSq( Dum->NextPos, Pos ) < POW( 5.0f )  )
 	{
@@ -308,7 +308,7 @@ void weBullBomb::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_BOMB;
 }
 
-float weBullBomb::DoTest(Dummy *Dum, float Armor )
+float weBullBomb::DoTest(CEntity *Dum, float Armor )
 {
 	// Nic...
 	return 0.0f;
@@ -357,7 +357,7 @@ weBullet* weBulletManager::GetBullet( unsigned int index )
 	return List[index];
 }
 
-float weBulletManager::DoTest( Dummy* Dum, float Armor )
+float weBulletManager::DoTest( CEntity* Dum, float Armor )
 {
 	float Damage = 0.0f;
 	weBullet* bull;
@@ -549,7 +549,7 @@ void weBonusManager::Clear()
 	}
 }
 
-void weBonusManager::DoEngine(gamePlayer *Player)
+void weBonusManager::DoEngine(CPlayer *Player)
 {
 	if( Count() == 0 || Player == NULL )
 		return;
@@ -656,7 +656,7 @@ void weWeapon::Rotate()
 /*	Ta funkcja jest wywo³ywana, gdy
 	jakaœ postaæ podniesie broñ.
 */
-void weWeapon::PickUp( weWeapon* Weapon, gamePlayer* Player )
+void weWeapon::PickUp( weWeapon* Weapon, CPlayer* Player )
 {
 	if( !InHand )
 	{

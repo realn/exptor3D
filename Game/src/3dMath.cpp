@@ -231,7 +231,7 @@ Vector3f Vector3f::Reverse()
 	return zwrot;
 }
 
-Vector3f Dummy::GetBlockPos()
+Vector3f CEntity::GetBlockPos()
 {
 	Vector3f zwrot;
 	zwrot.X = float( (int)Pos.X / 10 );
