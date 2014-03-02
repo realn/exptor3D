@@ -82,7 +82,7 @@ void CActor::Move( unsigned int flags, const float fTD )
 	Vector.Normalize();
 }
 
-void CActor::DoEngine( const float fTD )
+void CActor::Update( const float fTD )
 {
 	UpdateStats( fTD );
 
@@ -100,7 +100,7 @@ void CActor::DoEngine( const float fTD )
 	Pos = NextPos;
 }
 
-void CActor::DoDraw()
+void CActor::Render()
 {
 	// Dla niezdefiniowanych obiektów to pole pozostaje puste
 }
@@ -447,18 +447,18 @@ void CPlayer::ApplyNextPos()
 	Pos = NextPos;
 }
 
-void CPlayer::DoDraw()
+void CPlayer::Render()
 {
 	if( Weapon[CurrWeap]->GetHave() )
-		Weapon[CurrWeap]->DoDraw();
+		Weapon[CurrWeap]->Render();
 }
 
-void CPlayer::DoEngine( const float fTD )
+void CPlayer::Update( const float fTD )
 {
 
 }
 
-void CPlayer::DoEngine( bool* Keys, const float fTD )
+void CPlayer::Update( bool* Keys, const float fTD )
 {
 	Actions = 0;
 	if( Keys['W'] || Keys[VK_UP] )
@@ -552,7 +552,7 @@ void CPlayer::DoEngine( bool* Keys, const float fTD )
 	if( Weapon[CurrWeap]->GetHave() )
 	{
 		Weapon[CurrWeap]->Pos = Pos + temp;
-		Weapon[CurrWeap]->DoEngine();
+		Weapon[CurrWeap]->Update();
 		GUI.PInfo.AMMO = Weapon[CurrWeap]->GetAmmo();
 		GUI.PInfo.CLIPS = Weapon[CurrWeap]->GetClip();
 		GUI.PInfo.WeapName = Weapon[CurrWeap]->Name;
@@ -754,7 +754,7 @@ const bool CEnemy::LoadEnemy( const std::string filename )
 	return true;
 }
 
-void CEnemy::DoDraw()
+void CEnemy::Render()
 {
 	if( IsDead() )
 		return;
@@ -919,12 +919,12 @@ std::string gameStatObj::GetStr( FILE* fp )
 	return buf;
 }
 
-void gameStatObj::DoEngine( const float fTD )
+void gameStatObj::Update( const float fTD )
 {
 	//TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
 }
 
-void gameStatObj::DoDraw()
+void gameStatObj::Render()
 {
 	if( !Model )
 		return;
@@ -1045,7 +1045,7 @@ gameBlockInfo* CActorManager::GetThingBlock( unsigned int index )
 	return GLevel.GetBlock( List[index]->GetBlockPos() );
 }
 
-void CActorManager::DoEngine( const float fTD )
+void CActorManager::Update( const float fTD )
 {
 	CActor* Thing;
 	this->all = List.size();
@@ -1068,7 +1068,7 @@ void CActorManager::DoEngine( const float fTD )
 
 		Thing->ModHealth( -BManager.DoTest( Thing, Thing->GetArmor() ) );
 
-		Thing->DoEngine( fTD );
+		Thing->Update( fTD );
 
 		if( Thing->GetType() != GAME_THING_PLAYER )
 			this->life++;
@@ -1076,7 +1076,7 @@ void CActorManager::DoEngine( const float fTD )
 	}
 }
 
-void CActorManager::DoDraw()
+void CActorManager::Render()
 {
 	CActor* Thing;
 	unsigned int i;
@@ -1088,7 +1088,7 @@ void CActorManager::DoDraw()
 		if( mathDistSq( MainPlayer.Pos, Thing->Pos ) > POW(100.0f) )
 			continue;
 
-		Thing->DoDraw();
+		Thing->Render();
 	}
 }
 
@@ -1173,13 +1173,13 @@ gameWeaponManager::~gameWeaponManager()
 	Clear();
 }
 
-void gameWeaponManager::DoEngine( CPlayer* Players, int PlayerCount )
+void gameWeaponManager::Update( CPlayer* Players, int PlayerCount )
 {
 	unsigned int i;
 	int j;
 	for( i = 0; i < List.size(); i++ )
 	{
-		List[i]->DoEngine();
+		List[i]->Update();
 	}
 	for( i = 0; i < PlayerCount; i++ )
 	{
@@ -1194,12 +1194,12 @@ void gameWeaponManager::DoEngine( CPlayer* Players, int PlayerCount )
 	}
 }
 
-void gameWeaponManager::DoDraw()
+void gameWeaponManager::Render()
 {
 	unsigned int i;
 	for( i = 0; i < List.size(); i++ )
 	{
-		List[i]->DoDraw();
+		List[i]->Render();
 	}
 	if( GUI.GetReflection() )
 	{
@@ -1211,7 +1211,7 @@ void gameWeaponManager::DoDraw()
 		glFrontFace( GL_CW );
 		for( i = 0; i < List.size(); i++ )
 		{
-			List[i]->DoDraw();
+			List[i]->Render();
 		}
 		glFrontFace( GL_CCW );
 		glDisable( GL_CLIP_PLANE1 );

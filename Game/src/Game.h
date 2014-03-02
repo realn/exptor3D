@@ -64,6 +64,18 @@ public:
 	virtual void SetArmor( const float set );
 };
 
+class IUpdateable
+{
+public:
+	virtual void Update(const float fTD) = 0;
+};
+
+class IRenderable
+{
+public:
+	virtual void Render() = 0;
+};
+
 /*	KLASA CActor
 	Jest to klasa wyjœciowa dla wiêkszoœci
 	obiektów "¿ywych" -  w tym tak¿e dla gracza.
@@ -73,7 +85,8 @@ public:
 */
 class CActor : 
 	public CEntity,
-	public CActorStats
+	public CActorStats,
+	public IUpdateable
 {
 protected:
 	float StartAngle;
@@ -107,8 +120,8 @@ public:
 
 	virtual void Init();
 
-	virtual void DoEngine( const float fTD );
-	virtual void DoDraw();
+	virtual void Update( const float fTD ) override;
+	virtual void Render();
 
 	virtual void Reset() override;
 
@@ -164,9 +177,9 @@ public:
 	void	OnDie() override;
 	void	OnDead() override;
 
-	void DoDraw();
-	void DoEngine( const float fTD ) override;
-	void DoEngine( bool* Keys, const float fTD );
+	void Render();
+	void Update( const float fTD ) override;
+	void Update( bool* Keys, const float fTD );
 
 	void Move(unsigned uFlags, const float fTD ) override;
 
@@ -211,7 +224,7 @@ public:
 
 	const bool LoadEnemy( const std::string filename );
 
-	void DoDraw();
+	void Render();
 	void Fire( Vector3f FireTarget );
 
 	void OnDie() override;
@@ -233,8 +246,8 @@ public:
 	gameStatObj()
 	{	file = "-";	};
 
-	void DoEngine( const float fTD );
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 
 	bool LoadObj( std::string filename );
 };
@@ -255,8 +268,8 @@ public:
 	CActorManager();
 	~CActorManager();
 
-	void DoEngine( const float fTD );
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 
 	void ReCountStats();
 	void ResetAll();
@@ -289,8 +302,8 @@ private:
 public:
 	gameWeaponManager();
 	~gameWeaponManager();
-	void DoEngine( CPlayer* Players, int PlayerCount );
-	void DoDraw();
+	void Update( CPlayer* Players, int PlayerCount );
+	void Render();
 
 	void AddWeapon( weWeapon* weapon );
 	void DeleteWeapon( unsigned int index );
@@ -313,7 +326,7 @@ public:
 	float GetRot();
 
 	void LoadFromFile( std::string filename );
-	void DoDraw();
+	void Render();
 };
 */
 extern CActorManager ThingManager;

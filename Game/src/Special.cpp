@@ -19,12 +19,12 @@ specEffect::specEffect()
 	CanDelete = false;
 }
 
-void specEffect::DoEngine()
+void specEffect::Update()
 {
 
 }
 
-void specEffect::DoDraw()
+void specEffect::Render()
 {
 
 }
@@ -37,14 +37,14 @@ void specRay::Create( Vector3f Pos, Vector3f Veloc )
 	ToPos = RayCast( Pos, Veloc, 1.0f, &GLevel );
 }
 
-void specRay::DoEngine()
+void specRay::Update()
 {
 	if( Alpha > 0.0f )
 		Alpha -= 0.02f * GUI.GetSpeed();
 	else CanDelete = true;
 }
 
-void specRay::DoDraw()
+void specRay::Render()
 {
 	glDisable( GL_TEXTURE_2D );
 	glDisable( GL_CULL_FACE );
@@ -72,7 +72,7 @@ void specExplode::Create( Vector3f Pos, float Power, float fStep )
 	thisPower = 0.0f;
 }
 
-void specExplode::DoEngine()
+void specExplode::Update()
 {
 	if( thisPower < toPower )
 	{
@@ -83,7 +83,7 @@ void specExplode::DoEngine()
 	else CanDelete = true;
 }
 
-void specExplode::DoDraw()
+void specExplode::Render()
 {
 	glPushMatrix();
 	glDisable( GL_TEXTURE_2D );
@@ -119,14 +119,14 @@ void specSprite::Create( Vector3f Pos, float R, float G, float B )
 	CanDelete = false;
 }
 
-void specSprite::DoEngine()
+void specSprite::Update()
 {
 	Alpha -= 0.01f * GUI.GetSpeed();
 	if( Alpha <= 0.0f )
 		CanDelete = true;
 }
 
-void specSprite::DoDraw()
+void specSprite::Render()
 {
 	if( !GUI.GetCanSmoke() )
 		return;
@@ -178,13 +178,13 @@ specEffect* specManager::GetEffect( unsigned int index )
 	return List[index];
 }
 
-void specManager::DoEngine()
+void specManager::Update()
 {
 	specEffect* effect;
 	for( int i = List.size()-1; i >= 0; i-- )
 	{
 		effect = List[i];
-		effect->DoEngine();
+		effect->Update();
 		if( effect->CanDelete )
 		{
 			DeleteEffect( i );
@@ -192,7 +192,7 @@ void specManager::DoEngine()
 	}
 }
 
-void specManager::DoDraw()
+void specManager::Render()
 {
 	unsigned int i;
 	specEffect* effect;
@@ -203,7 +203,7 @@ void specManager::DoDraw()
 		if( !effect->Visible )
 			continue;
 
-		effect->DoDraw();
+		effect->Render();
 	}
 	if( GUI.GetReflection() )
 	{
@@ -220,7 +220,7 @@ void specManager::DoDraw()
 			if( !effect->Visible )
 				continue;
 
-			effect->DoDraw();
+			effect->Render();
 		}
 		glFrontFace( GL_CCW );
 		glDisable( GL_CLIP_PLANE1 );
@@ -312,7 +312,7 @@ void specMotionBlur::CopyImage()
 	CanCopy = false;
 }
 
-void specMotionBlur::DoEngine()
+void specMotionBlur::Update()
 {
 	tick++;
 	if( tick >= GUI.GetMBKeyFrames() )
@@ -322,7 +322,7 @@ void specMotionBlur::DoEngine()
 	}
 }
 
-void specMotionBlur::DoDraw()
+void specMotionBlur::Render()
 {
 	glCallList( list );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );

@@ -106,27 +106,27 @@ void Update(const float fTD)	// Logika gry
 	Mouse();
 
 	GLevel.CheckWLFlags();
-	MainPlayer.DoEngine( Keys, fTD );
-	ThingManager.DoEngine( fTD );
+	MainPlayer.Update( Keys, fTD );
+	ThingManager.Update( fTD );
 
 	if( GUI.GetCliping() )
 	{
 		MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
-		WManager.DoEngine( &MainPlayer, 1 );
-		BonusMan.DoEngine( &MainPlayer );
+		WManager.Update( &MainPlayer, 1 );
+		BonusMan.Update( &MainPlayer );
 	}
 	MainPlayer.ApplyNextPos();
 
-	SEManager.DoEngine();
-	SMBlur.DoEngine();
-	BManager.DoEngine();
+	SEManager.Update();
+	SMBlur.Update();
+	BManager.Update();
 
 	GUI.PInfo.HEALTH = MainPlayer.GetHealth();
 	GUI.PInfo.ARMOR = MainPlayer.GetArmor();
 	GUI.PInfo.angle = MainPlayer.GetAng();
 }
 
-void DoDraw()	// Wizualizacja gry
+void RenderLevel()	// Wizualizacja gry
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
 	if( GUI.GetMotionBlur() )
@@ -139,20 +139,20 @@ void DoDraw()	// Wizualizacja gry
 		glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
 		GLevel.DrawLevel();
-		ThingManager.DoDraw();
+		ThingManager.Render();
 		glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-		WManager.DoDraw();
-		BManager.DoDraw();
-		BonusMan.DoDraw();
+		WManager.Render();
+		BManager.Render();
+		BonusMan.Render();
 		glDepthMask( 0 );
-		SEManager.DoDraw();
+		SEManager.Render();
 		GLevel.DrawReflect();
 		glDepthMask( 1 );
 
 		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
 		glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
 		glLoadIdentity();
-		MainPlayer.DoDraw();
+		MainPlayer.Render();
 		
 		glFlush();
 
@@ -168,23 +168,23 @@ void DoDraw()	// Wizualizacja gry
 	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
 	GLevel.DrawLevel();
-	ThingManager.DoDraw();
+	ThingManager.Render();
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-	WManager.DoDraw();
-	BManager.DoDraw();
-	BonusMan.DoDraw();
+	WManager.Render();
+	BManager.Render();
+	BonusMan.Render();
 	glDepthMask( 0 );
-	SEManager.DoDraw();
+	SEManager.Render();
 	GLevel.DrawReflect();
 	glDepthMask( 1 );
 
 	GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
 	glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
 	glLoadIdentity();
-	MainPlayer.DoDraw();
+	MainPlayer.Render();
 
 	if( GUI.GetMotionBlur() )
-		SMBlur.DoDraw();
+		SMBlur.Render();
 
 	glFlush();
 }
@@ -194,7 +194,7 @@ bool Render()		//G³ówna funkcja renderuj¹ca
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
 
 	if( GUI.CanDoMainDraw() )
-		DoDraw();
+		RenderLevel();
 
 	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
 	{

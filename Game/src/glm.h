@@ -61,8 +61,8 @@ public:
 	unsigned int GetObjCount();
 
 	void CallObject( unsigned int index );
-	void DoDrawAnim( unsigned int index );
-	void DoEngineAnim();
+	void RenderAnim( unsigned int index );
+	void UpdateAnim();
 	void PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip = false );
 
 private:

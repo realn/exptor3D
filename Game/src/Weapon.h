@@ -11,7 +11,8 @@
 #include	"Game.h"
 
 /*	KLASY POCISKÓW	*/
-class weBullet : public CEntity
+class weBullet : 
+	public CEntity
 {
 protected:
 	unsigned int Type;
@@ -25,9 +26,9 @@ public:
 
 	virtual void Init( Vector3f pos, Vector3f veloc, float speed );
 
-	virtual void DoEngine();
+	virtual void Update( const float fTD );
 	virtual float DoTest( CEntity* Dum, float Armor = 0.0f );
-	virtual void DoDraw();
+	virtual void Render();
 
 	virtual void OnDelete();
 
@@ -40,7 +41,7 @@ class weBullSaw : public weBullet
 private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void DoEngine();
+	void Update();
 	float DoTest( CEntity* Dum, float Armor = 0.0f );
 };
 // Promieñ
@@ -52,9 +53,9 @@ private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	
-	void DoEngine();
+	void Update( const float fTD ) override;
 	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void DoDraw();
+	void Render();
 };
 
 // Rakieta
@@ -67,8 +68,8 @@ private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD ) override;
+	void Render();
 	void OnDelete();
 };
 
@@ -83,9 +84,9 @@ public:
 
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 
-	void DoEngine();
+	void Update( const float fTD ) override;
 	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void DoDraw();
+	void Render();
 };
 
 // Bomba
@@ -97,9 +98,9 @@ private:
 	GLModel* Model;
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void DoEngine();
+	void Update( const float fTD ) override;
 	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void DoDraw();
+	void Render();
 };
 // Menager pocisków
 class weBulletManager
@@ -112,8 +113,8 @@ public:
 	weBullet* GetBullet( unsigned int index );
 
 	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 
 	void Clear();
 };
@@ -130,8 +131,8 @@ protected:
 public:
 	weBonus();
 	bool CanDelete;
-	virtual void DoDraw();
-	virtual void DoEngine();
+	virtual void Render();
+	virtual void Update( const float fTD );
 	unsigned int GetType();
 };
 
@@ -176,8 +177,8 @@ public:
 	weBonus* GetBonus( unsigned int index );
 	void DeleteBonus( unsigned int index );
 
-	void DoEngine( CPlayer* Player );
-	void DoDraw();
+	void Update( CPlayer* Player, const float fTD  );
+	void Render();
 
 	unsigned int Count();
 	void Clear();
@@ -250,8 +251,8 @@ public:
 	void PickUp( weWeapon* Weapon, CPlayer* Player );
 
 	virtual void Init();
-	virtual void DoEngine();
-	virtual void DoDraw();
+	virtual void Update( const float fTD );
+	virtual void Render();
 	virtual void Shot();
 	virtual void Free();
 
@@ -276,8 +277,8 @@ public:
 	weSaw();
 	// Funckja inicjuj¹ca
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD ) override;
+	void Render();
 
 	// Funkcja wywo³ywana podczas strza³u
 	void Shot();
@@ -294,8 +295,8 @@ private:
 public:
 	// Inicjalizacja
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD ) override;
+	void Render();
 
 	void Shot();
 };
@@ -311,8 +312,8 @@ private:
 public:
 	// Inicjalizacja
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 	void Shot();
 };
 
@@ -327,8 +328,8 @@ private:
 public:
 	// Inicjalizacja
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 	void Shot();
 };
 
@@ -342,8 +343,8 @@ private:
 	float Time;
 public:
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update();
+	void Render();
 	void Shot();
 };
 
@@ -355,8 +356,8 @@ private:
 	float BackA;
 public:
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update();
+	void Render();
 	void Shot();
 };
 
@@ -370,8 +371,8 @@ private:
 	Vector3f PutPos;
 public:
 	void Init();
-	void DoEngine();
-	void DoDraw();
+	void Update();
+	void Render();
 	void Shot();
 };
 
