@@ -128,5 +128,8 @@
     <ClInclude Include="src\GameStaticObject.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameEntity.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

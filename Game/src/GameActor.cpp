@@ -9,7 +9,7 @@
 
 =========================*/
 CActor::CActor() : 
-	CEntity(2.0f),
+	CDynamic(2.0f),
 	CActorStats(100.0f, 100.0f),
 	Model(0),
 	Enemy(0)

@@ -182,9 +182,9 @@ public:
 	void Free();
 };
 
-extern bool TestCollBlock( CEntity* Dum, gameBlockInfo* Block, bool testthing = false );
+extern bool TestCollBlock( CDynamic* Dum, gameBlockInfo* Block, bool testthing = false );
 extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level );
-extern bool TestCollDum( CEntity* Dum, CEntity* Dum2 );
+extern bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
 extern gameLevel GLevel;

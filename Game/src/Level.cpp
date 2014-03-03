@@ -1385,11 +1385,11 @@ void gameLevel::Free()
 }
 
 /*	To jest odzielna funkcja sprawdzaj¹ca kolizje
-	obiektu CEntity, ze œcianami podanego bloku.
+	obiektu CDynamic, ze œcianami podanego bloku.
 	Jest to samodzielna funkcja, by mo¿na by³o j¹ wygonie
 	u¿yæ, nie korzystaj¹c z klasy gameLevel.
 */
-bool TestCollBlock( CEntity* Dum, gameBlockInfo* Block, bool testthing )
+bool TestCollBlock( CDynamic* Dum, gameBlockInfo* Block, bool testthing )
 {
 	if( Block == NULL )
 		return false;
@@ -1571,7 +1571,7 @@ Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level )
 	if(Veloc.LeangthSq() == 0.0f)
 		return Pos;
 
-	CEntity Dum;
+	CDynamic Dum;
 	Dum.Radius = 0.1f;
 	Dum.NextPos = Pos;
 	gameBlockInfo* Block = NULL;
@@ -1602,7 +1602,7 @@ Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level )
 	sprawdza ona odleg³oœæ miêdzy dwoma kuk³ami i
 	zwraca czy siê zde¿y³y, czy nie.
 */
-bool TestCollDum( CEntity* Dum, CEntity* Dum2 )
+bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 )
 {
 	Vector3f V1 = ClosestPoint( Dum2->Pos, Dum2->NextPos, Dum->NextPos );
 
@@ -1619,7 +1619,7 @@ bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps )
 {
 	Vector3f Veloc = V2 - V1;
 	Vector3f Step = Veloc / (float)Steps;
-	CEntity Dum;
+	CDynamic Dum;
 	Dum.Radius = 0.1f;
 	Dum.NextPos = V1;
 	gameBlockInfo* Block = NULL;

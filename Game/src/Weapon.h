@@ -11,7 +11,7 @@
 
 /*	KLASY POCISKÓW	*/
 class weBullet : 
-	public CEntity
+	public CDynamic
 {
 protected:
 	unsigned int Type;
@@ -26,7 +26,7 @@ public:
 	virtual void Init( Vector3f pos, Vector3f veloc, float speed );
 
 	virtual void Update( const float fTD );
-	virtual float DoTest( CEntity* Dum, float Armor = 0.0f );
+	virtual float DoTest( CDynamic* Dum, float Armor = 0.0f );
 	virtual void Render();
 
 	virtual void OnDelete();
@@ -41,7 +41,7 @@ private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
+	float DoTest( CDynamic* Dum, float Armor = 0.0f );
 };
 // Promieñ
 class weBullRay : public weBullet
@@ -53,7 +53,7 @@ public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	
 	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
+	float DoTest( CDynamic* Dum, float Armor = 0.0f );
 	void Render();
 };
 
@@ -84,7 +84,7 @@ public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 
 	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
+	float DoTest( CDynamic* Dum, float Armor = 0.0f );
 	void Render();
 };
 
@@ -98,7 +98,7 @@ private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
 	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
+	float DoTest( CDynamic* Dum, float Armor = 0.0f );
 	void Render();
 };
 // Menager pocisków
@@ -111,7 +111,7 @@ public:
 	void DeleteBullet( unsigned int index );
 	weBullet* GetBullet( unsigned int index );
 
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
+	float DoTest( CDynamic* Dum, float Armor = 0.0f );
 	void Update( const float fTD );
 	void Render();
 
@@ -121,7 +121,7 @@ public:
 
 extern weBulletManager BManager;
 
-class weBonus : public CEntity
+class weBonus : public CDynamic
 {
 protected:
 	float rot;
@@ -191,7 +191,7 @@ extern weBonusManager BonusMan;
 	elementy wspólne dla
 	wszystkich klas.
 */
-class weWeapon : public CEntity
+class weWeapon : public CDynamic
 {
 	/*	¯eby by³ dostêp do tych zmiennych
 		w klasach dziedzicz¹czych, umieœci³em

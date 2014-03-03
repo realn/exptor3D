@@ -2,6 +2,7 @@
 
 #include "3dMath.h"
 #include "glm.h"
+#include "GameEntity.h"
 
 #define GAME_THING_PLAYER	0
 #define GAME_THING_ENEMY	1
@@ -89,7 +90,8 @@ public:
 	sztucznej inteligencji.
 */
 class CActor : 
-	public CEntity,
+	public IEntity,
+	public CDynamic,
 	public CActorStats
 {
 protected:
@@ -124,8 +126,8 @@ public:
 
 	virtual void Init();
 
-	virtual void Update( const float fTD );
-	virtual void Render();
+	virtual void Update( const float fTD ) override;
+	virtual void Render() override;
 
 	virtual void Reset() override;
 

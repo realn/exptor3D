@@ -49,7 +49,7 @@ void weBullet::Update( const float fTD )
 		OnDelete();
 }
 
-float weBullet::DoTest( CEntity* Dum, float Armor )
+float weBullet::DoTest( CDynamic* Dum, float Armor )
 {
 	if( Dum != NULL && Dum != Owner && TestCollDum( Dum, this ) )
 	{
@@ -112,7 +112,7 @@ void weBullRay::Init( Vector3f pos, Vector3f veloc, float speed )
 	SEManager.AddEffect( Spr );
 }
 
-float weBullRay::DoTest( CEntity* Dum, float Armor )
+float weBullRay::DoTest( CDynamic* Dum, float Armor )
 {
 	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
 	if( Dum != NULL && Dum != Owner )
@@ -229,7 +229,7 @@ void weBullExplode::Init( Vector3f pos, Vector3f veloc, float speed )
 	SEManager.AddEffect( spec );
 }
 
-float weBullExplode::DoTest( CEntity *Dum, float Armor )
+float weBullExplode::DoTest( CDynamic *Dum, float Armor )
 {
 	if( Dum == NULL || Dum == Owner )
 		return 0.0f;
@@ -285,7 +285,7 @@ void weBullSaw::Update( const float fTD )
 	CanDelete = true;
 }
 
-float weBullSaw::DoTest( CEntity* Dum, float Armor )
+float weBullSaw::DoTest( CDynamic* Dum, float Armor )
 {
 	if( Dum != NULL && Dum != Owner && mathDistSq( Dum->NextPos, Pos ) < POW( 5.0f )  )
 	{
@@ -309,7 +309,7 @@ void weBullBomb::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_BOMB;
 }
 
-float weBullBomb::DoTest(CEntity *Dum, float Armor )
+float weBullBomb::DoTest(CDynamic *Dum, float Armor )
 {
 	// Nic...
 	return 0.0f;
@@ -358,7 +358,7 @@ weBullet* weBulletManager::GetBullet( unsigned int index )
 	return List[index];
 }
 
-float weBulletManager::DoTest( CEntity* Dum, float Armor )
+float weBulletManager::DoTest( CDynamic* Dum, float Armor )
 {
 	float Damage = 0.0f;
 	weBullet* bull;

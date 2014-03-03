@@ -147,7 +147,7 @@ public:
 ///	Objawia siê ona zwrotem/kierunkiem w który mog¹
 /// byæ zwrócone oraz pozycj¹ w której chc¹ siê znaleŸæ.
 /// </summary>
-class CEntity : 
+class CDynamic : 
 	public CObject
 {
 public:
@@ -155,9 +155,9 @@ public:
 	Vector3f	Vector;
 
 public:
-	CEntity() : CObject(3.0f){};
-	CEntity(const float radius) : CObject(radius){}
-	virtual ~CEntity(){}
+	CDynamic() : CObject(3.0f){};
+	CDynamic(const float radius) : CObject(radius){}
+	virtual ~CDynamic(){}
 
 	Vector3f GetBlockPos();
 };

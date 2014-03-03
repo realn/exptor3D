@@ -3,9 +3,12 @@
 #include "3dMath.h"
 #include "glm.h"
 
+#include "GameEntity.h"
+
 /*	KLASA gameStatObj
 */
 class gameStatObj : 
+	public IEntity,
 	public CObject
 {
 private:
@@ -17,8 +20,8 @@ public:
 	gameStatObj()
 	{	file = "-";	};
 
-	void Update( const float fTD );
-	void Render();
+	void Update( const float fTD ) override;
+	void Render() override;
 
 	bool LoadObj( std::string filename );
 };

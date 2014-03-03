@@ -105,6 +105,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameActor.h" />
     <ClInclude Include="src\GameEnemy.h" />
+    <ClInclude Include="src\GameEntity.h" />
     <ClInclude Include="src\GamePlayer.h" />
     <ClInclude Include="src\GameStaticObject.h" />
     <ClInclude Include="src\glm.h" />
