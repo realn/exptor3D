@@ -14,7 +14,7 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 #include "main.h"
 
 #include "GamePlayer.h"
-
+#include "WeaponBulletManager.h"
 
 bool CanDoWLScr = true;
 

@@ -1,127 +1,19 @@
 #pragma once
 
-#include	"defines.h"
-#include	"gui.h"
-#include	"Render.h"
-#include	"Texture.h"
-#include	"glm.h"
-#include	"3dMath.h"
-#include	"Special.h"
-#include	"Game.h"
+#include "3dMath.h"
+#include "GameEntity.h"
+#include "glm.h"
+#include "GamePlayer.h"
 
-/*	KLASY POCISKÓW	*/
-class weBullet : 
-	public CDynamic
-{
-protected:
-	unsigned int Type;
-	Vector3f Veloc;
-	bool DoDelete;
-
-public:
-	float Damage;
-	CActor* Owner;
-
-	weBullet();
-
-	virtual void Init( Vector3f pos, Vector3f veloc, float speed );
-
-	virtual void Update( const float fTD );
-	virtual float DoTest( CDynamic* Dum, float Armor = 0.0f );
-	virtual void Render();
-
-	virtual void OnDelete();
-
-	bool CanDelete;
-	bool Visible;
-};
-
-class weBullSaw : public weBullet
-{
-private:
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void Update( const float fTD ) override;
-	float DoTest( CDynamic* Dum, float Armor = 0.0f );
-};
-
-// Promieñ
-class weBullRay : public weBullet
-{
-private:
-	Vector3f Temp;
-	float Time;
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-	
-	void Update( const float fTD ) override;
-	float DoTest( CDynamic* Dum, float Armor = 0.0f );
-	void Render();
-};
-
-// Rakieta
-class weBullRocket : public weBullet
-{
-private:
-	GLModel* Model;
-	float Angle;
-	float Sec;
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-
-	void Update( const float fTD ) override;
-	void Render();
-	void OnDelete();
-};
-
-// Wybuch
-class weBullExplode : public weBullet
-{
-private:
-	float thisPower;
-	float Step;
-public:
-	float Power;
-
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-
-	void Update( const float fTD ) override;
-	float DoTest( CDynamic* Dum, float Armor = 0.0f );
-	void Render();
-};
-
-// Bomba
-class weBullBomb : public weBullet
-{
-private:
-	float BoomTime;
-	float ThisTime;
-	GLModel* Model;
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void Update( const float fTD ) override;
-	float DoTest( CDynamic* Dum, float Armor = 0.0f );
-	void Render();
-};
-// Menager pocisków
-class weBulletManager
-{
-private:
-	std::vector<weBullet*> List;
-public:
-	void AddBullet( weBullet* bullet );
-	void DeleteBullet( unsigned int index );
-	weBullet* GetBullet( unsigned int index );
-
-	float DoTest( CDynamic* Dum, float Armor = 0.0f );
-	void Update( const float fTD );
-	void Render();
-
-	void Clear();
-};
-
-
-extern weBulletManager BManager;
+#define	GAME_WEAP_SAW		0
+#define	GAME_WEAP_PISTOL	1
+#define	GAME_WEAP_MINIPZR	3
+#define	GAME_WEAP_MINIGUN	4
+#define	GAME_WEAP_ROCKETLUN	5
+#define	GAME_WEAP_PICKABOO	6
+#define	GAME_WEAP_PHAZER	7
+#define	GAME_WEAP_MINE		8
+#define	GAME_WEAP_ATOM_BOMB	9
 
 class weBonus : public CDynamic
 {

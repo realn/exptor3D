@@ -9,426 +9,11 @@ Opis:	Patrz -> Weapon.h
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "Weapon.h"
+
 #include "GamePlayer.h"
+#include "Level.h"
+#include "Special.h"
 
-/*====================
-	KLASA weBullet
-	zwyk³y pocisk - 
-	podstawa do 
-	reszty pocisków.
-====================*/
-weBullet::weBullet()
-{
-	CanDelete = false;
-	DoDelete = false;
-	Visible = true;
-}
-
-void weBullet::Init( Vector3f pos, Vector3f veloc, float speed )
-{
-	Veloc = veloc * speed;
-	Pos = pos + ( veloc * 1.5f );
-	NextPos = Pos;
-	Radius = 0.1f;
-
-	Type = BULLET_TYPE_NORMAL;
-}
-
-void weBullet::Update( const float fTD )
-{
-	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
-	{
-		Pos = NextPos;
-		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
-		if( GLevel.GetBlock( this->GetBlockPos() ) == NULL )
-			DoDelete = true;
-	}
-	else DoDelete = true;
-
-	if( DoDelete )
-		OnDelete();
-}
-
-float weBullet::DoTest( CDynamic* Dum, float Armor )
-{
-	if( Dum != NULL && Dum != Owner && TestCollDum( Dum, this ) )
-	{
-		float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-		DoDelete = true;
-		return Damage * ArmorMod;
-	}
-	return 0.0f;
-}
-
-void weBullet::Render()
-{
-	glPushMatrix();
-	GLUquadric* obj = gluNewQuadric();
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
-
-	glDisable( GL_TEXTURE_2D );
-
-	glColor3f( 0.5f, 0.5f, 0.5f );
-	gluSphere( obj, 0.1, 8, 8 );
-
-	glEnable( GL_TEXTURE_2D );
-
-	gluDeleteQuadric( obj );
-	glPopMatrix();
-}
-
-void weBullet::OnDelete()
-{
-	specSprite* Spr = new specSprite;
-	Spr->Create( NextPos, 0.5f, 0.5f, 0.5f );
-	SEManager.AddEffect( Spr );
-	CanDelete = true;
-}
-
-
-/*====================
-	KLASA weBullRay
-	promieñ phazer'a
-====================*/
-void weBullRay::Init( Vector3f pos, Vector3f veloc, float speed )
-{
-	Pos = pos + ( veloc * 1.5f );
-	Time = 1.0f;
-	Radius = 0.1f;
-	Veloc = veloc;
-	Type = BULLET_TYPE_RAY;
-	CanDelete = false;
-
-	specRay* Effect = new specRay;
-	specSprite* Spr = new specSprite;
-
-	Effect->Create( Pos, veloc );
-	Pos = Effect->FromPos;
-	NextPos = Effect->ToPos;
-
-	Spr->Create( Effect->ToPos + ( veloc.Reverse() * 0.2f ), 1.0f, 0.8f, 0.0f );
-
-	SEManager.AddEffect( Effect );
-	SEManager.AddEffect( Spr );
-}
-
-float weBullRay::DoTest( CDynamic* Dum, float Armor )
-{
-	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-	if( Dum != NULL && Dum != Owner )
-	{
-		if( TestCollDum( Dum, this ) )
-		{
-			specSprite* Spr = new specSprite;
-			Spr->Create( Dum->NextPos, 1.0f, 2.0f, 0.0f );
-			SEManager.AddEffect( Spr );
-			return Damage * ArmorMod;
-		}
-	}
-	return 0.0f;
-}
-
-void weBullRay::Update( const float fTD )
-{
-	CanDelete = true;
-}
-
-void weBullRay::Render()
-{
-	// Nic...
-}
-
-
-/*====================
-	KLASA weBullRocked
-	Rakieta z wyrzutni
-====================*/
-void weBullRocket::Init( Vector3f pos, Vector3f veloc, float speed )
-{
-	Pos = pos + ( veloc * 3.0f );
-	Veloc = veloc * speed;
-	NextPos = pos + Veloc;
-	Angle = ::GetAngle( Pos, NextPos );
-	Sec = 0.0f;
-	Radius = 0.3f;
-	glEnable( GL_LIGHT0 );
-
-	Model = GLMManager.Get( "Data/Missle.glm" );
-
-	Type = BULLET_TYPE_ROCKET;
-}
-
-void weBullRocket::Render()
-{
-	glPushMatrix();
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
-	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
-	
-	glRotatef( 180.f, 0.0f, 1.0f ,0.0f );
-#ifdef LIGHT_TEST
-	float t[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glLightfv( GL_LIGHT0, GL_POSITION, t );
-#endif
-	Model->CallObject( 0 );
-
-	glPopMatrix();
-}
-
-void weBullRocket::OnDelete()
-{
-	CanDelete = true;
-	weBullExplode *Bull = new weBullExplode;
-	Bull->Owner = NULL;
-	Bull->Damage = this->Damage / 10.0f;
-	Bull->Power = 15.0f;
-	Bull->Init( Pos, Veloc, 0.4f );
-	BManager.AddBullet( Bull );
-	glDisable( GL_LIGHT0 );
-}
-
-void weBullRocket::Update( const float fTD )
-{
-	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
-	{
-		Pos = NextPos;
-		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
-		Sec += fTD * GUI.GetSpeed();
-		if( Sec > 3.0f )
-		{
-			Vector3f Tail = Veloc;
-			Tail.Normalize();
-			Tail *= 1.0f;
-			Tail = Tail.Reverse();
-			Sec = 0.0f;
-			specSprite* spec = new specSprite;
-			spec->Create( Pos + Tail, 1.0f, 0.7f, 0.0f );
-			SEManager.AddEffect( spec );
-		}
-		if( GLevel.GetBlock( this->GetBlockPos() ) == NULL )
-			DoDelete = true;
-	}
-	else DoDelete = true;
-
-	if( DoDelete )
-		OnDelete();
-}
-
-/*====================
-	KLASA weBullExplode
-	eksplozja
-====================*/
-void weBullExplode::Init( Vector3f pos, Vector3f veloc, float speed )
-{
-	thisPower = 0.0f;
-	Step = speed;
-	NextPos = Pos = pos;
-	glEnable( GL_LIGHT1 );
-
-	specExplode* spec = new specExplode;
-	spec->Create( Pos, Power, Step );
-	SEManager.AddEffect( spec );
-}
-
-float weBullExplode::DoTest( CDynamic *Dum, float Armor )
-{
-	if( Dum == NULL || Dum == Owner )
-		return 0.0f;
-
-	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-	float dist = mathDist( Pos, Dum->NextPos );
-
-	if( dist < Dum->Radius + this->thisPower )
-	{
-		if( dist < Dum->Radius + ( this->thisPower / 2.0f ) )
-			ArmorMod *= 2.0f;
-
-		return Damage * ArmorMod * GUI.GetSpeed();
-	}
-
-	return 0.0f;
-}
-
-void weBullExplode::Update( const float fTD )
-{
-	thisPower += Step * fTD;
-
-	if( thisPower >= Power * 0.8f )
-	{
-		CanDelete = true;
-		glDisable( GL_LIGHT1 );
-	}
-}
-
-void weBullExplode::Render()
-{
-#ifdef LIGHT_TEST
-	float t[] = { Pos.X, Pos.Y, Pos.Z, 1.0f };
-	glLightfv( GL_LIGHT1, GL_POSITION, t );
-#endif
-	// Nic...
-}
-
-/*====================
-	KLASA weBullSaw
-====================*/
-void weBullSaw::Init( Vector3f pos, Vector3f veloc, float speed )
-{
-	weBullet::Init( pos, veloc, speed);
-	Pos = pos;
-	NextPos = pos + veloc;
-	Radius = 0.5f;
-	Type = BULLET_TYPE_SAW;
-}
-
-void weBullSaw::Update( const float fTD )
-{
-	CanDelete = true;
-}
-
-float weBullSaw::DoTest( CDynamic* Dum, float Armor )
-{
-	if( Dum != NULL && Dum != Owner && mathDistSq( Dum->NextPos, Pos ) < POW( 5.0f )  )
-	{
-		float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-		CanDelete = true;
-		return Damage * ArmorMod;
-	}
-	return 0.0f;
-}
-
-/*====================
-	KLASA weBullBomb
-	Jest to bomba
-====================*/
-void weBullBomb::Init( Vector3f pos, Vector3f veloc, float speed )
-{
-	Pos = NextPos = pos;
-	BoomTime = speed;
-	ThisTime = 0.0f;
-	Model = GLMManager.Get( "Data/bomb-model.glm" );
-	Type = BULLET_TYPE_BOMB;
-}
-
-float weBullBomb::DoTest(CDynamic *Dum, float Armor )
-{
-	// Nic...
-	return 0.0f;
-}
-
-void weBullBomb::Update( const float fTD )
-{
-	ThisTime += fTD * GUI.GetSpeed();
-	if( ThisTime >= BoomTime )
-	{
-		CanDelete = true;
-		weBullExplode* bull = new weBullExplode;
-		bull->Power = 60.0f;
-		bull->Init( Pos, Veloc, 0.5f );
-		bull->Damage = this->Damage;
-		BManager.AddBullet( bull );
-	}
-}
-
-void weBullBomb::Render()
-{
-	glPushMatrix();
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
-	Model->CallObject( 0 );
-
-	glPopMatrix();
-}
-
-/*====================
-	KLASA weBullManager
-	Zarz¹dza wszystkimi pociskami
-====================*/
-void weBulletManager::AddBullet( weBullet *bullet )
-{
-	List.push_back( bullet );
-}
-
-void weBulletManager::DeleteBullet( unsigned int index )
-{
-	delete List[index];
-	List.erase( List.begin() + index );
-}
-
-weBullet* weBulletManager::GetBullet( unsigned int index )
-{
-	return List[index];
-}
-
-float weBulletManager::DoTest( CDynamic* Dum, float Armor )
-{
-	float Damage = 0.0f;
-	weBullet* bull;
-	for( int i = List.size()-1; i >= 0; i-- )
-	{
-		bull = List[i];
-
-		Damage += bull->DoTest( Dum, Armor );
-
-		if( bull->CanDelete )
-			DeleteBullet( i );
-	}
-	return Damage;
-}
-
-void weBulletManager::Update( const float fTD )
-{
-	weBullet* bull;
-	for( int i = List.size()-1; i >= 0; i-- )
-	{
-		bull = List[i];
-		bull->Update( fTD );
-
-		if( bull->CanDelete )
-			DeleteBullet( i );
-	}
-}
-
-void weBulletManager::Render()
-{
-	unsigned int i;
-	weBullet* bull;
-	for( i = 0; i < List.size(); i++ )
-	{
-		bull = List[i];
-		if( !bull->Visible )
-			continue;
-		bull->Render();
-	}
-	if( GUI.GetReflection() )
-	{
-		glPushMatrix();
-		glTranslatef( 0.0f, -10.0f, 0.0f );
-		glScalef( 1.0f, -1.0f, 1.0f );
-		glDisable( GL_CLIP_PLANE0 );
-		glEnable( GL_CLIP_PLANE1 );
-		glFrontFace( GL_CW );
-		for( i = 0; i < List.size(); i++ )
-		{
-			bull = List[i];
-			if( !bull->Visible )
-				continue;
-			bull->Render();
-		}
-		glFrontFace( GL_CCW );
-		glDisable( GL_CLIP_PLANE1 );
-		glEnable( GL_CLIP_PLANE0 );
-		glPopMatrix();
-	}
-}
-
-void weBulletManager::Clear()
-{
-	if( List.size() == 0 )
-		return;
-
-	for( int i = List.size()-1; i >= 0; i-- )
-		DeleteBullet( i );
-}
-weBulletManager BManager;
 
 /*	KLASA BONUSÓW	*/
 weBonus::weBonus()
@@ -775,6 +360,8 @@ void weWeapon::Free()
 	Model = NULL;
 }
 
+#include "WeaponBulletSaw.h"
+#include "WeaponBulletManager.h"
 
 /*	PI£A :D
 	Teraz zaczynaj¹ siê klasy broni.
@@ -859,10 +446,7 @@ void weSaw::Update( const float fTD )
 
 		Shake[0] = 0.0f;
 		Shake[1] = 0.0f;
-		weBullSaw* bull = new weBullSaw;
-		bull->Init( Owner->NextPos, Owner->Vector, 0.0f );
-		bull->Damage = 0.5f;
-		bull->Owner = Owner;
+		CBullSaw* bull = new CBullSaw( Owner, 0.5f, Owner->Pos );
 		BManager.AddBullet( bull );
 		fire = false;
 	}
@@ -985,7 +569,7 @@ void wePistol::Update( const float fTD )
 	if( back )
 	{
 		Time += 1.0f * GUI.GetSpeed() * fTD;
-		BackA += 0.1f * GUI.GetSpeed() * fTD;
+		BackA += 0.7f * GUI.GetSpeed() * fTD;
 		if( Time >= ShotPause )
 		{
 			back = false;
@@ -1002,14 +586,12 @@ void wePistol::Update( const float fTD )
 			Time = 0.0f;
 			Ammo--;
 			CurrClip--;
-			weBullet* Bull = new weBullet;
+
 			Vector3f temp;
 			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
 			temp = temp - Pos;
 			temp.Normalize();
-			Bull->Init( Pos, temp, 4.0f );
-			Bull->Owner = this->Owner;
-			Bull->Damage = Damage[0];
+			CBullet* Bull = new CBullet( Owner, Damage[0], Pos, temp, 10.0f );
 			BManager.AddBullet( Bull );
 		}
 		Shake[0] = 0.0f;
@@ -1078,6 +660,9 @@ void wePistol::Shot()
 		fire = true;
 }
 
+
+#include "WeaponBulletRay.h"
+
 /*	MINIPHAZER	*/
 void weMiniPhazer::Init()
 {
@@ -1123,15 +708,17 @@ void weMiniPhazer::Update( const float fTD )
 			{
 				Shake[0] = 0.0f;
 				Shake[1] = 0.0f;
+				
 				Vector3f temp;
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullRay;
-				Bull->Init( Pos, temp, 0 );
-				Bull->Owner = this->Owner;
-				Bull->Damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				CBullet* Bull = new CBullRay( Owner, damage, Pos, temp );
 				BManager.AddBullet( Bull );
+
 				back = true;
 				Ammo--;
 			}
@@ -1214,7 +801,6 @@ void weMiniPhazer::Shot()
 
 
 
-
 /*	PHAZER	*/
 void wePhazer::Init()
 {
@@ -1264,11 +850,12 @@ void wePhazer::Update( const float fTD )
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullRay;
-				Bull->Init( Pos, temp, 0 );
-				Bull->Owner = this->Owner;
-				Bull->Damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				CBullet* Bull = new CBullRay( Owner, damage, Pos, temp );
 				BManager.AddBullet( Bull );
+
 				back = true;
 				Ammo--;
 			}
@@ -1409,11 +996,10 @@ void weMiniGun::Update( const float fTD )
 				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullet; 
-				Bull->Visible = false;;
-				Bull->Init( Pos, temp, 4.0f );
-				Bull->Owner = this->Owner;
-				Bull->Damage = this->Damage[0] * 10.0f;// + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				CBullet* Bull = new CBullet( Owner, Damage[0] * 0.1f, Pos, temp, 10.0f ); 
+				Bull->Visible = false;
+				
 				BManager.AddBullet( Bull );
 				Ammo -= 10;
 			}
@@ -1500,6 +1086,7 @@ void weMiniGun::Shot()
 }
 
 
+#include "WeaponBulletRocket.h"
 
 /*	ROCKET LUNCHER	*/
 void weRocketLuncher::Init()
@@ -1546,15 +1133,17 @@ void weRocketLuncher::Update( const float fTD )
 			{
 				Shake[0] = 0.0f;
 				Shake[1] = 0.0f;
+
 				Vector3f temp;
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
-				weBullet* Bull = new weBullRocket;
-				Bull->Init( Pos, temp, 0.5f );
-				Bull->Owner = this->Owner;
-				Bull->Damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
+
+				CBullet* Bull = new CBullRocket( Owner, damage, Pos, temp, 2.0f );
 				BManager.AddBullet( Bull );
+
 				back = true;
 				Ammo--;
 			}
@@ -1637,6 +1226,7 @@ void weRocketLuncher::Shot()
 }
 
 
+#include "WeaponBulletBomb.h"
 
 /*	ATOM BOMB	*/
 void weAtomBomb::Init()
@@ -1681,10 +1271,9 @@ void weAtomBomb::Update( const float fTD )
 			if( Ammo == 0 )
 				return;
 
-			weBullBomb* Bull = new weBullBomb;
-			Bull->Init( Owner->NextPos, Owner->Vector, 300.0f );
-			Bull->Damage = 10.0f;
+			CBullBomb* Bull = new CBullBomb( Owner, 10.0f, Pos, 5.0f );
 			BManager.AddBullet( Bull );
+
 			Ammo--;
 			puted = true;
 			return;

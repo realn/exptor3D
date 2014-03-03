@@ -1,5 +1,14 @@
 #include "GameEnemy.h"
+
 #include "Weapon.h"
+#include "Log.h"
+#include "gui.h"
+
+#include "WeaponBulletManager.h"
+#include "WeaponBulletRay.h"
+#include "WeaponBulletRocket.h"
+
+#include "Special.h"
 
 /*=========================
 	KLASA CEnemy
@@ -204,29 +213,20 @@ void CEnemy::Fire( Vector3f FireTarget )
 	{
 	case GAME_WEAP_PISTOL :
 		{
-			weBullet* Bull = new weBullet();
-			Bull->Init( temp, FireVeloc, 1.0f );
-			Bull->Owner = this;
-			Bull->Damage = 1.0f;
+			CBullet* Bull = new CBullet( this, 1.0f, Pos, FireVeloc, 12.0f );
 			BManager.AddBullet( Bull );
 			return;
 		}
 	case GAME_WEAP_MINIPZR:
 	case GAME_WEAP_PHAZER :
 		{
-			weBullet* Bull = new weBullRay();
-			Bull->Init( temp, FireVeloc, 0 );
-			Bull->Owner = this;
-			Bull->Damage = 50.0f;
+			CBullet* Bull = new CBullRay( this, 50.0f, temp, FireVeloc );
 			BManager.AddBullet( Bull );
 			return;
 		}
 	case GAME_WEAP_ROCKETLUN :
 		{
-			weBullet* Bull = new weBullRocket();
-			Bull->Init( temp, FireVeloc, 0.2f );
-			Bull->Owner = this;
-			Bull->Damage = 10.0f;
+			CBullet* Bull = new CBullRocket( this, 10.0f, temp, FireVeloc, 2.0f );
 			BManager.AddBullet( Bull );
 			return;
 		}

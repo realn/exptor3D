@@ -38,23 +38,6 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 #define GAME_TEX_FLOOR		1
 #define GAME_TEX_TOP		2
 
-#define	GAME_WEAP_SAW		0
-#define	GAME_WEAP_PISTOL	1
-#define	GAME_WEAP_MINIPZR	3
-#define	GAME_WEAP_MINIGUN	4
-#define	GAME_WEAP_ROCKETLUN	5
-#define	GAME_WEAP_PICKABOO	6
-#define	GAME_WEAP_PHAZER	7
-#define	GAME_WEAP_MINE		8
-#define	GAME_WEAP_ATOM_BOMB	9
-
-#define BULLET_TYPE_NORMAL	0
-#define BULLET_TYPE_RAY		1
-#define BULLET_TYPE_ROCKET	2
-#define	BULLET_TYPE_EXPLODE	3
-#define BULLET_TYPE_BOMB	4
-#define BULLET_TYPE_SAW		5
-
 #define BONUS_TYPE_UNKNOWN	0
 #define BONUS_TYPE_AMMO		1
 #define BONUS_TYPE_HEALTH	2
@@ -83,11 +66,11 @@ class wePistol;
 class weMinigun;
 class wePhazer;
 
-class weBullet;
-class weBullRay;
-class weBullRocket;
-class weBullExplode;
-class weBulletManager;
+class CBullet;
+class CBullRay;
+class CBullRocket;
+class CBullExplosion;
+class CBulletManager;
 
 class weBonus;
 class weAmmo;
@@ -105,7 +88,7 @@ class specMotionBlur;
 class ioTexture;
 class ioTexManager;
 
-extern weBulletManager	BManager;
+extern CBulletManager	BManager;
 extern gameLevel		GLevel;
 extern gameLevel*		pGLevel;
 extern ioTexManager		TManager;

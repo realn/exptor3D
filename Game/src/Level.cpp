@@ -11,6 +11,7 @@ Opis:	Patrz -> Level.h
 #include "Level.h"
 
 #include "GamePlayer.h"
+#include "WeaponBulletManager.h"
 
 gameLevel GLevel;
 gameLevel* pGLevel = &GLevel;

@@ -10,6 +10,9 @@
     <Filter Include="Source\Level">
       <UniqueIdentifier>{267ba8d4-7683-42d6-a37f-086b3ca5c660}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\Weapon">
+      <UniqueIdentifier>{f97e86df-7b4b-4f99-a2a3-5b6f2c1700d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -42,9 +45,6 @@
     <ClCompile Include="src\Timer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Weapon.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\StrEx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -71,6 +71,30 @@
     </ClCompile>
     <ClCompile Include="src\GameObjectManager.cpp">
       <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Weapon.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBullet.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBulletSaw.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBulletRay.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBulletRocket.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBulletExplosion.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBulletBomb.cpp">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponBulletManager.cpp">
+      <Filter>Source\Game\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,9 +131,6 @@
     <ClInclude Include="src\Timer.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="src\Weapon.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="src\StrEx.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -136,6 +157,30 @@
     </ClInclude>
     <ClInclude Include="src\GameObjectManager.h">
       <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Weapon.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBullet.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBulletSaw.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBulletRay.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBulletRocket.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBulletExplosion.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBulletBomb.h">
+      <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponBulletManager.h">
+      <Filter>Source\Game\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

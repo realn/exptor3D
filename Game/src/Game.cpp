@@ -11,6 +11,7 @@ Opis:	Patrz -> Game.h
 #include "Game.h"
 
 #include "GamePlayer.h"
+#include "WeaponBulletManager.h"
 
 CActorManager::CActorManager()
 {

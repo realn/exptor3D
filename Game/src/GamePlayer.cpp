@@ -1,5 +1,8 @@
 #include "GamePlayer.h"
+
 #include "Weapon.h"
+#include "gui.h"
+#include "Level.h"
 
 /*=========================	
 	KLASA CPlayer

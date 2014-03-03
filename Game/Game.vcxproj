@@ -99,6 +99,13 @@
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
+    <ClCompile Include="src\WeaponBullet.cpp" />
+    <ClCompile Include="src\WeaponBulletBomb.cpp" />
+    <ClCompile Include="src\WeaponBulletExplosion.cpp" />
+    <ClCompile Include="src\WeaponBulletManager.cpp" />
+    <ClCompile Include="src\WeaponBulletRay.cpp" />
+    <ClCompile Include="src\WeaponBulletRocket.cpp" />
+    <ClCompile Include="src\WeaponBulletSaw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h" />
@@ -122,6 +129,13 @@
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Weapon.h" />
+    <ClInclude Include="src\WeaponBullet.h" />
+    <ClInclude Include="src\WeaponBulletBomb.h" />
+    <ClInclude Include="src\WeaponBulletExplosion.h" />
+    <ClInclude Include="src\WeaponBulletManager.h" />
+    <ClInclude Include="src\WeaponBulletRay.h" />
+    <ClInclude Include="src\WeaponBulletRocket.h" />
+    <ClInclude Include="src\WeaponBulletSaw.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
