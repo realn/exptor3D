@@ -80,8 +80,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp" />
-    <ClCompile Include="src\ActorStats.cpp" />
+    <ClCompile Include="src\GameActor.cpp" />
+    <ClCompile Include="src\GameActorStats.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameEnemy.cpp" />
+    <ClCompile Include="src\GamePlayer.cpp" />
+    <ClCompile Include="src\GameStaticObject.cpp" />
     <ClCompile Include="src\glm.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\inifile.cpp" />
@@ -99,6 +103,10 @@
     <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\defines.h" />
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\GameActor.h" />
+    <ClInclude Include="src\GameEnemy.h" />
+    <ClInclude Include="src\GamePlayer.h" />
+    <ClInclude Include="src\GameStaticObject.h" />
     <ClInclude Include="src\glm.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\inifile.h" />

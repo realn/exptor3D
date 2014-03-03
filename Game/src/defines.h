@@ -38,17 +38,6 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 #define GAME_TEX_FLOOR		1
 #define GAME_TEX_TOP		2
 
-#define GAME_MOVE_FORWARD	1
-#define GAME_MOVE_BACK		2
-#define GAME_MOVE_STRAFE_R	4
-#define	GAME_MOVE_STRAFE_L	8
-#define GAME_DO_FIREWEAPON	16
-#define GAME_DO_ATTACK		16
-
-#define GAME_THING_PLAYER	0
-#define GAME_THING_ENEMY	1
-#define GAME_THING_OTHER	2
-
 #define	GAME_WEAP_SAW		0
 #define	GAME_WEAP_PISTOL	1
 #define	GAME_WEAP_MINIPZR	3
@@ -75,29 +64,6 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 #define	WEAP_FLAG_AMMOPACK	2
 #define	WEAP_FLAG_AUTODEL	4
 
-#define	AI_NO_AI			0
-#define AI_SIMPLE_AI		1
-#define AI_PLAYER_ENEMY		2
-#define AI_PLAYER_HELP		4
-#define	AI_ATTACK_FAR		8
-#define	AI_ATTACK_CLOSE		16
-#define	AI_MOVE_AROUND		32
-#define	AI_STAY_ON_ATTACK	64
-#define	AI_MOVE_ON_ATTACK	128
-#define AI_SEARCH_ENEMY		256
-#define	AI_FIRE_AT_WILL		512
-#define	AI_FIRE_IF_ATTACKED	1024
-#define AI_TAKE_ITEMS		2048
-#define	AI_DONT_TAKE_ITEMS	4096
-#define	AI_ALLWAYS_WALK		8192
-#define	AI_ALLWAYS_RUN		16384
-
-#define AI_STATE_NOTHING	0
-#define AI_STATE_STAND		1
-#define AI_STATE_WALK		2
-#define	AI_STATE_FIRE		3
-#define	AI_STATE_WALKFIRE	4
-#define	AI_STATE_STANDFIRE	5
 
 class guiMain;
 

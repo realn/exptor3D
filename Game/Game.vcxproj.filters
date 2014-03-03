@@ -4,12 +4,15 @@
     <Filter Include="Source">
       <UniqueIdentifier>{31300e7d-855d-4b06-9a86-9a4c22657e05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game">
+      <UniqueIdentifier>{3b92effd-6289-42e9-8a46-c235e41d7504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Level">
+      <UniqueIdentifier>{267ba8d4-7683-42d6-a37f-086b3ca5c660}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\glm.cpp">
@@ -19,9 +22,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\inifile.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Level.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Log.cpp">
@@ -48,8 +48,26 @@
     <ClCompile Include="src\StrEx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\ActorStats.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="src\Game.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level.cpp">
+      <Filter>Source\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameActorStats.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameActor.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GamePlayer.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameEnemy.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameStaticObject.cpp">
+      <Filter>Source\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,9 +77,6 @@
     <ClInclude Include="src\defines.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="src\glm.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -69,9 +84,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\inifile.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Level.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\Log.h">
@@ -97,6 +109,24 @@
     </ClInclude>
     <ClInclude Include="src\StrEx.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameActor.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GamePlayer.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameEnemy.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Level.h">
+      <Filter>Source\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameStaticObject.h">
+      <Filter>Source\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

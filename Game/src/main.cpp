@@ -1,6 +1,6 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
-Plik:	glm.cpp
+Plik:	main.cpp
 Autor:	Real_Noname (real_noname@wp.pl)
 (C):	CODE RULERS (Real_Noname)
 WWW:	www.coderulers.prv.pl
@@ -12,6 +12,10 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "main.h"
+
+#include "GamePlayer.h"
+
+
 bool CanDoWLScr = true;
 
 bool Init()    //Inicjalizacja OpenGL

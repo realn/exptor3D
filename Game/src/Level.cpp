@@ -10,6 +10,8 @@ Opis:	Patrz -> Level.h
 ///////////////////////////////////////////////////////*/
 #include "Level.h"
 
+#include "GamePlayer.h"
+
 gameLevel GLevel;
 gameLevel* pGLevel = &GLevel;
 
