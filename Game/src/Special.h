@@ -23,8 +23,8 @@ public:
 	bool Visible;
 	bool CanDelete;
 	specEffect();
-	virtual void DoEngine();
-	virtual void DoDraw();
+	virtual void Update( const float fTD );
+	virtual void Render();
 };
 
 class specRay : public specEffect
@@ -37,8 +37,8 @@ public:
 
 	void Create( Vector3f Pos, Vector3f Veloc );
 
-	void DoDraw();
-	void DoEngine();
+	void Render();
+	void Update( const float fTD ) override;
 };
 
 class specExplode : public specEffect
@@ -53,8 +53,8 @@ public:
 
 	void Create( Vector3f Pos, float Power, float fStep );
 
-	void DoDraw();
-	void DoEngine();
+	void Render();
+	void Update( const float fTD ) override;
 };
 
 class specSprite : public specEffect
@@ -68,8 +68,8 @@ public:
 
 	void Create( Vector3f Pos, float R = 1.0f, float G = 1.0f, float B = 1.0f );
 
-	void DoDraw();
-	void DoEngine();
+	void Render();
+	void Update( const float fTD ) override;
 };
 
 class specManager
@@ -83,8 +83,8 @@ public:
 	void DeleteEffect( unsigned int index );
 	specEffect* GetEffect( unsigned int index );
 	
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 };
 
 class specMotionBlur
@@ -101,8 +101,8 @@ public:
 	~specMotionBlur();
 	void Init();
 	void CopyImage();
-	void DoEngine();
-	void DoDraw();
+	void Update( const float fTD );
+	void Render();
 	void Free();
 };
 

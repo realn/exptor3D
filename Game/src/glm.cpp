@@ -954,7 +954,7 @@ void GLModel::PlayAnim( unsigned int fromframe, unsigned int toframe, bool cansk
 	playing = true;
 }
 
-void GLModel::DoEngineAnim()
+void GLModel::UpdateAnim()
 {
 	if( !playing )
 		return;
@@ -965,7 +965,7 @@ void GLModel::DoEngineAnim()
 		playing = false;
 }
 
-void GLModel::DoDrawAnim( unsigned int index )
+void GLModel::RenderAnim( unsigned int index )
 {
 	if( !animation || !playing )
 	{

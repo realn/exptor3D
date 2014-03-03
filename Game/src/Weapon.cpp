@@ -33,12 +33,12 @@ void weBullet::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_NORMAL;
 }
 
-void weBullet::DoEngine()
+void weBullet::Update( const float fTD )
 {
 	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
 	{
 		Pos = NextPos;
-		NextPos = Pos + ( Veloc * GUI.GetSpeed() );
+		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
 		if( GLevel.GetBlock( this->GetBlockPos() ) == NULL )
 			DoDelete = true;
 	}
@@ -59,7 +59,7 @@ float weBullet::DoTest( CEntity* Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullet::DoDraw()
+void weBullet::Render()
 {
 	glPushMatrix();
 	GLUquadric* obj = gluNewQuadric();
@@ -127,12 +127,12 @@ float weBullRay::DoTest( CEntity* Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullRay::DoEngine()
+void weBullRay::Update( const float fTD )
 {
 	CanDelete = true;
 }
 
-void weBullRay::DoDraw()
+void weBullRay::Render()
 {
 	// Nic...
 }
@@ -157,7 +157,7 @@ void weBullRocket::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_ROCKET;
 }
 
-void weBullRocket::DoDraw()
+void weBullRocket::Render()
 {
 	glPushMatrix();
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
@@ -185,13 +185,13 @@ void weBullRocket::OnDelete()
 	glDisable( GL_LIGHT0 );
 }
 
-void weBullRocket::DoEngine()
+void weBullRocket::Update( const float fTD )
 {
 	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
 	{
 		Pos = NextPos;
-		NextPos = Pos + ( Veloc * GUI.GetSpeed() );
-		Sec += 1.0f * GUI.GetSpeed();
+		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
+		Sec += fTD * GUI.GetSpeed();
 		if( Sec > 3.0f )
 		{
 			Vector3f Tail = Veloc;
@@ -247,9 +247,9 @@ float weBullExplode::DoTest( CEntity *Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullExplode::DoEngine()
+void weBullExplode::Update( const float fTD )
 {
-	thisPower += Step;
+	thisPower += Step * fTD;
 
 	if( thisPower >= Power * 0.8f )
 	{
@@ -258,7 +258,7 @@ void weBullExplode::DoEngine()
 	}
 }
 
-void weBullExplode::DoDraw()
+void weBullExplode::Render()
 {
 #ifdef LIGHT_TEST
 	float t[] = { Pos.X, Pos.Y, Pos.Z, 1.0f };
@@ -279,7 +279,7 @@ void weBullSaw::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_SAW;
 }
 
-void weBullSaw::DoEngine()
+void weBullSaw::Update( const float fTD )
 {
 	CanDelete = true;
 }
@@ -314,9 +314,9 @@ float weBullBomb::DoTest(CEntity *Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullBomb::DoEngine()
+void weBullBomb::Update( const float fTD )
 {
-	ThisTime += 1.0f * GUI.GetSpeed();
+	ThisTime += fTD * GUI.GetSpeed();
 	if( ThisTime >= BoomTime )
 	{
 		CanDelete = true;
@@ -328,7 +328,7 @@ void weBullBomb::DoEngine()
 	}
 }
 
-void weBullBomb::DoDraw()
+void weBullBomb::Render()
 {
 	glPushMatrix();
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
@@ -373,20 +373,20 @@ float weBulletManager::DoTest( CEntity* Dum, float Armor )
 	return Damage;
 }
 
-void weBulletManager::DoEngine()
+void weBulletManager::Update( const float fTD )
 {
 	weBullet* bull;
 	for( int i = List.size()-1; i >= 0; i-- )
 	{
 		bull = List[i];
-		bull->DoEngine();
+		bull->Update( fTD );
 
 		if( bull->CanDelete )
 			DeleteBullet( i );
 	}
 }
 
-void weBulletManager::DoDraw()
+void weBulletManager::Render()
 {
 	unsigned int i;
 	weBullet* bull;
@@ -395,7 +395,7 @@ void weBulletManager::DoDraw()
 		bull = List[i];
 		if( !bull->Visible )
 			continue;
-		bull->DoDraw();
+		bull->Render();
 	}
 	if( GUI.GetReflection() )
 	{
@@ -410,7 +410,7 @@ void weBulletManager::DoDraw()
 			bull = List[i];
 			if( !bull->Visible )
 				continue;
-			bull->DoDraw();
+			bull->Render();
 		}
 		glFrontFace( GL_CCW );
 		glDisable( GL_CLIP_PLANE1 );
@@ -437,7 +437,7 @@ weBonus::weBonus()
 	type = BONUS_TYPE_UNKNOWN;
 }
 
-void weBonus::DoDraw()
+void weBonus::Render()
 {
 	glPushMatrix();
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
@@ -446,15 +446,16 @@ void weBonus::DoDraw()
 	glPopMatrix();
 }
 
-void weBonus::DoEngine()
+void weBonus::Update( const float fTD )
 {
-	rot += 1.0f * GUI.GetSpeed();
+	rot += fTD * GUI.GetSpeed();
 }
 
 unsigned int weBonus::GetType()
 {
 	return type;
 }
+
 /*	BONUS - AMUNICJA	*/
 void weAmmo::Init(unsigned int weaptype, unsigned int ammocount, std::string modelfile) 
 {
@@ -549,7 +550,7 @@ void weBonusManager::Clear()
 	}
 }
 
-void weBonusManager::DoEngine(CPlayer *Player)
+void weBonusManager::Update( CPlayer *Player, const float fTD )
 {
 	if( Count() == 0 || Player == NULL )
 		return;
@@ -562,7 +563,7 @@ void weBonusManager::DoEngine(CPlayer *Player)
 		if( mathDistSq( Bonus->Pos, Player->NextPos ) > POW( 90.0f ) )
 			continue;
 
-		Bonus->DoEngine();
+		Bonus->Update( fTD );
 		Player->TestBonus( Bonus );
 
 		if( Bonus->CanDelete )
@@ -570,7 +571,7 @@ void weBonusManager::DoEngine(CPlayer *Player)
 	}
 }
 
-void weBonusManager::DoDraw()
+void weBonusManager::Render()
 {
 	unsigned int i;
 	weBonus* Bonus;
@@ -579,7 +580,7 @@ void weBonusManager::DoDraw()
 		Bonus = List[i];
 		if( mathDistSq( Bonus->Pos, MainPlayer.NextPos ) > POW( 90.0f ) )
 			continue;
-		Bonus->DoDraw();
+		Bonus->Render();
 	}
 	if( GUI.GetReflection() )
 	{
@@ -594,7 +595,7 @@ void weBonusManager::DoDraw()
 			Bonus = List[i];
 			if( mathDistSq( Bonus->Pos, MainPlayer.NextPos ) > POW( 90.0f ) )
 				continue;
-			Bonus->DoDraw();
+			Bonus->Render();
 		}
 		glFrontFace( GL_CCW );
 		glDisable( GL_CLIP_PLANE1 );
@@ -646,9 +647,9 @@ weWeapon::~weWeapon()
 	to bêdziemy j¹ obracaæ. Efekt wygl¹da
 	lepiej. :)
 */
-void weWeapon::Rotate()
+void weWeapon::Rotate( const float fTD )
 {
-	Rot += 0.5f * GUI.GetSpeed();
+	Rot += fTD * 0.5f * GUI.GetSpeed();
 	if( Rot >= 360.0f )
 		Rot = 0.0f;
 }
@@ -745,12 +746,12 @@ bool weWeapon::GetInited()
 	return inited;
 }
 
-void weWeapon::DoEngine()
+void weWeapon::Update( const float fTD )
 {
 
 }
 
-void weWeapon::DoDraw()
+void weWeapon::Render()
 {
 
 }
@@ -833,10 +834,10 @@ void weSaw::Init()
 	to wygl¹da ni¿ statyczny model i s³owo
 	"O, trafi³em..." ;)
 */
-void weSaw::DoEngine()
+void weSaw::Update( const float fTD )
 {
 	//	Funkcja obracaj¹ca, dzia³a bez wzglêdu, czy broñ jest na ziemi, czy nie
-	Rotate();
+	Rotate( fTD );
 
 	// Sprawdzamy, czy broñ jest podnisiona
 	if( !InHand ) 
@@ -851,9 +852,10 @@ void weSaw::DoEngine()
 	if( fire ) 
 	{
 		if( ShotPause < 20.0f )
-			ShotPause += 0.4f;
+			ShotPause += 0.4f * fTD;
 		if( ReloadTime > -1.0f )
-			ReloadTime -= 0.2f;
+			ReloadTime -= 0.2f * fTD;
+
 		Shake[0] = 0.0f;
 		Shake[1] = 0.0f;
 		weBullSaw* bull = new weBullSaw;
@@ -870,14 +872,15 @@ void weSaw::DoEngine()
 	else 
 	{
 		if( ShotPause > 0.3f )
-			ShotPause -= 0.1f;
+			ShotPause -= 0.1f * fTD;
 		if( ReloadTime < 0.0f )
-			ReloadTime += 0.05f;
+			ReloadTime += 0.05f * fTD;
+
 		Shake[0] = ( sinf( Rot / 10.0f ) / 20.0f );
 		Shake[1] = ( cosf( Rot / 10.0f ) / 20.0f );
 	}
 	// Obracamy ostrze i gdy wykona³o pe³ny obrót, zerujemy
-	ShotTime += ShotPause * GUI.GetSpeed();
+	ShotTime += ShotPause * GUI.GetSpeed() * fTD;
 	if( ShotTime >= 360.0f )
 		ShotTime = 0.0f;
 }
@@ -885,7 +888,7 @@ void weSaw::DoEngine()
 /*	METODA RYSUJ¥CA
 	Tu nastêpuje wyœwietlenie na ekranie. Nic wielkiego :P
 */
-void weSaw::DoDraw()
+void weSaw::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -971,17 +974,17 @@ void wePistol::Init()
 	inited = true;
 }
 
-void wePistol::DoEngine()
+void wePistol::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( !InHand )
 		return;
 
 	if( back )
 	{
-		Time += 1.0f * GUI.GetSpeed();
-		BackA += 0.1f * GUI.GetSpeed();
+		Time += 1.0f * GUI.GetSpeed() * fTD;
+		BackA += 0.1f * GUI.GetSpeed() * fTD;
 		if( Time >= ShotPause )
 		{
 			back = false;
@@ -994,19 +997,19 @@ void wePistol::DoEngine()
 	{
 		if( !back )
 		{
-				back = true;
-				Time = 0.0f;
-				Ammo--;
-				CurrClip--;
-				weBullet* Bull = new weBullet;
-				Vector3f temp;
-				temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
-				temp = temp - Pos;
-				temp.Normalize();
-				Bull->Init( Pos, temp, 4.0f );
-				Bull->Owner = this->Owner;
-				Bull->Damage = Damage[0];
-				BManager.AddBullet( Bull );
+			back = true;
+			Time = 0.0f;
+			Ammo--;
+			CurrClip--;
+			weBullet* Bull = new weBullet;
+			Vector3f temp;
+			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
+			temp = temp - Pos;
+			temp.Normalize();
+			Bull->Init( Pos, temp, 4.0f );
+			Bull->Owner = this->Owner;
+			Bull->Damage = Damage[0];
+			BManager.AddBullet( Bull );
 		}
 		Shake[0] = 0.0f;
 		Shake[1] = 0.0f;
@@ -1014,7 +1017,7 @@ void wePistol::DoEngine()
 	}
 }
 
-void wePistol::DoDraw()
+void wePistol::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -1105,9 +1108,9 @@ void weMiniPhazer::Init()
 	inited = true;
 }
 
-void weMiniPhazer::DoEngine()
+void weMiniPhazer::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1133,10 +1136,10 @@ void weMiniPhazer::DoEngine()
 			}
 			else
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += fTD * GUI.GetSpeed();
 				if( Time >= ShotPause * 0.2f )
 				{
-					BackA -= ( 1.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed();
+					BackA -= ( 1.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed() * fTD;
 					if( Time >= ShotPause )
 					{
 						BackA = 0.0f;
@@ -1147,7 +1150,7 @@ void weMiniPhazer::DoEngine()
 				}
 				else
 				{
-					BackA += ( 1.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed();
+					BackA += ( 1.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed() * fTD;
 				}
 			}
 		}
@@ -1155,7 +1158,7 @@ void weMiniPhazer::DoEngine()
 	}
 }
 
-void weMiniPhazer::DoDraw()
+void weMiniPhazer::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -1242,9 +1245,9 @@ void wePhazer::Init()
 	inited = true;
 }
 
-void wePhazer::DoEngine()
+void wePhazer::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1270,10 +1273,10 @@ void wePhazer::DoEngine()
 			}
 			else
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += fTD * GUI.GetSpeed();
 				if( Time >= ShotPause * 0.2f )
 				{
-					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed();
+					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed() * fTD;
 					if( Time >= ShotPause )
 					{
 						BackA = 0.0f;
@@ -1284,7 +1287,7 @@ void wePhazer::DoEngine()
 				}
 				else
 				{
-					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed();
+					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed() * fTD;
 				}
 			}
 		}
@@ -1292,7 +1295,7 @@ void wePhazer::DoEngine()
 	}
 }
 
-void wePhazer::DoDraw()
+void wePhazer::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -1377,9 +1380,9 @@ void weMiniGun::Init()
 	inited = true;
 }
 
-void weMiniGun::DoEngine()
+void weMiniGun::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1387,13 +1390,15 @@ void weMiniGun::DoEngine()
 		{
 			if( Rot2 < 15.0f )
 			{
-				Rot2 += 1.0f * GUI.GetSpeed();
+				Rot2 += GUI.GetSpeed() * fTD;
 			}
 			else Rot2 = 15.0f;
+
 			if( BackA == 1.0f && Rot2 == 15.0f )
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += GUI.GetSpeed() * fTD;
 			}
+
 			if( Time >= ShotPause )
 			{
 				Time = 0.0f;
@@ -1413,7 +1418,7 @@ void weMiniGun::DoEngine()
 			}
 			if( BackA < 1.0f )
 			{
-				BackA += ( 0.5f / 14.0f ) * GUI.GetSpeed();
+				BackA += ( 0.5f / 14.0f ) * GUI.GetSpeed() * fTD;
 				back = true;
 			}
 			else BackA = 1.0f;
@@ -1425,13 +1430,13 @@ void weMiniGun::DoEngine()
 			Shake[1] = ( cos( Rot / 10.0f ) / 20.0f );
 			if( Rot2 > 0.0f )
 			{
-				Rot2 -= 1.0f * GUI.GetSpeed();
+				Rot2 -= GUI.GetSpeed() * fTD;
 			}
 			else Rot2 = 0.0f;
 
 			if( BackA > 0.0f )
 			{
-				BackA -= ( 0.5f / 14.0f ) * GUI.GetSpeed();
+				BackA -= ( 0.5f / 14.0f ) * GUI.GetSpeed() * fTD;
 				back = false;
 			}
 			else BackA = 0.0f;
@@ -1440,7 +1445,7 @@ void weMiniGun::DoEngine()
 	}
 }
 
-void weMiniGun::DoDraw()
+void weMiniGun::Render()
 {
 	glPushMatrix();
 	// Rysujemy broñ, w zale¿noœci, czy ona jest na ziemi, czy nie
@@ -1526,9 +1531,9 @@ void weRocketLuncher::Init()
 	inited = true;
 }
 
-void weRocketLuncher::DoEngine()
+void weRocketLuncher::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1554,10 +1559,10 @@ void weRocketLuncher::DoEngine()
 			}
 			else
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += GUI.GetSpeed() * fTD;
 				if( Time >= ShotPause * 0.2f )
 				{
-					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed();
+					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed() * fTD;
 					if( Time >= ShotPause )
 					{
 						BackA = 0.0f;
@@ -1568,7 +1573,7 @@ void weRocketLuncher::DoEngine()
 				}
 				else
 				{
-					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed();
+					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed() * fTD;
 				}
 			}
 		}
@@ -1576,7 +1581,7 @@ void weRocketLuncher::DoEngine()
 	}
 }
 
-void weRocketLuncher::DoDraw()
+void weRocketLuncher::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -1658,9 +1663,9 @@ void weAtomBomb::Init()
 	inited = true;
 }
 
-void weAtomBomb::DoEngine()
+void weAtomBomb::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1687,7 +1692,7 @@ void weAtomBomb::DoEngine()
 	}
 }
 
-void weAtomBomb::DoDraw()
+void weAtomBomb::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();

@@ -516,7 +516,7 @@ void guiMain::DoGUIEngine(const float fTD)
 
 	this->ScrMsgEng( fTD );
 	this->ConsoleEng( fTD );
-	this->Menu.DoEngine();
+	this->Menu.Update();
 	this->EngineWLScr( fTD );
 
 	if( FScrColor[3] > 0.0f )
@@ -601,7 +601,7 @@ void guiMain::DoGUIDraw()
 	else
 	{
 		this->ConsoleDraw();
-		this->Menu.DoDraw();
+		this->Menu.Render();
 	}
 
 	if( WireFrame )
@@ -1310,7 +1310,7 @@ void guiMenuItem::DontHighLight()
 	Highlight = false;
 }
 
-void guiMenuItem::DoEngine()
+void guiMenuItem::Update()
 {
 	if( !Highlight )
 	{
@@ -1330,7 +1330,7 @@ void guiMenuItem::DoEngine()
 	}
 }
 
-void guiMenuItem::DoDraw( guiTextureText *TText )
+void guiMenuItem::Render( guiTextureText *TText )
 {
 	if( Enabled )
 		TText->SetColor( 0.4f + Color, 0.4f + Color, 0.4f + Color );
@@ -1364,7 +1364,7 @@ guiMenu::~guiMenu()
 	Free();
 }
 
-void guiMenu::DoEngine( float cX, float cY, bool click )
+void guiMenu::Update( float cX, float cY, bool click )
 {
 	x=cX;
 	y=cY;
@@ -1396,11 +1396,11 @@ void guiMenu::DoEngine( float cX, float cY, bool click )
 		}
 		else Item->DontHighLight();
 
-		Item->DoEngine();
+		Item->Update();
 	}
 }
 
-void guiMenu::DoDraw( guiTextureText *TText )
+void guiMenu::Render( guiTextureText *TText )
 {
 	TText->StartPrint();
 	GUI.Cursor->Activate();
@@ -1428,7 +1428,7 @@ void guiMenu::DoDraw( guiTextureText *TText )
 	for( int i = 0; i < List.size(); i++ )
 	{
 		Item = List[i];
-		Item->DoDraw( TText );
+		Item->Render( TText );
 	}
 	TText->EndPrint();
 }
@@ -1480,7 +1480,7 @@ void guiMainMenu::Init( guiTextureText *text )
 	curY = 0.0f;
 }
 
-void guiMainMenu::DoEngine()
+void guiMainMenu::Update()
 {
 	if( !Enabled )
 		return;
@@ -1510,11 +1510,11 @@ void guiMainMenu::DoEngine()
 	Menu = List[CurMenu];
 	Menu->slide = slide;
 
-	Menu->DoEngine( curX, curY, Clicked );
+	Menu->Update( curX, curY, Clicked );
 	Clicked = false;
 }
 
-void guiMainMenu::DoDraw()
+void guiMainMenu::Render()
 {
 	if( !Enabled )
 		return;
@@ -1525,7 +1525,7 @@ void guiMainMenu::DoDraw()
 	guiMenu* Menu;
 	Menu = List[CurMenu];
 
-	Menu->DoDraw( TText );
+	Menu->Render( TText );
 }
 
 void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
@@ -1933,7 +1933,7 @@ void guiIntro::Start()
 	Alpha = 1.0f;
 }
 
-void guiIntro::DoEngine()
+void guiIntro::Update()
 {
 	if( !Started )
 		return;
@@ -1968,7 +1968,7 @@ void guiIntro::DoEngine()
 	}
 }
 
-void guiIntro::DoDraw()
+void guiIntro::Render()
 {
 	if( Ended )
 		return;

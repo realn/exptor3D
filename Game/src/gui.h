@@ -69,8 +69,8 @@ public:
 	void AddStr( std::string str, int tpc );
 
 	void Start();
-	void DoEngine();
-	void DoDraw();
+	void Update();
+	void Render();
 	bool IsEnd();
 };
 
@@ -116,8 +116,8 @@ public:
 
 	guiMenuItem();
 
-	void DoEngine();
-	void DoDraw( guiTextureText* TText );
+	void Update();
+	void Render( guiTextureText* TText );
 
 	void Enable();
 	void Disable();
@@ -145,8 +145,8 @@ public:
 	~guiMenu();
 	void Free();
 
-	void DoEngine( float cX, float cY, bool click );
-	void DoDraw( guiTextureText* TText );
+	void Update( float cX, float cY, bool click );
+	void Render( guiTextureText* TText );
 	void AddMenuItem( guiMenuItem* item );
 	void DeleteMenuItem( unsigned int index );
 };
@@ -188,8 +188,8 @@ public:
 
 	void GoToMenu( unsigned int index );
 
-	void DoEngine();
-	void DoDraw();
+	void Update();
+	void Render();
 
 	void Enable();
 	void Disable();
