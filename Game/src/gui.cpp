@@ -1786,7 +1786,7 @@ guiTextureText::~guiTextureText()
 	Free();
 }
 
-void guiTextureText::Init( ioTexture* font )
+void guiTextureText::Init( CTexture* font )
 {
 	if( !font )
 		return;
@@ -1909,7 +1909,7 @@ guiIntro::~guiIntro()
 
 }
 
-bool guiIntro::Init( ioTexture* Font )
+bool guiIntro::Init( CTexture* Font )
 {
 	Tex = Font;
 	TText.Init( Tex );

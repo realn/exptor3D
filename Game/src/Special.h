@@ -61,7 +61,7 @@ class specSprite : public specEffect
 {
 private:
 	float Alpha;
-	ioTexture Tex;
+	CTexture Tex;
 	float C[3];
 public:
 	Vector3f AtPos;
@@ -107,7 +107,7 @@ public:
 };
 
 extern specManager SEManager;
-extern ioTexture Part;
+extern CTexture Part;
 extern specMotionBlur SMBlur;
 
 #endif

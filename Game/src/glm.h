@@ -12,7 +12,7 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 #ifndef _GLM_H_
 #define _GLM_H_
 
-#include "Texture.h"	// Naglówek z klasa ioTexture
+#include "Texture.h"	// Naglówek z klasa CTexture
 #include <fstream>
 
 // Numer wersji loader'a
@@ -24,7 +24,7 @@ class GLModel
 {
 private:
 	// Lista tekstur
-	std::vector<ioTexture*>	Textures;
+	std::vector<CTexture*>	Textures;
 	// Lista obiektów
 	unsigned int List;
 	// Liczba obiektów

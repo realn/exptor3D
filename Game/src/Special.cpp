@@ -11,7 +11,7 @@ Opis:	Patrz -> Special.h
 #include "Special.h"
 
 specManager SEManager;
-ioTexture	Part;
+CTexture	Part;
 
 specEffect::specEffect()
 {

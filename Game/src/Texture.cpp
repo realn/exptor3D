@@ -12,7 +12,7 @@ Opis:	Patrz -> Texture.h
 #include "Log.h"
 #include <fstream>
 
-ioTexture::ioTexture() :
+CTexture::CTexture() :
 	loaded(false),
 	file("-"),
 	texture(0)
@@ -21,7 +21,7 @@ ioTexture::ioTexture() :
 	file = "-";
 }
 
-ioTexture::ioTexture( std::string filename ) :
+CTexture::CTexture( std::string filename ) :
 	loaded(false),
 	file("-"),
 	texture(0)
@@ -29,12 +29,12 @@ ioTexture::ioTexture( std::string filename ) :
 	LoadTGA( filename );
 }
 
-ioTexture::~ioTexture()
+CTexture::~CTexture()
 {
 	Free();
 }
 
-bool	ioTexture::LoadTGA( std::string filename )
+bool	CTexture::LoadTGA( std::string filename )
 {
 	/*	¯eby odczytaæ plik TGA
 		potrzebne s¹ odpowiednie
@@ -204,7 +204,7 @@ bool	ioTexture::LoadTGA( std::string filename )
 	return true;
 }
 
-void ioTexture::Activate( unsigned int tex )
+void CTexture::Activate( unsigned int tex )
 {
 	if( !loaded )
 		return;
@@ -212,12 +212,12 @@ void ioTexture::Activate( unsigned int tex )
 	glBindTexture( GL_TEXTURE_2D, texture );
 }
 
-std::string ioTexture::GetFile()
+std::string CTexture::GetFile()
 {
 	return file;
 }
 
-void ioTexture::Free()
+void CTexture::Free()
 {
 	if( !loaded )
 		return;
@@ -230,16 +230,16 @@ void ioTexture::Free()
 
 
 
-ioTexManager::ioTexManager()
+CTexManager::CTexManager()
 {
 }
 
-ioTexManager::~ioTexManager()
+CTexManager::~CTexManager()
 {
 	Clear();
 }
 
-ioTexture* ioTexManager::Get( std::string filename )
+CTexture* CTexManager::Get( std::string filename )
 {
 	if( filename == "" )
 	{
@@ -248,7 +248,7 @@ ioTexture* ioTexManager::Get( std::string filename )
 	}
 
 	unsigned int i;
-	ioTexture* NewTex;
+	CTexture* NewTex;
 	for( i = 0; i < List.size(); i++ )
 	{
 		NewTex = GetTexture( i );
@@ -256,7 +256,7 @@ ioTexture* ioTexManager::Get( std::string filename )
 			return NewTex;
 	}
 
-	NewTex = new ioTexture;
+	NewTex = new CTexture;
 	if( !NewTex->LoadTGA( filename ) )
 	{
 		Log.Error( "TEXMANAGER(): Nieudane za³adowanie tekstury: " + filename );
@@ -270,12 +270,12 @@ ioTexture* ioTexManager::Get( std::string filename )
 	return NewTex;
 }
 
-void ioTexManager::AddTexture( ioTexture *Tex )
+void CTexManager::AddTexture( CTexture *Tex )
 {
 	List.push_back( Tex );
 }
 
-void ioTexManager::DeleteTexture( unsigned int index )
+void CTexManager::DeleteTexture( unsigned int index )
 {
 	if( index >= List.size() )
 		return;
@@ -284,7 +284,7 @@ void ioTexManager::DeleteTexture( unsigned int index )
 	List.erase( List.begin() + index );
 }
 
-ioTexture* ioTexManager::GetTexture( unsigned int index )
+CTexture* CTexManager::GetTexture( unsigned int index )
 {
 	if( index >= List.size() )
 		return 0;
@@ -292,7 +292,7 @@ ioTexture* ioTexManager::GetTexture( unsigned int index )
 	return List[index];
 }
 
-void ioTexManager::Clear()
+void CTexManager::Clear()
 {
 	for(unsigned i = 0; i < List.size(); i++)
 	{
@@ -301,4 +301,4 @@ void ioTexManager::Clear()
 	List.clear();
 }
 
-ioTexManager TManager;
+CTexManager TManager;

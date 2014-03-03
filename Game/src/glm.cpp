@@ -741,7 +741,7 @@ bool GLModel::LoadModel( std::string filename )
 	if( texCount > 0 )
 	{
 		Textures.resize(texCount);
-		memset(&Textures[0], 0, sizeof(ioTexture*) * texCount);
+		memset(&Textures[0], 0, sizeof(CTexture*) * texCount);
 
 		str = GetString( fileStream );
 

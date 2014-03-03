@@ -85,15 +85,15 @@ class specSprite;
 class specManager;
 class specMotionBlur;
 
-class ioTexture;
-class ioTexManager;
+class CTexture;
+class CTexManager;
 
 extern CBulletManager	BManager;
 extern gameLevel		GLevel;
 extern gameLevel*		pGLevel;
-extern ioTexManager		TManager;
+extern CTexManager		TManager;
 extern specManager		SEManager;
-extern ioTexture		Part;
+extern CTexture		Part;
 extern specMotionBlur	SMBlur;
 extern guiMain			GUI;
 extern CPlayer		MainPlayer;

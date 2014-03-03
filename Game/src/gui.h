@@ -23,7 +23,7 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 class guiTextureText
 {
 private:
-	ioTexture *Tex;
+	CTexture *Tex;
 
 	unsigned int base;
 	unsigned int list;
@@ -38,7 +38,7 @@ public:
 	guiTextureText();
 	~guiTextureText();
 
-	void Init( ioTexture *font );
+	void Init( CTexture *font );
 	void Free();
 	void SetSize( unsigned int wid, unsigned int hei );
 	void SetColor( float R, float G, float B, float Alpha = 1.0f );
@@ -50,7 +50,7 @@ public:
 class guiIntro
 {
 private:
-	ioTexture		*Tex;
+	CTexture		*Tex;
 	guiTextureText	TText;
 	unsigned int Time;
 	unsigned int TimePerChar;
@@ -64,7 +64,7 @@ public:
 	guiIntro();
 	~guiIntro();
 
-	bool Init( ioTexture *Font );
+	bool Init( CTexture *Font );
 
 	void AddStr( std::string str, int tpc );
 
@@ -201,8 +201,8 @@ public:
 class guiMain
 {
 private:
-	ioTexture font[1];
-	ioTexture CH[1];
+	CTexture font[1];
+	CTexture CH[1];
 	guiTextureText TText;
 
 	unsigned short MaxTexDLevel;
@@ -272,7 +272,7 @@ private:
 	void	EngineWLScr( const float fTD );
 
 public:
-	ioTexture *Cursor;
+	CTexture *Cursor;
 	guiMainMenu Menu;
 	guiPlayerInfo PInfo;
 	std::string LevName;

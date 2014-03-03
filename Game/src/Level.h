@@ -10,8 +10,12 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _LEVEL_H_
-#define _LEVEL_H_
+#pragma once
+
+#include <string>	// Nag³ówek od klasy ³añcucha znaków
+#include <fstream>	// Nag³ówek od operacji we/wy.
+
+#include "StrEx.h"
 
 #include "defines.h"
 #include "Log.h"
@@ -20,8 +24,6 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 #include "Game.h"
-#include <string>	// Nag³ówek od klasy ³añcucha znaków
-#include <stdio.h>	// Nag³ówek od operacji we/wy.
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -94,7 +96,7 @@ public:
 class gameLevel
 {
 private:
-	ioTexture *Tex[3];
+	CTexture *Tex[3];
 	
 	// Informacje o liczbie wierszy i kolumn w poziomie gry
 	unsigned int rows;
@@ -135,7 +137,6 @@ private:
 	std::string file;
 
 	// Metoda pobiera jedna linie z pliku
-	std::string GetString( FILE* fp );
 	std::string GetParamStr( const std::string &str );
 
 	// Metody wykorzystywane przy wizualizacji
@@ -145,7 +146,7 @@ private:
 
 	// Metody inicjuj¹ce
 	void BuildVisual();
-	void BuildPhisic();
+	void BuildPhysic();
 public:
 	// Konstruktor i destruktor
 	gameLevel();
@@ -189,5 +190,3 @@ extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
 extern gameLevel GLevel;
 extern gameLevel* pGLevel;
-
-#endif
