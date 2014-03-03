@@ -19,7 +19,7 @@ specEffect::specEffect()
 	CanDelete = false;
 }
 
-void specEffect::Update()
+void specEffect::Update( const float fTD )
 {
 
 }
@@ -37,10 +37,10 @@ void specRay::Create( Vector3f Pos, Vector3f Veloc )
 	ToPos = RayCast( Pos, Veloc, 1.0f, &GLevel );
 }
 
-void specRay::Update()
+void specRay::Update( const float fTD )
 {
 	if( Alpha > 0.0f )
-		Alpha -= 0.02f * GUI.GetSpeed();
+		Alpha -= 0.02f * GUI.GetSpeed() * fTD;
 	else CanDelete = true;
 }
 
@@ -72,11 +72,11 @@ void specExplode::Create( Vector3f Pos, float Power, float fStep )
 	thisPower = 0.0f;
 }
 
-void specExplode::Update()
+void specExplode::Update( const float fTD )
 {
 	if( thisPower < toPower )
 	{
-		thisPower += Step * GUI.GetSpeed();
+		thisPower += Step * GUI.GetSpeed() * fTD;
 
 		Alpha = 1.0f - ( thisPower * ( 1.0f / toPower ) );
 	}
@@ -119,9 +119,9 @@ void specSprite::Create( Vector3f Pos, float R, float G, float B )
 	CanDelete = false;
 }
 
-void specSprite::Update()
+void specSprite::Update( const float fTD )
 {
-	Alpha -= 0.01f * GUI.GetSpeed();
+	Alpha -= 0.01f * GUI.GetSpeed() * fTD;
 	if( Alpha <= 0.0f )
 		CanDelete = true;
 }
@@ -178,13 +178,13 @@ specEffect* specManager::GetEffect( unsigned int index )
 	return List[index];
 }
 
-void specManager::Update()
+void specManager::Update( const float fTD )
 {
 	specEffect* effect;
 	for( int i = List.size()-1; i >= 0; i-- )
 	{
 		effect = List[i];
-		effect->Update();
+		effect->Update( fTD );
 		if( effect->CanDelete )
 		{
 			DeleteEffect( i );
@@ -312,7 +312,7 @@ void specMotionBlur::CopyImage()
 	CanCopy = false;
 }
 
-void specMotionBlur::Update()
+void specMotionBlur::Update( const float fTD )
 {
 	tick++;
 	if( tick >= GUI.GetMBKeyFrames() )

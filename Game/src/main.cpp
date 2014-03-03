@@ -112,14 +112,14 @@ void Update(const float fTD)	// Logika gry
 	if( GUI.GetCliping() )
 	{
 		MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
-		WManager.Update( &MainPlayer, 1 );
-		BonusMan.Update( &MainPlayer );
+		WManager.Update( &MainPlayer, 1, fTD );
+		BonusMan.Update( &MainPlayer, fTD );
 	}
 	MainPlayer.ApplyNextPos();
 
-	SEManager.Update();
-	SMBlur.Update();
-	BManager.Update();
+	SEManager.Update( fTD );
+	SMBlur.Update( fTD );
+	BManager.Update( fTD );
 
 	GUI.PInfo.HEALTH = MainPlayer.GetHealth();
 	GUI.PInfo.ARMOR = MainPlayer.GetArmor();
@@ -154,8 +154,6 @@ void RenderLevel()	// Wizualizacja gry
 		glLoadIdentity();
 		MainPlayer.Render();
 		
-		glFlush();
-
 		SMBlur.CopyImage();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
 		GLRender.Resize( GLRender.GetWidth(), GLRender.GetHeight() );
@@ -185,8 +183,6 @@ void RenderLevel()	// Wizualizacja gry
 
 	if( GUI.GetMotionBlur() )
 		SMBlur.Render();
-
-	glFlush();
 }
 
 bool Render()		//G³ówna funkcja renderuj¹ca
@@ -387,20 +383,21 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	{
 		frameTime += timer.GetDT();
 
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Czy otrzymano komunikat?
+		if ( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )	// Czy otrzymano komunikat?
 		{
-			if (msg.message==WM_QUIT)				// Czy to komunikat wyjœcia?
+			if ( msg.message == WM_QUIT )				// Czy to komunikat wyjœcia?
 			{
 				done = true;							// Je¿eli tak to wychodzimy z pêtli
 			}
 			else									// Je¿eli nie to zajmij siê komunikatami
 			{
-				TranslateMessage(&msg);				// T³umacz komunikat
-				DispatchMessage(&msg);				// Wykonaj komunikat
+				TranslateMessage( &msg );				// T³umacz komunikat
+				DispatchMessage( &msg );				// Wykonaj komunikat
 			}
 		}
 
 		GUI.UpdateCounter();
+
 		// Rysujemy scene
 		if (active)								// Program jest aktywny?
 		{
@@ -412,7 +409,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 			{
 				Render();						// Rysujemy scene
 
-				while(frameTime > TIME_STEP)
+				for(unsigned i = 0; i < 20 && frameTime > TIME_STEP; i++)
 				{
 					Update(TIME_STEP);
 					frameTime -= TIME_STEP;

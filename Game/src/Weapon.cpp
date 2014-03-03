@@ -33,12 +33,12 @@ void weBullet::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_NORMAL;
 }
 
-void weBullet::Update()
+void weBullet::Update( const float fTD )
 {
 	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
 	{
 		Pos = NextPos;
-		NextPos = Pos + ( Veloc * GUI.GetSpeed() );
+		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
 		if( GLevel.GetBlock( this->GetBlockPos() ) == NULL )
 			DoDelete = true;
 	}
@@ -127,7 +127,7 @@ float weBullRay::DoTest( CEntity* Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullRay::Update()
+void weBullRay::Update( const float fTD )
 {
 	CanDelete = true;
 }
@@ -185,13 +185,13 @@ void weBullRocket::OnDelete()
 	glDisable( GL_LIGHT0 );
 }
 
-void weBullRocket::Update()
+void weBullRocket::Update( const float fTD )
 {
 	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
 	{
 		Pos = NextPos;
-		NextPos = Pos + ( Veloc * GUI.GetSpeed() );
-		Sec += 1.0f * GUI.GetSpeed();
+		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
+		Sec += fTD * GUI.GetSpeed();
 		if( Sec > 3.0f )
 		{
 			Vector3f Tail = Veloc;
@@ -247,9 +247,9 @@ float weBullExplode::DoTest( CEntity *Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullExplode::Update()
+void weBullExplode::Update( const float fTD )
 {
-	thisPower += Step;
+	thisPower += Step * fTD;
 
 	if( thisPower >= Power * 0.8f )
 	{
@@ -279,7 +279,7 @@ void weBullSaw::Init( Vector3f pos, Vector3f veloc, float speed )
 	Type = BULLET_TYPE_SAW;
 }
 
-void weBullSaw::Update()
+void weBullSaw::Update( const float fTD )
 {
 	CanDelete = true;
 }
@@ -314,9 +314,9 @@ float weBullBomb::DoTest(CEntity *Dum, float Armor )
 	return 0.0f;
 }
 
-void weBullBomb::Update()
+void weBullBomb::Update( const float fTD )
 {
-	ThisTime += 1.0f * GUI.GetSpeed();
+	ThisTime += fTD * GUI.GetSpeed();
 	if( ThisTime >= BoomTime )
 	{
 		CanDelete = true;
@@ -373,13 +373,13 @@ float weBulletManager::DoTest( CEntity* Dum, float Armor )
 	return Damage;
 }
 
-void weBulletManager::Update()
+void weBulletManager::Update( const float fTD )
 {
 	weBullet* bull;
 	for( int i = List.size()-1; i >= 0; i-- )
 	{
 		bull = List[i];
-		bull->Update();
+		bull->Update( fTD );
 
 		if( bull->CanDelete )
 			DeleteBullet( i );
@@ -446,15 +446,16 @@ void weBonus::Render()
 	glPopMatrix();
 }
 
-void weBonus::Update()
+void weBonus::Update( const float fTD )
 {
-	rot += 1.0f * GUI.GetSpeed();
+	rot += fTD * GUI.GetSpeed();
 }
 
 unsigned int weBonus::GetType()
 {
 	return type;
 }
+
 /*	BONUS - AMUNICJA	*/
 void weAmmo::Init(unsigned int weaptype, unsigned int ammocount, std::string modelfile) 
 {
@@ -549,7 +550,7 @@ void weBonusManager::Clear()
 	}
 }
 
-void weBonusManager::Update(CPlayer *Player)
+void weBonusManager::Update( CPlayer *Player, const float fTD )
 {
 	if( Count() == 0 || Player == NULL )
 		return;
@@ -562,7 +563,7 @@ void weBonusManager::Update(CPlayer *Player)
 		if( mathDistSq( Bonus->Pos, Player->NextPos ) > POW( 90.0f ) )
 			continue;
 
-		Bonus->Update();
+		Bonus->Update( fTD );
 		Player->TestBonus( Bonus );
 
 		if( Bonus->CanDelete )
@@ -646,9 +647,9 @@ weWeapon::~weWeapon()
 	to bêdziemy j¹ obracaæ. Efekt wygl¹da
 	lepiej. :)
 */
-void weWeapon::Rotate()
+void weWeapon::Rotate( const float fTD )
 {
-	Rot += 0.5f * GUI.GetSpeed();
+	Rot += fTD * 0.5f * GUI.GetSpeed();
 	if( Rot >= 360.0f )
 		Rot = 0.0f;
 }
@@ -745,7 +746,7 @@ bool weWeapon::GetInited()
 	return inited;
 }
 
-void weWeapon::Update()
+void weWeapon::Update( const float fTD )
 {
 
 }
@@ -833,10 +834,10 @@ void weSaw::Init()
 	to wygl¹da ni¿ statyczny model i s³owo
 	"O, trafi³em..." ;)
 */
-void weSaw::Update()
+void weSaw::Update( const float fTD )
 {
 	//	Funkcja obracaj¹ca, dzia³a bez wzglêdu, czy broñ jest na ziemi, czy nie
-	Rotate();
+	Rotate( fTD );
 
 	// Sprawdzamy, czy broñ jest podnisiona
 	if( !InHand ) 
@@ -851,9 +852,10 @@ void weSaw::Update()
 	if( fire ) 
 	{
 		if( ShotPause < 20.0f )
-			ShotPause += 0.4f;
+			ShotPause += 0.4f * fTD;
 		if( ReloadTime > -1.0f )
-			ReloadTime -= 0.2f;
+			ReloadTime -= 0.2f * fTD;
+
 		Shake[0] = 0.0f;
 		Shake[1] = 0.0f;
 		weBullSaw* bull = new weBullSaw;
@@ -870,14 +872,15 @@ void weSaw::Update()
 	else 
 	{
 		if( ShotPause > 0.3f )
-			ShotPause -= 0.1f;
+			ShotPause -= 0.1f * fTD;
 		if( ReloadTime < 0.0f )
-			ReloadTime += 0.05f;
+			ReloadTime += 0.05f * fTD;
+
 		Shake[0] = ( sinf( Rot / 10.0f ) / 20.0f );
 		Shake[1] = ( cosf( Rot / 10.0f ) / 20.0f );
 	}
 	// Obracamy ostrze i gdy wykona³o pe³ny obrót, zerujemy
-	ShotTime += ShotPause * GUI.GetSpeed();
+	ShotTime += ShotPause * GUI.GetSpeed() * fTD;
 	if( ShotTime >= 360.0f )
 		ShotTime = 0.0f;
 }
@@ -971,17 +974,17 @@ void wePistol::Init()
 	inited = true;
 }
 
-void wePistol::Update()
+void wePistol::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( !InHand )
 		return;
 
 	if( back )
 	{
-		Time += 1.0f * GUI.GetSpeed();
-		BackA += 0.1f * GUI.GetSpeed();
+		Time += 1.0f * GUI.GetSpeed() * fTD;
+		BackA += 0.1f * GUI.GetSpeed() * fTD;
 		if( Time >= ShotPause )
 		{
 			back = false;
@@ -994,19 +997,19 @@ void wePistol::Update()
 	{
 		if( !back )
 		{
-				back = true;
-				Time = 0.0f;
-				Ammo--;
-				CurrClip--;
-				weBullet* Bull = new weBullet;
-				Vector3f temp;
-				temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
-				temp = temp - Pos;
-				temp.Normalize();
-				Bull->Init( Pos, temp, 4.0f );
-				Bull->Owner = this->Owner;
-				Bull->Damage = Damage[0];
-				BManager.AddBullet( Bull );
+			back = true;
+			Time = 0.0f;
+			Ammo--;
+			CurrClip--;
+			weBullet* Bull = new weBullet;
+			Vector3f temp;
+			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
+			temp = temp - Pos;
+			temp.Normalize();
+			Bull->Init( Pos, temp, 4.0f );
+			Bull->Owner = this->Owner;
+			Bull->Damage = Damage[0];
+			BManager.AddBullet( Bull );
 		}
 		Shake[0] = 0.0f;
 		Shake[1] = 0.0f;
@@ -1105,9 +1108,9 @@ void weMiniPhazer::Init()
 	inited = true;
 }
 
-void weMiniPhazer::Update()
+void weMiniPhazer::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1133,10 +1136,10 @@ void weMiniPhazer::Update()
 			}
 			else
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += fTD * GUI.GetSpeed();
 				if( Time >= ShotPause * 0.2f )
 				{
-					BackA -= ( 1.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed();
+					BackA -= ( 1.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed() * fTD;
 					if( Time >= ShotPause )
 					{
 						BackA = 0.0f;
@@ -1147,7 +1150,7 @@ void weMiniPhazer::Update()
 				}
 				else
 				{
-					BackA += ( 1.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed();
+					BackA += ( 1.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed() * fTD;
 				}
 			}
 		}
@@ -1242,9 +1245,9 @@ void wePhazer::Init()
 	inited = true;
 }
 
-void wePhazer::Update()
+void wePhazer::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1270,10 +1273,10 @@ void wePhazer::Update()
 			}
 			else
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += fTD * GUI.GetSpeed();
 				if( Time >= ShotPause * 0.2f )
 				{
-					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed();
+					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed() * fTD;
 					if( Time >= ShotPause )
 					{
 						BackA = 0.0f;
@@ -1284,7 +1287,7 @@ void wePhazer::Update()
 				}
 				else
 				{
-					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed();
+					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed() * fTD;
 				}
 			}
 		}
@@ -1377,9 +1380,9 @@ void weMiniGun::Init()
 	inited = true;
 }
 
-void weMiniGun::Update()
+void weMiniGun::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1387,13 +1390,15 @@ void weMiniGun::Update()
 		{
 			if( Rot2 < 15.0f )
 			{
-				Rot2 += 1.0f * GUI.GetSpeed();
+				Rot2 += GUI.GetSpeed() * fTD;
 			}
 			else Rot2 = 15.0f;
+
 			if( BackA == 1.0f && Rot2 == 15.0f )
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += GUI.GetSpeed() * fTD;
 			}
+
 			if( Time >= ShotPause )
 			{
 				Time = 0.0f;
@@ -1413,7 +1418,7 @@ void weMiniGun::Update()
 			}
 			if( BackA < 1.0f )
 			{
-				BackA += ( 0.5f / 14.0f ) * GUI.GetSpeed();
+				BackA += ( 0.5f / 14.0f ) * GUI.GetSpeed() * fTD;
 				back = true;
 			}
 			else BackA = 1.0f;
@@ -1425,13 +1430,13 @@ void weMiniGun::Update()
 			Shake[1] = ( cos( Rot / 10.0f ) / 20.0f );
 			if( Rot2 > 0.0f )
 			{
-				Rot2 -= 1.0f * GUI.GetSpeed();
+				Rot2 -= GUI.GetSpeed() * fTD;
 			}
 			else Rot2 = 0.0f;
 
 			if( BackA > 0.0f )
 			{
-				BackA -= ( 0.5f / 14.0f ) * GUI.GetSpeed();
+				BackA -= ( 0.5f / 14.0f ) * GUI.GetSpeed() * fTD;
 				back = false;
 			}
 			else BackA = 0.0f;
@@ -1526,9 +1531,9 @@ void weRocketLuncher::Init()
 	inited = true;
 }
 
-void weRocketLuncher::Update()
+void weRocketLuncher::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{
@@ -1554,10 +1559,10 @@ void weRocketLuncher::Update()
 			}
 			else
 			{
-				Time += 1.0f * GUI.GetSpeed();
+				Time += GUI.GetSpeed() * fTD;
 				if( Time >= ShotPause * 0.2f )
 				{
-					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed();
+					BackA -= ( 2.0f / ( ShotPause * 0.8f )) * GUI.GetSpeed() * fTD;
 					if( Time >= ShotPause )
 					{
 						BackA = 0.0f;
@@ -1568,7 +1573,7 @@ void weRocketLuncher::Update()
 				}
 				else
 				{
-					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed();
+					BackA += ( 2.0f / ( ShotPause * 0.2f ) ) * GUI.GetSpeed() * fTD;
 				}
 			}
 		}
@@ -1658,9 +1663,9 @@ void weAtomBomb::Init()
 	inited = true;
 }
 
-void weAtomBomb::Update()
+void weAtomBomb::Update( const float fTD )
 {
-	Rotate();
+	Rotate( fTD );
 
 	if( InHand )
 	{

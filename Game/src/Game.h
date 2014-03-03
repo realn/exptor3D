@@ -64,18 +64,6 @@ public:
 	virtual void SetArmor( const float set );
 };
 
-class IUpdateable
-{
-public:
-	virtual void Update(const float fTD) = 0;
-};
-
-class IRenderable
-{
-public:
-	virtual void Render() = 0;
-};
-
 /*	KLASA CActor
 	Jest to klasa wyjœciowa dla wiêkszoœci
 	obiektów "¿ywych" -  w tym tak¿e dla gracza.
@@ -85,8 +73,7 @@ public:
 */
 class CActor : 
 	public CEntity,
-	public CActorStats,
-	public IUpdateable
+	public CActorStats
 {
 protected:
 	float StartAngle;
@@ -120,7 +107,7 @@ public:
 
 	virtual void Init();
 
-	virtual void Update( const float fTD ) override;
+	virtual void Update( const float fTD );
 	virtual void Render();
 
 	virtual void Reset() override;
@@ -302,7 +289,7 @@ private:
 public:
 	gameWeaponManager();
 	~gameWeaponManager();
-	void Update( CPlayer* Players, int PlayerCount );
+	void Update( CPlayer* Players, int PlayerCount, const float fTD );
 	void Render();
 
 	void AddWeapon( weWeapon* weapon );

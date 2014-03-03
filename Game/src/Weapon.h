@@ -1,5 +1,4 @@
-#ifndef _WEAPON_H_
-#define _WEAPON_H_
+#pragma once
 
 #include	"defines.h"
 #include	"gui.h"
@@ -41,7 +40,7 @@ class weBullSaw : public weBullet
 private:
 public:
 	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void Update();
+	void Update( const float fTD ) override;
 	float DoTest( CEntity* Dum, float Armor = 0.0f );
 };
 // Promieñ
@@ -257,7 +256,7 @@ public:
 	virtual void Free();
 
 	// Funkcja obracaj¹ca broñ ( animacja raczej wspólna dla wszystkich broni );
-	void Rotate();
+	void Rotate( const float fTD );
 
 	int GetAmmo();
 	int GetAllAmmo();
@@ -312,7 +311,7 @@ private:
 public:
 	// Inicjalizacja
 	void Init();
-	void Update( const float fTD );
+	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
 };
@@ -328,7 +327,7 @@ private:
 public:
 	// Inicjalizacja
 	void Init();
-	void Update( const float fTD );
+	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
 };
@@ -343,7 +342,7 @@ private:
 	float Time;
 public:
 	void Init();
-	void Update();
+	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
 };
@@ -356,7 +355,7 @@ private:
 	float BackA;
 public:
 	void Init();
-	void Update();
+	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
 };
@@ -371,9 +370,7 @@ private:
 	Vector3f PutPos;
 public:
 	void Init();
-	void Update();
+	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
 };
-
-#endif

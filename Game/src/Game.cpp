@@ -552,7 +552,7 @@ void CPlayer::Update( bool* Keys, const float fTD )
 	if( Weapon[CurrWeap]->GetHave() )
 	{
 		Weapon[CurrWeap]->Pos = Pos + temp;
-		Weapon[CurrWeap]->Update();
+		Weapon[CurrWeap]->Update( fTD );
 		GUI.PInfo.AMMO = Weapon[CurrWeap]->GetAmmo();
 		GUI.PInfo.CLIPS = Weapon[CurrWeap]->GetClip();
 		GUI.PInfo.WeapName = Weapon[CurrWeap]->Name;
@@ -1173,13 +1173,13 @@ gameWeaponManager::~gameWeaponManager()
 	Clear();
 }
 
-void gameWeaponManager::Update( CPlayer* Players, int PlayerCount )
+void gameWeaponManager::Update( CPlayer* Players, int PlayerCount, const float fTD )
 {
 	unsigned int i;
 	int j;
 	for( i = 0; i < List.size(); i++ )
 	{
-		List[i]->Update();
+		List[i]->Update( fTD );
 	}
 	for( i = 0; i < PlayerCount; i++ )
 	{
