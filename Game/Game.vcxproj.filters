@@ -69,6 +69,9 @@
     <ClCompile Include="src\GameStaticObject.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameObjectManager.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -129,6 +132,9 @@
       <Filter>Source\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\GameEntity.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObjectManager.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
   </ItemGroup>

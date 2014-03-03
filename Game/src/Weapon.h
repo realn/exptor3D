@@ -17,6 +17,7 @@ protected:
 	unsigned int Type;
 	Vector3f Veloc;
 	bool DoDelete;
+
 public:
 	float Damage;
 	CActor* Owner;
@@ -43,6 +44,7 @@ public:
 	void Update( const float fTD ) override;
 	float DoTest( CDynamic* Dum, float Armor = 0.0f );
 };
+
 // Promieñ
 class weBullRay : public weBullet
 {

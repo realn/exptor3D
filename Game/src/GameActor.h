@@ -98,7 +98,10 @@ protected:
 	float StartAngle;
 	float Speed;
 	float RotSpeed;
+	float ToAngle;
+
 	bool HasTarget;
+
 	unsigned int AIflags;
 	unsigned int AIState;
 	unsigned int Actions;
@@ -120,7 +123,6 @@ protected:
 	virtual void AIAttackTarget();
 	virtual bool IsEnemyInFront();
 public:
-	float ToAngle;
 	CActor();
 	~CActor();
 
