@@ -13,6 +13,9 @@
     <Filter Include="Source\Game\Weapon">
       <UniqueIdentifier>{f97e86df-7b4b-4f99-a2a3-5b6f2c1700d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\Item">
+      <UniqueIdentifier>{f7b17ccf-1125-47db-9c38-5675aac487fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -95,6 +98,21 @@
     </ClCompile>
     <ClCompile Include="src\WeaponBulletManager.cpp">
       <Filter>Source\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Item.cpp">
+      <Filter>Source\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ItemAmmo.cpp">
+      <Filter>Source\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ItemHealth.cpp">
+      <Filter>Source\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ItemArmor.cpp">
+      <Filter>Source\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ItemManager.cpp">
+      <Filter>Source\Game\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +199,21 @@
     </ClInclude>
     <ClInclude Include="src\WeaponBulletManager.h">
       <Filter>Source\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Item.h">
+      <Filter>Source\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemAmmo.h">
+      <Filter>Source\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemHealth.h">
+      <Filter>Source\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemArmor.h">
+      <Filter>Source\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemManager.h">
+      <Filter>Source\Game\Item</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,69 +15,7 @@
 #define	GAME_WEAP_MINE		8
 #define	GAME_WEAP_ATOM_BOMB	9
 
-class weBonus : public CDynamic
-{
-protected:
-	float rot;
-	unsigned int type;
-	GLModel* Model;
-public:
-	weBonus();
-	bool CanDelete;
-	virtual void Render();
-	virtual void Update( const float fTD );
-	unsigned int GetType();
-};
 
-class weAmmo : public weBonus
-{
-private:
-	unsigned int WeapType;
-	unsigned int AmmoCount;
-public:
-	void Init( unsigned int weaptype, unsigned int ammocount, std::string modelfile );
-	unsigned int GetWeapType();
-	unsigned int GetAmmoCount();
-};
-
-class weHealth : public weBonus
-{
-private:
-	float HealthAdd;
-public:
-	void Init( float health, std::string modelfile );
-	float GetHealth();
-};
-
-class weArmor : public weBonus
-{
-private:
-	float ArmorAdd;
-public:
-	void Init( float armor, std::string modelfile );
-	float GetArmor();
-};
-
-class weBonusManager
-{
-private:
-	std::vector<weBonus*> List;
-public:
-	weBonusManager();
-	~weBonusManager();
-
-	void AddBonus( weBonus* Bonus );
-	weBonus* GetBonus( unsigned int index );
-	void DeleteBonus( unsigned int index );
-
-	void Update( CPlayer* Player, const float fTD  );
-	void Render();
-
-	unsigned int Count();
-	void Clear();
-};
-
-extern weBonusManager BonusMan;
 
 /*	KLASA BRONI
 	To jest tylko klasa do 

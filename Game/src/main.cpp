@@ -15,6 +15,7 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 
 #include "GamePlayer.h"
 #include "WeaponBulletManager.h"
+#include "ItemManager.h"
 
 bool CanDoWLScr = true;
 
@@ -387,11 +388,12 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	{
 		frameTime += timer.GetDT();
 
-		if ( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )	// Czy otrzymano komunikat?
+		for( unsigned i = 0; i < 20 && PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ); i++ )	// Czy otrzymano komunikat?
 		{
 			if ( msg.message == WM_QUIT )				// Czy to komunikat wyjœcia?
 			{
 				done = true;							// Je¿eli tak to wychodzimy z pêtli
+				break;
 			}
 			else									// Je¿eli nie to zajmij siê komunikatami
 			{

@@ -166,6 +166,6 @@ extern float	mathDist( const Vector3f& V1, const Vector3f& V2 );
 extern float	mathDistSq( const Vector3f& V1, const Vector3f& V2 );
 extern Vector3f	ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
 extern float	GetAngle( const Vector3f &V1, const Vector3f &V2 );
-extern float	SwapAngle( const float &Angle );
+extern const float	SwapAngle( const float &Angle );
 
 #endif

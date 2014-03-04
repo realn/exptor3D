@@ -3,7 +3,7 @@
 #include "GameActor.h"
 
 class weWeapon;
-class weBonus;
+class CItem;
 
 /*	KLASA POSTACI
 	Postacie gry maj¹ swoj¹ binarn¹
@@ -47,7 +47,7 @@ public:
 	unsigned int GetHand();
 
 	void TestWeapon( weWeapon* Weap );
-	void TestBonus( weBonus* Bonus );
+	void TestBonus( CItem* Bonus );
 	void ApplyNextPos();
 
 	void ModHealth( const float mod ) override;

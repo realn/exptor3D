@@ -3,6 +3,10 @@
 #include "Weapon.h"
 #include "gui.h"
 #include "Level.h"
+#include "ItemManager.h"
+#include "ItemHealth.h"
+#include "ItemAmmo.h"
+#include "ItemArmor.h"
 
 /*=========================	
 	KLASA CPlayer
@@ -196,32 +200,32 @@ void CPlayer::TestWeapon( weWeapon* Weap )
 	}
 }
 
-void CPlayer::TestBonus( weBonus* Bonus )
+void CPlayer::TestBonus( CItem* Bonus )
 {
 	if( mathDistSq( Bonus->Pos, this->NextPos ) < POW( Radius ) )
 	{
 		switch( Bonus->GetType() )
 		{
 		case BONUS_TYPE_AMMO :
-			if( Weapon[((weAmmo*)Bonus)->GetWeapType()]->ModAmmo( ((weAmmo*)Bonus)->GetAmmoCount() ) )
+			if( Weapon[((CItemAmmo*)Bonus)->GetWeapType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
 			{
-				GUI.SendMsg( "Podniosles: " + guiIntToStr( ((weAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
+				GUI.SendMsg( "Podniosles: " + guiIntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
 				Bonus->CanDelete = true;
 			}
 			break;
 		case BONUS_TYPE_HEALTH :
 			if( Health != MaxHealth )
 			{
-				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((weHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
-				ModHealth( ((weHealth*)Bonus)->GetHealth() );
+				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
+				ModHealth( ((CItemHealth*)Bonus)->GetHealth() );
 				Bonus->CanDelete = true;
 			}
 			break;
 		case BONUS_TYPE_ARMOR :
 			if( Armor != MaxArmor )
 			{
-				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((weArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
-				ModArmor( ((weArmor*)Bonus)->GetArmor() );
+				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
+				ModArmor( ((CItemArmor*)Bonus)->GetArmor() );
 				Bonus->CanDelete = true;
 			}
 			break;

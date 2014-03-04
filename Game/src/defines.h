@@ -38,11 +38,6 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 #define GAME_TEX_FLOOR		1
 #define GAME_TEX_TOP		2
 
-#define BONUS_TYPE_UNKNOWN	0
-#define BONUS_TYPE_AMMO		1
-#define BONUS_TYPE_HEALTH	2
-#define	BONUS_TYPE_ARMOR	3
-
 #define WEAP_FLAG_RESPAWN	1
 #define	WEAP_FLAG_AMMOPACK	2
 #define	WEAP_FLAG_AUTODEL	4
@@ -72,11 +67,11 @@ class CBullRocket;
 class CBullExplosion;
 class CBulletManager;
 
-class weBonus;
-class weAmmo;
-class weHealth;
-class weArmor;
-class weBonusManager;
+class CItem;
+class CItemAmmo;
+class CItemHealth;
+class CItemArmor;
+class CItemManager;
 
 class specEffect;
 class specRay;
@@ -99,7 +94,7 @@ extern guiMain			GUI;
 extern CPlayer		MainPlayer;
 extern gameWeaponManager WManager;
 extern CActorManager ThingManager;
-extern weBonusManager	BonusMan;
+extern CItemManager	BonusMan;
 extern bool	CanDoWLScr;
 
 #endif

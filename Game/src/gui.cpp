@@ -120,7 +120,7 @@ void guiMain::ParseKeys( bool *Keys )
 	{
 		POINT mpos;
 		GetCursorPos( &mpos );
-		Menu.Cursor( mpos.x, mpos.y );
+		Menu.SetCursor( mpos.x, mpos.y );
 		if( Keys[VK_LBUTTON] )
 		{
 			Menu.Click( mpos.x, mpos.y, true );
@@ -674,11 +674,12 @@ void guiMain::InitGUI()
 	Timer = new CTimer();
 	Timer->Init();
 	Log.Log( "Inicjalizacja koñcowa GUI" );
-	font[0].LoadTGA( "Data/Font.tga" );
+	font = TManager.Get( "Data/Font.tga" );
 	Cursor = TManager.Get( "Data/Kursor.tga" );
-	TText.Init( &font[0] );
-	CH[0].LoadTGA( "Data/cel.tga" );
-	Menu.Init( &TText );
+	CH = TManager.Get( "Data/cel.tga" );
+
+	TText.Init( font );
+	Menu.Init( &TText, Cursor );
 }
 
 // Silnik widomoœci ekranowych wysy³anych przez silnik gry
@@ -1400,10 +1401,10 @@ void guiMenu::Update( float cX, float cY, bool click )
 	}
 }
 
-void guiMenu::Render( guiTextureText *TText )
+void guiMenu::Render( guiTextureText *TText, CTexture* cursor )
 {
 	TText->StartPrint();
-	GUI.Cursor->Activate();
+	cursor->Activate();
 	glDisable( GL_CULL_FACE );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -1473,9 +1474,10 @@ guiMainMenu::~guiMainMenu()
 	Free();
 }
 
-void guiMainMenu::Init( guiTextureText *text )
+void guiMainMenu::Init( guiTextureText *text, CTexture* cursor )
 {
 	TText = text;
+	Cursor = cursor;
 	curX = 0.0f;
 	curY = 0.0f;
 }
@@ -1525,7 +1527,7 @@ void guiMainMenu::Render()
 	guiMenu* Menu;
 	Menu = List[CurMenu];
 
-	Menu->Render( TText );
+	Menu->Render( TText, Cursor );
 }
 
 void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
@@ -1539,7 +1541,7 @@ void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
 	Clicked = click;
 }
 
-void guiMainMenu::Cursor( unsigned int X, unsigned int Y )
+void guiMainMenu::SetCursor( unsigned int X, unsigned int Y )
 {
 	float ax = 800.0f / (float)GLRender.GetWidth();
 	float ay = 600.0f / (float)GLRender.GetHeight();

@@ -146,7 +146,7 @@ public:
 	void Free();
 
 	void Update( float cX, float cY, bool click );
-	void Render( guiTextureText* TText );
+	void Render( guiTextureText* TText, CTexture* cursor );
 	void AddMenuItem( guiMenuItem* item );
 	void DeleteMenuItem( unsigned int index );
 };
@@ -156,6 +156,7 @@ class guiMainMenu
 {
 private:
 	guiTextureText* TText;
+	CTexture* Cursor;
 	std::vector<guiMenu*> List;
 
 	bool Enabled;
@@ -180,11 +181,11 @@ public:
 	guiMainMenu();
 	~guiMainMenu();
 
-	void Init( guiTextureText* text );
+	void Init( guiTextureText* text, CTexture* cursor );
 	void Free();
 
 	void Click( unsigned int X, unsigned int Y, bool click );
-	void Cursor( unsigned int X, unsigned int Y );
+	void SetCursor( unsigned int X, unsigned int Y );
 
 	void GoToMenu( unsigned int index );
 
@@ -201,9 +202,10 @@ public:
 class guiMain
 {
 private:
-	CTexture font[1];
-	CTexture CH[1];
+	CTexture *font;
+	CTexture *CH;
 	guiTextureText TText;
+	CTexture *Cursor;
 
 	unsigned short MaxTexDLevel;
 	unsigned short TexDetailLevel;
@@ -272,7 +274,6 @@ private:
 	void	EngineWLScr( const float fTD );
 
 public:
-	CTexture *Cursor;
 	guiMainMenu Menu;
 	guiPlayerInfo PInfo;
 	std::string LevName;

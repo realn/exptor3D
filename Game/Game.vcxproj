@@ -90,6 +90,11 @@
     <ClCompile Include="src\glm.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\inifile.cpp" />
+    <ClCompile Include="src\Item.cpp" />
+    <ClCompile Include="src\ItemAmmo.cpp" />
+    <ClCompile Include="src\ItemArmor.cpp" />
+    <ClCompile Include="src\ItemHealth.cpp" />
+    <ClCompile Include="src\ItemManager.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -120,6 +125,11 @@
     <ClInclude Include="src\glm.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\inifile.h" />
+    <ClInclude Include="src\Item.h" />
+    <ClInclude Include="src\ItemAmmo.h" />
+    <ClInclude Include="src\ItemArmor.h" />
+    <ClInclude Include="src\ItemHealth.h" />
+    <ClInclude Include="src\ItemManager.h" />
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\main.h" />

@@ -306,7 +306,7 @@ float GetAngle( const Vector3f &V1, const Vector3f &V2 )
 	else return 0.0f;
 }
 
-float SwapAngle( const float &Angle )
+const float SwapAngle( const float &Angle )
 {
 	if( Angle < 0.0f )
 		return Angle + 360.0f;

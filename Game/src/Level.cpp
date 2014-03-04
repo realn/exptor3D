@@ -13,6 +13,11 @@ Opis:	Patrz -> Level.h
 #include "GamePlayer.h"
 #include "WeaponBulletManager.h"
 
+#include "ItemManager.h"
+#include "ItemAmmo.h"
+#include "ItemArmor.h"
+#include "ItemHealth.h"
+
 gameLevel GLevel;
 gameLevel* pGLevel = &GLevel;
 
@@ -677,26 +682,27 @@ bool gameLevel::LoadLevel( const std::string &filename )
 		{
 			int a, b;
 			str = GetLine( stream );
+			std::string param = GetParamStr( str );
 
 			sscanf_s( str.c_str(), "%d,%d/", &k, &l );
-			weBonus* Bonus;
+			CItem* Bonus;
 			switch( l )
 			{
 			case BONUS_TYPE_AMMO :
 				sscanf_s( str.c_str(), "%d,%d/%d,%d=", &k, &l, &a, &b );
-				Bonus = new weAmmo;
-				((weAmmo*)Bonus)->Init( a, b, GetParamStr( str ) );
+				Bonus = new CItemAmmo( a, b, GLMManager.Get( param ) );
 				break;
+
 			case BONUS_TYPE_HEALTH :
 				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new weHealth;
-				((weHealth*)Bonus)->Init( a, GetParamStr( str ) );
+				Bonus = new CItemHealth( a, GLMManager.Get( param ) );
 				break;
+
 			case BONUS_TYPE_ARMOR :
 				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new weArmor;
-				((weArmor*)Bonus)->Init( a, GetParamStr( str ) );
+				Bonus = new CItemArmor( a, GLMManager.Get( param ) );
 				break;
+
 			case BONUS_TYPE_UNKNOWN :
 			default:
 				continue;
