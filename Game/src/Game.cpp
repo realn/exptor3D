@@ -259,13 +259,13 @@ void gameWeaponManager::Render()
 	}
 }
 
-void gameWeaponManager::AddWeapon( weWeapon* weapon )
+void gameWeaponManager::AddWeapon( GLModelManager& modelManager, weWeapon* weapon )
 {
 	if( weapon == NULL )
 		return;
 
 	if( !weapon->GetInited() )
-		weapon->Init();
+		weapon->Init( modelManager );
 
 	List.push_back( weapon );
 }

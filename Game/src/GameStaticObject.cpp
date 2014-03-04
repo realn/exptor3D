@@ -34,7 +34,7 @@ void gameStatObj::Render()
 	glPopMatrix();
 }
 
-bool gameStatObj::LoadObj( std::string filename )
+bool gameStatObj::LoadObj( GLModelManager& modelManager, const std::string& filename )
 {
 	if( filename == "" )
 	{
@@ -53,7 +53,7 @@ bool gameStatObj::LoadObj( std::string filename )
 	}
 
 	str = GetStr( fp );
-	Model = GLMManager.Get( str );
+	Model = modelManager.Get( str );
 	if( !Model )
 	{
 		Log.Error( "STATOBJ( " + file + " ): Nieudane wczytanie modelu: " + str );
@@ -61,7 +61,7 @@ bool gameStatObj::LoadObj( std::string filename )
 	}
 
 	str = GetStr( fp );
-	Radius = atof( GetStr( fp ).c_str() );
+	Radius = (float)atof( GetStr( fp ).c_str() );
 
 	fclose( fp );
 	return true;

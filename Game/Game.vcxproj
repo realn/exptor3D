@@ -98,6 +98,7 @@
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ModelManager.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Special.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\main.h" />
+    <ClInclude Include="src\ModelManager.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Special.h" />
     <ClInclude Include="src\StrEx.h" />

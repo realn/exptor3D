@@ -24,9 +24,6 @@
     <ClCompile Include="src\3dMath.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\glm.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\gui.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -117,15 +114,18 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="src\glm.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelManager.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\defines.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glm.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\gui.h">
@@ -216,6 +216,12 @@
       <Filter>Source\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="src\Texture.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glm.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelManager.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
   </ItemGroup>

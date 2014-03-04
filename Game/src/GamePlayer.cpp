@@ -48,6 +48,11 @@ CPlayer::~CPlayer()
 	delete Weapon[GAME_WEAP_ATOM_BOMB];
 }
 
+void	CPlayer::Init( GLModelManager& modelManager )
+{
+	ModelManager = &modelManager;
+}
+
 void	CPlayer::OnDie()
 {
 }
@@ -196,7 +201,7 @@ void CPlayer::TestWeapon( weWeapon* Weap )
 		if( !Weapon[Weap->GetType()]->GetInited() )
 			this->SwichWeap( Weap->GetType() );
 
-		Weapon[Weap->GetType()]->PickUp( Weap, this );
+		Weapon[Weap->GetType()]->PickUp( Weap, this, *ModelManager );
 	}
 }
 

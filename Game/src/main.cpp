@@ -13,13 +13,14 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 ///////////////////////////////////////////////////////*/
 #include "main.h"
 
+#include "ModelManager.h"
 #include "GamePlayer.h"
 #include "WeaponBulletManager.h"
 #include "ItemManager.h"
 
 bool CanDoWLScr = true;
 
-bool Init( CTexManager& texManager )    //Inicjalizacja OpenGL
+bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjalizacja OpenGL
 {
 	glDepthFunc( GL_LEQUAL );				//Metoda testowania G³êbokoœci (ta jest lepsza)
 	glEnable( GL_TEXTURE_2D );
@@ -77,7 +78,7 @@ bool Init( CTexManager& texManager )    //Inicjalizacja OpenGL
 	GUI.SendConMsg( "Inicjalizacja silnika...", false );
 	SMBlur.Init();
 	Part.LoadTGA( "Data/Part.tga" );
-	MenuModel = GLMManager.Get( "Data/menumodel.glm" );
+	MenuModel = modelManager.Get( "Data/menumodel.glm" );
 	MainPlayer.SetArmor( 100.0f );
 	GUI.Menu.LoadMenu( "Data/menu.mnu" );
 	SEManager.MaxSpec = 100;
@@ -375,11 +376,12 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	}
 
 	CTexManager texManager;
-	GLMManager.Init( &texManager );
-	GLevel.Init( &texManager );
+	GLModelManager modelManager( texManager );
+	GLevel.Init( texManager, modelManager );
+	MainPlayer.Init( modelManager );
 
 	Log.Log( "Inicjalizacja OpenGL" );
-	if( !Init( texManager ) )
+	if( !Init( texManager, modelManager ) )
 	{
 		Log.Error( "B³¹d inicjalizacji" );
 		return 0;

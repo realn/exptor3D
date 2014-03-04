@@ -1,8 +1,9 @@
 #pragma once
 
 #include "3dMath.h"
-#include "GameEntity.h"
 #include "glm.h"
+#include "ModelManager.h"
+#include "GameEntity.h"
 #include "GamePlayer.h"
 
 #define	GAME_WEAP_SAW		0
@@ -79,9 +80,9 @@ public:
 	~weWeapon();
 
 	// Funkcja podnoszenia broni
-	void PickUp( weWeapon* Weapon, CPlayer* Player );
+	void PickUp( weWeapon* Weapon, CPlayer* Player, GLModelManager& modelManager );
 
-	virtual void Init();
+	virtual void Init( GLModelManager& modelManager );
 	virtual void Update( const float fTD );
 	virtual void Render();
 	virtual void Shot();
@@ -107,7 +108,7 @@ private:
 public:
 	weSaw();
 	// Funckja inicjuj¹ca
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 
@@ -125,7 +126,7 @@ private:
 	float	BackA;
 public:
 	// Inicjalizacja
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 
@@ -142,7 +143,7 @@ private:
 	float BackA;
 public:
 	// Inicjalizacja
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -158,7 +159,7 @@ private:
 	float BackA;
 public:
 	// Inicjalizacja
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -173,7 +174,7 @@ private:
 	float BackA;
 	float Time;
 public:
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -182,11 +183,13 @@ public:
 class weRocketLuncher : public weWeapon
 {
 private:
+	GLModelManager* ModelManager;
 	float Time;
 	bool back;
 	float BackA;
+
 public:
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -196,12 +199,14 @@ public:
 class weAtomBomb : public weWeapon
 {
 private:
+	GLModelManager* ModelManager;
 	float Time;
 	bool armed;
 	bool puted;
 	Vector3f PutPos;
+
 public:
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -222,7 +227,7 @@ public:
 	void Update( CPlayer* Players, int PlayerCount, const float fTD );
 	void Render();
 
-	void AddWeapon( weWeapon* weapon );
+	void AddWeapon( GLModelManager& modelManager, weWeapon* weapon );
 	void DeleteWeapon( unsigned int index );
 	weWeapon* GetWeapon( unsigned int index );
 	void Clear();

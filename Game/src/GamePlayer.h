@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameActor.h"
+#include "ModelManager.h"
 
 class weWeapon;
 class CItem;
@@ -15,6 +16,8 @@ class CPlayer :
 	public CActor
 {
 private:
+	GLModelManager* ModelManager;
+
 	// Postaæ biega?
 	bool run;
 
@@ -32,6 +35,8 @@ public:
 
 	CPlayer();
 	~CPlayer();
+
+	void	Init( GLModelManager& modelManager );
 
 	void	OnDie() override;
 	void	OnDead() override;

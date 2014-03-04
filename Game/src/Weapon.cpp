@@ -65,7 +65,7 @@ void weWeapon::Rotate( const float fTD )
 /*	Ta funkcja jest wywo³ywana, gdy
 	jakaœ postaæ podniesie broñ.
 */
-void weWeapon::PickUp( weWeapon* Weapon, CPlayer* Player )
+void weWeapon::PickUp( weWeapon* Weapon, CPlayer* Player, GLModelManager& modelManager )
 {
 	if( !InHand )
 	{
@@ -73,7 +73,7 @@ void weWeapon::PickUp( weWeapon* Weapon, CPlayer* Player )
 		InHand = true;
 		Owner = Player;
 		if( !inited )
-			Init();
+			Init( modelManager );
 		GUI.SendMsg( "Podniosles: " + Weapon->Name, 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.5f, 0.5f );
 	}
 	else
@@ -164,7 +164,7 @@ void weWeapon::Render()
 
 }
 
-void weWeapon::Init()
+void weWeapon::Init( GLModelManager& modelManager )
 {
 
 }
@@ -203,7 +203,7 @@ weSaw::weSaw()
 	plików, ale to by siê zesz³o zbyt
 	d³ugo :P 
 */
-void weSaw::Init()
+void weSaw::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -231,7 +231,7 @@ void weSaw::Init()
 
 	Name = "SAW";
 
-	Model = GLMManager.Get( "Data/saw-model.glm" );
+	Model = modelManager.Get( "Data/saw-model.glm" );
 
 	inited = true;
 }
@@ -350,7 +350,7 @@ void weSaw::Shot()
 }
 
 /*	PISTOLET	*/
-void wePistol::Init()
+void wePistol::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -376,7 +376,7 @@ void wePistol::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/pistol-model.glm" );
+	Model = modelManager.Get( "Data/pistol-model.glm" );
 
 	inited = true;
 }
@@ -486,7 +486,7 @@ void wePistol::Shot()
 #include "WeaponBulletRay.h"
 
 /*	MINIPHAZER	*/
-void weMiniPhazer::Init()
+void weMiniPhazer::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -511,7 +511,7 @@ void weMiniPhazer::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/miniphazer-model.glm" );
+	Model = modelManager.Get( "Data/miniphazer-model.glm" );
 
 	inited = true;
 }
@@ -624,7 +624,7 @@ void weMiniPhazer::Shot()
 
 
 /*	PHAZER	*/
-void wePhazer::Init()
+void wePhazer::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -649,7 +649,7 @@ void wePhazer::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/phazer-model.glm" );
+	Model = modelManager.Get( "Data/phazer-model.glm" );
 
 	inited = true;
 }
@@ -759,7 +759,7 @@ void wePhazer::Shot()
 }
 
 /*	MINIGUN	*/
-void weMiniGun::Init()
+void weMiniGun::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -785,7 +785,7 @@ void weMiniGun::Init()
 	BackA = 0.0f;
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/minigun-model.glm" );
+	Model = modelManager.Get( "Data/minigun-model.glm" );
 
 	inited = true;
 }
@@ -911,7 +911,7 @@ void weMiniGun::Shot()
 #include "WeaponBulletRocket.h"
 
 /*	ROCKET LUNCHER	*/
-void weRocketLuncher::Init()
+void weRocketLuncher::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -936,7 +936,8 @@ void weRocketLuncher::Init()
 
 	Time = 0.0f;
 
-	Model = GLMManager.Get( "Data/rocketlun-model.glm" );
+	ModelManager = &modelManager;
+	Model = modelManager.Get( "Data/rocketlun-model.glm" );
 
 	inited = true;
 }
@@ -963,7 +964,7 @@ void weRocketLuncher::Update( const float fTD )
 
 				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 
-				CBullet* Bull = new CBullRocket( Owner, damage, Pos, temp, 2.0f );
+				CBullet* Bull = new CBullRocket( Owner, damage, Pos, temp, 2.0f, *ModelManager );
 				BManager.AddBullet( Bull );
 
 				back = true;
@@ -1051,7 +1052,7 @@ void weRocketLuncher::Shot()
 #include "WeaponBulletBomb.h"
 
 /*	ATOM BOMB	*/
-void weAtomBomb::Init()
+void weAtomBomb::Init( GLModelManager& modelManager )
 {
 	if( inited )
 		return;
@@ -1071,7 +1072,8 @@ void weAtomBomb::Init()
 
 	Name = "NUKE";
 
-	Model = GLMManager.Get( "Data/atombomb-model.glm" );
+	ModelManager = &modelManager;
+	Model = modelManager.Get( "Data/atombomb-model.glm" );
 
 	inited = true;
 }
@@ -1093,7 +1095,7 @@ void weAtomBomb::Update( const float fTD )
 			if( Ammo == 0 )
 				return;
 
-			CBullBomb* Bull = new CBullBomb( Owner, 10.0f, Pos, 5.0f );
+			CBullBomb* Bull = new CBullBomb( Owner, 10.0f, Pos, 5.0f, *ModelManager );
 			BManager.AddBullet( Bull );
 
 			Ammo--;

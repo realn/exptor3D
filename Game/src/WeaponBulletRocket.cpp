@@ -9,7 +9,7 @@
 KLASA weBullRocked
 Rakieta z wyrzutni
 ====================*/
-CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed ) :
+CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, GLModelManager& modelManager ) :
 	CBullet( owner, damage, pos, vector, speed )
 {
 	Angle = ::GetAngle( Pos, NextPos );
@@ -17,7 +17,7 @@ CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos
 	Radius = 0.3f;
 	//glEnable( GL_LIGHT0 );
 
-	Model = GLMManager.Get( "Data/Missle.glm" );
+	Model = modelManager.Get( "Data/Missle.glm" );
 
 	Type = BULLET_TYPE_ROCKET;
 }
@@ -28,7 +28,7 @@ void CBullRocket::Render()
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
 	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 
-	glRotatef( 180.f, 0.0f, 1.0f ,0.0f );
+	glRotatef( -180.f, 0.0f, 1.0f ,0.0f );
 #ifdef LIGHT_TEST
 	float t[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightfv( GL_LIGHT0, GL_POSITION, t );

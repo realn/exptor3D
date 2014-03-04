@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WeaponBullet.h"
+#include "ModelManager.h"
 
 // Bomba
 class CBullBomb : public CBullet
@@ -11,7 +12,7 @@ private:
 	GLModel* Model;
 
 public:
-	CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time );
+	CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, GLModelManager& modelManager );
 
 	void Update( const float fTD ) override;
 	void Render() override;

@@ -572,7 +572,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	return true;
 }
 
-bool GLModel::LoadModel( CTexManager* texManager, std::string filename )
+bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 {
 	// Sprawdzamy czy ³añcuch nie jest pusty
 	if( filename.empty() )
@@ -679,7 +679,7 @@ bool GLModel::LoadModel( CTexManager* texManager, std::string filename )
 			{
 				str = GetLine( fileStream );
 
-				if( !( Textures[i] = texManager->Get( str ) ) )
+				if( !( Textures[i] = texManager.Get( str ) ) )
 				{
 					Log.Error( "GLMODEL( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
 				}
@@ -903,82 +903,3 @@ void GLModel::RenderAnim( unsigned int index )
 
 	glCallList( Frame + CurrFrame );
 }
-
-
-GLModelManager GLMManager;
-
-GLModelManager::GLModelManager()
-{
-}
-
-GLModelManager::~GLModelManager()
-{
-	//Clear();
-}
-
-void	GLModelManager::Init( CTexManager* texManager )
-{
-	TexManager = texManager;
-}
-
-GLModel* GLModelManager::Get( std::string filename )
-{
-	if( filename.empty() )
-	{
-		Log.Error( "MODELMANAGER(): Pusty ci¹g znaków!" );
-		return 0;
-	}
-
-	int i;
-	GLModel* Model;
-	for( i = 0; i < List.size(); i++ )
-	{
-		Model = GetModel( i );
-		if( Model->GetFile() == filename )
-			return Model;
-	}
-
-	Model = new GLModel;
-	if( !Model->LoadModel( TexManager, filename ) )
-	{
-		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
-		delete Model;
-		return 0;
-	}
-
-	AddModel( Model );
-	Log.Log( "MODELMANAGER(): Dodano nowy model: " + filename );
-	return Model;
-}
-
-void GLModelManager::AddModel( GLModel *Model )
-{
-	List.push_back( Model );
-}
-
-void GLModelManager::DeleteModel( unsigned int index )
-{
-	if( index >= List.size() )
-		return;
-
-	delete List[index];
-	List.erase( List.begin() + index );
-}
-
-GLModel* GLModelManager::GetModel( unsigned int index )
-{
-	if( index >= List.size() )
-		return 0;
-
-	return List[index];
-}
-
-void GLModelManager::Clear()
-{
-	for(unsigned i = 0; i < List.size(); i++)
-	{
-		delete List[i];
-	}
-	List.clear();
-}
-

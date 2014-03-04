@@ -2,6 +2,7 @@
 
 #include "3dMath.h"
 #include "glm.h"
+#include "ModelManager.h"
 
 #include "GameEntity.h"
 
@@ -23,6 +24,6 @@ public:
 	void Update( const float fTD ) override;
 	void Render() override;
 
-	bool LoadObj( std::string filename );
+	bool LoadObj( GLModelManager& modelManager, const std::string& filename );
 };
 

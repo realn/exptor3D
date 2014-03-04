@@ -26,7 +26,7 @@ const std::string CEnemy::GetStr( std::fstream& fileStream )
 	return  buf;
 }
 
-const bool CEnemy::LoadEnemy( const std::string filename )
+const bool CEnemy::LoadEnemy( const std::string& filename )
 {
 	// Sprawdzamy, czy argument nie jest pusty
 	if( filename.empty() )
@@ -97,7 +97,7 @@ const bool CEnemy::LoadEnemy( const std::string filename )
 
 	// przypisujemy model
 	str = GetStr( fileStream );
-	Model = GLMManager.Get( str );
+	Model = ModelManager.Get( str );
 
 	str = GetStr( fileStream );
 	FireTime = FirePause = atof( str.c_str() );
@@ -226,7 +226,7 @@ void CEnemy::Fire( Vector3f FireTarget )
 		}
 	case GAME_WEAP_ROCKETLUN :
 		{
-			CBullet* Bull = new CBullRocket( this, 10.0f, temp, FireVeloc, 2.0f );
+			CBullet* Bull = new CBullRocket( this, 10.0f, temp, FireVeloc, 2.0f, ModelManager );
 			BManager.AddBullet( Bull );
 			return;
 		}

@@ -55,7 +55,7 @@ public:
 	GLModel();
 	~GLModel();
 
-	bool LoadModel( CTexManager* texManager, std::string filename );
+	bool LoadModel( CTexManager& texManager, std::string filename );
 	virtual void Free();
 	std::string GetFile();
 	unsigned int GetObjCount();
@@ -75,26 +75,5 @@ private:
 	bool ReadAnimHeader( std::fstream& fileStream );
 };
 
-
-class GLModelManager
-{
-private:
-	CTexManager*	TexManager;
-	std::vector<GLModel*> List;
-
-public:
-	GLModelManager();
-	~GLModelManager();
-
-	void Init( CTexManager* texManager );
-
-	GLModel* Get( std::string filename );
-	void AddModel( GLModel* Model );
-	GLModel* GetModel( unsigned int index );
-	void DeleteModel( unsigned int index );
-	void Clear();
-};
-
-extern GLModelManager GLMManager;
 
 #endif

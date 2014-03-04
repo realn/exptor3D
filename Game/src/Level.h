@@ -16,6 +16,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include <fstream>	// Nag³ówek od operacji we/wy.
 
 #include "StrEx.h"
+#include "ModelManager.h"
 
 #include "defines.h"
 #include "Log.h"
@@ -99,6 +100,7 @@ public:
 class gameLevel
 {
 private:
+	GLModelManager*	ModelManager;
 	CTexManager*	TexManager;
 	CTexture*		Tex[3];
 	
@@ -156,7 +158,7 @@ public:
 	gameLevel();
 	~gameLevel();
 
-	void	Init( CTexManager* texManager );
+	void	Init( CTexManager& texManager, GLModelManager& modelManager );
 
 	std::string GetLevelName();
 

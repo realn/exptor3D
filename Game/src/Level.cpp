@@ -173,9 +173,10 @@ gameLevel::~gameLevel()
 	Free();
 }
 
-void	gameLevel::Init( CTexManager* texManager )
+void	gameLevel::Init( CTexManager& texManager, GLModelManager& modelManager )
 {
-	TexManager = texManager;
+	TexManager = &texManager;
+	ModelManager = &modelManager;
 }
 
 // Zwraca, czy poziom jest za³adowany i gotowy
@@ -563,10 +564,10 @@ bool gameLevel::LoadLevel( const std::string &filename )
 			default:
 				continue;
 			}
-			Weap->Init();
+			Weap->Init( *ModelManager );
 			Weap->Pos = GetBlockPos( j );
 			Weap->NextPos = Weap->Pos;
-			WManager.AddWeapon( Weap );
+			WManager.AddWeapon( *ModelManager, Weap );
 		}
 
 		str = GetLine( stream );
@@ -622,7 +623,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 
 			sscanf_s( str.c_str(), "%d=%d,%d", &j, &k, &l );
 
-			CEnemy* Enemy = new CEnemy;
+			CEnemy* Enemy = new CEnemy( *ModelManager );
 			Enemy->SetStartPos( this->GetBlockPos( j ) );
 			Enemy->SetStartAngle( (float)l );
 			Enemy->LoadEnemy( EnemyType[k] );
@@ -695,17 +696,17 @@ bool gameLevel::LoadLevel( const std::string &filename )
 			{
 			case BONUS_TYPE_AMMO :
 				sscanf_s( str.c_str(), "%d,%d/%d,%d=", &k, &l, &a, &b );
-				Bonus = new CItemAmmo( a, b, GLMManager.Get( param ) );
+				Bonus = new CItemAmmo( a, b, ModelManager->Get( param ) );
 				break;
 
 			case BONUS_TYPE_HEALTH :
 				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new CItemHealth( a, GLMManager.Get( param ) );
+				Bonus = new CItemHealth( a, ModelManager->Get( param ) );
 				break;
 
 			case BONUS_TYPE_ARMOR :
 				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new CItemArmor( a, GLMManager.Get( param ) );
+				Bonus = new CItemArmor( a, ModelManager->Get( param ) );
 				break;
 
 			case BONUS_TYPE_UNKNOWN :
