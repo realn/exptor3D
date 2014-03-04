@@ -66,7 +66,6 @@ public:
 	void PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip = false );
 
 private:
-	std::string GetString( std::fstream& fileStream );
 	std::string NoSpace( const std::string &str );
 	void ParseGLCommand( const std::string &fullstr );
 	bool GetParams( const std::string &str, int from, std::vector<std::string>& param, const std::string &Com );

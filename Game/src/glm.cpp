@@ -10,6 +10,7 @@ Opis:	Patrz -> glm.h
 ///////////////////////////////////////////////////////*/
 #include "glm.h"
 #include "Log.h"
+#include "StrEx.h"
 
 const unsigned BUFFER_SIZE = 1024;
 
@@ -35,79 +36,6 @@ GLModel::~GLModel()
 {
 	// Zwolnienie pamiêci
 	Free();
-}
-
-bool	IsWhiteSpace(char Character)
-{
-	return Character == ' ' || Character == '\t' || Character == '\r' || Character == '\n';
-}
-
-/*=====METODA GetString=====
-	Metoda pobiera jedn¹ linie z pliku
-	i j¹ modyfikuje. Pozbywa siê pustej
-	linii, znaków spacji i tabulacji przed
-	rozpoczêciem w³aœciwych poleceñ, oraz
-	czyœci z komentarzy.
-*/
-std::string	GLModel::GetString( std::fstream& fileStream )
-{
-	char	buf[BUFFER_SIZE + 1];
-	int		len = 0;
-	bool	repeat = false;
-	bool	wfchar = false;
-
-	unsigned pos = 0;
-	std::string line;
-	std::string result;
-
-	do
-	{
-		repeat = false;
-		wfchar = false;
-
-		memset(buf, 0, BUFFER_SIZE + 1);
-		fileStream.getline(buf, BUFFER_SIZE);
-		line = buf;
-
-		if(line.empty() && fileStream)
-		{
-			repeat = true;
-			continue;
-		}
-	
-		pos = 0;
-		for( ; pos < line.length(); pos++ )
-		{
-			if(!IsWhiteSpace(line[pos]))
-				break;
-		}
-
-		for( ; pos < line.length(); pos++ )
-		{
-			if( line[pos] == '#' )
-			{
-				repeat = true;
-				break;
-			}
-
-			if(IsWhiteSpace(line[pos]))
-			{
-				if(!wfchar)
-				{
-					wfchar = true;
-					result += ' ';
-				}
-				continue;
-			}
-			else
-				wfchar = false;
-
-			result += line[pos];
-		}
-	}
-	while( repeat );
-
-	return result;
 }
 
 /*=====METODA NoSpace=====
@@ -610,7 +538,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	std::string str;
 
 	// Pobieramy liczbê tekstur
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "TEXCOUNT %u", &texCount ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby tekstur!" );
@@ -618,7 +546,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	}
 
 	// Pobieramy liczbê obiektów
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "LISTCOUNT %u", &ListCount ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby obiektów!" );
@@ -626,7 +554,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	}
 
 	// Pobieramy, czy plik ma zapisan¹ animacjê
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "ANIMATION %u", &animation ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ animacji!" );
@@ -634,7 +562,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	}
 
 	// Sprawdzamy czy to koniec nag³ówka
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 	if( str != "END HEADER" )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Brak koñca nag³ówka!" );
@@ -672,7 +600,7 @@ bool GLModel::LoadModel( std::string filename )
 	}
 
 	// Pobieramy pierwsz¹ linie
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 
 	// Skanujemy liniê w poszukiwaniu numeru wersji
 	if( !sscanf_s( str.c_str(), "GLM %d", &Version ) )
@@ -698,7 +626,7 @@ bool GLModel::LoadModel( std::string filename )
 	Log.Log( "GLMODEL( " + file + " ): £adowanie modelu z pliku " + filename );
 	file = filename;
 
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 
 	unsigned texCount = 0;
 
@@ -719,7 +647,7 @@ bool GLModel::LoadModel( std::string filename )
 
 	if( animation )
 	{
-		str = GetString( fileStream );
+		str = GetLine( fileStream );
 
 		// Czytamy nag³ówek
 		if( str == "ANIMHEADER" )
@@ -743,13 +671,13 @@ bool GLModel::LoadModel( std::string filename )
 		Textures.resize(texCount);
 		memset(&Textures[0], 0, sizeof(CTexture*) * texCount);
 
-		str = GetString( fileStream );
+		str = GetLine( fileStream );
 
 		if( str == "TEXLIST" )
 		{
 			for( i = 0; i < Textures.size(); i++ )
 			{
-				str = GetString( fileStream );
+				str = GetLine( fileStream );
 
 				if( !( Textures[i] = TManager.Get( str ) ) )
 				{
@@ -765,7 +693,7 @@ bool GLModel::LoadModel( std::string filename )
 			
 			if( str != "END TEXLIST" )
 			{
-				str = GetString( fileStream );
+				str = GetLine( fileStream );
 				if( str != "END TEXLIST" )
 				{
 					Log.Error( "GLMODEL( " + file + " ): Brak koñca listy tekstur!" );
@@ -792,7 +720,7 @@ bool GLModel::LoadModel( std::string filename )
 
 		for( i = 0; i < ListCount; i++ )
 		{
-			str = GetString( fileStream );
+			str = GetLine( fileStream );
 
 			int j;
 
@@ -809,7 +737,7 @@ bool GLModel::LoadModel( std::string filename )
 
 			do
 			{
-				str = GetString( fileStream );
+				str = GetLine( fileStream );
 
 				if( str != "END MODEL" )
 				{
@@ -830,7 +758,7 @@ bool GLModel::LoadModel( std::string filename )
 
 			for( i = 0; i < FrameCount; i++ )
 			{
-				str = GetString( fileStream );
+				str = GetLine( fileStream );
 
 				int j;
 
@@ -847,7 +775,7 @@ bool GLModel::LoadModel( std::string filename )
 
 				do
 				{
-					str = GetString( fileStream );
+					str = GetLine( fileStream );
 
 					if( str != "END FRAME" )
 					{
@@ -861,7 +789,7 @@ bool GLModel::LoadModel( std::string filename )
 		}	
 	}
 
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 
 	if( str == "END GLM" )
 	{
@@ -919,7 +847,7 @@ bool GLModel::ReadAnimHeader( std::fstream& fileStream )
 	std::string str;
 
 	// Pobieramy liczbê tekstur
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "FRAMECOUNT %u", &FrameCount ) )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby klatek animacji!" );
@@ -927,7 +855,7 @@ bool GLModel::ReadAnimHeader( std::fstream& fileStream )
 	}
 
 	// Sprawdzamy czy to koniec nag³ówka
-	str = GetString( fileStream );
+	str = GetLine( fileStream );
 	if( str != "END ANIMHEADER" )
 	{
 		Log.Error( "GLMODEL( " + file + " ): Brak koñca nag³ówka animacji!" );

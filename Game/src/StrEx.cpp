@@ -78,6 +78,12 @@ const std::string GetLine( std::fstream& stream )
 				break;
 		}
 
+		if( pos >= line.length() )
+		{
+			repeat = true;
+			continue;
+		}
+
 		bool possibleComment = true;
 		for( ; pos < line.length(); pos++ )
 		{
