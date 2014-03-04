@@ -12,6 +12,8 @@ public:
 	GLModelManager( CTexManager& texManager );
 	~GLModelManager();
 
+	CTexManager& GetTexMng();
+
 	GLModel* Get( std::string filename );
 	void AddModel( GLModel* Model );
 	GLModel* GetModel( unsigned int index );

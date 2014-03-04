@@ -17,71 +17,26 @@ Opis:	Zawiera definicje klas odpowiedzialnych za efekty specjalne
 #include "Level.h"
 #include "vector"
 
-class specEffect
-{
-public:
-	bool Visible;
-	bool CanDelete;
-	specEffect();
-	virtual void Update( const float fTD );
-	virtual void Render();
-};
+#include "Effect.h"
 
-class specRay : public specEffect
+class CSpecialEffectManager
 {
 private:
-	float Alpha;
-public:
-	Vector3f FromPos;
-	Vector3f ToPos;
+	CTexManager*	TexManager;
+	std::vector<CEffect*> List;
 
-	void Create( Vector3f Pos, Vector3f Veloc );
-
-	void Render();
-	void Update( const float fTD ) override;
-};
-
-class specExplode : public specEffect
-{
-private:
-	float toPower;
-	float thisPower;
-	float Step;
-	float Alpha;	
-public:
-	Vector3f FromPos;
-
-	void Create( Vector3f Pos, float Power, float fStep );
-
-	void Render();
-	void Update( const float fTD ) override;
-};
-
-class specSprite : public specEffect
-{
-private:
-	float Alpha;
-	CTexture Tex;
-	float C[3];
-public:
-	Vector3f AtPos;
-
-	void Create( Vector3f Pos, float R = 1.0f, float G = 1.0f, float B = 1.0f );
-
-	void Render();
-	void Update( const float fTD ) override;
-};
-
-class specManager
-{
-private:
-	std::vector<specEffect*> List;
 public:
 	int MaxSpec;
+
+	CSpecialEffectManager();
+	virtual ~CSpecialEffectManager();
 	
-	void AddEffect( specEffect* effect );
+	void Init( CTexManager& texManager );
+	CTexManager&	GetTexMng();
+
+	void AddEffect( CEffect* effect );
 	void DeleteEffect( unsigned int index );
-	specEffect* GetEffect( unsigned int index );
+	CEffect* GetEffect( unsigned int index );
 	
 	void Update( const float fTD );
 	void Render();
@@ -106,8 +61,7 @@ public:
 	void Free();
 };
 
-extern specManager SEManager;
-extern CTexture Part;
+extern CSpecialEffectManager SEManager;
 extern specMotionBlur SMBlur;
 
 #endif

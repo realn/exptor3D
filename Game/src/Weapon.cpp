@@ -410,7 +410,7 @@ void wePistol::Update( const float fTD )
 			CurrClip--;
 
 			Vector3f temp;
-			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, &GLevel );
+			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, GLevel );
 			temp = temp - Pos;
 			temp.Normalize();
 			CBullet* Bull = new CBullet( Owner, Damage[0], Pos, temp, 10.0f );
@@ -532,7 +532,7 @@ void weMiniPhazer::Update( const float fTD )
 				Shake[1] = 0.0f;
 				
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
@@ -669,7 +669,7 @@ void wePhazer::Update( const float fTD )
 				Shake[0] = 0.0f;
 				Shake[1] = 0.0f;
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
@@ -815,7 +815,7 @@ void weMiniGun::Update( const float fTD )
 				Shake[0] = 0.0f;
 				Shake[1] = 0.0f;
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, &GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
@@ -920,8 +920,8 @@ void weRocketLuncher::Init( GLModelManager& modelManager )
 	back = false;
 	BackA = 0.0f;
 
-	ShotTime = 8.0f;
-	ShotPause = 120.0f;
+	ShotTime = 1.0f;
+	ShotPause = 2.0f;
 	ReloadTime = 0.0f;
 
 	Ammo = 20;
@@ -958,13 +958,13 @@ void weRocketLuncher::Update( const float fTD )
 				Shake[1] = 0.0f;
 
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, &GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, GLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
 				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 
-				CBullet* Bull = new CBullRocket( Owner, damage, Pos, temp, 2.0f, *ModelManager );
+				CBullet* Bull = new CBullRocket( Owner, damage, Pos, temp, 10.0f, *ModelManager );
 				BManager.AddBullet( Bull );
 
 				back = true;

@@ -13,15 +13,12 @@ CBullRay::CBullRay( CActor* owner, const float damage, const Vector3f& pos, cons
 	Type = BULLET_TYPE_RAY;
 	CanDelete = false;
 
-	specRay* Effect = new specRay;
-	specSprite* Spr = new specSprite;
+	CEffectRay* Effect = new CEffectRay( GLevel, pos, vector );
 
-	Effect->Create( Pos, Vector );
+	Pos = Effect->GetFromPos();
+	NextPos = Effect->GetToPos();
 
-	Pos = Effect->FromPos;
-	NextPos = Effect->ToPos;
-
-	Spr->Create( Effect->ToPos + ( Vector.Reverse() * 0.2f ), 1.0f, 0.8f, 0.0f );
+	CEffectSprite* Spr = new CEffectSprite( SEManager.GetTexMng(), Effect->GetToPos() + ( Vector.Reverse() * 0.2f ), 1.0f, 0.8f, 0.0f );
 
 	SEManager.AddEffect( Effect );
 	SEManager.AddEffect( Spr );
@@ -34,9 +31,7 @@ float CBullRay::DoTest( CDynamic* Dum, float Armor )
 	{
 		if( TestCollDum( Dum, this ) )
 		{
-			specSprite* Spr = new specSprite;
-			Spr->Create( Dum->NextPos, 1.0f, 2.0f, 0.0f );
-			SEManager.AddEffect( Spr );
+			SEManager.AddEffect( new CEffectSprite( SEManager.GetTexMng(), Dum->NextPos, 1.0f, 2.0f, 0.0f ) );
 			return Damage * ArmorMod;
 		}
 	}

@@ -1179,26 +1179,26 @@ std::string CLevel::GetLevelName()
 
 /*	Ta zwraca dany block z okreœlonego wiersza i kolumny
 */
-CLvlBlock* CLevel::GetBlock( unsigned int i, unsigned int j )
+CLvlBlock* CLevel::GetBlock( unsigned int i, unsigned int j ) const
 {
 	if( i >= 0 && j >= 0 )
 	{
 		if( j < rows && i < cols )
 		{
-			return &block[ j * cols + i ];
+			return (CLvlBlock*)&block[ j * cols + i ];
 		}
 	}
 	return NULL;
 }
 
-CLvlBlock* CLevel::GetBlock( Vector3f Pos )
+CLvlBlock* CLevel::GetBlock( Vector3f Pos ) const
 {
 	return GetBlock( (unsigned int)Pos.X, (unsigned int)Pos.Z );
 }
 
-CLvlBlock* CLevel::GetBlock( unsigned int i )
+CLvlBlock* CLevel::GetBlock( unsigned int i ) const
 {
-	return &block[i];
+	return (CLvlBlock*)&block[i];
 }
 
 unsigned int CLevel::GetBlockCount()
@@ -1518,22 +1518,22 @@ co okreœlony krok badaæ kolizje, a¿ do znalezienia
 punktu kolizji. Kolizje s¹ sprawdzane za pomoc¹
 poprzedniej funkcji.
 */
-Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, CLevel* Level )
+const Vector3f RayCast( const Vector3f& pos, const Vector3f& vector, const float step, const CLevel& level )
 {
-	if(Veloc.LeangthSq() == 0.0f)
-		return Pos;
+	if(vector.LeangthSq() == 0.0f)
+		return pos;
 
 	CDynamic Dum;
 	Dum.Radius = 0.1f;
-	Dum.NextPos = Pos;
+	Dum.NextPos = pos;
 	CLvlBlock* Block = NULL;
 
 	do
 	{
 		Dum.Pos = Dum.NextPos;
-		Dum.NextPos = Dum.Pos + Veloc * Step;
+		Dum.NextPos = Dum.Pos + vector * step;
 
-		Block = Level->GetBlock( Dum.GetBlockPos() );
+		Block = level.GetBlock( Dum.GetBlockPos() );
 		/*	Takie ma³e zabezpieczenie.
 		Kiedy promieñ znajdzie siê poza poziomem
 		( gdzie nie ma ¿adnych œcian ) to zamiast

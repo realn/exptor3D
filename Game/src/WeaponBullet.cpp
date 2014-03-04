@@ -81,8 +81,6 @@ void CBullet::Render()
 
 void CBullet::OnDelete()
 {
-	specSprite* Spr = new specSprite;
-	Spr->Create( NextPos, 0.5f, 0.5f, 0.5f );
-	SEManager.AddEffect( Spr );
+	SEManager.AddEffect( new CEffectSprite( SEManager.GetTexMng(), NextPos, 0.5f, 0.5f, 0.5f ) );
 	CanDelete = true;
 }

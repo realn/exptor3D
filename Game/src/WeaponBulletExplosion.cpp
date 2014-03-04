@@ -13,9 +13,7 @@ CBullExplosion::CBullExplosion( CActor* owner, const float damage, const Vector3
 	Power( radius ),
 	thisPower( 0.0f )
 {
-	specExplode* spec = new specExplode;
-	spec->Create( Pos, Power, speed );
-	SEManager.AddEffect( spec );
+	SEManager.AddEffect( new CEffectExplosion( Pos, Power, speed ) );
 }
 
 float CBullExplosion::DoTest( CDynamic *Dum, float Armor )

@@ -168,9 +168,9 @@ public:
 	std::string GetLevelName();
 
 	unsigned int GetBlockCount();
-	CLvlBlock* GetBlock( unsigned int i, unsigned int j );
-	CLvlBlock* GetBlock( Vector3f Pos );
-	CLvlBlock* GetBlock( unsigned int i );
+	CLvlBlock* GetBlock( unsigned int i, unsigned int j ) const;
+	CLvlBlock* GetBlock( Vector3f Pos ) const;
+	CLvlBlock* GetBlock( unsigned int i ) const;
 	Vector3f GetBlockPos( unsigned int i );
 	bool GetLoaded();
 	unsigned int GetEnemyCount();
@@ -200,7 +200,7 @@ private:
 };
 
 extern bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing = false );
-extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, CLevel* Level );
+extern const Vector3f RayCast( const Vector3f& pos, const Vector3f& vector, const float step, const CLevel& level );
 extern bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 

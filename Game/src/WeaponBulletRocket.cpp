@@ -10,7 +10,8 @@ KLASA weBullRocked
 Rakieta z wyrzutni
 ====================*/
 CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, GLModelManager& modelManager ) :
-	CBullet( owner, damage, pos, vector, speed )
+	CBullet( owner, damage, pos, vector, speed ),
+	TexManager( modelManager.GetTexMng() )
 {
 	Angle = ::GetAngle( Pos, NextPos );
 	Sec = 0.0f;
@@ -28,7 +29,7 @@ void CBullRocket::Render()
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
 	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 
-	glRotatef( -180.f, 0.0f, 1.0f ,0.0f );
+	glRotatef( 0.f, 1.0f, 0.0f ,0.0f );
 #ifdef LIGHT_TEST
 	float t[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightfv( GL_LIGHT0, GL_POSITION, t );
@@ -45,7 +46,7 @@ void CBullRocket::Update( const float fTD )
 		Pos = NextPos;
 		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
 		Sec += fTD * GUI.GetSpeed();
-		if( Sec > 3.0f )
+		if( Sec > 0.1f )
 		{
 			Vector3f Tail = Veloc;
 			Tail.Normalize();
@@ -53,9 +54,7 @@ void CBullRocket::Update( const float fTD )
 			Tail = Tail.Reverse();
 			Sec = 0.0f;
 
-			specSprite* spec = new specSprite;
-			spec->Create( Pos + Tail, 1.0f, 0.7f, 0.0f );
-			SEManager.AddEffect( spec );
+			SEManager.AddEffect( new CEffectSprite( TexManager, Pos + Tail, 1.0f, 0.7f, 0.0f ) );
 		}
 		if( GLevel.GetBlock( this->GetBlockPos() ) == NULL )
 			DoDelete = true;
@@ -69,7 +68,6 @@ void CBullRocket::Update( const float fTD )
 void CBullRocket::OnDelete()
 {
 	CanDelete = true;
-	CBullExplosion *Bull = new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 1.0f );
-	BManager.AddBullet( Bull );
+	BManager.AddBullet( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 10.0f ) );
 }
 

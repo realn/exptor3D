@@ -11,6 +11,11 @@ GLModelManager::~GLModelManager()
 	//Clear();
 }
 
+CTexManager& GLModelManager::GetTexMng()
+{
+	return TexManager;
+}
+
 GLModel* GLModelManager::Get( std::string filename )
 {
 	if( filename.empty() )

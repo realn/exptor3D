@@ -80,6 +80,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp" />
+    <ClCompile Include="src\Effect.cpp" />
+    <ClCompile Include="src\EffectExplosion.cpp" />
+    <ClCompile Include="src\EffectRay.cpp" />
+    <ClCompile Include="src\EffectSprite.cpp" />
     <ClCompile Include="src\GameActor.cpp" />
     <ClCompile Include="src\GameActorStats.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -117,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\defines.h" />
+    <ClInclude Include="src\Effect.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameActor.h" />
     <ClInclude Include="src\GameEnemy.h" />

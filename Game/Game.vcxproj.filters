@@ -19,6 +19,9 @@
     <Filter Include="Source\Graphic">
       <UniqueIdentifier>{b1f34753-42b6-46e8-9f75-0de93d91ec6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Graphic\Special">
+      <UniqueIdentifier>{e49b4ad6-0c50-4267-b06a-0af3645cab71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -105,9 +108,6 @@
     <ClCompile Include="src\ItemManager.cpp">
       <Filter>Source\Game\Item</Filter>
     </ClCompile>
-    <ClCompile Include="src\Special.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="src\Render.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
@@ -122,6 +122,21 @@
     </ClCompile>
     <ClCompile Include="src\LevelBlock.cpp">
       <Filter>Source\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Special.cpp">
+      <Filter>Source\Graphic\Special</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EffectRay.cpp">
+      <Filter>Source\Graphic\Special</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EffectExplosion.cpp">
+      <Filter>Source\Graphic\Special</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EffectSprite.cpp">
+      <Filter>Source\Graphic\Special</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Effect.cpp">
+      <Filter>Source\Graphic\Special</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,9 +227,6 @@
     <ClInclude Include="src\ItemManager.h">
       <Filter>Source\Game\Item</Filter>
     </ClInclude>
-    <ClInclude Include="src\Special.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="src\Render.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
@@ -226,6 +238,12 @@
     </ClInclude>
     <ClInclude Include="src\ModelManager.h">
       <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Special.h">
+      <Filter>Source\Graphic\Special</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Effect.h">
+      <Filter>Source\Graphic\Special</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

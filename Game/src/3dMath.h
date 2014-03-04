@@ -87,16 +87,16 @@ public:
 		tylko wprowadza³o zamêt w kodzie :P )
 	*/
 	// CrossProduct
-	Vector3f Cross( const Vector3f &V1 );
+	const Vector3f Cross( const Vector3f &V1 ) const;
 
 	// DotProduct
-	float Dot( const Vector3f &V1 );
+	const float Dot( const Vector3f &V1 ) const;
 
 	// D³ugoœæ wektora
-	float Leangth();
+	const float Leangth() const;
 
 	// D³ugoœæ wektora, ale niespierwiastkowana
-	float LeangthSq();
+	const float LeangthSq() const;
 
 	// Normalizacja
 	Vector3f Normalize();

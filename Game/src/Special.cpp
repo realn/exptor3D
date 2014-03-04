@@ -10,155 +10,29 @@ Opis:	Patrz -> Special.h
 ///////////////////////////////////////////////////////*/
 #include "Special.h"
 
-specManager SEManager;
-CTexture	Part;
+CSpecialEffectManager SEManager;
 
-specEffect::specEffect()
+CSpecialEffectManager::CSpecialEffectManager() :
+	TexManager( nullptr )
 {
-	Visible = true;
-	CanDelete = false;
 }
 
-void specEffect::Update( const float fTD )
+CSpecialEffectManager::~CSpecialEffectManager()
 {
 
 }
 
-void specEffect::Render()
+void	CSpecialEffectManager::Init( CTexManager& texManager )
 {
-
+	TexManager = &texManager;
 }
 
-void specRay::Create( Vector3f Pos, Vector3f Veloc )
+CTexManager&	CSpecialEffectManager::GetTexMng()
 {
-	Alpha = 1.0f;
-
-	FromPos = Pos;
-	ToPos = RayCast( Pos, Veloc, 1.0f, &GLevel );
+	return *TexManager;
 }
 
-void specRay::Update( const float fTD )
-{
-	if( Alpha > 0.0f )
-		Alpha -= 0.02f * GUI.GetSpeed() * fTD;
-	else CanDelete = true;
-}
-
-void specRay::Render()
-{
-	glDisable( GL_TEXTURE_2D );
-	glDisable( GL_CULL_FACE );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glEnable( GL_BLEND );
-	glBegin( GL_QUADS );
-	glColor4f( 1.0f, 0.7f, 0.0f, Alpha * 0.5f );
-	glVertex3f( FromPos.X, FromPos.Y + 0.1f, FromPos.Z );
-	glVertex3f( FromPos.X, FromPos.Y - 0.1f, FromPos.Z );
-	glColor4f( 1.0f, 0.8f, 0.0f, Alpha );
-	glVertex3f( ToPos.X, -0.1f, ToPos.Z );
-	glVertex3f( ToPos.X, 0.1f, ToPos.Z );
-	glEnd();
-	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	glDisable( GL_BLEND );
-	glEnable( GL_CULL_FACE );
-	glEnable( GL_TEXTURE_2D );
-}
-
-void specExplode::Create( Vector3f Pos, float Power, float fStep )
-{
-	Step = fStep;
-	toPower = Power;
-	FromPos = Pos;
-	thisPower = 0.0f;
-}
-
-void specExplode::Update( const float fTD )
-{
-	if( thisPower < toPower )
-	{
-		thisPower += Step * GUI.GetSpeed() * fTD;
-
-		Alpha = 1.0f - ( thisPower * ( 1.0f / toPower ) );
-	}
-	else CanDelete = true;
-}
-
-void specExplode::Render()
-{
-	glPushMatrix();
-	glDisable( GL_TEXTURE_2D );
-	glDisable( GL_CULL_FACE );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glEnable( GL_BLEND );
-
-	glTranslatef( FromPos.X, 0.0f, FromPos.Z );
-	GLUquadric* obj = gluNewQuadric();
-
-	glColor4f( 1.0f, 0.0f, 0.0f, Alpha );
-	gluSphere( obj, thisPower/2.0f, 16, 16 );
-
-	glColor4f( 1.0f, 1.0f, 0.2f, Alpha );
-	gluSphere( obj, thisPower, 16, 16 );
-
-	gluDeleteQuadric( obj );
-
-	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	glDisable( GL_BLEND );
-	glEnable( GL_CULL_FACE );
-	glEnable( GL_TEXTURE_2D );
-	glPopMatrix();
-}
-
-void specSprite::Create( Vector3f Pos, float R, float G, float B )
-{
-	C[0] = R;
-	C[1] = G;
-	C[2] = B;
-	AtPos = Pos;
-	Alpha = 1.0f;
-	CanDelete = false;
-}
-
-void specSprite::Update( const float fTD )
-{
-	Alpha -= 0.01f * GUI.GetSpeed() * fTD;
-	if( Alpha <= 0.0f )
-		CanDelete = true;
-}
-
-void specSprite::Render()
-{
-	if( !GUI.GetCanSmoke() )
-		return;
-
-	glPushMatrix();
-	glDisable( GL_CULL_FACE );
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	glEnable( GL_BLEND );
-
-	glTranslatef( AtPos.X, AtPos.Y, AtPos.Z );
-	glRotatef( -(GUI.PInfo.angle-180.0f), 0.0f, 1.0f, 0.0f );
-
-	Part.Activate( GUI.GetTexDLevel() );
-	glBegin( GL_TRIANGLE_STRIP );
-	glColor4f( C[0], C[1], C[2], Alpha );
-	glTexCoord2f( 1.0f, 1.0f );
-	glVertex3f( -0.8f, 0.8f, 0.0f );
-	glTexCoord2f( 1.0f, 0.0f );
-	glVertex3f( -0.8f, -0.8f, 0.0f );
-	glTexCoord2f( 0.0f, 1.0f );
-	glVertex3f( 0.8f, 0.8f, 0.0f );
-	glTexCoord2f( 0.0f, 0.0f );
-	glVertex3f( 0.8f, -0.8f, 0.0f );
-	glEnd();
-
-	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	glDisable( GL_BLEND );
-	glEnable( GL_CULL_FACE );
-	glPopMatrix();
-}
-
-void specManager::AddEffect( specEffect* effect )
+void CSpecialEffectManager::AddEffect( CEffect* effect )
 {
 	if( GUI.GetMaxSpecial() > 0 )
 		if( List.size() >= GUI.GetMaxSpecial() )
@@ -167,20 +41,20 @@ void specManager::AddEffect( specEffect* effect )
 	List.push_back( effect );
 }
 
-void specManager::DeleteEffect( unsigned int index )
+void CSpecialEffectManager::DeleteEffect( unsigned int index )
 {
 	delete List[index];
 	List.erase( List.begin() + index );
 }
 
-specEffect* specManager::GetEffect( unsigned int index )
+CEffect* CSpecialEffectManager::GetEffect( unsigned int index )
 {
 	return List[index];
 }
 
-void specManager::Update( const float fTD )
+void CSpecialEffectManager::Update( const float fTD )
 {
-	specEffect* effect;
+	CEffect* effect;
 	for( int i = List.size()-1; i >= 0; i-- )
 	{
 		effect = List[i];
@@ -192,10 +66,10 @@ void specManager::Update( const float fTD )
 	}
 }
 
-void specManager::Render()
+void CSpecialEffectManager::Render()
 {
 	unsigned int i;
-	specEffect* effect;
+	CEffect* effect;
 	for( i = 0; i < List.size(); i++ )
 	{
 		effect = List[i];

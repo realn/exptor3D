@@ -235,9 +235,7 @@ void CEnemy::Fire( Vector3f FireTarget )
 
 void CEnemy::OnDie()
 {
-	specExplode* spec = new specExplode;
-	spec->Create( Pos, 5.0f, 0.1f );
-	SEManager.AddEffect( spec );
+	SEManager.AddEffect( new CEffectExplosion( Pos, 5.0f, 0.1f ) );
 }
 
 void CEnemy::OnDead()

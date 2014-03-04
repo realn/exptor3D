@@ -8,6 +8,7 @@ class CBullRocket :
 	public CBullet
 {
 private:
+	CTexManager& TexManager;
 	GLModel* Model;
 	float Angle;
 	float Sec;

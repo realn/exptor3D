@@ -77,7 +77,6 @@ bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjali
 
 	GUI.SendConMsg( "Inicjalizacja silnika...", false );
 	SMBlur.Init();
-	Part.LoadTGA( "Data/Part.tga" );
 	MenuModel = modelManager.Get( "Data/menumodel.glm" );
 	MainPlayer.SetArmor( 100.0f );
 	GUI.Menu.LoadMenu( "Data/menu.mnu" );
@@ -377,6 +376,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 
 	CTexManager texManager;
 	GLModelManager modelManager( texManager );
+	SEManager.Init( texManager );
 	GLevel.Init( texManager, modelManager );
 	MainPlayer.Init( modelManager );
 
