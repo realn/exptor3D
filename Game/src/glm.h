@@ -55,7 +55,7 @@ public:
 	GLModel();
 	~GLModel();
 
-	bool LoadModel( std::string filename );
+	bool LoadModel( CTexManager* texManager, std::string filename );
 	virtual void Free();
 	std::string GetFile();
 	unsigned int GetObjCount();
@@ -79,11 +79,14 @@ private:
 class GLModelManager
 {
 private:
+	CTexManager*	TexManager;
 	std::vector<GLModel*> List;
 
 public:
 	GLModelManager();
 	~GLModelManager();
+
+	void Init( CTexManager* texManager );
 
 	GLModel* Get( std::string filename );
 	void AddModel( GLModel* Model );

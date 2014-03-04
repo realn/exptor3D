@@ -24,6 +24,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 #include "Game.h"
+#include "GameEnemy.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -40,6 +41,8 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #define	WLFLAG_GET_WEAP			4
 #define WLFLAG_SELF_DEAD		8
 #define WLFLAG_THING_DEAD		16
+
+class gameBlockInfo;
 
 class gameWLFlags
 {
@@ -96,7 +99,8 @@ public:
 class gameLevel
 {
 private:
-	CTexture *Tex[3];
+	CTexManager*	TexManager;
+	CTexture*		Tex[3];
 	
 	// Informacje o liczbie wierszy i kolumn w poziomie gry
 	unsigned int rows;
@@ -151,6 +155,8 @@ public:
 	// Konstruktor i destruktor
 	gameLevel();
 	~gameLevel();
+
+	void	Init( CTexManager* texManager );
 
 	std::string GetLevelName();
 

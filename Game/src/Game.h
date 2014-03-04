@@ -10,20 +10,18 @@ Opis:	Zawiera definicje klas obiektów poruszaj¹cych siê
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _GAME_H_
-#define _GAME_H_
+#pragma once
 
-#include "defines.h"
-#include "Render.h"
 #include "Texture.h"
 #include "3dMath.h"
 #include "Level.h"
 #include "Weapon.h"
 #include <vector>
 
-
 #include "GameActor.h"
 #include "GameEnemy.h"
+
+class gameBlockInfo;
 
 /*	KLASA CActorManager
 	Jest to klasa zarz¹daj¹ca wszystkimi
@@ -63,5 +61,3 @@ public:
 };
 
 extern CActorManager ThingManager;
-
-#endif

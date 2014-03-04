@@ -19,11 +19,11 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 
 bool CanDoWLScr = true;
 
-bool Init()    //Inicjalizacja OpenGL
+bool Init( CTexManager& texManager )    //Inicjalizacja OpenGL
 {
 	glDepthFunc( GL_LEQUAL );				//Metoda testowania G³êbokoœci (ta jest lepsza)
 	glEnable( GL_TEXTURE_2D );
-	GUI.InitGUI();
+	GUI.InitGUI( &texManager );
 	GUI.SetLoadLevelFunc( LoadLevel );
 	GUI.SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
 	GUI.SendConMsg( "STEROWNIK: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
@@ -374,8 +374,12 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 		return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
 	}
 
+	CTexManager texManager;
+	GLMManager.Init( &texManager );
+	GLevel.Init( &texManager );
+
 	Log.Log( "Inicjalizacja OpenGL" );
-	if( !Init() )
+	if( !Init( texManager ) )
 	{
 		Log.Error( "B³¹d inicjalizacji" );
 		return 0;
@@ -434,7 +438,6 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	// Deinicjalizacja
 	Log.Log( "Koniec pracy Aplikacji" );
 	GLRender.GLDestroyWindow();// Zniszcz okno
-	if( Timer ) delete Timer;
 	return (msg.wParam);							// WyjdŸ z programu
 }
 

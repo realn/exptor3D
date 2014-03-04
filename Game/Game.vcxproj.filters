@@ -16,6 +16,9 @@
     <Filter Include="Source\Game\Item">
       <UniqueIdentifier>{f7b17ccf-1125-47db-9c38-5675aac487fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Graphic">
+      <UniqueIdentifier>{b1f34753-42b6-46e8-9f75-0de93d91ec6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -34,15 +37,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Render.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Special.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Timer.cpp">
@@ -114,6 +108,15 @@
     <ClCompile Include="src\ItemManager.cpp">
       <Filter>Source\Game\Item</Filter>
     </ClCompile>
+    <ClCompile Include="src\Special.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -135,15 +138,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\main.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Render.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Special.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Texture.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\Timer.h">
@@ -214,6 +208,15 @@
     </ClInclude>
     <ClInclude Include="src\ItemManager.h">
       <Filter>Source\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Special.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Source\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

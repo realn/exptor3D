@@ -286,5 +286,3 @@ void CTexManager::Clear()
 	}
 	List.clear();
 }
-
-CTexManager TManager;

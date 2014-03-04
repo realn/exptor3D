@@ -572,7 +572,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	return true;
 }
 
-bool GLModel::LoadModel( std::string filename )
+bool GLModel::LoadModel( CTexManager* texManager, std::string filename )
 {
 	// Sprawdzamy czy ³añcuch nie jest pusty
 	if( filename.empty() )
@@ -679,7 +679,7 @@ bool GLModel::LoadModel( std::string filename )
 			{
 				str = GetLine( fileStream );
 
-				if( !( Textures[i] = TManager.Get( str ) ) )
+				if( !( Textures[i] = texManager->Get( str ) ) )
 				{
 					Log.Error( "GLMODEL( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
 				}
@@ -916,6 +916,11 @@ GLModelManager::~GLModelManager()
 	//Clear();
 }
 
+void	GLModelManager::Init( CTexManager* texManager )
+{
+	TexManager = texManager;
+}
+
 GLModel* GLModelManager::Get( std::string filename )
 {
 	if( filename.empty() )
@@ -934,7 +939,7 @@ GLModel* GLModelManager::Get( std::string filename )
 	}
 
 	Model = new GLModel;
-	if( !Model->LoadModel( filename ) )
+	if( !Model->LoadModel( TexManager, filename ) )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
 		delete Model;

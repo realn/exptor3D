@@ -64,5 +64,3 @@ public:
 	CTexture* GetTexture( unsigned int index );
 	void Clear();
 };
-
-extern CTexManager TManager;

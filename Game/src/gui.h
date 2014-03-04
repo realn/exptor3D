@@ -279,7 +279,8 @@ public:
 	std::string LevName;
 
 	guiMain();
-	void InitGUI();
+
+	void InitGUI( CTexManager* texManager );
 
 	unsigned short	GetTexDLevel();
 	void	SetTexDLevel( unsigned short level );

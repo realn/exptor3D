@@ -173,6 +173,11 @@ gameLevel::~gameLevel()
 	Free();
 }
 
+void	gameLevel::Init( CTexManager* texManager )
+{
+	TexManager = texManager;
+}
+
 // Zwraca, czy poziom jest za³adowany i gotowy
 bool gameLevel::GetLoaded()
 {
@@ -444,21 +449,21 @@ bool gameLevel::LoadLevel( const std::string &filename )
 	else
 	{
 		str = GetLine( stream );
-		if( !( Tex[0] = TManager.Get( GetParamStr( str ) ) ) )
+		if( !( Tex[0] = TexManager->Get( GetParamStr( str ) ) ) )
 		{
 			Log.Error( "GLEVEL( " + file + " ): B³êdny plik graficzny!" );
 			Free();
 			return false;
 		}
 		str = GetLine( stream );
-		if( !( Tex[1] = TManager.Get( GetParamStr( str ) ) ) )
+		if( !( Tex[1] = TexManager->Get( GetParamStr( str ) ) ) )
 		{
 			Log.Error( "GLEVEL( " + file + " ): B³êdny plik graficzny!" );
 			Free();
 			return false;
 		}
 		str = GetLine( stream );
-		if( !( Tex[2] = TManager.Get( GetParamStr( str ) ) ) )
+		if( !( Tex[2] = TexManager->Get( GetParamStr( str ) ) ) )
 		{
 			Log.Error( "GLEVEL( " + file + " ): B³êdny plik graficzny!" );
 			Free();

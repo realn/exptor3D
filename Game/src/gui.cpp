@@ -11,6 +11,7 @@ Opis:	Patrz -> gio.h
 #include "gui.h"
 
 guiMain GUI;
+extern bool CanDoWLScr;
 
 const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",
 								"RefLevel", "WireFrame", "Note", "SaveRndInfo",
@@ -504,8 +505,6 @@ unsigned int guiMain::GetEPFTimes()
 */
 void guiMain::DoGUIEngine(const float fTD)
 {
-	Timer->Update();
-
 	if( !ConsoleOn && !Menu.IsEnabled() )
 	{
 		DoMainEngine = true;
@@ -669,14 +668,12 @@ unsigned int guiMain::GetMiliSecPas()
 }
 
 // Metoda inicjalizuje GUI
-void guiMain::InitGUI()
+void guiMain::InitGUI( CTexManager* texManager )
 {
-	Timer = new CTimer();
-	Timer->Init();
 	Log.Log( "Inicjalizacja koñcowa GUI" );
-	font = TManager.Get( "Data/Font.tga" );
-	Cursor = TManager.Get( "Data/Kursor.tga" );
-	CH = TManager.Get( "Data/cel.tga" );
+	font = texManager->Get( "Data/Font.tga" );
+	Cursor = texManager->Get( "Data/Kursor.tga" );
+	CH = texManager->Get( "Data/cel.tga" );
 
 	TText.Init( font );
 	Menu.Init( &TText, Cursor );
