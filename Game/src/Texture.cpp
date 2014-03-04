@@ -17,8 +17,7 @@ CTexture::CTexture() :
 	file("-"),
 	texture(0)
 {
-	loaded = false;
-	file = "-";
+	glGenTextures( 1, &texture );
 }
 
 CTexture::CTexture( std::string filename ) :
@@ -26,12 +25,13 @@ CTexture::CTexture( std::string filename ) :
 	file("-"),
 	texture(0)
 {
+	glGenTextures( 1, &texture );
 	LoadTGA( filename );
 }
 
 CTexture::~CTexture()
 {
-	Free();
+	glDeleteTextures( 1, &texture );
 }
 
 bool	CTexture::LoadTGA( std::string filename )
@@ -97,7 +97,9 @@ bool	CTexture::LoadTGA( std::string filename )
 	
 	if( loaded )
 	{
-		Free();
+		glDeleteTextures( 1, &texture );
+		loaded = false;
+		glGenTextures( 1, &texture );
 		Log.Report( "TGATEX( " + file + " ): Prze³adowanie tekstury na " + filename );
 	}
 	file = filename;
@@ -140,7 +142,7 @@ bool	CTexture::LoadTGA( std::string filename )
 	{
 		// Je¿eli coœ siê nie zgadza, to przerywamy
 		if( imageData != NULL)
-			free( imageData );
+			delete[] imageData;
 
 		Log.Error( "TGATEX( " + file + " ): B³¹d pamiêci!" );
 		return false;	
@@ -180,12 +182,6 @@ bool	CTexture::LoadTGA( std::string filename )
 		który daje lepszy wygl¹d gdy tekstura jest pod du¿ym k¹tem.
 		Po wiêcej informacji zapraszam do dokumentacji OpenGL (RTFM!) :) 
 	*/
-
-	// Stwórz piêæ niezdefinowanych tekstur
-	glGenTextures( 1, &texture );
-
-	// I same tekstury
-
 	//===================Najwy¿sza jakoœæ MipMapingu====================
 	glBindTexture( GL_TEXTURE_2D, texture );			// Bind Our Texture
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR ); 
@@ -215,16 +211,6 @@ void CTexture::Activate( unsigned int tex )
 std::string CTexture::GetFile()
 {
 	return file;
-}
-
-void CTexture::Free()
-{
-	if( !loaded )
-		return;
-
-	glDeleteTextures( 1, &texture );
-
-	loaded = false;
 }
 
 

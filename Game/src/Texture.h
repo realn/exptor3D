@@ -43,9 +43,6 @@ public:
 	// Funkcja aktywuj¹ca teksturê
 	virtual void Activate( unsigned int tex = 2 );
 
-	// Funkcja zwalniaj¹ca pamiêæ
-	virtual void Free();
-
 	// Metoda zwraca nazwe aktualnie za³adowanego pliku
 	virtual std::string GetFile();
 };
