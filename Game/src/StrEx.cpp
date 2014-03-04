@@ -113,3 +113,50 @@ const std::string GetLine( std::fstream& stream )
 
 	return result;
 }
+
+const std::string ClearWhiteSpace( const std::string& str )
+{
+	std::string result;
+	for( unsigned i = 0; i < str.length(); i++ )
+	{
+		if( !IsWhiteSpace( str[i] ) )
+			result += str[i];
+	}
+	return result;
+}
+
+const std::string GetClearLine( std::fstream& stream )
+{
+	return ClearWhiteSpace( GetLine( stream ) );
+}
+
+const bool	ContainsString( const std::string& where, const std::string& what )
+{
+	return where.find( what ) != std::string::npos;
+}
+
+void SplitString( const std::string& str, const std::string& split, std::vector<std::string>& list )
+{
+	size_t pos = 0;
+	size_t next = 0;
+	while( ( next = str.find( split, pos ) ) != std::string::npos )
+	{
+		if( next - pos > 0 )
+			list.push_back( str.substr( pos, next - pos ) );
+
+		pos = next + 1;
+	}
+	if( pos < str.length() )
+		list.push_back( str.substr( pos ) );
+}
+
+const std::string	CorrectDirSlashes( const std::string& str )
+{
+	std::string result( str );
+	for( unsigned i = 0; i < result.length(); i++ )
+	{
+		if( result[i] == '\\' )
+			result[i] = '/';
+	}
+	return result;
+}
