@@ -2,7 +2,7 @@
 #include "Log.h"
 
 GLModelManager::GLModelManager( CTexManager& texManager ) :
-	TexManager( TexManager )
+	TexManager( texManager )
 {
 }
 
@@ -67,7 +67,7 @@ void GLModelManager::Clear()
 {
 	for(unsigned i = 0; i < List.size(); i++)
 	{
-		delete List[i];
+		delete GetModel( i );
 	}
 	List.clear();
 }

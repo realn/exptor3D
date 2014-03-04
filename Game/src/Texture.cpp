@@ -282,7 +282,7 @@ void CTexManager::Clear()
 {
 	for(unsigned i = 0; i < List.size(); i++)
 	{
-		delete List[i];
+		delete GetTexture( i );
 	}
 	List.clear();
 }

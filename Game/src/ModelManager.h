@@ -16,6 +16,7 @@ public:
 	void AddModel( GLModel* Model );
 	GLModel* GetModel( unsigned int index );
 	void DeleteModel( unsigned int index );
+
 	void Clear();
 };
 

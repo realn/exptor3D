@@ -96,6 +96,7 @@
     <ClCompile Include="src\ItemHealth.cpp" />
     <ClCompile Include="src\ItemManager.cpp" />
     <ClCompile Include="src\Level.cpp" />
+    <ClCompile Include="src\LevelBlock.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ModelManager.cpp" />

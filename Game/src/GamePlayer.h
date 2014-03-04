@@ -6,6 +6,8 @@
 class weWeapon;
 class CItem;
 
+#define WEAPON_COUNT 10
+
 /*	KLASA POSTACI
 	Postacie gry maj¹ swoj¹ binarn¹
 	postaæ w taki sposób. Dziêki niej
@@ -31,7 +33,7 @@ private:
 	unsigned int CurrWeap;
 	unsigned int Hand;
 public:
-	weWeapon* Weapon[10];
+	weWeapon* Weapon[WEAPON_COUNT];
 
 	CPlayer();
 	~CPlayer();

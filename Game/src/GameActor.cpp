@@ -189,7 +189,7 @@ bool CActor::AIFindTarget()
 
 Vector3f CActor::AIFindWalkTarget()
 {
-	gameBlockInfo* Block = GLevel.GetBlock( this->GetBlockPos() );
+	CLvlBlock* Block = GLevel.GetBlock( this->GetBlockPos() );
 	if( Block == NULL )
 		return Vector3f( 0.0f ,0.0f, 0.0f );
 	

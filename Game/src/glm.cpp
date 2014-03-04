@@ -242,7 +242,7 @@ bool	CheckParams(std::vector<std::string>& param)
 {
 	for(unsigned i = 0; i < param.size(); i++)
 	{
-		if(param[i] == "" || param.empty())
+		if(param[i].empty())
 			return false;
 	}
 	return true;

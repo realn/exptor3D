@@ -43,7 +43,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #define WLFLAG_SELF_DEAD		8
 #define WLFLAG_THING_DEAD		16
 
-class gameBlockInfo;
+class CLvlBlock;
 
 class gameWLFlags
 {
@@ -56,9 +56,9 @@ private:
 public:
 	unsigned int	flags;
 	unsigned int	BlockID;
-	gameBlockInfo*	Block;
+	CLvlBlock*		Block;
 	std::string		EnemyID;
-	CEnemy*		Enemy;
+	CEnemy*			Enemy;
 	unsigned int	WeapID;
 	std::string		Text;
 	float			Color[3];
@@ -68,13 +68,13 @@ public:
 	bool CheckOneFlag();
 };
 
-/*	KLASA gameBlockInfo
+/*	KLASA CLvlBlock
 	Przechowuje dane potrzebne
 	do stworzenia, inicjalizacji
 	i dzia³ani poszczególnych
 	"bloków" na poziomie.
 */
-class gameBlockInfo
+class CLvlBlock
 {
 public:
 	// Wektor trzymaj¹cy rogi sektora
@@ -90,14 +90,19 @@ public:
 
 	// Dane dla broni i amunicji ( -1 jak nie ma ¿adnej w danym bloku )
 	std::string StatObj;
+
+public:
+	CLvlBlock();
+
+	void	LoadWalls( const std::string& str );
 };
 
-/*	KLASA gameLevel
+/*	KLASA CLevel
 	Obiekty tej klasy ³aduj¹
 	pliki txt z poziomami, i
 	tworz¹ ich wizualn¹ wersjê.
 */
-class gameLevel
+class CLevel
 {
 private:
 	GLModelManager*	ModelManager;
@@ -121,7 +126,7 @@ private:
 	unsigned int Version;
 
 	// Tablica trzymaj¹ca dane wyci¹gniête z pliku
-	gameBlockInfo* block;
+	std::vector<CLvlBlock> block;
 
 	int AllWin;
 	int AllLose;
@@ -155,17 +160,17 @@ private:
 	void BuildPhysic();
 public:
 	// Konstruktor i destruktor
-	gameLevel();
-	~gameLevel();
+	CLevel();
+	~CLevel();
 
 	void	Init( CTexManager& texManager, GLModelManager& modelManager );
 
 	std::string GetLevelName();
 
 	unsigned int GetBlockCount();
-	gameBlockInfo* GetBlock( unsigned int i, unsigned int j );
-	gameBlockInfo* GetBlock( Vector3f Pos );
-	gameBlockInfo* GetBlock( unsigned int i );
+	CLvlBlock* GetBlock( unsigned int i, unsigned int j );
+	CLvlBlock* GetBlock( Vector3f Pos );
+	CLvlBlock* GetBlock( unsigned int i );
 	Vector3f GetBlockPos( unsigned int i );
 	bool GetLoaded();
 	unsigned int GetEnemyCount();
@@ -189,12 +194,15 @@ public:
 
 	// Metoda czyszcz¹ca pamiêæ
 	void Free();
+
+private:
+	const bool	LoadWalls( std::fstream& stream );
 };
 
-extern bool TestCollBlock( CDynamic* Dum, gameBlockInfo* Block, bool testthing = false );
-extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level );
+extern bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing = false );
+extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, CLevel* Level );
 extern bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
-extern gameLevel GLevel;
-extern gameLevel* pGLevel;
+extern CLevel GLevel;
+extern CLevel* pGLevel;

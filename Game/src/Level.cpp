@@ -18,8 +18,8 @@ Opis:	Patrz -> Level.h
 #include "ItemArmor.h"
 #include "ItemHealth.h"
 
-gameLevel GLevel;
-gameLevel* pGLevel = &GLevel;
+CLevel GLevel;
+CLevel* pGLevel = &GLevel;
 
 /*	KLASA gameWLFlags
 S³u¿y do sprawdzania warunków wygranej jak i przegranej.
@@ -130,14 +130,12 @@ bool gameWLFlags::CheckOneFlag()
 }
 
 
-/*	KLASA gameLevel
+/*	KLASA CLevel
 Patrz -> definicja klasy
 */
 /*	KONSTRUKTOR	*/
-gameLevel::gameLevel()
+CLevel::CLevel()
 {
-	// Zerujemy wskaŸnik (który bêdzie do tablicy)
-	block = NULL;
 	// Ustawiamy, ¿e poziom nie by³ jeszcze ³adowany
 	loaded = false;
 	// Ustawiamy domyœln¹ nazwê poziomu
@@ -165,7 +163,7 @@ gameLevel::gameLevel()
 }
 
 /*	DESTRUKTOR	*/
-gameLevel::~gameLevel()
+CLevel::~CLevel()
 {
 	/*	Przy destrukcji wypada³o
 	by zwolniæ pamiêæ
@@ -173,32 +171,32 @@ gameLevel::~gameLevel()
 	Free();
 }
 
-void	gameLevel::Init( CTexManager& texManager, GLModelManager& modelManager )
+void	CLevel::Init( CTexManager& texManager, GLModelManager& modelManager )
 {
 	TexManager = &texManager;
 	ModelManager = &modelManager;
 }
 
 // Zwraca, czy poziom jest za³adowany i gotowy
-bool gameLevel::GetLoaded()
+bool CLevel::GetLoaded()
 {
 	return loaded;
 }
 
 // Zwraca iloœæ przeciwników odczytanych z pliku
-unsigned int gameLevel::GetEnemyCount()
+unsigned int CLevel::GetEnemyCount()
 {
 	return EnemyCount;
 }
 
 // Zwraca iloœæ obiektów statycznych odczytanych z pliku
-unsigned int gameLevel::GetSObjCount()
+unsigned int CLevel::GetSObjCount()
 {
 	return StatObjCount;
 }
 
 // Wyci¹ga z wartoœæ po znaku "="
-std::string gameLevel::GetParamStr( const std::string &str )
+std::string CLevel::GetParamStr( const std::string &str )
 {
 	int i;
 
@@ -220,7 +218,7 @@ Na pocz¹tku podstawowe dane,
 a dalej jedziemy ze œcianami
 i ca³¹ reszt¹ danych.
 */
-bool gameLevel::LoadLevel( const std::string &filename )
+bool CLevel::LoadLevel( const std::string &filename )
 {
 	if( filename == "" )
 	{
@@ -242,7 +240,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 	int i, j, k, l;
 
 	// Pobieramy wersje poziomu oraz j¹ sprawdzamy
-	str = GetLine( stream );
+	str = GetClearLine( stream );
 	if( !sscanf_s( str.c_str(), "E3DTLEV=%u", &Version ) )
 	{
 		Log.Error( "GLEVEL( " + file + " ): Nieprawid³owy plik poziomu!" );
@@ -279,7 +277,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 	file = filename;
 
 	// Teraz nastêpna linia MUSI byc rozpoczêciem nag³ówka, inaczej klops
-	str = GetLine( stream );
+	str = GetClearLine( stream );
 	if( str != "HEADER" )
 	{
 		Log.Error( "GLEVEL( " + file + " ): Brak nag³ówka, lub w nieodpowiednim miejscu!" );
@@ -291,12 +289,13 @@ bool gameLevel::LoadLevel( const std::string &filename )
 		do
 		{
 			str = GetLine( stream );
-			if( guiIsInStr( str, "NAME" ) )
+			if( ContainsString( str, "NAME" ) )
 			{
 				LevName = GetParamStr( str );
 			}
-			if( guiIsInStr( str, "ROWS" ) )
+			if( ContainsString( str, "ROWS" ) )
 			{
+				str = ClearWhiteSpace( str );
 				if( !sscanf_s( str.c_str(), "ROWS=%u", &rows ) )
 				{
 					Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby wierszy!" );
@@ -304,8 +303,9 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "COLS" ) )
+			if( ContainsString( str, "COLS" ) )
 			{
+				str = ClearWhiteSpace( str );
 				if( !sscanf_s( str.c_str(), "COLS=%u", &cols ) )
 				{
 					Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby kolumn!" );
@@ -313,7 +313,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "WEAPCOUNT" ) )
+			if( ContainsString( str, "WEAPCOUNT" ) )
 			{
 				if( !sscanf_s( str.c_str(), "WEAPCOUNT=%u", &WeapCount ) )
 				{
@@ -322,7 +322,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "BONUSCOUNT" ) )
+			if( ContainsString( str, "BONUSCOUNT" ) )
 			{
 				if( !sscanf_s( str.c_str(), "BONUSCOUNT=%u", &BonusCount ) )
 				{
@@ -331,7 +331,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "ENEMYTYPECOUNT" ) )
+			if( ContainsString( str, "ENEMYTYPECOUNT" ) )
 			{
 				if( !sscanf_s( str.c_str(), "ENEMYTYPECOUNT=%u", &EnemyTypeCount ) )
 				{
@@ -340,7 +340,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "ENEMYCOUNT" ) )
+			if( ContainsString( str, "ENEMYCOUNT" ) )
 			{
 				if( !sscanf_s( str.c_str(), "ENEMYCOUNT=%u", &EnemyCount ) )
 				{
@@ -349,7 +349,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "PLAYERSTARTPOS" ) )
+			if( ContainsString( str, "PLAYERSTARTPOS" ) )
 			{
 				if( !sscanf_s( str.c_str(), "PLAYERSTARTPOS=%u", &PlayerStartBlock ) )
 				{
@@ -358,7 +358,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "PLAYERSTARTANGLE" ) )
+			if( ContainsString( str, "PLAYERSTARTANGLE" ) )
 			{
 				if( !sscanf_s( str.c_str(), "PLAYERSTARTANGLE=%u", &PlayerStartAngle ) )
 				{
@@ -367,7 +367,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "STATOBJ" ) )
+			if( ContainsString( str, "STATOBJ" ) )
 			{
 				if( !sscanf_s( str.c_str(), "STATOBJ=%u", &StatObjCount ) )
 				{
@@ -376,7 +376,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "WINALL" ) )
+			if( ContainsString( str, "WINALL" ) )
 			{
 				if( !sscanf_s( str.c_str(), "WINALL=%d", &AllWin ) )
 				{
@@ -385,7 +385,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "LOSEALL" ) )
+			if( ContainsString( str, "LOSEALL" ) )
 			{
 				if( !sscanf_s( str.c_str(), "LOSEALL=%d", &AllLose ) )
 				{
@@ -394,7 +394,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "WINFLAGS" ) )
+			if( ContainsString( str, "WINFLAGS" ) )
 			{
 				if( !sscanf_s( str.c_str(), "WINFLAGS=%u", &WinFlags.flags ) )
 				{
@@ -403,7 +403,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "WINBLOCK" ) )
+			if( ContainsString( str, "WINBLOCK" ) )
 			{
 				if( !sscanf_s( str.c_str(), "WINBLOCK=%u", &WinFlags.BlockID ) )
 				{
@@ -412,7 +412,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "LOSEFLAGS" ) )
+			if( ContainsString( str, "LOSEFLAGS" ) )
 			{
 				if( !sscanf_s( str.c_str(), "LOSEFLAGS=%u", &LoseFlags.flags ) )
 				{
@@ -421,7 +421,7 @@ bool gameLevel::LoadLevel( const std::string &filename )
 					return false;
 				}
 			}
-			if( guiIsInStr( str, "LOSEBLOCK" ) )
+			if( ContainsString( str, "LOSEBLOCK" ) )
 			{
 				if( !sscanf_s( str.c_str(), "LOSEBLOCK=%u", &LoseFlags.BlockID ) )
 				{
@@ -480,37 +480,8 @@ bool gameLevel::LoadLevel( const std::string &filename )
 		}
 	}
 
-	/*	Teraz tworzymy tablicê odpowiednich
-	rozmiarów zdoln¹ pomieœciæ nastêpne
-	dane. S¹ to liczby ca³kowite jednoznacznie
-	okreœlaj¹ce zawarte w nich œciany ( patrz
-	definicje makrowe )
-	*/
-	str = GetLine( stream );
-	if( str != "WALLS" )
-	{
-		Log.Error( "GLEVEL( " + file + " ): Brak listy œcian!" );
-		Free();
+	if(! LoadWalls( stream ) )
 		return false;
-	}
-	block = new gameBlockInfo[rows*cols];
-
-	for( i = 0; i < rows*cols; i++ )
-	{
-		str = GetLine( stream );
-
-		// Wpisujemy t¹ liczbê do sk³adowej walls
-		sscanf_s( str.c_str(), "%d", &block[i].walls );
-		block[i].CornerCount = 0;
-	}
-
-	str = GetLine( stream );
-	if( str != "END WALLS" )
-	{
-		Log.Error( "GLEVEL( " + file + " ): Brak koñca listy œcian!" );
-		Free();
-		return false;
-	}
 
 	if( WeapCount > 0 )
 	{
@@ -748,7 +719,7 @@ W zale¿noœci od tego jak¹
 œciane chcemy, tak¹ rysuje
 razem z koordynatami tekstur
 */
-void gameLevel::DrawWall( unsigned int wall )
+void CLevel::DrawWall( unsigned int wall )
 {
 	float mult = GUI.GetTexPerPlane( GAME_TEX_WALL );
 	switch( wall )
@@ -820,7 +791,7 @@ void gameLevel::DrawWall( unsigned int wall )
 Metody podobne do poprzedniej - rysuj¹
 pod³oge i sufit razem z koordynatami.
 */
-void gameLevel::DrawFloor()
+void CLevel::DrawFloor()
 {
 	float mult = GUI.GetTexPerPlane( GAME_TEX_FLOOR );
 	glBegin( GL_TRIANGLE_STRIP );
@@ -836,7 +807,7 @@ void gameLevel::DrawFloor()
 	glEnd();
 }
 
-void gameLevel::DrawTop()
+void CLevel::DrawTop()
 {
 	float mult = GUI.GetTexPerPlane( GAME_TEX_TOP );
 	glBegin( GL_TRIANGLE_STRIP );
@@ -855,7 +826,7 @@ void gameLevel::DrawTop()
 /*	Ta metoda jednorazowo wywo³uje dwie
 inne metody
 */
-void gameLevel::InitLevel()
+void CLevel::InitLevel()
 {
 	// Gdy poziom ju¿ jest za³adowany, to trzeba przerwaæ inicjalizacje
 	if( !loaded )
@@ -871,7 +842,7 @@ void gameLevel::InitLevel()
 poziomu, oddzielnie od reszty logiki. W programowaniu gier jest ZAWSZE
 zasada odzielania tych czêœci.
 */
-void gameLevel::BuildVisual()
+void CLevel::BuildVisual()
 {
 	if( !loaded )
 		return;
@@ -972,7 +943,7 @@ void gameLevel::BuildVisual()
 buduje, m.in. punkty i p³aszczyzny, w oparciu o które
 bêd¹ wykrywane kolizje.
 */
-void gameLevel::BuildPhysic()
+void CLevel::BuildPhysic()
 {
 	if( !loaded )
 		return;
@@ -980,8 +951,8 @@ void gameLevel::BuildPhysic()
 	GUI.SendConMsg( "Poziom: Tworzenie czesci fizycznej...", false );
 	// Zmienne pomocznicze
 	int i, j, k, ai, aj;
-	gameBlockInfo* blk;
-	gameBlockInfo* SideBlock[4];
+	CLvlBlock* blk;
+	CLvlBlock* SideBlock[4];
 	float nx, ny;
 
 	/*	Pêtla sprawdza ka¿de 4 œciany
@@ -1125,7 +1096,7 @@ void gameLevel::BuildPhysic()
 /*	Tu odbywa siê rysowanie levelu. 
 ( takie proste, ¿e a¿ g³upie :) )
 */
-void gameLevel::DrawLevel()
+void CLevel::DrawLevel()
 {
 	if( !loaded )
 		return;
@@ -1156,7 +1127,7 @@ void gameLevel::DrawLevel()
 	}
 }
 
-void gameLevel::DrawAllTop()
+void CLevel::DrawAllTop()
 {
 	if( !loaded )
 		return;
@@ -1165,7 +1136,7 @@ void gameLevel::DrawAllTop()
 	glCallList( Top );
 }
 
-void gameLevel::DrawAllWall()
+void CLevel::DrawAllWall()
 {
 	if( !loaded )
 		return;
@@ -1174,7 +1145,7 @@ void gameLevel::DrawAllWall()
 	glCallList( Wall );
 }
 
-void gameLevel::DrawAllFloor()
+void CLevel::DrawAllFloor()
 {
 	if( !loaded )
 		return;
@@ -1183,7 +1154,7 @@ void gameLevel::DrawAllFloor()
 	glCallList( Floor );
 }
 
-void gameLevel::DrawReflect()
+void CLevel::DrawReflect()
 {
 	if( !GUI.GetReflection() )
 		return;
@@ -1201,14 +1172,14 @@ void gameLevel::DrawReflect()
 /*	Ta metoda zwraca nazwê poziomu wyczytan¹ z pliku
 (lub domyœln¹).
 */
-std::string gameLevel::GetLevelName()
+std::string CLevel::GetLevelName()
 {
 	return LevName;
 }
 
 /*	Ta zwraca dany block z okreœlonego wiersza i kolumny
 */
-gameBlockInfo* gameLevel::GetBlock( unsigned int i, unsigned int j )
+CLvlBlock* CLevel::GetBlock( unsigned int i, unsigned int j )
 {
 	if( i >= 0 && j >= 0 )
 	{
@@ -1220,27 +1191,27 @@ gameBlockInfo* gameLevel::GetBlock( unsigned int i, unsigned int j )
 	return NULL;
 }
 
-gameBlockInfo* gameLevel::GetBlock( Vector3f Pos )
+CLvlBlock* CLevel::GetBlock( Vector3f Pos )
 {
 	return GetBlock( (unsigned int)Pos.X, (unsigned int)Pos.Z );
 }
 
-gameBlockInfo* gameLevel::GetBlock( unsigned int i )
+CLvlBlock* CLevel::GetBlock( unsigned int i )
 {
 	return &block[i];
 }
 
-unsigned int gameLevel::GetBlockCount()
+unsigned int CLevel::GetBlockCount()
 {
 	return rows*cols;
 }
 
-Vector3f gameLevel::GetBlockPos( unsigned int i )
+Vector3f CLevel::GetBlockPos( unsigned int i )
 {
 	return Vector3f( (float)(i % cols)*10.0f+5.0f, 0.0f, -(float)(i / cols)*10.0f-5.0f );
 }
 
-void gameLevel::CheckWLFlags()
+void CLevel::CheckWLFlags()
 {
 	if( !this->loaded )
 		return;
@@ -1274,18 +1245,14 @@ void gameLevel::CheckWLFlags()
 /*	Metoda czyœci pamiêc zarezerwowan¹ dla
 tej klasy.
 */
-void gameLevel::Free()
+void CLevel::Free()
 {
 	if( !loaded )
 		return;
 
 	GUI.SendConMsg( "Poziom: Zwalnianie pamieci...", false );
 
-	if( block != NULL )
-	{
-		delete[] block;
-		block = NULL;
-	}
+	block.clear();
 
 	if( EnemyType != NULL )
 	{
@@ -1313,12 +1280,68 @@ void gameLevel::Free()
 	loaded = false;
 }
 
+const bool	CLevel::LoadWalls( std::fstream& stream )
+{
+	/*	Teraz tworzymy tablicê odpowiednich
+	rozmiarów zdoln¹ pomieœciæ nastêpne
+	dane. S¹ to liczby ca³kowite jednoznacznie
+	okreœlaj¹ce zawarte w nich œciany ( patrz
+	definicje makrowe )
+	*/
+	std::string str = GetLine( stream );
+	if( str != "WALLS" )
+	{
+		Log.Error( "GLEVEL( " + file + " ): Brak listy œcian!" );
+		Free();
+		return false;
+	}
+	block.resize( rows * cols );
+
+	for( unsigned i = 0; i < block.size(); i++ )
+	{
+		str = GetClearLine( stream );
+
+		if(ContainsString( str, "," ))
+		{
+			std::vector<std::string> list;
+			SplitString( str, ",", list );
+
+			for(unsigned j = 0; j < list.size() && i + j < block.size(); j++ )
+			{
+			// Wpisujemy t¹ liczbê do sk³adowej walls
+				//sscanf_s( list[j].c_str(), "%d", &block[i + j].walls );
+				block[i + j].LoadWalls( list[j] );
+				block[i + j].CornerCount = 0;
+			}
+			if( list.size() > 0 )
+				i += list.size() - 1;
+		}
+		else
+		{
+			// Wpisujemy t¹ liczbê do sk³adowej walls
+			//sscanf_s( str.c_str(), "%d", &block[i].walls );
+			block[i].LoadWalls( str );
+			block[i].CornerCount = 0;
+		}
+	}
+
+	str = GetLine( stream );
+	if( str != "END WALLS" )
+	{
+		Log.Error( "GLEVEL( " + file + " ): Brak koñca listy œcian!" );
+		Free();
+		return false;
+	}
+
+	return true;
+}
+
 /*	To jest odzielna funkcja sprawdzaj¹ca kolizje
 obiektu CDynamic, ze œcianami podanego bloku.
 Jest to samodzielna funkcja, by mo¿na by³o j¹ wygonie
-u¿yæ, nie korzystaj¹c z klasy gameLevel.
+u¿yæ, nie korzystaj¹c z klasy CLevel.
 */
-bool TestCollBlock( CDynamic* Dum, gameBlockInfo* Block, bool testthing )
+bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 {
 	if( Block == NULL )
 		return false;
@@ -1495,7 +1518,7 @@ co okreœlony krok badaæ kolizje, a¿ do znalezienia
 punktu kolizji. Kolizje s¹ sprawdzane za pomoc¹
 poprzedniej funkcji.
 */
-Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level )
+Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, CLevel* Level )
 {
 	if(Veloc.LeangthSq() == 0.0f)
 		return Pos;
@@ -1503,7 +1526,7 @@ Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level )
 	CDynamic Dum;
 	Dum.Radius = 0.1f;
 	Dum.NextPos = Pos;
-	gameBlockInfo* Block = NULL;
+	CLvlBlock* Block = NULL;
 
 	do
 	{
@@ -1551,7 +1574,7 @@ bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps )
 	CDynamic Dum;
 	Dum.Radius = 0.1f;
 	Dum.NextPos = V1;
-	gameBlockInfo* Block = NULL;
+	CLvlBlock* Block = NULL;
 
 	for( int i = 0; i < Steps; i++ )
 	{

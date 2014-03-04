@@ -56,7 +56,7 @@ public:
 	~GLModel();
 
 	bool LoadModel( CTexManager& texManager, std::string filename );
-	virtual void Free();
+	void Free();
 	std::string GetFile();
 	unsigned int GetObjCount();
 

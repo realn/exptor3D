@@ -446,20 +446,17 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 // Oddzielna funkcja ³aduj¹ca poziom - nie da³o siê inaczej zrobiæ :/
 void LoadLevel( std::string filename )
 {
-	FILE* fp = 0;
-	fopen_s(&fp, filename.c_str(), "r" );
-	if( !fp )
+	if( GLevel.LoadLevel( filename ) )
+	{
+		GLevel.InitLevel();
+		GUI.LevName = GLevel.GetLevelName();
+		WManager.LoadFromLevel();
+		GUI.EnableMainEngine();
+		GUI.EnableGGUI();
+		CanDoWLScr = true;
+	}
+	else
 	{
 		GUI.SendConMsg( "Nie mozna znalesc pliku", false );
-		return;
 	}
-	fclose( fp );
-
-	GLevel.LoadLevel( filename );
-	GLevel.InitLevel();
-	GUI.LevName = GLevel.GetLevelName();
-	WManager.LoadFromLevel();
-	GUI.EnableMainEngine();
-	GUI.EnableGGUI();
-	CanDoWLScr = true;
 }

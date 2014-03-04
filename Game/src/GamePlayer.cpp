@@ -28,6 +28,9 @@ CPlayer::CPlayer()
 	MaxArmor = 150.0f;
 	CurrWeap = GAME_WEAP_PHAZER;
 
+	for( unsigned i = 0; i < WEAPON_COUNT; i++ )
+		Weapon[i] = nullptr;
+
 	Weapon[GAME_WEAP_SAW] = new weSaw();
 	Weapon[GAME_WEAP_PISTOL] = new wePistol();
 	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer();
@@ -261,7 +264,8 @@ void CPlayer::Reset()
 	CActor::Reset();
 	for( int i = 0; i < 10; i++ )
 	{
-		delete Weapon[i];
+		if( Weapon[i] != nullptr )
+			delete Weapon[i];
 	}
 	Weapon[GAME_WEAP_SAW] = new weSaw();
 	Weapon[GAME_WEAP_PISTOL] = new wePistol();

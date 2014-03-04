@@ -21,7 +21,7 @@ Opis:	Zawiera definicje klas obiektów poruszaj¹cych siê
 #include "GameActor.h"
 #include "GameEnemy.h"
 
-class gameBlockInfo;
+class CLvlBlock;
 
 /*	KLASA CActorManager
 	Jest to klasa zarz¹daj¹ca wszystkimi
@@ -50,7 +50,7 @@ public:
 	CEnemy* GetEnemyByID( std::string ID );
 	Vector3f GetThingPos( unsigned int index );
 	Vector3f GetThingBlockPos( unsigned int index );
-	gameBlockInfo* GetThingBlock( unsigned int index );
+	CLvlBlock* GetThingBlock( unsigned int index );
 
 	unsigned int Count();
 	void Clear();

@@ -76,7 +76,7 @@ Vector3f CActorManager::GetThingBlockPos( unsigned int index )
 	return List[index]->GetBlockPos();	
 }
 
-gameBlockInfo* CActorManager::GetThingBlock( unsigned int index )
+CLvlBlock* CActorManager::GetThingBlock( unsigned int index )
 {
 	if( index >= List.size() )
 		return NULL;
