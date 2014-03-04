@@ -22,9 +22,11 @@ protected:
 	Vector3f Veloc;
 	bool DoDelete;
 	float Damage;
+	GLUquadric* obj;
 
 public:
 	CBullet(CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed);
+	virtual ~CBullet();
 
 	CActor*	GetOwner() const;
 

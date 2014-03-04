@@ -15,7 +15,8 @@ CBullet::CBullet(CActor* owner, const float damage, const Vector3f& pos, const V
 	Damage(damage),
 	CanDelete( false ),
 	DoDelete( false ),
-	Visible( true )
+	Visible( true ),
+	obj( nullptr )
 {
 	Pos = pos;
 	Vector = vector;
@@ -23,6 +24,18 @@ CBullet::CBullet(CActor* owner, const float damage, const Vector3f& pos, const V
 	NextPos = Pos + Veloc;
 
 	Type = BULLET_TYPE_NORMAL;
+	obj = gluNewQuadric();
+	gluQuadricTexture( obj, GL_FALSE );
+	gluQuadricNormals( obj, GL_TRUE );
+}
+
+CBullet::~CBullet()
+{
+	if( obj != nullptr )
+	{
+		gluDeleteQuadric( obj );
+		obj = nullptr;
+	}
 }
 
 void CBullet::Update( const float fTD )
@@ -54,7 +67,6 @@ float CBullet::DoTest( CDynamic* Dum, float Armor )
 void CBullet::Render()
 {
 	glPushMatrix();
-	GLUquadric* obj = gluNewQuadric();
 	glTranslatef( Pos.X, Pos.Y, Pos.Z );
 
 	glDisable( GL_TEXTURE_2D );
@@ -64,7 +76,6 @@ void CBullet::Render()
 
 	glEnable( GL_TEXTURE_2D );
 
-	gluDeleteQuadric( obj );
 	glPopMatrix();
 }
 
