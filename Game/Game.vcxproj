@@ -105,6 +105,8 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ModelManager.cpp" />
     <ClCompile Include="src\Render.cpp" />
+    <ClCompile Include="src\Renderable.cpp" />
+    <ClCompile Include="src\RenderList.cpp" />
     <ClCompile Include="src\Special.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -137,11 +139,14 @@
     <ClInclude Include="src\ItemArmor.h" />
     <ClInclude Include="src\ItemHealth.h" />
     <ClInclude Include="src\ItemManager.h" />
+    <ClInclude Include="src\ItemWeapon.h" />
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\ModelManager.h" />
     <ClInclude Include="src\Render.h" />
+    <ClInclude Include="src\Renderable.h" />
+    <ClInclude Include="src\RenderList.h" />
     <ClInclude Include="src\Special.h" />
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\Texture.h" />

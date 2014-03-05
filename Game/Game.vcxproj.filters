@@ -138,6 +138,12 @@
     <ClCompile Include="src\Effect.cpp">
       <Filter>Source\Graphic\Special</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderable.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderList.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -244,6 +250,15 @@
     </ClInclude>
     <ClInclude Include="src\Effect.h">
       <Filter>Source\Graphic\Special</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemWeapon.h">
+      <Filter>Source\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderable.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderList.h">
+      <Filter>Source\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
