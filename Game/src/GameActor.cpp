@@ -88,7 +88,7 @@ void CActor::Update( const float fTD )
 
 	Actions = 0;
 
-	TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
+	TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ), true );
 
 	Pos = NextPos;
 }
@@ -189,7 +189,7 @@ bool CActor::AIFindTarget()
 
 Vector3f CActor::AIFindWalkTarget()
 {
-	CLvlBlock* Block = GLevel.GetBlock( this->GetBlockPos() );
+	CLvlBlock* Block = pGLevel->GetBlock( this->GetBlockPos() );
 	if( Block == NULL )
 		return Vector3f( 0.0f ,0.0f, 0.0f );
 	

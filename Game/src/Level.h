@@ -28,6 +28,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Game.h"
 #include "GameEnemy.h"
 #include "Item.h"
+#include "RenderList.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -56,6 +57,8 @@ private:
 	bool IsSelfDead();
 	bool IsThingDead();
 public:
+	gameWLFlags();
+
 	unsigned int	flags;
 	unsigned int	BlockID;
 	CLvlBlock*		Block;
@@ -107,8 +110,9 @@ public:
 class CLevel
 {
 private:
-	GLModelManager*	ModelManager;
-	CTexManager*	TexManager;
+	GLModelManager&	ModelManager;
+	CTexManager&	TexManager;
+	CRenderList		RenderList;
 	CTexture*		Tex[3];
 	
 	float blockWidth;
@@ -168,10 +172,11 @@ private:
 
 public:
 	// Konstruktor i destruktor
-	CLevel();
+	CLevel( CTexManager& texManager, GLModelManager& modelManager );
 	~CLevel();
 
-	void	Init( CTexManager& texManager, GLModelManager& modelManager );
+	void	Update( const float fTD );
+	void	Render();
 
 	std::string GetLevelName();
 
@@ -209,6 +214,8 @@ public:
 private:
 	const bool	ParseCoords(const std::string& str, int& x, int& y);
 	const bool	ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& type, std::vector<std::string>& params);
+	const bool	LoadHeader( std::fstream& stream );
+	const bool	LoadTextures( std::fstream& stream );
 	const bool	LoadWalls( std::fstream& stream );
 	const bool	LoadItemList( std::fstream& stream );
 };
@@ -218,5 +225,4 @@ extern const Vector3f RayCast( const Vector3f& pos, const Vector3f& vector, cons
 extern bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
-extern CLevel GLevel;
 extern CLevel* pGLevel;

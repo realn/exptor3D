@@ -10,7 +10,9 @@ private:
 	unsigned AmmoCount;
 
 public:
-	CItemAmmo( const unsigned weapType, const unsigned ammoCount, GLModel* model );
+	CItemAmmo( const unsigned weapType, const unsigned ammoCount );
+
+	const bool	LoadGraphic( CTexManager& texManager, GLModelManager& modelManager ) override;
 
 	const unsigned GetWeapType() const;
 	const unsigned GetAmmoCount() const;

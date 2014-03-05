@@ -4,6 +4,8 @@
 #include "GameEntity.h"
 #include "glm.h"
 
+#include "Renderable.h"
+
 enum class ITEM_TYPE
 {
 	UNKNOWN	= 0,
@@ -15,6 +17,7 @@ enum class ITEM_TYPE
 
 class CItem : 
 	public CObject,
+	public IRenderable,
 	public IEntity
 {
 protected:
@@ -27,6 +30,7 @@ public:
 
 	virtual void Render() override;
 	virtual void Update( const float fTD ) override;
+
 	const ITEM_TYPE GetType() const;
 
 	bool CanDelete;

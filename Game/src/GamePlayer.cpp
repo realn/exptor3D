@@ -179,7 +179,7 @@ void CPlayer::Update( bool* Keys, const float fTD )
 		GUI.PInfo.CLIPS = Weapon[CurrWeap]->GetClip();
 		GUI.PInfo.WeapName = Weapon[CurrWeap]->Name;
 	}
-	TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ), true );
+	TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ), true );
 
 	ApplyNextPos();
 }

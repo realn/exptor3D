@@ -144,6 +144,9 @@
     <ClCompile Include="src\RenderList.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="src\LevelFlags.cpp">
+      <Filter>Source\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">

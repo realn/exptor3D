@@ -13,7 +13,7 @@ CBullRay::CBullRay( CActor* owner, const float damage, const Vector3f& pos, cons
 	Type = BULLET_TYPE_RAY;
 	CanDelete = false;
 
-	CEffectRay* Effect = new CEffectRay( GLevel, pos, vector );
+	CEffectRay* Effect = new CEffectRay( *pGLevel, pos, vector );
 
 	Pos = Effect->GetFromPos();
 	NextPos = Effect->GetToPos();

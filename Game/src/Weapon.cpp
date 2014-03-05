@@ -414,7 +414,7 @@ void wePistol::Update( const float fTD )
 			CurrClip--;
 
 			Vector3f temp;
-			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, GLevel );
+			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, *pGLevel );
 			temp = temp - Pos;
 			temp.Normalize();
 			CBullet* Bull = new CBullet( Owner, Damage[0], Pos, temp, 10.0f );
@@ -540,7 +540,7 @@ void weMiniPhazer::Update( const float fTD )
 				Shake[1] = 0.0f;
 				
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
@@ -681,7 +681,7 @@ void wePhazer::Update( const float fTD )
 				Shake[0] = 0.0f;
 				Shake[1] = 0.0f;
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
@@ -831,7 +831,7 @@ void weMiniGun::Update( const float fTD )
 				Shake[0] = 0.0f;
 				Shake[1] = 0.0f;
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, *pGLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 
@@ -978,7 +978,7 @@ void weRocketLuncher::Update( const float fTD )
 				Shake[1] = 0.0f;
 
 				Vector3f temp;
-				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, GLevel );
+				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
 				temp = temp - Pos;
 				temp.Normalize();
 

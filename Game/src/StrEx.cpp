@@ -39,6 +39,38 @@ const std::string BoolToStr(const bool x)
 	return "FALSE";
 }
 
+const int	StrToInt(const std::string& str)
+{
+	if(str.empty())
+		return 0;
+	return atoi( str.c_str() );
+}
+
+const unsigned	StrToUInt(const std::string& str)
+{
+	if(str.empty())
+		return 0;
+	return (unsigned)atoi( str.c_str() );
+}
+
+const float	StrToFloat(const std::string& str)
+{
+	if(str.empty())
+		return 0.0f;
+	return (float)atof( str.c_str() );
+}
+
+const bool	StrToBool(const std::string& str)
+{
+	if(str.empty())
+		return false;
+
+	if(str == "1" || str == "true" || str == "TRUE" || str == "True")
+		return true;
+
+	return false;
+}
+
 const bool	IsWhiteSpace( const char Character )
 {
 	return Character == ' ' || Character == '\t' || Character == '\r' || Character == '\n';
@@ -159,4 +191,16 @@ const std::string	CorrectDirSlashes( const std::string& str )
 			result[i] = '/';
 	}
 	return result;
+}
+
+const bool	ParseNameValue( const std::string& str, std::string& name, std::string& value )
+{
+	auto pos = str.find("=");
+	if( pos == std::string::npos )
+		return false;
+
+	name = ClearWhiteSpace(str.substr(0, pos));
+	value = str.substr(pos + 1);
+
+	return true;
 }

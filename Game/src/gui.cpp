@@ -595,13 +595,13 @@ void guiMain::DoGUIDraw()
 		}
 	}
 
-	if( this->IsShowingWLScr() )
-		this->DrawWLScr();
-	else
-	{
+	//if( this->IsShowingWLScr() )
+	//	this->DrawWLScr();
+	//else
+	//{
 		this->ConsoleDraw();
 		this->Menu.Render();
-	}
+	//}
 
 	if( WireFrame )
 		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -1090,7 +1090,7 @@ void guiMain::SendConMsg( std::string msg, bool parse, bool hist )
 	if( !MainEngineEnabled && !Menu.IsEnabled() )
 	{
 		GLRender.SetOrtho();
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		//this->ConsoleEng();
 		this->ConsoleDraw();
 		GLRender.SwapBuffers();

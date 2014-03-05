@@ -40,11 +40,11 @@ CBullet::~CBullet()
 
 void CBullet::Update( const float fTD )
 {
-	if( !TestCollBlock( this, GLevel.GetBlock( this->GetBlockPos() ) ) )
+	if( !TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ) ) )
 	{
 		Pos = NextPos;
 		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
-		if( GLevel.GetBlock( this->GetBlockPos() ) == NULL )
+		if( pGLevel->GetBlock( this->GetBlockPos() ) == NULL )
 			DoDelete = true;
 	}
 	else DoDelete = true;

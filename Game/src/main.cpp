@@ -36,6 +36,7 @@ bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjali
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );	//Ustawienie koloru czyszczenia bufora kolorów
 	glClearDepth( 1.0f );					//Ustwienie glêbokoœci czyszczenia bufora g³êbokoœci
 	glEnable( GL_DEPTH_TEST );				//W³¹czenie test g³êbokoœci
+
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );//Standardowa funkcja przezroczystoœci 
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );//Najlepsze obliczenia perspektywy
 	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
@@ -58,7 +59,8 @@ bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjali
 
 	glEnable( GL_CLIP_PLANE0 );
 	glEnable( GL_COLOR_MATERIAL );
-	glEnable( GL_CULL_FACE );
+	glDisable( GL_CULL_FACE );
+	glDisable( GL_LIGHTING );
 
 #ifdef LIGHT_TEST
 	float lDiffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -97,7 +99,7 @@ void Update(const float fTD)	// Logika gry
 	GUI.ParseKeys( Keys );
 	GUI.DoGUIEngine(fTD);
 
-	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
+	if( GUI.Menu.IsEnabled() && !pGLevel->GetLoaded() )
 	{
 		menuModelRot += fTD;
 	}
@@ -110,7 +112,7 @@ void Update(const float fTD)	// Logika gry
 
 	Mouse();
 
-	GLevel.CheckWLFlags();
+	pGLevel->CheckWLFlags();
 	MainPlayer.Update( Keys, fTD );
 	ThingManager.Update( fTD );
 
@@ -133,7 +135,8 @@ void Update(const float fTD)	// Logika gry
 
 void RenderLevel()	// Wizualizacja gry
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
+	/*
 	if( GUI.GetMotionBlur() )
 	{
 		GLRender.Resize( 512, 512 );
@@ -143,15 +146,19 @@ void RenderLevel()	// Wizualizacja gry
 		glRotatef( MainPlayer.GetAng(), 0.0f, 1.0f, 0.0f );
 		glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
-		GLevel.DrawLevel();
+		pGLevel->DrawLevel();
+
 		ThingManager.Render();
+		
 		glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
 		WManager.Render();
 		BManager.Render();
 		BonusMan.Render();
+		pGLevel->Render();
+
 		glDepthMask( 0 );
 		SEManager.Render();
-		GLevel.DrawReflect();
+		pGLevel->DrawReflect();
 		glDepthMask( 1 );
 
 		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
@@ -163,6 +170,7 @@ void RenderLevel()	// Wizualizacja gry
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
 		GLRender.Resize( GLRender.GetWidth(), GLRender.GetHeight() );
 	}
+	*/
 
 	GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 	glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
@@ -170,24 +178,27 @@ void RenderLevel()	// Wizualizacja gry
 	glRotatef( MainPlayer.GetAng(), 0.0f, 1.0f, 0.0f );
 	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
-	GLevel.DrawLevel();
-	ThingManager.Render();
+	pGLevel->DrawLevel();
+	//ThingManager.Render();
+
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-	WManager.Render();
-	BManager.Render();
-	BonusMan.Render();
-	glDepthMask( 0 );
-	SEManager.Render();
-	GLevel.DrawReflect();
-	glDepthMask( 1 );
+	//WManager.Render();
+	//BManager.Render();
+	//BonusMan.Render();
+	//pGLevel->Render();
 
-	GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
-	glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
-	glLoadIdentity();
-	MainPlayer.Render();
+	//glDepthMask( 0 );
+	//SEManager.Render();
+	//pGLevel->DrawReflect();
+	//glDepthMask( 1 );
 
-	if( GUI.GetMotionBlur() )
-		SMBlur.Render();
+	//GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
+	//glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
+	//glLoadIdentity();
+	//MainPlayer.Render();
+
+	//if( GUI.GetMotionBlur() )
+	//	SMBlur.Render();
 }
 
 bool Render()		//G³ówna funkcja renderuj¹ca
@@ -197,15 +208,15 @@ bool Render()		//G³ówna funkcja renderuj¹ca
 	if( GUI.CanDoMainDraw() )
 		RenderLevel();
 
-	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
-	{
-		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
-		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
+	//if( GUI.Menu.IsEnabled() && !pGLevel->GetLoaded() )
+	//{
+	//	GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
+	//	glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
-		glTranslatef( 0.0f, 0.0f, -10.0f );
-		glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
-		MenuModel->CallObject( 0 );
-	}
+	//	glTranslatef( 0.0f, 0.0f, -10.0f );
+	//	glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
+	//	MenuModel->CallObject( 0 );
+	//}
 	GUI.DoGUIDraw();
 
 	return true;//zwracamy, ¿e wszystko OK
@@ -376,8 +387,11 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 
 	CTexManager texManager( "Data/Textures/" );
 	GLModelManager modelManager( "Data/Models/", texManager );
+	CLevel level( texManager, modelManager );
+
+	pGLevel = &level;
+
 	SEManager.Init( texManager );
-	GLevel.Init( texManager, modelManager );
 	MainPlayer.Init( modelManager );
 
 	Log.Log( "Inicjalizacja OpenGL" );
@@ -446,13 +460,15 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 // Oddzielna funkcja ³aduj¹ca poziom - nie da³o siê inaczej zrobiæ :/
 void LoadLevel( std::string filename )
 {
-	if( GLevel.LoadLevel( filename ) )
+	if( pGLevel->LoadLevel( filename ) )
 	{
-		GLevel.InitLevel();
-		GUI.LevName = GLevel.GetLevelName();
+		pGLevel->InitLevel();
+		
+		GUI.LevName = pGLevel->GetLevelName();
 		WManager.LoadFromLevel();
 		GUI.EnableMainEngine();
 		GUI.EnableGGUI();
+
 		CanDoWLScr = true;
 	}
 	else

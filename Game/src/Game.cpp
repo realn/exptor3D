@@ -81,7 +81,7 @@ CLvlBlock* CActorManager::GetThingBlock( unsigned int index )
 	if( index >= List.size() )
 		return NULL;
 
-	return GLevel.GetBlock( List[index]->GetBlockPos() );
+	return pGLevel->GetBlock( List[index]->GetBlockPos() );
 }
 
 void CActorManager::Update( const float fTD )
