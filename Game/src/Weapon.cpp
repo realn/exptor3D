@@ -23,11 +23,11 @@ Opis:	Patrz -> Weapon.h
 */
 
 /*	KONSTRUKTOR	*/
-weWeapon::weWeapon()
+weWeapon::weWeapon(const WEAPON_TYPE type) :
+	Type(type)
 {
 	Damage[0] = 0.0f;
 	Damage[1] = 1.0f;
-	type = 0;
 	Ammo = 0;
 	MaxAmmo = 0;
 	AmmoPerClip = 0;
@@ -49,6 +49,11 @@ weWeapon::weWeapon()
 weWeapon::~weWeapon()
 {
 	Free();
+}
+
+const WEAPON_TYPE	weWeapon::GetType() const
+{
+	return Type;
 }
 
 /*	Jako, ¿e broñ na ziemi wygl¹da nudno
@@ -144,11 +149,6 @@ bool weWeapon::GetHave()
 	return InHand;
 }
 
-unsigned int weWeapon::GetType()
-{
-	return type;
-}
-
 bool weWeapon::GetInited()
 {
 	return inited;
@@ -193,7 +193,8 @@ void weWeapon::Free()
 	pi³a tarczowa ;D
 */
 
-weSaw::weSaw()
+weSaw::weSaw() :
+	weWeapon(WEAPON_TYPE::SAW)
 {
 }
 
@@ -208,7 +209,6 @@ void weSaw::Init( GLModelManager& modelManager )
 	if( inited ) 
 		return;
 
-	type = GAME_WEAP_SAW;
 	/*	Najpierw inicjujemy zmienne.
 		Te bêd¹ odpowiedzialne za
 		animacje obracaj¹cej siê tarczy
@@ -350,12 +350,16 @@ void weSaw::Shot()
 }
 
 /*	PISTOLET	*/
+wePistol::wePistol() :
+	weWeapon(WEAPON_TYPE::PISTOL)
+{
+}
+
 void wePistol::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
 
-	type = GAME_WEAP_PISTOL;
 	Reloading = false;
 	back = false;
 	BackA = 0.0f;
@@ -486,12 +490,16 @@ void wePistol::Shot()
 #include "WeaponBulletRay.h"
 
 /*	MINIPHAZER	*/
+weMiniPhazer::weMiniPhazer() :
+	weWeapon(WEAPON_TYPE::MINIPHAZER)
+{
+}
+
 void weMiniPhazer::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
 
-	type = GAME_WEAP_MINIPZR;
 	back = false;
 	BackA = 0.0f;
 
@@ -624,12 +632,16 @@ void weMiniPhazer::Shot()
 
 
 /*	PHAZER	*/
+wePhazer::wePhazer() :
+	weWeapon(WEAPON_TYPE::PHAZER)
+{
+}
+
 void wePhazer::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
 
-	type = GAME_WEAP_PHAZER;
 	back = false;
 	BackA = 0.0f;
 
@@ -759,12 +771,16 @@ void wePhazer::Shot()
 }
 
 /*	MINIGUN	*/
+weMiniGun::weMiniGun() :
+	weWeapon(WEAPON_TYPE::MINIGUN)
+{
+}
+
 void weMiniGun::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
 
-	type = GAME_WEAP_MINIGUN;
 	Rot2 = 0.0f;
 
 	ShotTime = 0.0001f;
@@ -911,12 +927,16 @@ void weMiniGun::Shot()
 #include "WeaponBulletRocket.h"
 
 /*	ROCKET LUNCHER	*/
+weRocketLuncher::weRocketLuncher() :
+	weWeapon(WEAPON_TYPE::ROCKETLUN)
+{
+}
+
 void weRocketLuncher::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
 
-	type = GAME_WEAP_ROCKETLUN;
 	back = false;
 	BackA = 0.0f;
 
@@ -1052,12 +1072,15 @@ void weRocketLuncher::Shot()
 #include "WeaponBulletBomb.h"
 
 /*	ATOM BOMB	*/
+weAtomBomb::weAtomBomb() :
+	weWeapon(WEAPON_TYPE::ATOMBOM)
+{
+}
+
 void weAtomBomb::Init( GLModelManager& modelManager )
 {
 	if( inited )
 		return;
-
-	type = GAME_WEAP_ATOM_BOMB;
 
 	ShotTime = 5.0f;
 	ShotPause = 10.0f;

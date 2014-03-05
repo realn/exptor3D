@@ -109,7 +109,7 @@ const std::string GetLine( std::fstream& stream )
 			result += line[pos];
 		}
 	}
-	while( repeat );
+	while( repeat && stream );
 
 	return result;
 }

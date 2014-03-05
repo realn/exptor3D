@@ -26,29 +26,29 @@ CPlayer::CPlayer()
 
 	Armor = 0.0f;
 	MaxArmor = 150.0f;
-	CurrWeap = GAME_WEAP_PHAZER;
+	CurrWeap = 0;
 
 	for( unsigned i = 0; i < WEAPON_COUNT; i++ )
 		Weapon[i] = nullptr;
 
-	Weapon[GAME_WEAP_SAW] = new weSaw();
-	Weapon[GAME_WEAP_PISTOL] = new wePistol();
-	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer();
-	Weapon[GAME_WEAP_MINIGUN] = new weMiniGun();
-	Weapon[GAME_WEAP_ROCKETLUN] = new weRocketLuncher();
-	Weapon[GAME_WEAP_PHAZER] = new wePhazer();
-	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb();
+	Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
+	Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
+	Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
+	Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
+	Weapon[(unsigned)WEAPON_TYPE::ROCKETLUN] = new weRocketLuncher();
+	Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
+	Weapon[(unsigned)WEAPON_TYPE::ATOMBOM] = new weAtomBomb();
 }
 
 CPlayer::~CPlayer()
 {
-	delete Weapon[GAME_WEAP_SAW];
-	delete Weapon[GAME_WEAP_PISTOL];
-	delete Weapon[GAME_WEAP_MINIPZR];
-	delete Weapon[GAME_WEAP_MINIGUN];
-	delete Weapon[GAME_WEAP_ROCKETLUN];
-	delete Weapon[GAME_WEAP_PHAZER];
-	delete Weapon[GAME_WEAP_ATOM_BOMB];
+	delete Weapon[(unsigned)WEAPON_TYPE::SAW];
+	delete Weapon[(unsigned)WEAPON_TYPE::PISTOL];
+	delete Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER];
+	delete Weapon[(unsigned)WEAPON_TYPE::MINIGUN];
+	delete Weapon[(unsigned)WEAPON_TYPE::ROCKETLUN];
+	delete Weapon[(unsigned)WEAPON_TYPE::PHAZER];
+	delete Weapon[(unsigned)WEAPON_TYPE::ATOMBOM];
 }
 
 void	CPlayer::Init( GLModelManager& modelManager )
@@ -201,10 +201,10 @@ void CPlayer::TestWeapon( weWeapon* Weap )
 {
 	if( mathDistSq( Pos, Weap->Pos ) <= POW(Radius + Weap->Radius) )
 	{
-		if( !Weapon[Weap->GetType()]->GetInited() )
-			this->SwichWeap( Weap->GetType() );
+		if( !Weapon[(unsigned)Weap->GetType()]->GetInited() )
+			this->SwichWeap( (unsigned)Weap->GetType() );
 
-		Weapon[Weap->GetType()]->PickUp( Weap, this, *ModelManager );
+		Weapon[(unsigned)Weap->GetType()]->PickUp( Weap, this, *ModelManager );
 	}
 }
 
@@ -214,14 +214,14 @@ void CPlayer::TestBonus( CItem* Bonus )
 	{
 		switch( Bonus->GetType() )
 		{
-		case BONUS_TYPE_AMMO :
+		case ITEM_TYPE::AMMO :
 			if( Weapon[((CItemAmmo*)Bonus)->GetWeapType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
 			{
 				GUI.SendMsg( "Podniosles: " + guiIntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
 				Bonus->CanDelete = true;
 			}
 			break;
-		case BONUS_TYPE_HEALTH :
+		case ITEM_TYPE::HEALTH :
 			if( Health != MaxHealth )
 			{
 				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
@@ -229,7 +229,7 @@ void CPlayer::TestBonus( CItem* Bonus )
 				Bonus->CanDelete = true;
 			}
 			break;
-		case BONUS_TYPE_ARMOR :
+		case ITEM_TYPE::ARMOR :
 			if( Armor != MaxArmor )
 			{
 				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
@@ -267,13 +267,13 @@ void CPlayer::Reset()
 		if( Weapon[i] != nullptr )
 			delete Weapon[i];
 	}
-	Weapon[GAME_WEAP_SAW] = new weSaw();
-	Weapon[GAME_WEAP_PISTOL] = new wePistol();
-	Weapon[GAME_WEAP_MINIPZR] = new weMiniPhazer();
-	Weapon[GAME_WEAP_MINIGUN] = new weMiniGun();
-	Weapon[GAME_WEAP_ROCKETLUN] = new weRocketLuncher();
-	Weapon[GAME_WEAP_PHAZER] = new wePhazer();
-	Weapon[GAME_WEAP_ATOM_BOMB] = new weAtomBomb();
+	Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
+	Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
+	Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
+	Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
+	Weapon[(unsigned)WEAPON_TYPE::ROCKETLUN] = new weRocketLuncher();
+	Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
+	Weapon[(unsigned)WEAPON_TYPE::ATOMBOM] = new weAtomBomb();
 	GUI.PInfo.FRAGS = 0;
 }
 

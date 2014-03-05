@@ -6,17 +6,19 @@
 #include "GameEntity.h"
 #include "GamePlayer.h"
 
-#define	GAME_WEAP_SAW		0
-#define	GAME_WEAP_PISTOL	1
-#define	GAME_WEAP_MINIPZR	3
-#define	GAME_WEAP_MINIGUN	4
-#define	GAME_WEAP_ROCKETLUN	5
-#define	GAME_WEAP_PICKABOO	6
-#define	GAME_WEAP_PHAZER	7
-#define	GAME_WEAP_MINE		8
-#define	GAME_WEAP_ATOM_BOMB	9
-
-
+enum class WEAPON_TYPE
+{
+	UNKNOWN		= -1,
+	SAW			= 0,
+	PISTOL		= 1,
+	MINIPHAZER	= 3,
+	MINIGUN		= 4,
+	ROCKETLUN	= 5,
+	PICKABOO	= 6,
+	PHAZER		= 7,
+	MINE		= 8,
+	ATOMBOM		= 9,
+};
 
 /*	KLASA BRONI
 	To jest tylko klasa do 
@@ -24,19 +26,22 @@
 	elementy wspólne dla
 	wszystkich klas.
 */
-class weWeapon : public CDynamic
+class weWeapon : 
+	public CDynamic
 {
 	/*	¯eby by³ dostêp do tych zmiennych
 		w klasach dziedzicz¹czych, umieœci³em
 		je w grupie protected.
 	*/
 protected:	
+	// Typ Broni ( patrz -> definicje sta³ych )
+	const WEAPON_TYPE Type;
+
 	// To jest stopieñ obrotu, kiedy broñ le¿y na ziemi
 	float Rot;
 	// To jest stopieñ dr¿enia w rêkach broni
 	float Shake[2];
-	// Typ Broni ( patrz -> definicje sta³ych )
-	unsigned int type;
+
 
 	/*	Okreœla ile zadaje broñ obra¿eñ.
 		Damage[0] - minimum
@@ -76,8 +81,10 @@ protected:
 public:
 	std::string Name;
 	// Konstruktor i destruktor
-	weWeapon();
-	~weWeapon();
+	weWeapon(const WEAPON_TYPE type);
+	virtual ~weWeapon();
+
+	const WEAPON_TYPE GetType() const;
 
 	// Funkcja podnoszenia broni
 	void PickUp( weWeapon* Weapon, CPlayer* Player, GLModelManager& modelManager );
@@ -97,7 +104,6 @@ public:
 	bool ModAmmo( int ammo );
 	int GetClip();
 	bool GetHave();
-	unsigned int GetType();
 	bool GetInited();
 };
 
@@ -107,6 +113,7 @@ class weSaw : public weWeapon
 private:
 public:
 	weSaw();
+
 	// Funckja inicjuj¹ca
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
@@ -124,7 +131,10 @@ private:
 	bool	Reloading;
 	bool	back;
 	float	BackA;
+
 public:
+	wePistol();
+
 	// Inicjalizacja
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
@@ -141,7 +151,10 @@ private:
 	float Time;
 	bool back;
 	float BackA;
+
 public:
+	weMiniPhazer();
+
 	// Inicjalizacja
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
@@ -158,6 +171,8 @@ private:
 	bool back;
 	float BackA;
 public:
+	wePhazer();
+
 	// Inicjalizacja
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
@@ -174,6 +189,8 @@ private:
 	float BackA;
 	float Time;
 public:
+	weMiniGun();
+
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
@@ -189,6 +206,8 @@ private:
 	float BackA;
 
 public:
+	weRocketLuncher();
+
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
@@ -206,6 +225,8 @@ private:
 	Vector3f PutPos;
 
 public:
+	weAtomBomb();
+
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();

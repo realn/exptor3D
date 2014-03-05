@@ -134,7 +134,12 @@ bool gameWLFlags::CheckOneFlag()
 Patrz -> definicja klasy
 */
 /*	KONSTRUKTOR	*/
-CLevel::CLevel()
+CLevel::CLevel() :
+	blockWidth( 10.0f ),
+	blockHeight( 10.0f ),
+	blockDepth( 10.0f ),
+	Rows(0),
+	Cols(0)
 {
 	// Ustawiamy, ¿e poziom nie by³ jeszcze ³adowany
 	loaded = false;
@@ -142,9 +147,6 @@ CLevel::CLevel()
 	LevName = "UNKNOWN LEVEL";
 	// Oraz domyœln¹ nazwê pliku
 	file = "-";
-	// Ustawiamy, ¿e nie ma ¿adnych kolumn, czy wierszy
-	rows = 0;
-	cols = 0;
 	// I zerujemy listê wyœwietlania
 	Top = 0;
 	Floor = 0;
@@ -296,7 +298,7 @@ bool CLevel::LoadLevel( const std::string &filename )
 			if( ContainsString( str, "ROWS" ) )
 			{
 				str = ClearWhiteSpace( str );
-				if( !sscanf_s( str.c_str(), "ROWS=%u", &rows ) )
+				if( !sscanf_s( str.c_str(), "ROWS=%u", &Rows ) )
 				{
 					Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby wierszy!" );
 					Free();
@@ -306,7 +308,7 @@ bool CLevel::LoadLevel( const std::string &filename )
 			if( ContainsString( str, "COLS" ) )
 			{
 				str = ClearWhiteSpace( str );
-				if( !sscanf_s( str.c_str(), "COLS=%u", &cols ) )
+				if( !sscanf_s( str.c_str(), "COLS=%u", &Cols ) )
 				{
 					Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby kolumn!" );
 					Free();
@@ -503,33 +505,33 @@ bool CLevel::LoadLevel( const std::string &filename )
 			weWeapon* Weap;
 			switch( k )
 			{
-			case GAME_WEAP_SAW :
+			case WEAPON_TYPE::SAW :
 				Weap = new weSaw;
 				break;
 
-			case GAME_WEAP_PISTOL :
+			case WEAPON_TYPE::PISTOL :
 				Weap = new wePistol;
 				break;
 
-			case GAME_WEAP_MINIPZR :
+			case WEAPON_TYPE::MINIPHAZER :
 				Weap = new weMiniPhazer;
 				break;
 
-			case GAME_WEAP_MINIGUN :
+			case WEAPON_TYPE::MINIGUN :
 				Weap = new weMiniGun;
 				break;
 
-			case GAME_WEAP_ROCKETLUN :
+			case WEAPON_TYPE::ROCKETLUN :
 				Weap = new weRocketLuncher;
 				break;
 
 				//case GAME_WEAP_PICKABOO	:
-			case GAME_WEAP_PHAZER :
+			case WEAPON_TYPE::PHAZER :
 				Weap = new wePhazer;
 				break;
 
 				//case GAME_WEAP_MINE :
-			case GAME_WEAP_ATOM_BOMB :
+			case WEAPON_TYPE::ATOMBOM :
 				Weap = new weAtomBomb;
 				break;
 			default:
@@ -644,61 +646,13 @@ bool CLevel::LoadLevel( const std::string &filename )
 		}
 	}
 
-	if( BonusCount > 0 )
+	str = GetLine( stream );
+	if( str == "ITEMLIST" )
 	{
-		str = GetLine( stream );
-
-		if( str != "BONUSLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak listy bonusów!" );
-			Free();
+		if( !LoadItemList( stream ) )
 			return false;
-		}
-
-		for( i = 0; i < BonusCount; i++ )
-		{
-			int a, b;
-			str = GetLine( stream );
-			std::string param = GetParamStr( str );
-
-			sscanf_s( str.c_str(), "%d,%d/", &k, &l );
-			CItem* Bonus;
-			switch( l )
-			{
-			case BONUS_TYPE_AMMO :
-				sscanf_s( str.c_str(), "%d,%d/%d,%d=", &k, &l, &a, &b );
-				Bonus = new CItemAmmo( a, b, ModelManager->Get( param ) );
-				break;
-
-			case BONUS_TYPE_HEALTH :
-				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new CItemHealth( a, ModelManager->Get( param ) );
-				break;
-
-			case BONUS_TYPE_ARMOR :
-				sscanf_s( str.c_str(), "%d,%d/%d=", &k, &l, &a );
-				Bonus = new CItemArmor( a, ModelManager->Get( param ) );
-				break;
-
-			case BONUS_TYPE_UNKNOWN :
-			default:
-				continue;
-			}
-
-			Bonus->Pos = GetBlockPos( k );
-			BonusMan.AddBonus( Bonus );
-		}
-
-		str = GetLine( stream );
-		if( str != "END BONUSLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak koñca listy bonusów!" );
-			Free();
-			return false;
-		}
 	}
 
-	// Zamykamy plik
 	str = GetLine( stream );
 	if( str != "END E3DTLEV" )
 	{
@@ -867,9 +821,9 @@ void CLevel::BuildVisual()
 	glNewList( Floor, GL_COMPILE );
 	glPushMatrix();
 	glTranslatef( 5, 0, -5 );
-	for( i = 0; i < rows; i++ )
+	for( i = 0; i < Rows; i++ )
 	{
-		for( j = 0; j < cols; j++ )
+		for( j = 0; j < Cols; j++ )
 		{
 			glPushMatrix();
 
@@ -886,9 +840,9 @@ void CLevel::BuildVisual()
 	glNewList( Top, GL_COMPILE );
 	glPushMatrix();
 	glTranslatef( 5, 0, -5 );
-	for( i = 0; i < rows; i++ )
+	for( i = 0; i < Rows; i++ )
 	{
-		for( j = 0; j < cols; j++ )
+		for( j = 0; j < Cols; j++ )
 		{
 			glPushMatrix();
 
@@ -908,15 +862,15 @@ void CLevel::BuildVisual()
 	glNewList( Wall, GL_COMPILE );
 	glPushMatrix();
 	glTranslatef( 5, 0, -5 );
-	for( i = 0; i < rows; i++ )
+	for( i = 0; i < Rows; i++ )
 	{
-		for( j = 0; j < cols; j++ )
+		for( j = 0; j < Cols; j++ )
 		{
 			glPushMatrix();
 
 			glTranslatef( j*10, 0.0f, -(i*10) );
 
-			int in = i * cols + j;
+			int in = i * Cols + j;
 
 			blk = block[ in ].walls;
 
@@ -959,11 +913,11 @@ void CLevel::BuildPhysic()
 	w ka¿dym bloku, czy nale¿y stworzyæ
 	w tym miejscu przeszkode.
 	*/
-	for( i = 0; i < rows; i++ )
+	for( i = 0; i < Rows; i++ )
 	{
-		for( j = 0; j < cols; j++ )
+		for( j = 0; j < Cols; j++ )
 		{
-			blk = &block[ i * cols + j ];
+			blk = &block[ i * Cols + j ];
 
 			for( k = 0; k < 4; k++ )
 			{
@@ -1024,32 +978,32 @@ void CLevel::BuildPhysic()
 	na œrodku pustej przestrzenie, te¿ jest 
 	absurdalna :)
 	*/
-	for( i = 0; i < rows; i++ )
+	for( i = 0; i < Rows; i++ )
 	{
-		for( j = 0; j < cols; j++ )
+		for( j = 0; j < Cols; j++ )
 		{
-			blk = &block[ i * cols + j ];
+			blk = &block[ i * Cols + j ];
 
 			/*	Znajdujemy bloki s¹siednie, by mo¿na
 			by³o znaleŸæ rogi œcian.
 			*/
-			if( i < rows - 1 )
-				SideBlock[0] = &block[ (i+1) * cols + j ];
+			if( i < Rows - 1 )
+				SideBlock[0] = &block[ (i+1) * Cols + j ];
 			else
 				SideBlock[0] = NULL;
 
-			if( j < cols - 1 )
-				SideBlock[1] = &block[ i * cols + (j+1) ];
+			if( j < Cols - 1 )
+				SideBlock[1] = &block[ i * Cols + (j+1) ];
 			else
 				SideBlock[1] = NULL;
 
 			if( i > 0 )
-				SideBlock[2] = &block[ (i-1) * cols + j ];
+				SideBlock[2] = &block[ (i-1) * Cols + j ];
 			else
 				SideBlock[2] = NULL;
 
 			if( j > 0 )
-				SideBlock[3] = &block[ i * cols + (j-1) ];
+				SideBlock[3] = &block[ i * Cols + (j-1) ];
 			else
 				SideBlock[3] = NULL;
 
@@ -1183,9 +1137,9 @@ CLvlBlock* CLevel::GetBlock( unsigned int i, unsigned int j ) const
 {
 	if( i >= 0 && j >= 0 )
 	{
-		if( j < rows && i < cols )
+		if( j < Rows && i < Cols )
 		{
-			return (CLvlBlock*)&block[ j * cols + i ];
+			return (CLvlBlock*)&block[ j * Cols + i ];
 		}
 	}
 	return NULL;
@@ -1203,12 +1157,20 @@ CLvlBlock* CLevel::GetBlock( unsigned int i ) const
 
 unsigned int CLevel::GetBlockCount()
 {
-	return rows*cols;
+	return Rows * Cols;
 }
 
-Vector3f CLevel::GetBlockPos( unsigned int i )
+const Vector3f CLevel::GetBlockPos( const unsigned i ) const
 {
-	return Vector3f( (float)(i % cols)*10.0f+5.0f, 0.0f, -(float)(i / cols)*10.0f-5.0f );
+	return GetBlockPos( i % Cols, i / Cols );
+}
+
+const Vector3f	CLevel::GetBlockPos( const int x, const int y ) const
+{
+	float halfW = blockWidth / 2.0f;
+	float halfD = blockDepth / 2.0f;
+
+	return Vector3f( (float)(x) * blockWidth + halfW, 0.0f, -(float)(y) * blockDepth - halfD );
 }
 
 void CLevel::CheckWLFlags()
@@ -1260,8 +1222,9 @@ void CLevel::Free()
 		EnemyType = NULL;
 	}
 
-	rows = 0;
-	cols = 0;
+	Rows = 0;
+	Cols = 0;
+
 	LevName = "UNKNOWN LEVEL";
 	WinFlags.flags = 0;
 	LoseFlags.flags = 0;
@@ -1280,6 +1243,47 @@ void CLevel::Free()
 	loaded = false;
 }
 
+const bool	CLevel::ParseCoords(const std::string& str, int& x, int& y)
+{
+	if(str.empty())
+		return false;
+	
+	std::vector<std::string> coordList;
+	SplitString(str, ",", coordList);
+
+	if(coordList.size() < 2)
+		return false;
+
+	x = atoi(coordList[0].c_str());
+	y = atoi(coordList[1].c_str());
+
+	return false;
+}
+
+const bool	CLevel::ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& type, std::vector<std::string>& params)
+{
+	auto pos = str.find( "=" );
+	if( pos == std::string::npos )
+		return false;
+
+	if( !ParseCoords( str.substr( 0, pos ), x, y ) )
+		return false;
+	
+	auto itemdef = str.substr(pos + 1);
+	
+	pos = itemdef.find("(");
+	auto end = itemdef.find(")");
+
+	if(pos == std::string::npos || end == std::string::npos)
+		return false;
+
+	type = ::ParseItem(itemdef.substr(0, pos));
+
+	SplitString( itemdef.substr(pos + 1, end - pos - 1), ",", params );
+
+	return true;
+}
+
 const bool	CLevel::LoadWalls( std::fstream& stream )
 {
 	/*	Teraz tworzymy tablicê odpowiednich
@@ -1295,7 +1299,8 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 		Free();
 		return false;
 	}
-	block.resize( rows * cols );
+
+	block.resize( Rows * Cols );
 
 	for( unsigned i = 0; i < block.size(); i++ )
 	{
@@ -1335,6 +1340,66 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 
 	return true;
 }
+
+const bool	CLevel::LoadItemList( std::fstream& stream )
+{
+	std::string str;
+	std::vector<std::string> params;
+	ITEM_TYPE type;
+	int x, y;
+
+	while( stream )
+	{
+		str = GetLine( stream );
+			
+		if( str == "END ITEMLIST" )
+			return true;
+
+		str = ClearWhiteSpace( str );	
+
+		params.clear();
+		if( ParseItem( str, x, y, type, params ) )
+		{
+			CItem* item = nullptr;
+			switch (type)
+			{
+				break;
+			case ITEM_TYPE::AMMO:
+				item = new CItemAmmo( atoi(params[0].c_str()), atoi(params[1].c_str()), ModelManager->Get( params[2] ) );
+				break;
+
+			case ITEM_TYPE::HEALTH:
+				item = new CItemHealth( (float)atoi(params[0].c_str()), ModelManager->Get( params[1] ) );
+				break;
+
+			case ITEM_TYPE::ARMOR:
+				item = new CItemArmor( (float)atoi(params[0].c_str()), ModelManager->Get( params[1] ) );
+				break;
+
+			case ITEM_TYPE::WEAPON:
+				break;
+
+			case ITEM_TYPE::UNKNOWN:
+			default:
+				Log.Error("GLEVEL( " + file + " ): B³¹d parsowania przedmiotu, nieznany typ z parsowania ci¹gu: " + str + ".");
+				break;
+			}
+
+			if(item != nullptr)
+			{
+				item->Pos = GetBlockPos( x, y );
+				BonusMan.AddBonus( item );
+			}
+		}
+		else
+		{
+			Log.Error("GLEVEL( " + file + " ): B³¹d parsowania przedmiotu dla ci¹gu: " + str + ".");
+		}
+	}
+
+	return false;
+}
+
 
 /*	To jest odzielna funkcja sprawdzaj¹ca kolizje
 obiektu CDynamic, ze œcianami podanego bloku.

@@ -24,8 +24,10 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Render.h"	// patrz-> nag³ówek Render.h i plik Render.cpp
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
+
 #include "Game.h"
 #include "GameEnemy.h"
+#include "Item.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -109,9 +111,13 @@ private:
 	CTexManager*	TexManager;
 	CTexture*		Tex[3];
 	
+	float blockWidth;
+	float blockHeight;
+	float blockDepth;
+
 	// Informacje o liczbie wierszy i kolumn w poziomie gry
-	unsigned int rows;
-	unsigned int cols;
+	unsigned int Rows;
+	unsigned int Cols;
 
 	unsigned int PlayerStartBlock;
 	unsigned int PlayerStartAngle;
@@ -136,6 +142,7 @@ private:
 	unsigned int Top;
 	unsigned int Wall;
 	unsigned int Reflect;
+
 	// Czy poziom ju¿ jest za³adowany
 	bool loaded;
 
@@ -171,7 +178,10 @@ public:
 	CLvlBlock* GetBlock( unsigned int i, unsigned int j ) const;
 	CLvlBlock* GetBlock( Vector3f Pos ) const;
 	CLvlBlock* GetBlock( unsigned int i ) const;
-	Vector3f GetBlockPos( unsigned int i );
+
+	const Vector3f GetBlockPos( const unsigned i ) const;
+	const Vector3f GetBlockPos( const int x, const int y ) const;
+
 	bool GetLoaded();
 	unsigned int GetEnemyCount();
 	unsigned int GetSObjCount();
@@ -196,7 +206,10 @@ public:
 	void Free();
 
 private:
+	const bool	ParseCoords(const std::string& str, int& x, int& y);
+	const bool	ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& type, std::vector<std::string>& params);
 	const bool	LoadWalls( std::fstream& stream );
+	const bool	LoadItemList( std::fstream& stream );
 };
 
 extern bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing = false );

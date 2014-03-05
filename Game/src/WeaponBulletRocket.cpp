@@ -68,6 +68,6 @@ void CBullRocket::Update( const float fTD )
 void CBullRocket::OnDelete()
 {
 	CanDelete = true;
-	BManager.AddBullet( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 10.0f ) );
+	BManager.AddBullet( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 20.0f ) );
 }
 

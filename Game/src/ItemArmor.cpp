@@ -2,10 +2,10 @@
 
 /*	BONUS - PANCERZ	*/
 CItemArmor::CItemArmor( const float armor, GLModel* model ) :
+	CItem(ITEM_TYPE::ARMOR),
 	ArmorValue( armor )
 {
 	Model = model;
-	type = BONUS_TYPE_ARMOR;
 }
 
 const float CItemArmor::GetArmor() const
