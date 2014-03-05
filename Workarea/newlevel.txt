@@ -6,9 +6,9 @@ E3DTLEV=100
 		WEAPCOUNT=1
 	END HEADER
 	TEXTURES
-		WALL=Data/brick4c.tga
-		TOP=Data/metal1c.tga
-		FLOOR=Data/tiles1a.tga
+		WALL=brick4c.tga
+		TOP=metal1c.tga
+		FLOOR=tiles1a.tga
 	END TEXTURES
 	WALLS
 		LN, N, 	NR

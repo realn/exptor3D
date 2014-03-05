@@ -1,7 +1,8 @@
 #include "ModelManager.h"
 #include "Log.h"
 
-GLModelManager::GLModelManager( CTexManager& texManager ) :
+GLModelManager::GLModelManager( const std::string& strDataDir, CTexManager& texManager ) :
+	DataDir( strDataDir ),
 	TexManager( texManager )
 {
 }
@@ -21,24 +22,25 @@ GLModel* GLModelManager::Get( std::string filename )
 	if( filename.empty() )
 	{
 		Log.Error( "MODELMANAGER(): Pusty ci¹g znaków!" );
-		return 0;
+		return nullptr;
 	}
 
-	int i;
+	auto path = DataDir + filename;
+
 	GLModel* Model;
-	for( i = 0; i < List.size(); i++ )
+	for( unsigned i = 0; i < List.size(); i++ )
 	{
 		Model = GetModel( i );
-		if( Model->GetFile() == filename )
+		if( Model->GetFile() == path )
 			return Model;
 	}
 
 	Model = new GLModel;
-	if( !Model->LoadModel( TexManager, filename ) )
+	if( !Model->LoadModel( TexManager, path ) )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
 		delete Model;
-		return 0;
+		return nullptr;
 	}
 
 	AddModel( Model );

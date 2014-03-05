@@ -52,10 +52,11 @@ public:
 class CTexManager
 {
 private:
+	const std::string	DataDir;
 	std::vector<CTexture*> List;
 
 public:
-	CTexManager();
+	CTexManager( const std::string& strDataDir );
 	~CTexManager();
 
 	CTexture* Get( std::string filename );

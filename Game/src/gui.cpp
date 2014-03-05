@@ -671,9 +671,9 @@ unsigned int guiMain::GetMiliSecPas()
 void guiMain::InitGUI( CTexManager* texManager )
 {
 	Log.Log( "Inicjalizacja koñcowa GUI" );
-	font = texManager->Get( "Data/Font.tga" );
-	Cursor = texManager->Get( "Data/Kursor.tga" );
-	CH = texManager->Get( "Data/cel.tga" );
+	font = texManager->Get( "Font.tga" );
+	Cursor = texManager->Get( "Kursor.tga" );
+	CH = texManager->Get( "cel.tga" );
 
 	TText.Init( font );
 	Menu.Init( &TText, Cursor );

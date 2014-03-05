@@ -165,6 +165,7 @@ private:
 	// Metody inicjuj¹ce
 	void BuildVisual();
 	void BuildPhysic();
+
 public:
 	// Konstruktor i destruktor
 	CLevel();

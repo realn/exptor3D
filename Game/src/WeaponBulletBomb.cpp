@@ -13,7 +13,7 @@ CBullBomb::CBullBomb( CActor* owner, const float damage, const Vector3f& pos, co
 {
 	BoomTime = time;
 	ThisTime = 0.0f;
-	Model = modelManager.Get( "Data/bomb-model.glm" );
+	Model = modelManager.Get( "bomb-model.glm" );
 	Type = BULLET_TYPE_BOMB;
 }
 

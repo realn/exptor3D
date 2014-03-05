@@ -6,17 +6,19 @@ LISTCOUNT	2
 ANIMATION	0
 END HEADER
 TEXLIST
-Data\metal1c.tga
+metal1c.tga
 END TEXLIST
-
 MODEL	0
 glPushMatrix()
 	glRotate( 180, 0, 1, 0 )
 	glBindTexture( 0 )
 	gluSphere( 0.8, 16, 16 )
-	gluCylinder( 0.4, 0.4, 2, 4, 1 )
+	gluCylinder( 0.2, 0.2, 2, 16, 1 )
+	glTranslate( 0, 0, 2 )
+	gluDisk( 0.1, 0.2, 16, 1 )
+	glTranslate( 0, 0, -2 )
 	gluQuadricOrientation( GLU_INSIDE )
-	gluCylinder( 0.4, 0.4, 2, 4, 1 )
+	gluCylinder( 0.1, 0.1, 2, 16, 1 )
 	gluQuadricOrientation( GLU_OUTSIDE )
 	glTranslate( 0, 0.7, 0 )
 	glPushMatrix()
@@ -26,7 +28,6 @@ glPushMatrix()
 	glTranslate( 0, 0.5, 0 )
 	gluSphere( 0.15, 8, 8 )
 glPopMatrix()
-
 END MODEL
 MODEL	1
 glPushMatrix()
@@ -51,7 +52,5 @@ glPushMatrix()
 		gluCylinder( 0.2, 0.2, 4, 16, 1 )
 	glPopMatrix()
 glPopMatrix()
-
 END MODEL
-
 END GLM

@@ -77,7 +77,7 @@ bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjali
 
 	GUI.SendConMsg( "Inicjalizacja silnika...", false );
 	SMBlur.Init();
-	MenuModel = modelManager.Get( "Data/menumodel.glm" );
+	MenuModel = modelManager.Get( "menumodel.glm" );
 	MainPlayer.SetArmor( 100.0f );
 	GUI.Menu.LoadMenu( "Data/menu.mnu" );
 	SEManager.MaxSpec = 100;
@@ -374,8 +374,8 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 		return 0;									// Wyjdü jeøeli nie zosta≥o stworzone
 	}
 
-	CTexManager texManager;
-	GLModelManager modelManager( texManager );
+	CTexManager texManager( "Data/Textures/" );
+	GLModelManager modelManager( "Data/Models/", texManager );
 	SEManager.Init( texManager );
 	GLevel.Init( texManager, modelManager );
 	MainPlayer.Init( modelManager );

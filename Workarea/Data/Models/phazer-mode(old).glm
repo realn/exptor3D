@@ -5,8 +5,8 @@ LISTCOUNT	1
 ANIMATION	0
 END HEADER
 TEXLIST
-Data/metal8c.tga
-Data/metal.tga
+metal8c.tga
+metal.tga
 END TEXLIST
 MODEL	0
 	glPushMatrix()

@@ -6,7 +6,7 @@ CEffectSprite::CEffectSprite( CTexManager& texManager, const Vector3f& pos, cons
 	Speed( 0.4f ),
 	Texture( nullptr )
 {
-	Texture = texManager.Get( "Data/Part.tga" );
+	Texture = texManager.Get( "Part.tga" );
 	C[0] = R;
 	C[1] = G;
 	C[2] = B;

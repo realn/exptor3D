@@ -18,7 +18,7 @@ CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos
 	Radius = 0.3f;
 	//glEnable( GL_LIGHT0 );
 
-	Model = modelManager.Get( "Data/Missle.glm" );
+	Model = modelManager.Get( "Missle.glm" );
 
 	Type = BULLET_TYPE_ROCKET;
 }

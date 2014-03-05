@@ -6,8 +6,8 @@ LISTCOUNT	1
 ANIMATION	0
 END HEADER
 TEXLIST
-Data\metal1c.tga
-Data\brick1c.tga
+metal1c.tga
+brick1c.tga
 END TEXLIST
 
 MODEL	0

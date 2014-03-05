@@ -231,7 +231,7 @@ void weSaw::Init( GLModelManager& modelManager )
 
 	Name = "SAW";
 
-	Model = modelManager.Get( "Data/saw-model.glm" );
+	Model = modelManager.Get( "saw-model.glm" );
 
 	inited = true;
 }
@@ -380,7 +380,7 @@ void wePistol::Init( GLModelManager& modelManager )
 
 	Time = 0.0f;
 
-	Model = modelManager.Get( "Data/pistol-model.glm" );
+	Model = modelManager.Get( "pistol-model.glm" );
 
 	inited = true;
 }
@@ -519,7 +519,7 @@ void weMiniPhazer::Init( GLModelManager& modelManager )
 
 	Time = 0.0f;
 
-	Model = modelManager.Get( "Data/miniphazer-model.glm" );
+	Model = modelManager.Get( "miniphazer-model.glm" );
 
 	inited = true;
 }
@@ -661,7 +661,7 @@ void wePhazer::Init( GLModelManager& modelManager )
 
 	Time = 0.0f;
 
-	Model = modelManager.Get( "Data/phazer-model.glm" );
+	Model = modelManager.Get( "phazer-model.glm" );
 
 	inited = true;
 }
@@ -801,7 +801,7 @@ void weMiniGun::Init( GLModelManager& modelManager )
 	BackA = 0.0f;
 	Time = 0.0f;
 
-	Model = modelManager.Get( "Data/minigun-model.glm" );
+	Model = modelManager.Get( "minigun-model.glm" );
 
 	inited = true;
 }
@@ -957,7 +957,7 @@ void weRocketLuncher::Init( GLModelManager& modelManager )
 	Time = 0.0f;
 
 	ModelManager = &modelManager;
-	Model = modelManager.Get( "Data/rocketlun-model.glm" );
+	Model = modelManager.Get( "rocketlun-model.glm" );
 
 	inited = true;
 }
@@ -1096,7 +1096,7 @@ void weAtomBomb::Init( GLModelManager& modelManager )
 	Name = "NUKE";
 
 	ModelManager = &modelManager;
-	Model = modelManager.Get( "Data/atombomb-model.glm" );
+	Model = modelManager.Get( "atombomb-model.glm" );
 
 	inited = true;
 }

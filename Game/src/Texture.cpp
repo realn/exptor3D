@@ -216,7 +216,8 @@ std::string CTexture::GetFile()
 
 
 
-CTexManager::CTexManager()
+CTexManager::CTexManager( const std::string& strDataDir ) :
+	DataDir( strDataDir )
 {
 }
 
@@ -227,27 +228,28 @@ CTexManager::~CTexManager()
 
 CTexture* CTexManager::Get( std::string filename )
 {
-	if( filename == "" )
+	if( filename.empty() )
 	{
 		Log.Error( "TEXMANAGER(): Pusty ci¹g znaków!" );
-		return 0;
+		return nullptr;
 	}
 
-	unsigned int i;
+	auto path = DataDir + filename;
+
 	CTexture* NewTex;
-	for( i = 0; i < List.size(); i++ )
+	for( unsigned i = 0; i < List.size(); i++ )
 	{
 		NewTex = GetTexture( i );
-		if( NewTex->GetFile() == filename )
+		if( NewTex->GetFile() == path )
 			return NewTex;
 	}
 
 	NewTex = new CTexture;
-	if( !NewTex->LoadTGA( filename ) )
+	if( !NewTex->LoadTGA( path ) )
 	{
 		Log.Error( "TEXMANAGER(): Nieudane za³adowanie tekstury: " + filename );
 		delete NewTex;
-		return 0;
+		return nullptr;
 	}
 
 	AddTexture( NewTex );

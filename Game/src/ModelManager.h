@@ -5,11 +5,12 @@
 class GLModelManager
 {
 private:
-	CTexManager&	TexManager;
+	const std::string	DataDir;
+	CTexManager&		TexManager;
 	std::vector<GLModel*> List;
 
 public:
-	GLModelManager( CTexManager& texManager );
+	GLModelManager( const std::string& strDataDir, CTexManager& texManager );
 	~GLModelManager();
 
 	CTexManager& GetTexMng();
