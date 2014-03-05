@@ -17,6 +17,7 @@ Opis:	Patrz -> Level.h
 #include "ItemAmmo.h"
 #include "ItemArmor.h"
 #include "ItemHealth.h"
+#include "ItemWeapon.h"
 
 CLevel* pGLevel = nullptr;
 
@@ -78,6 +79,7 @@ CLevel::~CLevel()
 void	CLevel::Update( const float fTD )
 {
 	RenderList.PreLoad();
+	CollisionMng.Solve();
 }
 
 void	CLevel::Render()
@@ -400,6 +402,8 @@ bool CLevel::LoadLevel( const std::string &filename )
 	MainPlayer.SetStartPos( this->GetBlockPos( PlayerStartBlock ) );
 	MainPlayer.SetStartAngle( (float)PlayerStartAngle );
 	MainPlayer.Reset();
+
+	CollisionMng.AddObject( &MainPlayer );
 
 	loaded = true;
 
@@ -844,23 +848,7 @@ void CLevel::DrawAllFloor()
 		return;
 
 	Tex[2]->Activate( GUI.GetTexDLevel() );
-	//glCallList( Floor );
-	glPushMatrix();
-	glTranslatef( 5, 0, -5 );
-	for( int i = 0; i < Rows; i++ )
-	{
-		for( int j = 0; j < Cols; j++ )
-		{
-			glPushMatrix();
-
-			glTranslatef( j*10, 0, -(i*10) );
-
-			DrawFloor();
-
-			glPopMatrix();
-		}
-	}
-	glPopMatrix();
+	glCallList( Floor );
 }
 
 void CLevel::DrawReflect()
@@ -1041,6 +1029,8 @@ const bool	CLevel::ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& 
 
 const bool	CLevel::LoadHeader( std::fstream& stream )
 {
+	Log.Log( "GLEVEL( " + file + " ): £adowanie nag³ówka.");
+
 	std::string str, name, value;
 	while( stream )
 	{
@@ -1193,6 +1183,8 @@ const bool	CLevel::LoadHeader( std::fstream& stream )
 
 const bool	CLevel::LoadTextures( std::fstream& stream )
 {
+	Log.Log( "GLEVEL( " + file + " ): £adowanie tekstur.");
+
 	std::string str, name, value;
 	while( stream )
 	{
@@ -1238,6 +1230,8 @@ const bool	CLevel::LoadTextures( std::fstream& stream )
 
 const bool	CLevel::LoadWalls( std::fstream& stream )
 {
+	Log.Log( "GLEVEL( " + file + " ): £adowanie œcian.");
+
 	/*	Teraz tworzymy tablicê odpowiednich
 	rozmiarów zdoln¹ pomieœciæ nastêpne
 	dane. S¹ to liczby ca³kowite jednoznacznie
@@ -1287,6 +1281,8 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 
 const bool	CLevel::LoadItemList( std::fstream& stream )
 {
+	Log.Log( "GLEVEL( " + file + " ): £adowanie listy przedmiotów.");
+
 	std::string str;
 	std::vector<std::string> params;
 	ITEM_TYPE type;
@@ -1309,18 +1305,19 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 			{
 				break;
 			case ITEM_TYPE::AMMO:
-				item = new CItemAmmo( atoi(params[0].c_str()), atoi(params[1].c_str()) );
+				item = new CItemAmmo( ParseWeapon( params[0] ) , StrToUInt( params[1] ) );
 				break;
 
 			case ITEM_TYPE::HEALTH:
-				item = new CItemHealth( (float)atoi(params[0].c_str()) );
+				item = new CItemHealth( StrToFloat( params[0] ) );
 				break;
 
 			case ITEM_TYPE::ARMOR:
-				item = new CItemArmor( (float)atoi(params[0].c_str()) );
+				item = new CItemArmor( StrToFloat( params[0] ) );
 				break;
 
 			case ITEM_TYPE::WEAPON:
+				item = new CItemWeapon( ParseWeapon( params[0] ), StrToUInt( params[1] ) );
 				break;
 
 			case ITEM_TYPE::UNKNOWN:
@@ -1332,6 +1329,8 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 			if(item != nullptr)
 			{
 				item->Pos = GetBlockPos( x, y );
+				RenderList.Add( item );
+				CollisionMng.AddObject( item );
 				BonusMan.AddBonus( item );
 			}
 		}

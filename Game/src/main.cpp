@@ -112,7 +112,9 @@ void Update(const float fTD)	// Logika gry
 
 	Mouse();
 
+	pGLevel->Update( fTD );
 	pGLevel->CheckWLFlags();
+
 	MainPlayer.Update( Keys, fTD );
 	ThingManager.Update( fTD );
 
@@ -185,7 +187,7 @@ void RenderLevel()	// Wizualizacja gry
 	//WManager.Render();
 	//BManager.Render();
 	//BonusMan.Render();
-	//pGLevel->Render();
+	pGLevel->Render();
 
 	//glDepthMask( 0 );
 	//SEManager.Render();

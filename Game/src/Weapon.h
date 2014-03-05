@@ -107,6 +107,8 @@ public:
 	bool GetInited();
 };
 
+extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
+
 /*	KLASA BRONI -> KLASA PI£Y	*/
 class weSaw : public weWeapon
 {

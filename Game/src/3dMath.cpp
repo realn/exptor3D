@@ -255,6 +255,11 @@ float mathDistSq( const Vector3f& V1, const Vector3f& V2 )
 	return vect.LeangthSq();
 }
 
+const float	TriangleSide( const float a, const float b )
+{
+	return sqrtf( POW(a) + POW(b) );
+}
+
 Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point )
 {
 	Vector3f Vect1, Vect2;

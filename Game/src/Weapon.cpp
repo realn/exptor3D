@@ -182,6 +182,22 @@ void weWeapon::Free()
 	Model = NULL;
 }
 
+const WEAPON_TYPE	ParseWeapon( const std::string& str )
+{
+	if( str == "SAW" )		return WEAPON_TYPE::SAW;
+	if( str == "PISTOL" )	return WEAPON_TYPE::PISTOL;
+	if( str == "MINIPHAZER" )	return WEAPON_TYPE::MINIPHAZER;
+	if( str == "MINIGUN" )	return WEAPON_TYPE::MINIGUN;
+	if( str == "ROCKET_LUNCHER" )	return WEAPON_TYPE::ROCKETLUN;
+	if( str == "PICK_A_BOO" )	return WEAPON_TYPE::PICKABOO;
+	if( str == "PHAZER" )	return WEAPON_TYPE::PHAZER;
+	if( str == "MINE" )		return WEAPON_TYPE::MINE;
+	if( str == "ATOM_BOMB" )	return WEAPON_TYPE::ATOMBOM;
+
+	return WEAPON_TYPE::UNKNOWN;
+}
+
+
 #include "WeaponBulletSaw.h"
 #include "WeaponBulletManager.h"
 

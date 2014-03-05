@@ -3,22 +3,21 @@
 #include <vector>
 
 #include "3dMath.h"
-#include "GameEntity.h"
 
-class CObjectManager
+class CCollisionManager
 {
 private:
-	std::vector<CObject*>	m_objectList;
-	std::vector<CDynamic*>	m_dynamicList;
-	std::vector<IEntity*>	m_entityList;
-
+	std::vector<CObject*>	ObjectList;
+	std::vector<CDynamic*>	DynamicList;
+	
 public:
-	CObjectManager();
+	CCollisionManager();
+	~CCollisionManager();
 
 	const bool	Contains(CObject* pObject) const;
 	void	AddObject(CObject* pObject);
 	void	DeleteObject(CObject* pObject);
 	void	Clear();
 
-	void	Update(const float fTD);
+	void	Solve();
 };

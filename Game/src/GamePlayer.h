@@ -59,6 +59,8 @@ public:
 
 	void ModHealth( const float mod ) override;
 	void Reset() override;
+
+	const bool	OnCollision( CObject* pObject ) override;
 };
 
 extern CPlayer MainPlayer;

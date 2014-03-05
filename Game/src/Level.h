@@ -29,6 +29,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "GameEnemy.h"
 #include "Item.h"
 #include "RenderList.h"
+#include "CollisionManager.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -112,7 +113,10 @@ class CLevel
 private:
 	GLModelManager&	ModelManager;
 	CTexManager&	TexManager;
-	CRenderList		RenderList;
+
+	CRenderList			RenderList;
+	CCollisionManager	CollisionMng;
+
 	CTexture*		Tex[3];
 	
 	float blockWidth;

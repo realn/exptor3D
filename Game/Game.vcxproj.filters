@@ -22,6 +22,9 @@
     <Filter Include="Source\Graphic\Special">
       <UniqueIdentifier>{e49b4ad6-0c50-4267-b06a-0af3645cab71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Logic">
+      <UniqueIdentifier>{4fe6ecff-f72f-48af-84e1-6f38ddf01829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -64,9 +67,6 @@
       <Filter>Source\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\GameStaticObject.cpp">
-      <Filter>Source\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObjectManager.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Weapon.cpp">
@@ -147,6 +147,12 @@
     <ClCompile Include="src\LevelFlags.cpp">
       <Filter>Source\Level</Filter>
     </ClCompile>
+    <ClCompile Include="src\ItemWeapon.cpp">
+      <Filter>Source\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CollisionManager.cpp">
+      <Filter>Source\Logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -189,12 +195,6 @@
       <Filter>Source\Level</Filter>
     </ClInclude>
     <ClInclude Include="src\GameStaticObject.h">
-      <Filter>Source\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameEntity.h">
-      <Filter>Source\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameObjectManager.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\Weapon.h">
@@ -262,6 +262,12 @@
     </ClInclude>
     <ClInclude Include="src\RenderList.h">
       <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameEntity.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollisionManager.h">
+      <Filter>Source\Logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

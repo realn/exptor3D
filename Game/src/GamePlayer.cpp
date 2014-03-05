@@ -82,6 +82,8 @@ void CPlayer::Update( const float fTD )
 
 void CPlayer::Update( bool* Keys, const float fTD )
 {
+	ApplyNextPos();
+
 	Actions = 0;
 	if( Keys['W'] || Keys[VK_UP] )
 	{
@@ -181,7 +183,6 @@ void CPlayer::Update( bool* Keys, const float fTD )
 	}
 	TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ), true );
 
-	ApplyNextPos();
 }
 
 void	CPlayer::Move(unsigned uFlags, const float fTD)
@@ -215,7 +216,7 @@ void CPlayer::TestBonus( CItem* Bonus )
 		switch( Bonus->GetType() )
 		{
 		case ITEM_TYPE::AMMO :
-			if( Weapon[((CItemAmmo*)Bonus)->GetWeapType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
+			if( Weapon[(unsigned)((CItemAmmo*)Bonus)->GetWeaponType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
 			{
 				GUI.SendMsg( "Podniosles: " + guiIntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
 				Bonus->CanDelete = true;
@@ -275,6 +276,13 @@ void CPlayer::Reset()
 	Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
 	Weapon[(unsigned)WEAPON_TYPE::ATOMBOM] = new weAtomBomb();
 	GUI.PInfo.FRAGS = 0;
+}
+
+const bool	CPlayer::OnCollision( CObject* pObject )
+{
+	int i = 0;
+
+	return true;
 }
 
 CPlayer MainPlayer;

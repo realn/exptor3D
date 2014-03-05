@@ -1,7 +1,7 @@
 #include "ItemAmmo.h"
 
 /*	BONUS - AMUNICJA	*/
-CItemAmmo::CItemAmmo( const unsigned weapType, const unsigned ammoCount ) :
+CItemAmmo::CItemAmmo( const WEAPON_TYPE weapType, const unsigned ammoCount ) :
 	CItem(ITEM_TYPE::AMMO),
 	WeapType( weapType ),
 	AmmoCount( ammoCount )
@@ -16,7 +16,7 @@ const bool	CItemAmmo::LoadGraphic( CTexManager& texManager, GLModelManager& mode
 	return GfxLoaded;
 }
 
-const unsigned CItemAmmo::GetWeapType() const
+const WEAPON_TYPE CItemAmmo::GetWeaponType() const
 {
 	return WeapType;
 }

@@ -8,6 +8,7 @@ CItem::CItem(const ITEM_TYPE type) :
 	CanDelete( false ),
 	Type( type )
 {
+	Radius = 3.0f;
 }
 
 CItem::~CItem()
@@ -21,7 +22,7 @@ void CItem::Render()
 
 	glPushMatrix();
 	
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
+	glTranslatef( Pos.X, Pos.Y - 3.0f, Pos.Z );
 	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 	Model->CallObject( 0 );
 	
@@ -30,7 +31,7 @@ void CItem::Render()
 
 void CItem::Update( const float fTD )
 {
-	Angle += fTD * GUI.GetSpeed();
+	Angle += fTD * 60.0f * GUI.GetSpeed();
 	Angle = SwapAngle( Angle );
 }
 
