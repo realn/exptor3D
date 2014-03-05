@@ -37,16 +37,27 @@ CLevel::CLevel( CTexManager& texManager, GLModelManager& modelManager ) :
 	file( "-" ),
 	loaded( false )
 {
+	Version = 0;
+
 	// I zerujemy listê wyœwietlania
-	Top = 0;
 	Floor = 0;
+	Top = 0;
 	Wall = 0;
+	Reflect = 0;
+
+	PlayerStartBlock = 0;
+	PlayerStartAngle = 0;
+
+	AllWin = 0;
+	AllLose = 0;
+
 	// Zerujemy inne wartoœci
 	WeapCount = 0;
 	StatObjCount = 0;
 	BonusCount = 0;
 	EnemyCount = 0;
 	EnemyTypeCount = 0;
+
 	// Zerujemy liste typów wroga
 	EnemyType = NULL;
 
