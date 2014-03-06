@@ -8,6 +8,10 @@ CItemAmmo::CItemAmmo( const WEAPON_TYPE weapType, const unsigned ammoCount ) :
 {
 }
 
+CItemAmmo::~CItemAmmo()
+{
+}
+
 const bool	CItemAmmo::LoadGraphic( CTexManager& texManager, GLModelManager& modelManager )
 {
 	Model = modelManager.Get( "rocketlun-model.glm" );

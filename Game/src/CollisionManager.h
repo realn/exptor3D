@@ -4,6 +4,10 @@
 
 #include "3dMath.h"
 
+class CFace{
+
+};
+
 class CCollisionManager
 {
 private:

@@ -10,6 +10,7 @@ private:
 
 public:
 	CItemHealth( const float health );
+	virtual ~CItemHealth();
 
 	const bool	LoadGraphic( CTexManager& texManager, GLModelManager& modelManager ) override;
 

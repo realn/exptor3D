@@ -62,9 +62,16 @@ void	CCollisionManager::Solve()
 	for( unsigned dyn = 0; dyn < DynamicList.size(); dyn++ )
 	{
 		CDynamic* pDynamic = DynamicList[dyn];
+
+		if( !pDynamic->IsCollidable() )
+			continue;
+
 		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
 		{
 			CObject* pObject = ObjectList[obj];
+
+			if( !pObject->IsCollidable() )
+				continue;
 
 			auto toObjVec = pObject->Pos - pDynamic->Pos;
 

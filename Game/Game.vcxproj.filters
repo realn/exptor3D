@@ -153,6 +153,9 @@
     <ClCompile Include="src\CollisionManager.cpp">
       <Filter>Source\Logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\CollisionFace.cpp">
+      <Filter>Source\Logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -267,6 +270,9 @@
       <Filter>Source\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\CollisionManager.h">
+      <Filter>Source\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollisionFace.h">
       <Filter>Source\Logic</Filter>
     </ClInclude>
   </ItemGroup>

@@ -185,19 +185,19 @@ void RenderLevel()	// Wizualizacja gry
 
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
 	//WManager.Render();
-	//BManager.Render();
+	BManager.Render();
 	//BonusMan.Render();
 	pGLevel->Render();
 
-	//glDepthMask( 0 );
-	//SEManager.Render();
+	glDepthMask( 0 );
+	SEManager.Render();
 	//pGLevel->DrawReflect();
-	//glDepthMask( 1 );
+	glDepthMask( 1 );
 
-	//GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
-	//glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
-	//glLoadIdentity();
-	//MainPlayer.Render();
+	GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
+	glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
+	glLoadIdentity();
+	MainPlayer.Render();
 
 	//if( GUI.GetMotionBlur() )
 	//	SMBlur.Render();

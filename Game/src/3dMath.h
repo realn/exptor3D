@@ -99,10 +99,10 @@ public:
 	const float LeangthSq() const;
 
 	// Normalizacja
-	Vector3f Normalize();
+	Vector3f Normalize() const;
 
 	// Odwrócenie
-	Vector3f Reverse();
+	Vector3f Reverse() const;
 };
 
 /*	KLASA P£ASZCZYZN
@@ -116,6 +116,13 @@ class Planef
 public:
 	Vector3f Normal;
 	float D;
+
+public:
+	Planef();
+	Planef(const Vector3f& normal, const float distance);
+	Planef(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
+
+	void	Set(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
 };
 
 /// <summary>
@@ -139,6 +146,8 @@ public:
 
 	virtual void		SetAngle(const float angle){ Angle = angle; }
 	virtual const float	GetAngle() const { return Angle; }
+
+	virtual const bool	IsCollidable() const { return true; }
 };
 
 /// <summary>
@@ -166,6 +175,7 @@ public:
 	virtual const bool	OnCollision( CObject* pObject ){ return false; };
 };
 
+extern const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 );
 extern float	mathDist( const Vector3f& V1, const Vector3f& V2 );
 extern float	mathDistSq( const Vector3f& V1, const Vector3f& V2 );
 extern const float	TriangleSide( const float A, const float B);

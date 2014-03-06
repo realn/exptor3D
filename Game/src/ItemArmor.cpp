@@ -7,6 +7,10 @@ CItemArmor::CItemArmor( const float armor ) :
 {
 }
 
+CItemArmor::~CItemArmor()
+{
+}
+
 const bool	CItemArmor::LoadGraphic( CTexManager& texManager, GLModelManager& modelManager )
 {
 	Model = modelManager.Get( "rocketlun-model.glm" );

@@ -268,18 +268,18 @@ bool CLevel::LoadLevel( const std::string &filename )
 				Weap = new weMiniGun;
 				break;
 
-			case WEAPON_TYPE::ROCKETLUN :
-				Weap = new weRocketLuncher;
+			case WEAPON_TYPE::ROCKET_LUNCHER :
+				Weap = new weROCKET_LUNCHERcher;
 				break;
 
-				//case GAME_WEAP_PICKABOO	:
+				//case GAME_WEAP_PICK_A_BOO	:
 			case WEAPON_TYPE::PHAZER :
 				Weap = new wePhazer;
 				break;
 
 				//case GAME_WEAP_MINE :
-			case WEAPON_TYPE::ATOMBOM :
-				Weap = new weAtomBomb;
+			case WEAPON_TYPE::ATOM_BOMB :
+				Weap = new weATOM_BOMBb;
 				break;
 			default:
 				continue;
@@ -1441,9 +1441,8 @@ bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 			continue;
 
 		// liczymy wektor od rogu, do pozycji
-		V = Dum->NextPos - Block->TCorner[i];
+		V = ( Dum->NextPos - Block->TCorner[i] ).Normalize();
 		// i go normalizujemy, by siê nadawa³ do wyliczenia odleg³oœci
-		V.Normalize();
 		Normal = V;
 		D = -Block->TCorner[i].Dot( V );
 
@@ -1494,8 +1493,7 @@ bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 			continue;
 
 		// Tworzymy p³aszczyzne i punkt przeciêcia.
-		Normal = Dum->NextPos - Thing->NextPos;
-		Normal.Normalize();
+		Normal = ( Dum->NextPos - Thing->NextPos ).Normalize();
 		V = Thing->Pos + Normal * Thing->Radius;
 		D = -V.Dot( Normal );
 

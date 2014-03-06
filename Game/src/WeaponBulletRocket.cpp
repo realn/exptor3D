@@ -13,7 +13,7 @@ CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos
 	CBullet( owner, damage, pos, vector, speed ),
 	TexManager( modelManager.GetTexMng() )
 {
-	Angle = ::GetAngle( Pos, NextPos );
+	Angle = ::GetAngle( Pos, Pos + Vector );
 	Sec = 0.0f;
 	Radius = 0.3f;
 	//glEnable( GL_LIGHT0 );
@@ -48,9 +48,7 @@ void CBullRocket::Update( const float fTD )
 		Sec += fTD * GUI.GetSpeed();
 		if( Sec > 0.1f )
 		{
-			Vector3f Tail = Veloc;
-			Tail.Normalize();
-			Tail *= 1.0f;
+			Vector3f Tail = Veloc.Normalize();
 			Tail = Tail.Reverse();
 			Sec = 0.0f;
 

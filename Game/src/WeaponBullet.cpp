@@ -21,7 +21,7 @@ CBullet::CBullet(CActor* owner, const float damage, const Vector3f& pos, const V
 	Pos = pos;
 	Vector = vector;
 	Veloc = Vector * speed;
-	NextPos = Pos + Veloc;
+	NextPos = Pos;
 
 	Type = BULLET_TYPE_NORMAL;
 	obj = gluNewQuadric();

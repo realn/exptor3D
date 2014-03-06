@@ -206,8 +206,7 @@ void CEnemy::Fire( Vector3f FireTarget )
 
 	temp += add;
 
-	FireVeloc = FireTarget - temp;
-	FireVeloc.Normalize();
+	FireVeloc = ( FireTarget - temp ).Normalize();
 
 	switch( WeapType )
 	{
@@ -224,7 +223,7 @@ void CEnemy::Fire( Vector3f FireTarget )
 			BManager.AddBullet( Bull );
 			return;
 		}
-	case WEAPON_TYPE::ROCKETLUN :
+	case WEAPON_TYPE::ROCKET_LUNCHER :
 		{
 			CBullet* Bull = new CBullRocket( this, 10.0f, temp, FireVeloc, 2.0f, ModelManager );
 			BManager.AddBullet( Bull );

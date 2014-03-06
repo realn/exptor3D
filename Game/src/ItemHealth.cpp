@@ -7,6 +7,10 @@ CItemHealth::CItemHealth( const float health ) :
 {
 }
 
+CItemHealth::~CItemHealth()
+{
+}
+
 const bool	CItemHealth::LoadGraphic( CTexManager& texManager, GLModelManager& modelManager )
 {
 	Model = modelManager.Get( "rocketlun-model.glm" );

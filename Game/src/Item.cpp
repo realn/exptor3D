@@ -6,7 +6,8 @@
 CItem::CItem(const ITEM_TYPE type) :
 	Model( nullptr ),
 	CanDelete( false ),
-	Type( type )
+	Type( type ),
+	Active( true )
 {
 	Radius = 3.0f;
 }
@@ -17,6 +18,9 @@ CItem::~CItem()
 
 void CItem::Render()
 {
+	if( !Active )
+		return;
+
 	if( Model == nullptr )
 		return;
 
@@ -31,13 +35,31 @@ void CItem::Render()
 
 void CItem::Update( const float fTD )
 {
+	if( !Active )
+		return;
+
 	Angle += fTD * 60.0f * GUI.GetSpeed();
 	Angle = SwapAngle( Angle );
+}
+
+void	CItem::SetActive( const bool set )
+{
+	Active = set;
 }
 
 const ITEM_TYPE CItem::GetType() const
 {
 	return Type;
+}
+
+const bool	CItem::IsActive() const
+{
+	return Active;
+}
+
+const bool	CItem::IsCollidable() const
+{
+	return Active;
 }
 
 //=====================================

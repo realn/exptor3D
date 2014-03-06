@@ -70,38 +70,41 @@ void weWeapon::Rotate( const float fTD )
 /*	Ta funkcja jest wywo³ywana, gdy
 	jakaœ postaæ podniesie broñ.
 */
-void weWeapon::PickUp( weWeapon* Weapon, CPlayer* Player, GLModelManager& modelManager )
+void weWeapon::PickUp( CPlayer& Player, const unsigned ammo, GLModelManager& modelManager )
 {
 	if( !InHand )
 	{
-		hand = Player->GetHand();
+		hand = Player.GetHand();
 		InHand = true;
-		Owner = Player;
+		Owner = &Player;
 		if( !inited )
 			Init( modelManager );
-		GUI.SendMsg( "Podniosles: " + Weapon->Name, 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.5f, 0.5f );
+
+		SetAmmo( ammo );
+		GUI.SendMsg( "Podniosles: " + Name, 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.5f, 0.5f );
 	}
 	else
 	{
-		if( Weapon->GetAllAmmo() == -1 )
-			return;
+		ModAmmo( ammo );
+		//if( Weapon->GetAllAmmo() == -1 )
+		//	return;
 
-		int PickAmmo = 0;
-		if( this->Ammo + Weapon->GetAllAmmo() <= this->MaxAmmo )
-		{
-			PickAmmo = Weapon->GetAllAmmo();
-			this->Ammo += Weapon->GetAllAmmo();
-			Weapon->SetAmmo( 0 );
-		}
-		else
-		{
-			int temp = this->MaxAmmo - this->Ammo;
-			Ammo += temp;
-			PickAmmo = temp;
-			Weapon->SetAmmo( Weapon->GetAllAmmo() - temp );
-		}
-		if( PickAmmo != 0 )
-			GUI.SendMsg( "Podniosles " + guiIntToStr( PickAmmo ) + " amunicji.", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 1.0f, 0.5f );		
+		//int PickAmmo = 0;
+		//if( this->Ammo + Weapon->GetAllAmmo() <= this->MaxAmmo )
+		//{
+		//	PickAmmo = Weapon->GetAllAmmo();
+		//	this->Ammo += Weapon->GetAllAmmo();
+		//	Weapon->SetAmmo( 0 );
+		//}
+		//else
+		//{
+		//	int temp = this->MaxAmmo - this->Ammo;
+		//	Ammo += temp;
+		//	PickAmmo = temp;
+		//	Weapon->SetAmmo( Weapon->GetAllAmmo() - temp );
+		//}
+		//if( PickAmmo != 0 )
+		GUI.SendMsg( "Podniosles " + IntToStr( ammo ) + " amunicji.", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 1.0f, 0.5f );		
 	}
 }
 
@@ -184,15 +187,15 @@ void weWeapon::Free()
 
 const WEAPON_TYPE	ParseWeapon( const std::string& str )
 {
-	if( str == "SAW" )		return WEAPON_TYPE::SAW;
-	if( str == "PISTOL" )	return WEAPON_TYPE::PISTOL;
+	if( str == "SAW" )			return WEAPON_TYPE::SAW;
+	if( str == "PISTOL" )		return WEAPON_TYPE::PISTOL;
 	if( str == "MINIPHAZER" )	return WEAPON_TYPE::MINIPHAZER;
-	if( str == "MINIGUN" )	return WEAPON_TYPE::MINIGUN;
-	if( str == "ROCKET_LUNCHER" )	return WEAPON_TYPE::ROCKETLUN;
-	if( str == "PICK_A_BOO" )	return WEAPON_TYPE::PICKABOO;
-	if( str == "PHAZER" )	return WEAPON_TYPE::PHAZER;
-	if( str == "MINE" )		return WEAPON_TYPE::MINE;
-	if( str == "ATOM_BOMB" )	return WEAPON_TYPE::ATOMBOM;
+	if( str == "MINIGUN" )		return WEAPON_TYPE::MINIGUN;
+	if( str == "ROCKET_LUNCHER" )	return WEAPON_TYPE::ROCKET_LUNCHER;
+	if( str == "PICK_A_BOO" )	return WEAPON_TYPE::PICK_A_BOO;
+	if( str == "PHAZER" )		return WEAPON_TYPE::PHAZER;
+	if( str == "MINE" )			return WEAPON_TYPE::MINE;
+	if( str == "ATOM_BOMB" )	return WEAPON_TYPE::ATOM_BOMB;
 
 	return WEAPON_TYPE::UNKNOWN;
 }
@@ -431,8 +434,7 @@ void wePistol::Update( const float fTD )
 
 			Vector3f temp;
 			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, *pGLevel );
-			temp = temp - Pos;
-			temp.Normalize();
+			temp = (temp - Pos).Normalize();
 			CBullet* Bull = new CBullet( Owner, Damage[0], Pos, temp, 10.0f );
 			BManager.AddBullet( Bull );
 		}
@@ -557,8 +559,7 @@ void weMiniPhazer::Update( const float fTD )
 				
 				Vector3f temp;
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
-				temp = temp - Pos;
-				temp.Normalize();
+				temp = (temp - Pos).Normalize();
 
 				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 
@@ -698,8 +699,7 @@ void wePhazer::Update( const float fTD )
 				Shake[1] = 0.0f;
 				Vector3f temp;
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
-				temp = temp - Pos;
-				temp.Normalize();
+				temp = (temp - Pos).Normalize();
 
 				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 
@@ -848,8 +848,7 @@ void weMiniGun::Update( const float fTD )
 				Shake[1] = 0.0f;
 				Vector3f temp;
 				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, *pGLevel );
-				temp = temp - Pos;
-				temp.Normalize();
+				temp = (temp - Pos).Normalize();
 
 				CBullet* Bull = new CBullet( Owner, Damage[0] * 0.1f, Pos, temp, 10.0f ); 
 				Bull->Visible = false;
@@ -943,12 +942,12 @@ void weMiniGun::Shot()
 #include "WeaponBulletRocket.h"
 
 /*	ROCKET LUNCHER	*/
-weRocketLuncher::weRocketLuncher() :
-	weWeapon(WEAPON_TYPE::ROCKETLUN)
+weROCKET_LUNCHERcher::weROCKET_LUNCHERcher() :
+	weWeapon(WEAPON_TYPE::ROCKET_LUNCHER)
 {
 }
 
-void weRocketLuncher::Init( GLModelManager& modelManager )
+void weROCKET_LUNCHERcher::Init( GLModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -978,7 +977,7 @@ void weRocketLuncher::Init( GLModelManager& modelManager )
 	inited = true;
 }
 
-void weRocketLuncher::Update( const float fTD )
+void weROCKET_LUNCHERcher::Update( const float fTD )
 {
 	Rotate( fTD );
 
@@ -995,8 +994,7 @@ void weRocketLuncher::Update( const float fTD )
 
 				Vector3f temp;
 				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
-				temp = temp - Pos;
-				temp.Normalize();
+				temp = (temp - Pos).Normalize();
 
 				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 
@@ -1030,7 +1028,7 @@ void weRocketLuncher::Update( const float fTD )
 	}
 }
 
-void weRocketLuncher::Render()
+void weROCKET_LUNCHERcher::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -1076,7 +1074,7 @@ void weRocketLuncher::Render()
 	glPopMatrix();
 }
 
-void weRocketLuncher::Shot()
+void weROCKET_LUNCHERcher::Shot()
 {
 	if( Ammo == 0 )
 		return;
@@ -1088,12 +1086,12 @@ void weRocketLuncher::Shot()
 #include "WeaponBulletBomb.h"
 
 /*	ATOM BOMB	*/
-weAtomBomb::weAtomBomb() :
-	weWeapon(WEAPON_TYPE::ATOMBOM)
+weATOM_BOMBb::weATOM_BOMBb() :
+	weWeapon(WEAPON_TYPE::ATOM_BOMB)
 {
 }
 
-void weAtomBomb::Init( GLModelManager& modelManager )
+void weATOM_BOMBb::Init( GLModelManager& modelManager )
 {
 	if( inited )
 		return;
@@ -1112,12 +1110,12 @@ void weAtomBomb::Init( GLModelManager& modelManager )
 	Name = "NUKE";
 
 	ModelManager = &modelManager;
-	Model = modelManager.Get( "atombomb-model.glm" );
+	Model = modelManager.Get( "ATOM_BOMBb-model.glm" );
 
 	inited = true;
 }
 
-void weAtomBomb::Update( const float fTD )
+void weATOM_BOMBb::Update( const float fTD )
 {
 	Rotate( fTD );
 
@@ -1145,7 +1143,7 @@ void weAtomBomb::Update( const float fTD )
 	}
 }
 
-void weAtomBomb::Render()
+void weATOM_BOMBb::Render()
 {
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
@@ -1187,7 +1185,7 @@ void weAtomBomb::Render()
 	glPopMatrix();
 }
 
-void weAtomBomb::Shot()
+void weATOM_BOMBb::Shot()
 {
 	if( Ammo == 0 )
 		return;

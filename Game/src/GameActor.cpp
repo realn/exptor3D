@@ -67,12 +67,10 @@ void CActor::Move( unsigned int flags, const float fTD )
 		NextPos = Pos;
 	else
 	{
-		temp.Normalize();
-		NextPos = Pos + temp * Speed * GUI.GetSpeed() * fTD;
+		NextPos = Pos + temp.Normalize() * Speed * GUI.GetSpeed() * fTD;
 	}
 
-	Vector = CreatePos( Angle );
-	Vector.Normalize();
+	Vector = CreatePos( Angle ).Normalize();
 }
 
 void CActor::Update( const float fTD )

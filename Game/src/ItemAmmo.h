@@ -12,6 +12,7 @@ private:
 
 public:
 	CItemAmmo( const WEAPON_TYPE weapType, const unsigned ammoCount );
+	virtual ~CItemAmmo();
 
 	const bool	LoadGraphic( CTexManager& texManager, GLModelManager& modelManager ) override;
 

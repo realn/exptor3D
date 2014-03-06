@@ -10,6 +10,7 @@ private:
 
 public:
 	CItemArmor( const float armor );
+	virtual ~CItemArmor();
 	
 	const bool	LoadGraphic( CTexManager& texManager, GLModelManager& modelManager ) override;
 

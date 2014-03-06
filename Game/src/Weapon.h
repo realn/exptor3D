@@ -8,16 +8,16 @@
 
 enum class WEAPON_TYPE
 {
-	UNKNOWN		= -1,
-	SAW			= 0,
-	PISTOL		= 1,
-	MINIPHAZER	= 3,
-	MINIGUN		= 4,
-	ROCKETLUN	= 5,
-	PICKABOO	= 6,
-	PHAZER		= 7,
-	MINE		= 8,
-	ATOMBOM		= 9,
+	UNKNOWN			= -1,
+	SAW				= 0,
+	PISTOL			= 1,
+	MINIPHAZER		= 3,
+	MINIGUN			= 4,
+	ROCKET_LUNCHER	= 5,
+	PICK_A_BOO		= 6,
+	PHAZER			= 7,
+	MINE			= 8,
+	ATOM_BOMB		= 9,
 };
 
 /*	KLASA BRONI
@@ -87,7 +87,7 @@ public:
 	const WEAPON_TYPE GetType() const;
 
 	// Funkcja podnoszenia broni
-	void PickUp( weWeapon* Weapon, CPlayer* Player, GLModelManager& modelManager );
+	void	PickUp( CPlayer& Player, const unsigned ammo, GLModelManager& modelManager );
 
 	virtual void Init( GLModelManager& modelManager );
 	virtual void Update( const float fTD );
@@ -199,7 +199,7 @@ public:
 	void Shot();
 };
 
-class weRocketLuncher : public weWeapon
+class weROCKET_LUNCHERcher : public weWeapon
 {
 private:
 	GLModelManager* ModelManager;
@@ -208,7 +208,7 @@ private:
 	float BackA;
 
 public:
-	weRocketLuncher();
+	weROCKET_LUNCHERcher();
 
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
@@ -217,7 +217,7 @@ public:
 };
 
 /*	KLASA BRONI -> KLASA BOMBY ATOMOWEJ	*/
-class weAtomBomb : public weWeapon
+class weATOM_BOMBb : public weWeapon
 {
 private:
 	GLModelManager* ModelManager;
@@ -227,7 +227,7 @@ private:
 	Vector3f PutPos;
 
 public:
-	weAtomBomb();
+	weATOM_BOMBb();
 
 	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;

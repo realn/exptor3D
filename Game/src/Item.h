@@ -22,6 +22,7 @@ class CItem :
 {
 protected:
 	const ITEM_TYPE Type;
+	bool	Active;
 	GLModel* Model;
 
 public:
@@ -31,7 +32,11 @@ public:
 	virtual void Render() override;
 	virtual void Update( const float fTD ) override;
 
+	virtual void	SetActive( const bool set );
+
 	const ITEM_TYPE GetType() const;
+	const bool		IsActive() const;
+	const bool		IsCollidable() const override;
 
 	bool CanDelete;
 };

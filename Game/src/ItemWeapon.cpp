@@ -8,11 +8,15 @@ CItemWeapon::CItemWeapon( const WEAPON_TYPE type, const unsigned ammo ) :
 
 }
 
+CItemWeapon::~CItemWeapon()
+{
+}
+
 const bool	CItemWeapon::LoadGraphic( CTexManager& texManager, GLModelManager& modelManager )
 {
 	switch (WeaponType)
 	{
-	case WEAPON_TYPE::ROCKETLUN:
+	case WEAPON_TYPE::ROCKET_LUNCHER:
 		Model = modelManager.Get( "rocketlun-model.glm" );
 		break;
 
