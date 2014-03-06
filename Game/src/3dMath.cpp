@@ -369,10 +369,12 @@ float GetAngle( const Vector3f &V1, const Vector3f &V2 )
 
 const float SwapAngle( const float &Angle )
 {
-	if( Angle < 0.0f )
-		return Angle + 360.0f;
-	if( Angle > 360.0f )
-		return Angle - 360.0f;
+	float angle = Angle;
 
-	return Angle;
+	while( angle > 180.0f )
+		angle -= 360.0f;
+	while( angle < -180.0f )
+		angle += 360.0f;
+
+	return angle;
 }
