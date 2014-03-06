@@ -8,69 +8,37 @@
 
 
 =========================*/
-CActor::CActor() : 
+CActor::CActor( const ACTOR_TYPE type ) : 
 	CDynamic(2.0f),
 	CActorStats(100.0f, 100.0f),
-	Model(0),
-	Enemy(0)
+	Type( type ),
+	Actions( 0 )
 {
 	Armor = 0.0f;
-
-	AIflags = AI_MOVE_AROUND;
+	
 	Speed = 0.1f;
-	RotSpeed = 1.0f;
 	Angle = 180.0f;
 	StartAngle = 180.0f;
-	ToAngle = 180.0f;
 	Pos.Set( 5.0f, 0.0f, -25.0f );
-	Type = GAME_THING_OTHER;
-	AIState = AI_STATE_NOTHING;
 }
 
 CActor::~CActor()
 {
-	Free();
-	Model = NULL;
 }
 
-void CActor::Init()
+const ACTOR_TYPE CActor::GetType() const
 {
+	return Type;
 }
 
-Vector3f CActor::CreatePos( float ang )
+void	CActor::DoAction( const GAME_ACTION action )
 {
-	Vector3f zwrot;
-
-	zwrot.X = sinf( ang * PIOVER180 );
-	zwrot.Z = -cosf( ang * PIOVER180 );
-
-	return zwrot;
+	Actions |= (unsigned)action;
 }
 
-void CActor::Move( unsigned int flags, const float fTD )
+void	CActor::DoRotate( const float angle )
 {
-	Vector3f temp;
-
-	if( flags & GAME_MOVE_FORWARD )
-		temp += CreatePos( Angle );
-
-	if( flags & GAME_MOVE_BACK )
-		temp += CreatePos( Angle - 180 );
-
-	if( flags & GAME_MOVE_STRAFE_L )
-		temp += CreatePos( Angle - 90 );
-
-	if( flags & GAME_MOVE_STRAFE_R )
-		temp += CreatePos( Angle + 90 );
-
-	if(temp.X == 0.0f && temp.Y == 0.0f && temp.Z == 0.0f)
-		NextPos = Pos;
-	else
-	{
-		NextPos = Pos + temp.Normalize() * Speed * GUI.GetSpeed() * fTD;
-	}
-
-	Vector = CreatePos( Angle ).Normalize();
+	Angle = ::SwapAngle( angle );
 }
 
 void CActor::Update( const float fTD )
@@ -80,15 +48,9 @@ void CActor::Update( const float fTD )
 	if( State == ACTOR_STATE::DEAD )
 		return;
 
-	DoAI();
-
-	Move( Actions, fTD );
-
-	Actions = 0;
-
-	TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ), true );
-
 	Pos = NextPos;
+
+	SolveActions( fTD );
 }
 
 void CActor::Render()
@@ -96,6 +58,7 @@ void CActor::Render()
 	// Dla niezdefiniowanych obiektów to pole pozostaje puste
 }
 
+/*
 bool CActor::IsEnemyInFront()
 {
 	if( Enemy == NULL )
@@ -292,93 +255,75 @@ void CActor::AIAttackTarget()
 		}
 	}
 }
+*/
 
-void CActor::Fire( Vector3f Target )
-{
-	// Dla niezdefiniwanych obiektów to pole jest puste
-}
-
-float CActor::GetAng()
+const float CActor::GetAngle() const
 {
 	return Angle;
 }
 
-void CActor::ModAngle( float mod )
+void CActor::ModAngle( const float mod )
 {
-	Angle += mod;
-	Angle = SwapAngle( Angle );
+	Angle = SwapAngle( Angle + mod );
 }
 
-void CActor::SetAngle( float set )
+void CActor::SetAngle( const float set )
 {
-	Angle = set;
-	Angle = SwapAngle( Angle );
+	Angle = SwapAngle( set );
 }
 
-void CActor::GoToAngle( float ang )
+void CActor::SetStartAngle( const float set )
 {
-	ang = SwapAngle( ang );
-	if( ang > Angle )
-	{
-		if( ang - Angle < 180.0f )
-		{
-			ModAngle( RotSpeed * GUI.GetSpeed() );
-		}
-		else
-		{
-			ModAngle( -RotSpeed * GUI.GetSpeed() );
-		}
-	}
-	else if( ang < Angle )
-	{
-		if( Angle - ang < 180.0f )
-		{
-			ModAngle( -RotSpeed * GUI.GetSpeed() );
-		}
-		else
-		{
-			ModAngle( RotSpeed * GUI.GetSpeed() );
-		}
-	}
+	StartAngle = SwapAngle( set );
 }
 
-void CActor::SetStartAngle( float set )
-{
-	StartAngle = set;
-}
-
-float CActor::GetStartAngle()
+const float CActor::GetStartAngle() const
 {
 	return StartAngle;
 }
 
-void CActor::SetStartPos( Vector3f set )
+void CActor::SetStartPos( const Vector3f& set )
 {
 	StartPos = set;
 }
 
-Vector3f CActor::GetStartPos()
+const Vector3f CActor::GetStartPos() const
 {
 	return StartPos;
-}
-
-unsigned int CActor::GetType()
-{
-	return Type;
 }
 
 void CActor::Reset()
 {
 	CActorStats::Reset();
+
 	Pos = StartPos;
 	NextPos = StartPos;
 	Angle = StartAngle;
 	Armor = 0.0f;
-	Enemy = NULL;
-	HasTarget = false;
 }
 
-void CActor::Free()
+void	CActor::SolveActions( const float fTD )
 {
+	Vector3f temp;
 
+	if( Actions & (unsigned)GAME_ACTION::MOVE_FORWARD )
+		temp += MakeVectorXZ( Angle );
+
+	if( Actions & (unsigned)GAME_ACTION::MOVE_BACK )
+		temp += -MakeVectorXZ( Angle );
+
+	if( Actions & (unsigned)GAME_ACTION::MOVE_STRAFE_LEFT )
+		temp += MakeVectorXZ( Angle - 90 );
+
+	if( Actions & (unsigned)GAME_ACTION::MOVE_STRAFE_RIGHT )
+		temp += MakeVectorXZ( Angle + 90 );
+
+	if( temp.LeangthSq() == 0.0f )
+		NextPos = Pos;
+	else
+		NextPos = Pos + temp.Normalize() * Speed * GUI.GetSpeed() * fTD;
+
+	Vector = MakeVectorXZ( Angle );
+
+	Actions = 0;
 }

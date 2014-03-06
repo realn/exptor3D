@@ -45,20 +45,20 @@ CActor* CActorManager::GetThing( unsigned int index )
 	return List[index];
 }
 
-CEnemy* CActorManager::GetEnemyByID( std::string ID )
-{
-	CEnemy* Enemy;
-	for( unsigned int i = 0; i < List.size(); i++ )
-	{
-		if( GetThing( i )->GetType() != GAME_THING_ENEMY )
-			continue;
-
-		Enemy = (CEnemy*)GetThing( i );
-		if( Enemy->GetID() == ID )
-			return Enemy;
-	}
-	return NULL;
-}
+//CEnemy* CActorManager::GetEnemyByID( std::string ID )
+//{
+//	CEnemy* Enemy;
+//	for( unsigned int i = 0; i < List.size(); i++ )
+//	{
+//		if( GetThing( i )->GetType() != GAME_THING_ENEMY )
+//			continue;
+//
+//		Enemy = (CEnemy*)GetThing( i );
+//		if( Enemy->GetID() == ID )
+//			return Enemy;
+//	}
+//	return NULL;
+//}
 
 Vector3f CActorManager::GetThingPos( unsigned int index )
 {
@@ -109,7 +109,7 @@ void CActorManager::Update( const float fTD )
 
 		Thing->Update( fTD );
 
-		if( Thing->GetType() != GAME_THING_PLAYER )
+		if( Thing->GetType() != ACTOR_TYPE::ACTOR_PLAYER )
 			this->life++;
 		else this->all--;
 	}
@@ -156,7 +156,7 @@ void CActorManager::ReCountStats()
 		Thing = GetThing( i );
 		if( Thing->IsDead() )
 			this->dead++;
-		else if( Thing->GetType() != GAME_THING_PLAYER )
+		else if( Thing->GetType() != ACTOR_TYPE::ACTOR_PLAYER )
 			this->life++;
 		else this->all--;
 	}
@@ -188,7 +188,7 @@ void CActorManager::Clear()
 
 	for( i = List.size()-1; i >= 0; i-- )
 	{
-		if( GetThing( i )->GetType() == GAME_THING_PLAYER )
+		if( GetThing( i )->GetType() == ACTOR_TYPE::ACTOR_PLAYER )
 			continue;
 
 		DeleteThing( i );

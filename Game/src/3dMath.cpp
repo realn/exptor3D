@@ -100,6 +100,11 @@ Vector3f Vector3f::operator-( const float &V1 ) const
 	return Vector3f( X - V1, Y - V1, Z - V1 );	
 }
 
+Vector3f Vector3f::operator-() const
+{
+	return Vector3f( -X, -Y, -Z );
+}
+
 Vector3f Vector3f::operator*( const Vector3f &V1 ) const
 {
 	return Vector3f( X * V1.X, Y * V1.Y, Z * V1.Z );
@@ -279,6 +284,15 @@ const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3
 	Vector3f vec2 = v3 - v1;
 
 	return vec1.Cross(vec2).Normalize();
+}
+
+const Vector3f	MakeVectorXZ( const float angle )
+{
+	return Vector3f(
+		sinf( angle * PIOVER180 ),
+		0.0f,
+		-cosf( angle * PIOVER180 )
+		);
 }
 
 /*	DYSTANS

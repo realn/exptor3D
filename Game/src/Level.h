@@ -64,7 +64,7 @@ public:
 	unsigned int	BlockID;
 	CLvlBlock*		Block;
 	std::string		EnemyID;
-	CEnemy*			Enemy;
+	//CEnemy*			Enemy;
 	unsigned int	WeapID;
 	std::string		Text;
 	float			Color[3];

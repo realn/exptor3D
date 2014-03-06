@@ -78,6 +78,7 @@ protected:
 	unsigned int hand;
 	// Czy broñ aktualnie strzela
 	bool fire;
+
 public:
 	std::string Name;
 	// Konstruktor i destruktor

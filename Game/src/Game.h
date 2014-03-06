@@ -47,7 +47,7 @@ public:
 	void AddThing( CActor* Thing );
 	void DeleteThing( unsigned int index );
 	CActor* GetThing( unsigned int index );
-	CEnemy* GetEnemyByID( std::string ID );
+	//CEnemy* GetEnemyByID( std::string ID );
 	Vector3f GetThingPos( unsigned int index );
 	Vector3f GetThingBlockPos( unsigned int index );
 	CLvlBlock* GetThingBlock( unsigned int index );

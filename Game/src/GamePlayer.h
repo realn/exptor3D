@@ -45,9 +45,7 @@ public:
 
 	void Render();
 	void Update( const float fTD ) override;
-	void Update( bool* Keys, const float fTD );
-
-	void Move(unsigned uFlags, const float fTD ) override;
+	void ParseKeys( const bool* Keys );
 
 	void SwichWeap( unsigned int index );
 
@@ -61,6 +59,9 @@ public:
 	void Reset() override;
 
 	const bool	OnCollision( CObject* pObject ) override;
+
+private:
+	virtual void	SolveActions( const float fTD ) override;
 };
 
 extern CPlayer MainPlayer;

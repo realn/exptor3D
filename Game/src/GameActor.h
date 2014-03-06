@@ -4,16 +4,21 @@
 #include "glm.h"
 #include "GameEntity.h"
 
-#define GAME_THING_PLAYER	0
-#define GAME_THING_ENEMY	1
-#define GAME_THING_OTHER	2
+enum class ACTOR_TYPE
+{
+	ACTOR_UNKNOWN	= 0,
+	ACTOR_PLAYER	= 1,
+	ACTOR_ENEMY		= 2,
+};
 
-#define GAME_MOVE_FORWARD	1
-#define GAME_MOVE_BACK		2
-#define GAME_MOVE_STRAFE_R	4
-#define	GAME_MOVE_STRAFE_L	8
-#define GAME_DO_FIREWEAPON	16
-#define GAME_DO_ATTACK		16
+enum class GAME_ACTION
+{
+	MOVE_FORWARD		= 0x01,
+	MOVE_BACK			= 0x02,
+	MOVE_STRAFE_LEFT	= 0x04,
+	MOVE_STRAFE_RIGHT	= 0x08,
+	DO_ATTACK			= 0x10,
+};
 
 #define	AI_NO_AI			0
 #define AI_SIMPLE_AI		1
@@ -95,60 +100,45 @@ class CActor :
 	public CActorStats
 {
 protected:
+	const ACTOR_TYPE	Type;
+
 	float StartAngle;
 	float Speed;
-	float RotSpeed;
-	float ToAngle;
 
-	bool HasTarget;
-
-	unsigned int AIflags;
-	unsigned int AIState;
 	unsigned int Actions;
-	unsigned int Type;
-
-	GLModel*	Model;
 
 	Vector3f StartPos;
-	Vector3f Target;
 
-	CActor* Enemy;
-
-	virtual Vector3f CreatePos( float ang );
-
-	virtual bool AIFindTarget();
-	virtual Vector3f AIFindWalkTarget();
-	virtual void AIStand();
-	virtual void AIWalk();
-	virtual void AIAttackTarget();
-	virtual bool IsEnemyInFront();
+	//virtual bool AIFindTarget();
+	//virtual Vector3f AIFindWalkTarget();
+	//virtual void AIStand();
+	//virtual void AIWalk();
+	//virtual void AIAttackTarget();
+	//virtual bool IsEnemyInFront();
 public:
-	CActor();
-	~CActor();
+	CActor( const ACTOR_TYPE type );
+	virtual ~CActor();
 
-	virtual void Init();
+	const ACTOR_TYPE GetType() const;
+
+	virtual	void	DoAction( const GAME_ACTION action );
+	virtual void	DoRotate( const float angle );
 
 	virtual void Update( const float fTD ) override;
 	virtual void Render() override;
 
 	virtual void Reset() override;
 
-	virtual void Move( unsigned int flags, const float fTD );
-	virtual void DoAI();
-
-	virtual void Fire( Vector3f FireTarget );
-
-	float GetAng();
+	const float GetAngle() const;
 	void ModAngle( float mod );
 	void SetAngle( const float set ) override;
-	void GoToAngle( float ang );
 
-	void SetStartAngle( float set );
-	float GetStartAngle();
+	void SetStartAngle( const float set );
+	const float GetStartAngle() const;
 
-	void SetStartPos( Vector3f set );
-	Vector3f GetStartPos();
+	void SetStartPos( const Vector3f& set );
+	const Vector3f GetStartPos() const;
 	
-	unsigned int GetType();
-	virtual void Free();
+protected:
+	virtual void	SolveActions( const float fTD );
 };

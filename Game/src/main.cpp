@@ -115,7 +115,9 @@ void Update(const float fTD)	// Logika gry
 	pGLevel->Update( fTD );
 	pGLevel->CheckWLFlags();
 
-	MainPlayer.Update( Keys, fTD );
+	MainPlayer.ParseKeys( Keys );
+
+	MainPlayer.Update( fTD );
 	ThingManager.Update( fTD );
 
 	if( GUI.GetCliping() )
@@ -132,7 +134,7 @@ void Update(const float fTD)	// Logika gry
 
 	GUI.PInfo.HEALTH = MainPlayer.GetHealth();
 	GUI.PInfo.ARMOR = MainPlayer.GetArmor();
-	GUI.PInfo.angle = MainPlayer.GetAng();
+	GUI.PInfo.angle = MainPlayer.GetAngle();
 }
 
 void RenderLevel()	// Wizualizacja gry
@@ -177,7 +179,7 @@ void RenderLevel()	// Wizualizacja gry
 	GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 	glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
-	glRotatef( MainPlayer.GetAng(), 0.0f, 1.0f, 0.0f );
+	glRotatef( MainPlayer.GetAngle(), 0.0f, 1.0f, 0.0f );
 	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
 	pGLevel->DrawLevel();

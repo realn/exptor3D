@@ -8,7 +8,7 @@ gameWLFlags::gameWLFlags() :
 	flags( 0 ),
 	BlockID( 0 ),
 	Block( nullptr ),
-	Enemy( nullptr ),
+	//Enemy( nullptr ),
 	WeapID( 0 )
 {
 	Color[0] = 1.0f;
@@ -54,10 +54,11 @@ bool gameWLFlags::IsSelfDead()
 // Sprawdzamy, czy okreœlony stwór nie ¿yje
 bool gameWLFlags::IsThingDead()
 {
-	if( Enemy == NULL )
-		return false;
+	//if( Enemy == NULL )
+	//	return false;
 
-	return Enemy->IsDead();
+	//return Enemy->IsDead();
+	return false;
 }
 
 // Inicjujemy flagi ( znajdujemy potwory, itp ).
@@ -69,7 +70,7 @@ void gameWLFlags::VerifyFlags()
 	}
 	if( flags & WLFLAG_THING_DEAD )
 	{
-		Enemy = ThingManager.GetEnemyByID( EnemyID );
+		//Enemy = ThingManager.GetEnemyByID( EnemyID );
 	}
 }
 

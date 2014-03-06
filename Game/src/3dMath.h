@@ -57,6 +57,7 @@ public:
 	// operator odejmowania
 	Vector3f operator-( const Vector3f &V1 ) const;
 	Vector3f operator-( const float &V1 ) const;
+	Vector3f operator-() const;
 
 	// operator mno¿enia
 	Vector3f operator*( const Vector3f &V1 ) const;
@@ -176,11 +177,12 @@ public:
 };
 
 extern const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 );
-extern float	mathDist( const Vector3f& V1, const Vector3f& V2 );
-extern float	mathDistSq( const Vector3f& V1, const Vector3f& V2 );
+extern const Vector3f	MakeVectorXZ( const float angle );
+extern float		mathDist( const Vector3f& V1, const Vector3f& V2 );
+extern float		mathDistSq( const Vector3f& V1, const Vector3f& V2 );
 extern const float	TriangleSide( const float A, const float B);
-extern Vector3f	ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
-extern float	GetAngle( const Vector3f &V1, const Vector3f &V2 );
+extern Vector3f		ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
+extern float		GetAngle( const Vector3f &V1, const Vector3f &V2 );
 extern const float	SwapAngle( const float &Angle );
 
 #endif

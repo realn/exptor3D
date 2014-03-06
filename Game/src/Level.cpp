@@ -1486,7 +1486,7 @@ bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 		// No chyba sam ze sob¹ nie mo¿na siê zderzyæ... :D
 		if( Dum == Thing )
 			continue;
-		if( Dum != &MainPlayer && Thing->GetType() == GAME_THING_ENEMY )
+		if( Dum != &MainPlayer && Thing->GetType() == ACTOR_TYPE::ACTOR_ENEMY )
 			continue;
 		// Sprawdzamy odleg³oœæ ( ja jeszcze doda³em dwie jednostki, by sprawdzanie rozpocze³o siê wczeœniej )
 		if( mathDistSq( Thing->Pos, Dum->NextPos ) > POW( Thing->Radius + Dum->Radius + 2.0f ) )

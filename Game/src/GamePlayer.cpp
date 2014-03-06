@@ -14,7 +14,8 @@ KLASA CPlayer
 
 
 =========================*/
-CPlayer::CPlayer()
+CPlayer::CPlayer() :
+	CActor( ACTOR_TYPE::ACTOR_PLAYER )
 {
 	run = true;
 	Angle = 0.0f;
@@ -22,8 +23,6 @@ CPlayer::CPlayer()
 	RunStep = 5.0f;
 	Radius = 3.0f;
 	Pos.Set( 5.0f, 0.0f, -5.0f );
-	AIflags = AI_NO_AI;
-	Type = GAME_THING_PLAYER;
 
 	Armor = 0.0f;
 	MaxArmor = 150.0f;
@@ -78,82 +77,7 @@ void CPlayer::Render()
 
 void CPlayer::Update( const float fTD )
 {
-
-}
-
-void CPlayer::Update( bool* Keys, const float fTD )
-{
-	ApplyNextPos();
-
-	Actions = 0;
-	if( Keys['W'] || Keys[VK_UP] )
-	{
-		Actions |= GAME_MOVE_FORWARD;
-	}
-	if( Keys['S'] || Keys[VK_DOWN] )
-	{
-		Actions |= GAME_MOVE_BACK;
-	}
-	if( Keys[VK_LEFT] )
-	{
-		ModAngle( -1.5f );
-	}
-	if( Keys[VK_RIGHT] )
-	{
-		ModAngle( 1.5f );
-	}
-	if( Keys['A'] )
-	{
-		Actions |= GAME_MOVE_STRAFE_L;
-	}
-	if( Keys['D'] )
-	{
-		Actions |= GAME_MOVE_STRAFE_R;
-	}
-	if( Keys[VK_LBUTTON] || Keys[VK_CONTROL] )
-	{
-		Actions |= GAME_DO_FIREWEAPON;
-	}
-	if( Keys['0'] )
-	{
-		SwichWeap( 0 );
-		Keys['0'] = false;
-	}
-	if( Keys['1'] )
-	{
-		SwichWeap( 1 );
-		Keys['1'] = false;
-	}
-	if( Keys['3'] )
-	{
-		SwichWeap( 3 );
-		Keys['3'] = false;
-	}
-	if( Keys['4'] )
-	{
-		SwichWeap( 4 );
-		Keys['4'] = false;
-	}
-	if( Keys['5'] )
-	{
-		SwichWeap( 5 );
-		Keys['5'] = false;
-	}
-	if( Keys['7'] )
-	{
-		SwichWeap( 7 );
-		Keys['7'] = false;
-	}
-	if( Keys['9'] )
-	{
-		SwichWeap( 9 );
-		Keys['9'] = false;
-	}
-	if( run )
-		Speed = RunStep;
-	else Speed = WalkStep;
-
-	Move( Actions, fTD );
+	CActor::Update( fTD );
 
 	float an = Angle;
 	switch( GUI.GetHandPos() )
@@ -182,16 +106,42 @@ void CPlayer::Update( bool* Keys, const float fTD )
 		GUI.PInfo.CLIPS = Weapon[CurrWeap]->GetClip();
 		GUI.PInfo.WeapName = Weapon[CurrWeap]->Name;
 	}
-	TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ), true );
-
 }
 
-void	CPlayer::Move(unsigned uFlags, const float fTD)
+void CPlayer::ParseKeys( const bool* Keys )
 {
-	if( uFlags & GAME_DO_FIREWEAPON )
-		this->Weapon[this->CurrWeap]->Shot();
+	if( Keys['W'] || Keys[VK_UP] )
+		DoAction( GAME_ACTION::MOVE_FORWARD );
+	if( Keys['S'] || Keys[VK_DOWN] )
+		DoAction( GAME_ACTION::MOVE_BACK );
+	if( Keys[VK_LEFT] )
+		ModAngle( -1.5f );
+	if( Keys[VK_RIGHT] )
+		ModAngle( 1.5f );
+	if( Keys['A'] )
+		DoAction( GAME_ACTION::MOVE_STRAFE_LEFT );
+	if( Keys['D'] )
+		DoAction( GAME_ACTION::MOVE_STRAFE_RIGHT );
+	if( Keys[VK_LBUTTON] || Keys[VK_CONTROL] )
+		DoAction( GAME_ACTION::DO_ATTACK );
+	if( Keys['0'] )
+		SwichWeap( 0 );
+	if( Keys['1'] )
+		SwichWeap( 1 );
+	if( Keys['3'] )
+		SwichWeap( 3 );
+	if( Keys['4'] )
+		SwichWeap( 4 );
+	if( Keys['5'] )
+		SwichWeap( 5 );
+	if( Keys['7'] )
+		SwichWeap( 7 );
+	if( Keys['9'] )
+		SwichWeap( 9 );
 
-	CActor::Move(uFlags, fTD);
+	if( run )
+		Speed = RunStep;
+	else Speed = WalkStep;
 }
 
 unsigned int CPlayer::GetHand()
@@ -304,6 +254,14 @@ const bool	CPlayer::OnCollision( CObject* pObject )
 	}
 
 	return true;
+}
+
+void	CPlayer::SolveActions( const float fTD )
+{
+	if( Actions & (unsigned)GAME_ACTION::DO_ATTACK )
+		this->Weapon[this->CurrWeap]->Shot();
+
+	CActor::SolveActions( fTD );
 }
 
 CPlayer MainPlayer;
