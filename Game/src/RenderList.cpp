@@ -29,8 +29,11 @@ void	CRenderList::PreLoad()
 	ToLoad.clear();
 }
 
-void	CRenderList::Render()
+void	CRenderList::Sort()
 {
+	SolidList.clear();
+	TransparentList.clear();
+
 	for( unsigned i = 0; i < List.size(); i++ )
 	{
 		if( !List[i]->IsVisible() )
@@ -42,7 +45,24 @@ void	CRenderList::Render()
 			continue;
 		}
 
-		List[i]->Render();
+		if( List[i]->IsTransparent() )
+			TransparentList.push_back( List[i] );
+		else
+			SolidList.push_back( List[i] );
+	}
+}
+
+void	CRenderList::Render(const bool solid)
+{
+	if( solid )
+	{
+		for( unsigned i = 0; i < SolidList.size(); i++ )
+			SolidList[i]->Render();
+	}
+	else
+	{
+		for( unsigned i = 0; i < TransparentList.size(); i++ )
+			TransparentList[i]->Render();
 	}
 }
 

@@ -79,12 +79,20 @@ CLevel::~CLevel()
 void	CLevel::Update( const float fTD )
 {
 	RenderList.PreLoad();
+	RenderList.Sort();
 	CollisionMng.Solve();
 }
 
 void	CLevel::Render()
 {
-	RenderList.Render();
+	DrawLevel();
+	RenderList.Render( true );
+	
+	glDepthMask( 0 );
+
+	RenderList.Render( false );
+
+	glDepthMask( 1 );
 }
 
 // Zwraca, czy poziom jest za³adowany i gotowy
@@ -103,23 +111,6 @@ unsigned int CLevel::GetEnemyCount()
 unsigned int CLevel::GetSObjCount()
 {
 	return StatObjCount;
-}
-
-// Wyci¹ga z wartoœæ po znaku "="
-std::string CLevel::GetParamStr( const std::string &str )
-{
-	int i;
-
-	for( i = 0; i < str.length(); i++ )
-	{
-		if( str[i] == '=' )
-		{
-			i++;
-			break;
-		}
-	}
-
-	return str.substr( i, str.length() - i );
 }
 
 /*	METODA WCZYTUJ¥CA DANE

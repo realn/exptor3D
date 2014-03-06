@@ -162,9 +162,6 @@ private:
 	// Plik ostatnio za³adowanego poziomu
 	std::string file;
 
-	// Metoda pobiera jedna linie z pliku
-	std::string GetParamStr( const std::string &str );
-
 	// Metody wykorzystywane przy wizualizacji
 	void DrawWall( unsigned int wall );
 	void DrawFloor();

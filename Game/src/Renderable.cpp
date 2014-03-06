@@ -34,3 +34,8 @@ const bool	IRenderable::IsGfxLoaded() const
 {
 	return GfxLoaded;
 }
+
+const bool	IRenderable::IsTransparent() const
+{
+	return false;
+}

@@ -181,15 +181,13 @@ void RenderLevel()	// Wizualizacja gry
 
 	glRotatef( MainPlayer.GetAngle(), 0.0f, 1.0f, 0.0f );
 	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
-
-	pGLevel->DrawLevel();
 	//ThingManager.Render();
 
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
 	//WManager.Render();
+	pGLevel->Render();
 	BManager.Render();
 	//BonusMan.Render();
-	pGLevel->Render();
 
 	glDepthMask( 0 );
 	SEManager.Render();
