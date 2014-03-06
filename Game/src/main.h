@@ -24,9 +24,6 @@
 #include	"glm.h"
 #include	"inifile.h"
 
-HINSTANCE   hInstance;      //Uchwyt instancji
-CTexture font[1];
-
 GLModel*	MenuModel;
 
 bool    Keys[255];           //Tablica bool od klawiatury

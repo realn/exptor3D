@@ -3,6 +3,7 @@
 #include "3dMath.h"
 #include "Texture.h"
 #include "Level.h"
+#include "Renderable.h"
 
 class CEffect
 {
