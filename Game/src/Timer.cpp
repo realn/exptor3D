@@ -1,8 +1,6 @@
 #include "Timer.h"
 #include <Windows.h>
 
-CTimer* Timer = NULL;
-
 CTimer::CTimer() :
 	bWinClock(false),
 	uFreq(0),
@@ -32,11 +30,6 @@ CTimer::~CTimer()
 
 }
 
-bool CTimer::Init()
-{
-	return true;
-}
-
 void CTimer::Update()
 {
 	if( bWinClock )
@@ -56,8 +49,4 @@ void CTimer::Update()
 	}
 	if( fDT != 0.0f )
 		fFPS = 1.0f / fDT;
-}
-
-void CTimer::Free()
-{
 }

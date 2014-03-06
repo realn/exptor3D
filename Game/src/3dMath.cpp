@@ -167,7 +167,7 @@ Vector3f Vector3f::operator/=( const float &V1 )
 	prostopad³y do dwóch pozosta³ych
 	wektorów.
 */
-Vector3f Vector3f::Cross( const Vector3f &V1 )
+const Vector3f Vector3f::Cross( const Vector3f &V1 ) const
 {
 	Vector3f zwrot;
 	zwrot.X = ( Y * V1.Z ) - ( V1.Y * Z );
@@ -183,7 +183,7 @@ Vector3f Vector3f::Cross( const Vector3f &V1 )
 	zmiennoprzecinkow¹ i... Sami siê
 	zreszt¹ przekonacie :P
 */
-float Vector3f::Dot( const Vector3f &V1 )
+const float Vector3f::Dot( const Vector3f &V1 ) const
 {
 	return X * V1.X + Y * V1.Y + Z * V1.Z;
 }
@@ -194,12 +194,12 @@ float Vector3f::Dot( const Vector3f &V1 )
 	metoda jest po prostu rozwiniêciem
 	wzoru Pitagorasa ( dodano 3 wymiar :) )
 */
-float Vector3f::Leangth()
+const float Vector3f::Leangth() const
 {
 	return sqrtf( X * X + Y * Y + Z * Z );
 }
 
-float Vector3f::LeangthSq()
+const float Vector3f::LeangthSq() const
 {
 	return X * X + Y * Y + Z * Z;
 }
@@ -231,7 +231,7 @@ Vector3f Vector3f::Reverse()
 	return zwrot;
 }
 
-Vector3f CEntity::GetBlockPos()
+Vector3f CDynamic::GetBlockPos()
 {
 	Vector3f zwrot;
 	zwrot.X = float( (int)Pos.X / 10 );
@@ -306,7 +306,7 @@ float GetAngle( const Vector3f &V1, const Vector3f &V2 )
 	else return 0.0f;
 }
 
-float SwapAngle( const float &Angle )
+const float SwapAngle( const float &Angle )
 {
 	if( Angle < 0.0f )
 		return Angle + 360.0f;

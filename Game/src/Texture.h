@@ -21,7 +21,7 @@ Opis:	Zawiera definicje klas odpowiedzalnych za tekstury.
 #include <vector>
 
 // Klasa do zarz¹dzania jedn¹ tekstur¹
-class ioTexture
+class CTexture
 {
 private:
 	// tablica trzymaj¹ca adresy pamiêci tekstury ( jest 5 poziomów jakoœci )
@@ -33,9 +33,9 @@ private:
 
 public:
 	// Konstruktor i Destruktor
-	ioTexture();
-	ioTexture( std::string filename );
-	virtual ~ioTexture();
+	CTexture();
+	CTexture( std::string filename );
+	virtual ~CTexture();
 
 	// Funkcja ³aduj¹ca obraz z pliku TGA
 	virtual bool LoadTGA( std::string filename );
@@ -43,29 +43,25 @@ public:
 	// Funkcja aktywuj¹ca teksturê
 	virtual void Activate( unsigned int tex = 2 );
 
-	// Funkcja zwalniaj¹ca pamiêæ
-	virtual void Free();
-
 	// Metoda zwraca nazwe aktualnie za³adowanego pliku
 	virtual std::string GetFile();
 };
 
 /*	Klasa zarz¹daj¹ca wieloma teksturami
 */
-class ioTexManager
+class CTexManager
 {
 private:
-	std::vector<ioTexture*> List;
+	const std::string	DataDir;
+	std::vector<CTexture*> List;
 
 public:
-	ioTexManager();
-	~ioTexManager();
+	CTexManager( const std::string& strDataDir );
+	~CTexManager();
 
-	ioTexture* Get( std::string filename );
-	void AddTexture( ioTexture* Tex );
+	CTexture* Get( std::string filename );
+	void AddTexture( CTexture* Tex );
 	void DeleteTexture( unsigned int index );
-	ioTexture* GetTexture( unsigned int index );
+	CTexture* GetTexture( unsigned int index );
 	void Clear();
 };
-
-extern ioTexManager TManager;

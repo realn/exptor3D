@@ -10,8 +10,13 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _LEVEL_H_
-#define _LEVEL_H_
+#pragma once
+
+#include <string>	// Nag³ówek od klasy ³añcucha znaków
+#include <fstream>	// Nag³ówek od operacji we/wy.
+
+#include "StrEx.h"
+#include "ModelManager.h"
 
 #include "defines.h"
 #include "Log.h"
@@ -19,9 +24,11 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Render.h"	// patrz-> nag³ówek Render.h i plik Render.cpp
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
+
 #include "Game.h"
-#include <string>	// Nag³ówek od klasy ³añcucha znaków
-#include <stdio.h>	// Nag³ówek od operacji we/wy.
+#include "GameEnemy.h"
+#include "Item.h"
+#include "RenderList.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -39,6 +46,8 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #define WLFLAG_SELF_DEAD		8
 #define WLFLAG_THING_DEAD		16
 
+class CLvlBlock;
+
 class gameWLFlags
 {
 private:
@@ -48,11 +57,13 @@ private:
 	bool IsSelfDead();
 	bool IsThingDead();
 public:
+	gameWLFlags();
+
 	unsigned int	flags;
 	unsigned int	BlockID;
-	gameBlockInfo*	Block;
+	CLvlBlock*		Block;
 	std::string		EnemyID;
-	CEnemy*		Enemy;
+	CEnemy*			Enemy;
 	unsigned int	WeapID;
 	std::string		Text;
 	float			Color[3];
@@ -62,13 +73,13 @@ public:
 	bool CheckOneFlag();
 };
 
-/*	KLASA gameBlockInfo
+/*	KLASA CLvlBlock
 	Przechowuje dane potrzebne
 	do stworzenia, inicjalizacji
 	i dzia³ani poszczególnych
 	"bloków" na poziomie.
 */
-class gameBlockInfo
+class CLvlBlock
 {
 public:
 	// Wektor trzymaj¹cy rogi sektora
@@ -84,21 +95,33 @@ public:
 
 	// Dane dla broni i amunicji ( -1 jak nie ma ¿adnej w danym bloku )
 	std::string StatObj;
+
+public:
+	CLvlBlock();
+
+	void	LoadWalls( const std::string& str );
 };
 
-/*	KLASA gameLevel
+/*	KLASA CLevel
 	Obiekty tej klasy ³aduj¹
 	pliki txt z poziomami, i
 	tworz¹ ich wizualn¹ wersjê.
 */
-class gameLevel
+class CLevel
 {
 private:
-	ioTexture *Tex[3];
+	GLModelManager&	ModelManager;
+	CTexManager&	TexManager;
+	CRenderList		RenderList;
+	CTexture*		Tex[3];
 	
+	float blockWidth;
+	float blockHeight;
+	float blockDepth;
+
 	// Informacje o liczbie wierszy i kolumn w poziomie gry
-	unsigned int rows;
-	unsigned int cols;
+	unsigned int Rows;
+	unsigned int Cols;
 
 	unsigned int PlayerStartBlock;
 	unsigned int PlayerStartAngle;
@@ -113,7 +136,7 @@ private:
 	unsigned int Version;
 
 	// Tablica trzymaj¹ca dane wyci¹gniête z pliku
-	gameBlockInfo* block;
+	std::vector<CLvlBlock> block;
 
 	int AllWin;
 	int AllLose;
@@ -123,6 +146,7 @@ private:
 	unsigned int Top;
 	unsigned int Wall;
 	unsigned int Reflect;
+
 	// Czy poziom ju¿ jest za³adowany
 	bool loaded;
 
@@ -135,7 +159,6 @@ private:
 	std::string file;
 
 	// Metoda pobiera jedna linie z pliku
-	std::string GetString( FILE* fp );
 	std::string GetParamStr( const std::string &str );
 
 	// Metody wykorzystywane przy wizualizacji
@@ -145,19 +168,26 @@ private:
 
 	// Metody inicjuj¹ce
 	void BuildVisual();
-	void BuildPhisic();
+	void BuildPhysic();
+
 public:
 	// Konstruktor i destruktor
-	gameLevel();
-	~gameLevel();
+	CLevel( CTexManager& texManager, GLModelManager& modelManager );
+	~CLevel();
+
+	void	Update( const float fTD );
+	void	Render();
 
 	std::string GetLevelName();
 
 	unsigned int GetBlockCount();
-	gameBlockInfo* GetBlock( unsigned int i, unsigned int j );
-	gameBlockInfo* GetBlock( Vector3f Pos );
-	gameBlockInfo* GetBlock( unsigned int i );
-	Vector3f GetBlockPos( unsigned int i );
+	CLvlBlock* GetBlock( unsigned int i, unsigned int j ) const;
+	CLvlBlock* GetBlock( Vector3f Pos ) const;
+	CLvlBlock* GetBlock( unsigned int i ) const;
+
+	const Vector3f GetBlockPos( const unsigned i ) const;
+	const Vector3f GetBlockPos( const int x, const int y ) const;
+
 	bool GetLoaded();
 	unsigned int GetEnemyCount();
 	unsigned int GetSObjCount();
@@ -180,14 +210,19 @@ public:
 
 	// Metoda czyszcz¹ca pamiêæ
 	void Free();
+
+private:
+	const bool	ParseCoords(const std::string& str, int& x, int& y);
+	const bool	ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& type, std::vector<std::string>& params);
+	const bool	LoadHeader( std::fstream& stream );
+	const bool	LoadTextures( std::fstream& stream );
+	const bool	LoadWalls( std::fstream& stream );
+	const bool	LoadItemList( std::fstream& stream );
 };
 
-extern bool TestCollBlock( CEntity* Dum, gameBlockInfo* Block, bool testthing = false );
-extern Vector3f RayCast( Vector3f Pos, Vector3f Veloc, float Step, gameLevel* Level );
-extern bool TestCollDum( CEntity* Dum, CEntity* Dum2 );
+extern bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing = false );
+extern const Vector3f RayCast( const Vector3f& pos, const Vector3f& vector, const float step, const CLevel& level );
+extern bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 );
 extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
-extern gameLevel GLevel;
-extern gameLevel* pGLevel;
-
-#endif
+extern CLevel* pGLevel;

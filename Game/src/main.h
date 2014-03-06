@@ -25,7 +25,7 @@
 #include	"inifile.h"
 
 HINSTANCE   hInstance;      //Uchwyt instancji
-ioTexture font[1];
+CTexture font[1];
 
 GLModel*	MenuModel;
 

@@ -23,7 +23,7 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 class guiTextureText
 {
 private:
-	ioTexture *Tex;
+	CTexture *Tex;
 
 	unsigned int base;
 	unsigned int list;
@@ -38,7 +38,7 @@ public:
 	guiTextureText();
 	~guiTextureText();
 
-	void Init( ioTexture *font );
+	void Init( CTexture *font );
 	void Free();
 	void SetSize( unsigned int wid, unsigned int hei );
 	void SetColor( float R, float G, float B, float Alpha = 1.0f );
@@ -50,7 +50,7 @@ public:
 class guiIntro
 {
 private:
-	ioTexture		*Tex;
+	CTexture		*Tex;
 	guiTextureText	TText;
 	unsigned int Time;
 	unsigned int TimePerChar;
@@ -64,7 +64,7 @@ public:
 	guiIntro();
 	~guiIntro();
 
-	bool Init( ioTexture *Font );
+	bool Init( CTexture *Font );
 
 	void AddStr( std::string str, int tpc );
 
@@ -146,7 +146,7 @@ public:
 	void Free();
 
 	void Update( float cX, float cY, bool click );
-	void Render( guiTextureText* TText );
+	void Render( guiTextureText* TText, CTexture* cursor );
 	void AddMenuItem( guiMenuItem* item );
 	void DeleteMenuItem( unsigned int index );
 };
@@ -156,6 +156,7 @@ class guiMainMenu
 {
 private:
 	guiTextureText* TText;
+	CTexture* Cursor;
 	std::vector<guiMenu*> List;
 
 	bool Enabled;
@@ -180,11 +181,11 @@ public:
 	guiMainMenu();
 	~guiMainMenu();
 
-	void Init( guiTextureText* text );
+	void Init( guiTextureText* text, CTexture* cursor );
 	void Free();
 
 	void Click( unsigned int X, unsigned int Y, bool click );
-	void Cursor( unsigned int X, unsigned int Y );
+	void SetCursor( unsigned int X, unsigned int Y );
 
 	void GoToMenu( unsigned int index );
 
@@ -201,9 +202,10 @@ public:
 class guiMain
 {
 private:
-	ioTexture font[1];
-	ioTexture CH[1];
+	CTexture *font;
+	CTexture *CH;
 	guiTextureText TText;
+	CTexture *Cursor;
 
 	unsigned short MaxTexDLevel;
 	unsigned short TexDetailLevel;
@@ -272,13 +274,13 @@ private:
 	void	EngineWLScr( const float fTD );
 
 public:
-	ioTexture *Cursor;
 	guiMainMenu Menu;
 	guiPlayerInfo PInfo;
 	std::string LevName;
 
 	guiMain();
-	void InitGUI();
+
+	void InitGUI( CTexManager* texManager );
 
 	unsigned short	GetTexDLevel();
 	void	SetTexDLevel( unsigned short level );

@@ -18,12 +18,8 @@ public:
 	CTimer();
 	~CTimer();
 	
-	bool Init();
 	void Update();
-	void Free();
 
 	float GetFPS(){	return fFPS;	}
 	float GetDT(){	return fDT;		}
 };
-
-extern CTimer* Timer;

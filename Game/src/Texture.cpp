@@ -12,29 +12,29 @@ Opis:	Patrz -> Texture.h
 #include "Log.h"
 #include <fstream>
 
-ioTexture::ioTexture() :
+CTexture::CTexture() :
 	loaded(false),
 	file("-"),
 	texture(0)
 {
-	loaded = false;
-	file = "-";
+	glGenTextures( 1, &texture );
 }
 
-ioTexture::ioTexture( std::string filename ) :
+CTexture::CTexture( std::string filename ) :
 	loaded(false),
 	file("-"),
 	texture(0)
 {
+	glGenTextures( 1, &texture );
 	LoadTGA( filename );
 }
 
-ioTexture::~ioTexture()
+CTexture::~CTexture()
 {
-	Free();
+	glDeleteTextures( 1, &texture );
 }
 
-bool	ioTexture::LoadTGA( std::string filename )
+bool	CTexture::LoadTGA( std::string filename )
 {
 	/*	¯eby odczytaæ plik TGA
 		potrzebne s¹ odpowiednie
@@ -97,7 +97,9 @@ bool	ioTexture::LoadTGA( std::string filename )
 	
 	if( loaded )
 	{
-		Free();
+		glDeleteTextures( 1, &texture );
+		loaded = false;
+		glGenTextures( 1, &texture );
 		Log.Report( "TGATEX( " + file + " ): Prze³adowanie tekstury na " + filename );
 	}
 	file = filename;
@@ -140,7 +142,7 @@ bool	ioTexture::LoadTGA( std::string filename )
 	{
 		// Je¿eli coœ siê nie zgadza, to przerywamy
 		if( imageData != NULL)
-			free( imageData );
+			delete[] imageData;
 
 		Log.Error( "TGATEX( " + file + " ): B³¹d pamiêci!" );
 		return false;	
@@ -180,12 +182,6 @@ bool	ioTexture::LoadTGA( std::string filename )
 		który daje lepszy wygl¹d gdy tekstura jest pod du¿ym k¹tem.
 		Po wiêcej informacji zapraszam do dokumentacji OpenGL (RTFM!) :) 
 	*/
-
-	// Stwórz piêæ niezdefinowanych tekstur
-	glGenTextures( 1, &texture );
-
-	// I same tekstury
-
 	//===================Najwy¿sza jakoœæ MipMapingu====================
 	glBindTexture( GL_TEXTURE_2D, texture );			// Bind Our Texture
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR ); 
@@ -204,7 +200,7 @@ bool	ioTexture::LoadTGA( std::string filename )
 	return true;
 }
 
-void ioTexture::Activate( unsigned int tex )
+void CTexture::Activate( unsigned int tex )
 {
 	if( !loaded )
 		return;
@@ -212,56 +208,48 @@ void ioTexture::Activate( unsigned int tex )
 	glBindTexture( GL_TEXTURE_2D, texture );
 }
 
-std::string ioTexture::GetFile()
+std::string CTexture::GetFile()
 {
 	return file;
 }
 
-void ioTexture::Free()
-{
-	if( !loaded )
-		return;
-
-	glDeleteTextures( 1, &texture );
-
-	loaded = false;
-}
 
 
 
-
-ioTexManager::ioTexManager()
+CTexManager::CTexManager( const std::string& strDataDir ) :
+	DataDir( strDataDir )
 {
 }
 
-ioTexManager::~ioTexManager()
+CTexManager::~CTexManager()
 {
 	Clear();
 }
 
-ioTexture* ioTexManager::Get( std::string filename )
+CTexture* CTexManager::Get( std::string filename )
 {
-	if( filename == "" )
+	if( filename.empty() )
 	{
 		Log.Error( "TEXMANAGER(): Pusty ci¹g znaków!" );
-		return 0;
+		return nullptr;
 	}
 
-	unsigned int i;
-	ioTexture* NewTex;
-	for( i = 0; i < List.size(); i++ )
+	auto path = DataDir + filename;
+
+	CTexture* NewTex;
+	for( unsigned i = 0; i < List.size(); i++ )
 	{
 		NewTex = GetTexture( i );
-		if( NewTex->GetFile() == filename )
+		if( NewTex->GetFile() == path )
 			return NewTex;
 	}
 
-	NewTex = new ioTexture;
-	if( !NewTex->LoadTGA( filename ) )
+	NewTex = new CTexture;
+	if( !NewTex->LoadTGA( path ) )
 	{
 		Log.Error( "TEXMANAGER(): Nieudane za³adowanie tekstury: " + filename );
 		delete NewTex;
-		return 0;
+		return nullptr;
 	}
 
 	AddTexture( NewTex );
@@ -270,12 +258,12 @@ ioTexture* ioTexManager::Get( std::string filename )
 	return NewTex;
 }
 
-void ioTexManager::AddTexture( ioTexture *Tex )
+void CTexManager::AddTexture( CTexture *Tex )
 {
 	List.push_back( Tex );
 }
 
-void ioTexManager::DeleteTexture( unsigned int index )
+void CTexManager::DeleteTexture( unsigned int index )
 {
 	if( index >= List.size() )
 		return;
@@ -284,7 +272,7 @@ void ioTexManager::DeleteTexture( unsigned int index )
 	List.erase( List.begin() + index );
 }
 
-ioTexture* ioTexManager::GetTexture( unsigned int index )
+CTexture* CTexManager::GetTexture( unsigned int index )
 {
 	if( index >= List.size() )
 		return 0;
@@ -292,13 +280,11 @@ ioTexture* ioTexManager::GetTexture( unsigned int index )
 	return List[index];
 }
 
-void ioTexManager::Clear()
+void CTexManager::Clear()
 {
 	for(unsigned i = 0; i < List.size(); i++)
 	{
-		delete List[i];
+		delete GetTexture( i );
 	}
 	List.clear();
 }
-
-ioTexManager TManager;

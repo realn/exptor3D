@@ -1,0 +1,27 @@
+GLM	100
+HEADER
+
+TEXCOUNT	1
+LISTCOUNT	1
+ANIMATION	0
+END HEADER
+TEXLIST
+metal8c.tga
+END TEXLIST
+
+MODEL	0
+glPushMatrix()
+	glBindTexture( 0 )
+	glTranslate( 0, 0, -0.5 )
+	gluQuadricOrientation( GLU_INSIDE )
+	glColor3( 1, 0, 0 )
+	gluDisk( 0, 0.2, 8, 1 )
+	glColor3( 1, 1, 1 )
+	gluQuadricOrientation( GLU_OUTSIDE )
+	gluCylinder( 0.2, 0.2, 1, 8, 1 )
+	glTranslate( 0, 0, 1 )
+	gluCylinder( 0.2, 0, 0.5, 8, 1 )
+glPopMatrix()
+END MODEL
+
+END GLM

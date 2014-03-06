@@ -12,7 +12,7 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 #ifndef _GLM_H_
 #define _GLM_H_
 
-#include "Texture.h"	// Naglówek z klasa ioTexture
+#include "Texture.h"	// Naglówek z klasa CTexture
 #include <fstream>
 
 // Numer wersji loader'a
@@ -24,7 +24,7 @@ class GLModel
 {
 private:
 	// Lista tekstur
-	std::vector<ioTexture*>	Textures;
+	std::vector<CTexture*>	Textures;
 	// Lista obiektów
 	unsigned int List;
 	// Liczba obiektów
@@ -55,8 +55,8 @@ public:
 	GLModel();
 	~GLModel();
 
-	bool LoadModel( std::string filename );
-	virtual void Free();
+	bool LoadModel( CTexManager& texManager, std::string filename );
+	void Free();
 	std::string GetFile();
 	unsigned int GetObjCount();
 
@@ -66,7 +66,6 @@ public:
 	void PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip = false );
 
 private:
-	std::string GetString( std::fstream& fileStream );
 	std::string NoSpace( const std::string &str );
 	void ParseGLCommand( const std::string &fullstr );
 	bool GetParams( const std::string &str, int from, std::vector<std::string>& param, const std::string &Com );
@@ -76,23 +75,5 @@ private:
 	bool ReadAnimHeader( std::fstream& fileStream );
 };
 
-
-class GLModelManager
-{
-private:
-	std::vector<GLModel*> List;
-
-public:
-	GLModelManager();
-	~GLModelManager();
-
-	GLModel* Get( std::string filename );
-	void AddModel( GLModel* Model );
-	GLModel* GetModel( unsigned int index );
-	void DeleteModel( unsigned int index );
-	void Clear();
-};
-
-extern GLModelManager GLMManager;
 
 #endif

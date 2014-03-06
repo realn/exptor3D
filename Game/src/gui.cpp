@@ -11,6 +11,7 @@ Opis:	Patrz -> gio.h
 #include "gui.h"
 
 guiMain GUI;
+extern bool CanDoWLScr;
 
 const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",
 								"RefLevel", "WireFrame", "Note", "SaveRndInfo",
@@ -120,7 +121,7 @@ void guiMain::ParseKeys( bool *Keys )
 	{
 		POINT mpos;
 		GetCursorPos( &mpos );
-		Menu.Cursor( mpos.x, mpos.y );
+		Menu.SetCursor( mpos.x, mpos.y );
 		if( Keys[VK_LBUTTON] )
 		{
 			Menu.Click( mpos.x, mpos.y, true );
@@ -504,8 +505,6 @@ unsigned int guiMain::GetEPFTimes()
 */
 void guiMain::DoGUIEngine(const float fTD)
 {
-	Timer->Update();
-
 	if( !ConsoleOn && !Menu.IsEnabled() )
 	{
 		DoMainEngine = true;
@@ -596,13 +595,13 @@ void guiMain::DoGUIDraw()
 		}
 	}
 
-	if( this->IsShowingWLScr() )
-		this->DrawWLScr();
-	else
-	{
+	//if( this->IsShowingWLScr() )
+	//	this->DrawWLScr();
+	//else
+	//{
 		this->ConsoleDraw();
 		this->Menu.Render();
-	}
+	//}
 
 	if( WireFrame )
 		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -669,16 +668,15 @@ unsigned int guiMain::GetMiliSecPas()
 }
 
 // Metoda inicjalizuje GUI
-void guiMain::InitGUI()
+void guiMain::InitGUI( CTexManager* texManager )
 {
-	Timer = new CTimer();
-	Timer->Init();
 	Log.Log( "Inicjalizacja koñcowa GUI" );
-	font[0].LoadTGA( "Data/Font.tga" );
-	Cursor = TManager.Get( "Data/Kursor.tga" );
-	TText.Init( &font[0] );
-	CH[0].LoadTGA( "Data/cel.tga" );
-	Menu.Init( &TText );
+	font = texManager->Get( "Font.tga" );
+	Cursor = texManager->Get( "Kursor.tga" );
+	CH = texManager->Get( "cel.tga" );
+
+	TText.Init( font );
+	Menu.Init( &TText, Cursor );
 }
 
 // Silnik widomoœci ekranowych wysy³anych przez silnik gry
@@ -1092,7 +1090,7 @@ void guiMain::SendConMsg( std::string msg, bool parse, bool hist )
 	if( !MainEngineEnabled && !Menu.IsEnabled() )
 	{
 		GLRender.SetOrtho();
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		//this->ConsoleEng();
 		this->ConsoleDraw();
 		GLRender.SwapBuffers();
@@ -1400,10 +1398,10 @@ void guiMenu::Update( float cX, float cY, bool click )
 	}
 }
 
-void guiMenu::Render( guiTextureText *TText )
+void guiMenu::Render( guiTextureText *TText, CTexture* cursor )
 {
 	TText->StartPrint();
-	GUI.Cursor->Activate();
+	cursor->Activate();
 	glDisable( GL_CULL_FACE );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -1473,9 +1471,10 @@ guiMainMenu::~guiMainMenu()
 	Free();
 }
 
-void guiMainMenu::Init( guiTextureText *text )
+void guiMainMenu::Init( guiTextureText *text, CTexture* cursor )
 {
 	TText = text;
+	Cursor = cursor;
 	curX = 0.0f;
 	curY = 0.0f;
 }
@@ -1525,7 +1524,7 @@ void guiMainMenu::Render()
 	guiMenu* Menu;
 	Menu = List[CurMenu];
 
-	Menu->Render( TText );
+	Menu->Render( TText, Cursor );
 }
 
 void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
@@ -1539,7 +1538,7 @@ void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
 	Clicked = click;
 }
 
-void guiMainMenu::Cursor( unsigned int X, unsigned int Y )
+void guiMainMenu::SetCursor( unsigned int X, unsigned int Y )
 {
 	float ax = 800.0f / (float)GLRender.GetWidth();
 	float ay = 600.0f / (float)GLRender.GetHeight();
@@ -1786,7 +1785,7 @@ guiTextureText::~guiTextureText()
 	Free();
 }
 
-void guiTextureText::Init( ioTexture* font )
+void guiTextureText::Init( CTexture* font )
 {
 	if( !font )
 		return;
@@ -1909,7 +1908,7 @@ guiIntro::~guiIntro()
 
 }
 
-bool guiIntro::Init( ioTexture* Font )
+bool guiIntro::Init( CTexture* Font )
 {
 	Tex = Font;
 	TText.Init( Tex );

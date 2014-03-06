@@ -1,6 +1,6 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
-Plik:	glm.cpp
+Plik:	main.cpp
 Autor:	Real_Noname (real_noname@wp.pl)
 (C):	CODE RULERS (Real_Noname)
 WWW:	www.coderulers.prv.pl
@@ -12,13 +12,19 @@ Opis:	Znajdujπ tu siÍ g≥Ûwne funkcje ktÛre program inicjalizujπ
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "main.h"
+
+#include "ModelManager.h"
+#include "GamePlayer.h"
+#include "WeaponBulletManager.h"
+#include "ItemManager.h"
+
 bool CanDoWLScr = true;
 
-bool Init()    //Inicjalizacja OpenGL
+bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjalizacja OpenGL
 {
 	glDepthFunc( GL_LEQUAL );				//Metoda testowania G≥Íbokoúci (ta jest lepsza)
 	glEnable( GL_TEXTURE_2D );
-	GUI.InitGUI();
+	GUI.InitGUI( &texManager );
 	GUI.SetLoadLevelFunc( LoadLevel );
 	GUI.SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
 	GUI.SendConMsg( "STEROWNIK: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
@@ -30,6 +36,7 @@ bool Init()    //Inicjalizacja OpenGL
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );	//Ustawienie koloru czyszczenia bufora kolorÛw
 	glClearDepth( 1.0f );					//Ustwienie glÍbokoúci czyszczenia bufora g≥Íbokoúci
 	glEnable( GL_DEPTH_TEST );				//W≥πczenie test g≥Íbokoúci
+
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );//Standardowa funkcja przezroczystoúci 
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );//Najlepsze obliczenia perspektywy
 	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
@@ -52,7 +59,8 @@ bool Init()    //Inicjalizacja OpenGL
 
 	glEnable( GL_CLIP_PLANE0 );
 	glEnable( GL_COLOR_MATERIAL );
-	glEnable( GL_CULL_FACE );
+	glDisable( GL_CULL_FACE );
+	glDisable( GL_LIGHTING );
 
 #ifdef LIGHT_TEST
 	float lDiffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -71,8 +79,7 @@ bool Init()    //Inicjalizacja OpenGL
 
 	GUI.SendConMsg( "Inicjalizacja silnika...", false );
 	SMBlur.Init();
-	Part.LoadTGA( "Data/Part.tga" );
-	MenuModel = GLMManager.Get( "Data/menumodel.glm" );
+	MenuModel = modelManager.Get( "menumodel.glm" );
 	MainPlayer.SetArmor( 100.0f );
 	GUI.Menu.LoadMenu( "Data/menu.mnu" );
 	SEManager.MaxSpec = 100;
@@ -92,7 +99,7 @@ void Update(const float fTD)	// Logika gry
 	GUI.ParseKeys( Keys );
 	GUI.DoGUIEngine(fTD);
 
-	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
+	if( GUI.Menu.IsEnabled() && !pGLevel->GetLoaded() )
 	{
 		menuModelRot += fTD;
 	}
@@ -105,7 +112,7 @@ void Update(const float fTD)	// Logika gry
 
 	Mouse();
 
-	GLevel.CheckWLFlags();
+	pGLevel->CheckWLFlags();
 	MainPlayer.Update( Keys, fTD );
 	ThingManager.Update( fTD );
 
@@ -128,7 +135,8 @@ void Update(const float fTD)	// Logika gry
 
 void RenderLevel()	// Wizualizacja gry
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforÛw
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforÛw
+	/*
 	if( GUI.GetMotionBlur() )
 	{
 		GLRender.Resize( 512, 512 );
@@ -138,15 +146,19 @@ void RenderLevel()	// Wizualizacja gry
 		glRotatef( MainPlayer.GetAng(), 0.0f, 1.0f, 0.0f );
 		glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
-		GLevel.DrawLevel();
+		pGLevel->DrawLevel();
+
 		ThingManager.Render();
+		
 		glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
 		WManager.Render();
 		BManager.Render();
 		BonusMan.Render();
+		pGLevel->Render();
+
 		glDepthMask( 0 );
 		SEManager.Render();
-		GLevel.DrawReflect();
+		pGLevel->DrawReflect();
 		glDepthMask( 1 );
 
 		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
@@ -158,6 +170,7 @@ void RenderLevel()	// Wizualizacja gry
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforÛw
 		GLRender.Resize( GLRender.GetWidth(), GLRender.GetHeight() );
 	}
+	*/
 
 	GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 	glLoadIdentity();	//Reset uk≥adu wspÛ≥rzÍdnych
@@ -165,24 +178,27 @@ void RenderLevel()	// Wizualizacja gry
 	glRotatef( MainPlayer.GetAng(), 0.0f, 1.0f, 0.0f );
 	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
 
-	GLevel.DrawLevel();
-	ThingManager.Render();
+	pGLevel->DrawLevel();
+	//ThingManager.Render();
+
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-	WManager.Render();
-	BManager.Render();
-	BonusMan.Render();
-	glDepthMask( 0 );
-	SEManager.Render();
-	GLevel.DrawReflect();
-	glDepthMask( 1 );
+	//WManager.Render();
+	//BManager.Render();
+	//BonusMan.Render();
+	//pGLevel->Render();
 
-	GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
-	glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforÛw
-	glLoadIdentity();
-	MainPlayer.Render();
+	//glDepthMask( 0 );
+	//SEManager.Render();
+	//pGLevel->DrawReflect();
+	//glDepthMask( 1 );
 
-	if( GUI.GetMotionBlur() )
-		SMBlur.Render();
+	//GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
+	//glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforÛw
+	//glLoadIdentity();
+	//MainPlayer.Render();
+
+	//if( GUI.GetMotionBlur() )
+	//	SMBlur.Render();
 }
 
 bool Render()		//G≥Ûwna funkcja renderujπca
@@ -192,15 +208,15 @@ bool Render()		//G≥Ûwna funkcja renderujπca
 	if( GUI.CanDoMainDraw() )
 		RenderLevel();
 
-	if( GUI.Menu.IsEnabled() && !GLevel.GetLoaded() )
-	{
-		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
-		glLoadIdentity();	//Reset uk≥adu wspÛ≥rzÍdnych
+	//if( GUI.Menu.IsEnabled() && !pGLevel->GetLoaded() )
+	//{
+	//	GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
+	//	glLoadIdentity();	//Reset uk≥adu wspÛ≥rzÍdnych
 
-		glTranslatef( 0.0f, 0.0f, -10.0f );
-		glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
-		MenuModel->CallObject( 0 );
-	}
+	//	glTranslatef( 0.0f, 0.0f, -10.0f );
+	//	glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
+	//	MenuModel->CallObject( 0 );
+	//}
 	GUI.DoGUIDraw();
 
 	return true;//zwracamy, øe wszystko OK
@@ -369,8 +385,17 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 		return 0;									// Wyjdü jeøeli nie zosta≥o stworzone
 	}
 
+	CTexManager texManager( "Data/Textures/" );
+	GLModelManager modelManager( "Data/Models/", texManager );
+	CLevel level( texManager, modelManager );
+
+	pGLevel = &level;
+
+	SEManager.Init( texManager );
+	MainPlayer.Init( modelManager );
+
 	Log.Log( "Inicjalizacja OpenGL" );
-	if( !Init() )
+	if( !Init( texManager, modelManager ) )
 	{
 		Log.Error( "B≥πd inicjalizacji" );
 		return 0;
@@ -383,11 +408,12 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	{
 		frameTime += timer.GetDT();
 
-		if ( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )	// Czy otrzymano komunikat?
+		for( unsigned i = 0; i < 20 && PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ); i++ )	// Czy otrzymano komunikat?
 		{
 			if ( msg.message == WM_QUIT )				// Czy to komunikat wyjúcia?
 			{
 				done = true;							// Jeøeli tak to wychodzimy z pÍtli
+				break;
 			}
 			else									// Jeøeli nie to zajmij siÍ komunikatami
 			{
@@ -428,27 +454,25 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	// Deinicjalizacja
 	Log.Log( "Koniec pracy Aplikacji" );
 	GLRender.GLDestroyWindow();// Zniszcz okno
-	if( Timer ) delete Timer;
 	return (msg.wParam);							// Wyjdü z programu
 }
 
 // Oddzielna funkcja ≥adujπca poziom - nie da≥o siÍ inaczej zrobiÊ :/
 void LoadLevel( std::string filename )
 {
-	FILE* fp = 0;
-	fopen_s(&fp, filename.c_str(), "r" );
-	if( !fp )
+	if( pGLevel->LoadLevel( filename ) )
+	{
+		pGLevel->InitLevel();
+		
+		GUI.LevName = pGLevel->GetLevelName();
+		WManager.LoadFromLevel();
+		GUI.EnableMainEngine();
+		GUI.EnableGGUI();
+
+		CanDoWLScr = true;
+	}
+	else
 	{
 		GUI.SendConMsg( "Nie mozna znalesc pliku", false );
-		return;
 	}
-	fclose( fp );
-
-	GLevel.LoadLevel( filename );
-	GLevel.InitLevel();
-	GUI.LevName = GLevel.GetLevelName();
-	WManager.LoadFromLevel();
-	GUI.EnableMainEngine();
-	GUI.EnableGGUI();
-	CanDoWLScr = true;
 }

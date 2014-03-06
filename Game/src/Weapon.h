@@ -1,189 +1,24 @@
 #pragma once
 
-#include	"defines.h"
-#include	"gui.h"
-#include	"Render.h"
-#include	"Texture.h"
-#include	"glm.h"
-#include	"3dMath.h"
-#include	"Special.h"
-#include	"Game.h"
+#include "3dMath.h"
+#include "glm.h"
+#include "ModelManager.h"
+#include "GameEntity.h"
+#include "GamePlayer.h"
 
-/*	KLASY POCISKÓW	*/
-class weBullet : 
-	public CEntity
+enum class WEAPON_TYPE
 {
-protected:
-	unsigned int Type;
-	Vector3f Veloc;
-	bool DoDelete;
-public:
-	float Damage;
-	CActor* Owner;
-
-	weBullet();
-
-	virtual void Init( Vector3f pos, Vector3f veloc, float speed );
-
-	virtual void Update( const float fTD );
-	virtual float DoTest( CEntity* Dum, float Armor = 0.0f );
-	virtual void Render();
-
-	virtual void OnDelete();
-
-	bool CanDelete;
-	bool Visible;
+	UNKNOWN		= -1,
+	SAW			= 0,
+	PISTOL		= 1,
+	MINIPHAZER	= 3,
+	MINIGUN		= 4,
+	ROCKETLUN	= 5,
+	PICKABOO	= 6,
+	PHAZER		= 7,
+	MINE		= 8,
+	ATOMBOM		= 9,
 };
-
-class weBullSaw : public weBullet
-{
-private:
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
-};
-// Promieñ
-class weBullRay : public weBullet
-{
-private:
-	Vector3f Temp;
-	float Time;
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-	
-	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void Render();
-};
-
-// Rakieta
-class weBullRocket : public weBullet
-{
-private:
-	GLModel* Model;
-	float Angle;
-	float Sec;
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-
-	void Update( const float fTD ) override;
-	void Render();
-	void OnDelete();
-};
-
-// Wybuch
-class weBullExplode : public weBullet
-{
-private:
-	float thisPower;
-	float Step;
-public:
-	float Power;
-
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-
-	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void Render();
-};
-
-// Bomba
-class weBullBomb : public weBullet
-{
-private:
-	float BoomTime;
-	float ThisTime;
-	GLModel* Model;
-public:
-	void Init( Vector3f pos, Vector3f veloc, float speed );
-	void Update( const float fTD ) override;
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void Render();
-};
-// Menager pocisków
-class weBulletManager
-{
-private:
-	std::vector<weBullet*> List;
-public:
-	void AddBullet( weBullet* bullet );
-	void DeleteBullet( unsigned int index );
-	weBullet* GetBullet( unsigned int index );
-
-	float DoTest( CEntity* Dum, float Armor = 0.0f );
-	void Update( const float fTD );
-	void Render();
-
-	void Clear();
-};
-
-
-extern weBulletManager BManager;
-
-class weBonus : public CEntity
-{
-protected:
-	float rot;
-	unsigned int type;
-	GLModel* Model;
-public:
-	weBonus();
-	bool CanDelete;
-	virtual void Render();
-	virtual void Update( const float fTD );
-	unsigned int GetType();
-};
-
-class weAmmo : public weBonus
-{
-private:
-	unsigned int WeapType;
-	unsigned int AmmoCount;
-public:
-	void Init( unsigned int weaptype, unsigned int ammocount, std::string modelfile );
-	unsigned int GetWeapType();
-	unsigned int GetAmmoCount();
-};
-
-class weHealth : public weBonus
-{
-private:
-	float HealthAdd;
-public:
-	void Init( float health, std::string modelfile );
-	float GetHealth();
-};
-
-class weArmor : public weBonus
-{
-private:
-	float ArmorAdd;
-public:
-	void Init( float armor, std::string modelfile );
-	float GetArmor();
-};
-
-class weBonusManager
-{
-private:
-	std::vector<weBonus*> List;
-public:
-	weBonusManager();
-	~weBonusManager();
-
-	void AddBonus( weBonus* Bonus );
-	weBonus* GetBonus( unsigned int index );
-	void DeleteBonus( unsigned int index );
-
-	void Update( CPlayer* Player, const float fTD  );
-	void Render();
-
-	unsigned int Count();
-	void Clear();
-};
-
-extern weBonusManager BonusMan;
 
 /*	KLASA BRONI
 	To jest tylko klasa do 
@@ -191,19 +26,22 @@ extern weBonusManager BonusMan;
 	elementy wspólne dla
 	wszystkich klas.
 */
-class weWeapon : public CEntity
+class weWeapon : 
+	public CDynamic
 {
 	/*	¯eby by³ dostêp do tych zmiennych
 		w klasach dziedzicz¹czych, umieœci³em
 		je w grupie protected.
 	*/
 protected:	
+	// Typ Broni ( patrz -> definicje sta³ych )
+	const WEAPON_TYPE Type;
+
 	// To jest stopieñ obrotu, kiedy broñ le¿y na ziemi
 	float Rot;
 	// To jest stopieñ dr¿enia w rêkach broni
 	float Shake[2];
-	// Typ Broni ( patrz -> definicje sta³ych )
-	unsigned int type;
+
 
 	/*	Okreœla ile zadaje broñ obra¿eñ.
 		Damage[0] - minimum
@@ -243,13 +81,15 @@ protected:
 public:
 	std::string Name;
 	// Konstruktor i destruktor
-	weWeapon();
-	~weWeapon();
+	weWeapon(const WEAPON_TYPE type);
+	virtual ~weWeapon();
+
+	const WEAPON_TYPE GetType() const;
 
 	// Funkcja podnoszenia broni
-	void PickUp( weWeapon* Weapon, CPlayer* Player );
+	void PickUp( weWeapon* Weapon, CPlayer* Player, GLModelManager& modelManager );
 
-	virtual void Init();
+	virtual void Init( GLModelManager& modelManager );
 	virtual void Update( const float fTD );
 	virtual void Render();
 	virtual void Shot();
@@ -264,7 +104,6 @@ public:
 	bool ModAmmo( int ammo );
 	int GetClip();
 	bool GetHave();
-	unsigned int GetType();
 	bool GetInited();
 };
 
@@ -274,8 +113,9 @@ class weSaw : public weWeapon
 private:
 public:
 	weSaw();
+
 	// Funckja inicjuj¹ca
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 
@@ -291,9 +131,12 @@ private:
 	bool	Reloading;
 	bool	back;
 	float	BackA;
+
 public:
+	wePistol();
+
 	// Inicjalizacja
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 
@@ -308,9 +151,12 @@ private:
 	float Time;
 	bool back;
 	float BackA;
+
 public:
+	weMiniPhazer();
+
 	// Inicjalizacja
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -325,8 +171,10 @@ private:
 	bool back;
 	float BackA;
 public:
+	wePhazer();
+
 	// Inicjalizacja
-	void Init();
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -341,7 +189,9 @@ private:
 	float BackA;
 	float Time;
 public:
-	void Init();
+	weMiniGun();
+
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -350,11 +200,15 @@ public:
 class weRocketLuncher : public weWeapon
 {
 private:
+	GLModelManager* ModelManager;
 	float Time;
 	bool back;
 	float BackA;
+
 public:
-	void Init();
+	weRocketLuncher();
+
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -364,13 +218,41 @@ public:
 class weAtomBomb : public weWeapon
 {
 private:
+	GLModelManager* ModelManager;
 	float Time;
 	bool armed;
 	bool puted;
 	Vector3f PutPos;
+
 public:
-	void Init();
+	weAtomBomb();
+
+	void Init( GLModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
 };
+
+/*	KLASA gameWeaponManager
+	S³u¿y do zarz¹dzania broni¹ le¿¹c¹ na ziemi
+	na poziomie. z tej klasy g³ównie korzysta gracz.
+	( i nikt poza nim :) )
+*/
+class gameWeaponManager
+{
+private:
+	std::vector <weWeapon*> List;
+public:
+	gameWeaponManager();
+	~gameWeaponManager();
+	void Update( CPlayer* Players, int PlayerCount, const float fTD );
+	void Render();
+
+	void AddWeapon( GLModelManager& modelManager, weWeapon* weapon );
+	void DeleteWeapon( unsigned int index );
+	weWeapon* GetWeapon( unsigned int index );
+	void Clear();
+	void LoadFromLevel();
+};
+
+extern gameWeaponManager WManager;

@@ -87,16 +87,16 @@ public:
 		tylko wprowadza³o zamêt w kodzie :P )
 	*/
 	// CrossProduct
-	Vector3f Cross( const Vector3f &V1 );
+	const Vector3f Cross( const Vector3f &V1 ) const;
 
 	// DotProduct
-	float Dot( const Vector3f &V1 );
+	const float Dot( const Vector3f &V1 ) const;
 
 	// D³ugoœæ wektora
-	float Leangth();
+	const float Leangth() const;
 
 	// D³ugoœæ wektora, ale niespierwiastkowana
-	float LeangthSq();
+	const float LeangthSq() const;
 
 	// Normalizacja
 	Vector3f Normalize();
@@ -147,7 +147,7 @@ public:
 ///	Objawia siê ona zwrotem/kierunkiem w który mog¹
 /// byæ zwrócone oraz pozycj¹ w której chc¹ siê znaleŸæ.
 /// </summary>
-class CEntity : 
+class CDynamic : 
 	public CObject
 {
 public:
@@ -155,9 +155,9 @@ public:
 	Vector3f	Vector;
 
 public:
-	CEntity() : CObject(3.0f){};
-	CEntity(const float radius) : CObject(radius){}
-	virtual ~CEntity(){}
+	CDynamic() : CObject(3.0f){};
+	CDynamic(const float radius) : CObject(radius){}
+	virtual ~CDynamic(){}
 
 	Vector3f GetBlockPos();
 };
@@ -166,6 +166,6 @@ extern float	mathDist( const Vector3f& V1, const Vector3f& V2 );
 extern float	mathDistSq( const Vector3f& V1, const Vector3f& V2 );
 extern Vector3f	ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
 extern float	GetAngle( const Vector3f &V1, const Vector3f &V2 );
-extern float	SwapAngle( const float &Angle );
+extern const float	SwapAngle( const float &Angle );
 
 #endif
