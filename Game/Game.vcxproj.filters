@@ -48,9 +48,6 @@
     <ClCompile Include="src\StrEx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game.cpp">
-      <Filter>Source\Game</Filter>
-    </ClCompile>
     <ClCompile Include="src\Level.cpp">
       <Filter>Source\Level</Filter>
     </ClCompile>
@@ -178,9 +175,6 @@
     </ClInclude>
     <ClInclude Include="src\StrEx.h">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game.h">
-      <Filter>Source\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\GameActor.h">
       <Filter>Source\Game</Filter>

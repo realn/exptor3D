@@ -25,7 +25,6 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 
-#include "Game.h"
 #include "GameEnemy.h"
 #include "Item.h"
 #include "RenderList.h"

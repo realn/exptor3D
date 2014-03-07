@@ -18,6 +18,7 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 #include "ModelManager.h"
 #include "GamePlayer.h"
 #include "WeaponBulletManager.h"
+#include "Weapon.h"
 
 bool CanDoWLScr = true;
 GLModel*	MenuModel;
@@ -126,7 +127,6 @@ void Update(const float fTD)	// Logika gry
 	MainPlayer.ParseKeys( Keys );
 
 	MainPlayer.Update( fTD );
-	ThingManager.Update( fTD );
 
 	if( GUI.GetCliping() )
 	{

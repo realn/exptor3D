@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "GameActor.h"
 
 CActorStats::CActorStats() :
 	Health(100.0f),

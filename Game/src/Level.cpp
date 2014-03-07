@@ -167,7 +167,6 @@ bool CLevel::LoadLevel( const std::string &filename )
 	{
 		Log.Report( "GLEVEL( " + file + " ): Prze³adowanie poziomu na : " + filename );
 		Free();
-		ThingManager.Clear();
 		WManager.Clear();
 		MainPlayer.Reset();
 		BManager.Clear();
@@ -1468,44 +1467,44 @@ bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 	Kiedy ju¿ stwierdzimy wyst¹pienie kolizji, to oddalamy kuk³e na odleg³oœæ sumy promieni pomno¿onej
 	przez wektor normalny. I tyle :)
 	*/
-	CActor* Thing;
-	for( i = 0; i < ThingManager.Count(); i++ )
-	{
-		Thing = ThingManager.GetThing( i );
-		// Po kiego maja sprawdzaæ kolizje na martwym przeciwniku??
-		if( Thing->IsDead() )
-			continue;
-		// No chyba sam ze sob¹ nie mo¿na siê zderzyæ... :D
-		if( Dum == Thing )
-			continue;
-		if( Dum != &MainPlayer && Thing->GetType() == ACTOR_TYPE::ACTOR_ENEMY )
-			continue;
-		// Sprawdzamy odleg³oœæ ( ja jeszcze doda³em dwie jednostki, by sprawdzanie rozpocze³o siê wczeœniej )
-		if( mathDistSq( Thing->Pos, Dum->NextPos ) > POW( Thing->Radius + Dum->Radius + 2.0f ) )
-			continue;
+	//CActor* Thing;
+	//for( i = 0; i < ThingManager.Count(); i++ )
+	//{
+	//	Thing = ThingManager.GetThing( i );
+	//	// Po kiego maja sprawdzaæ kolizje na martwym przeciwniku??
+	//	if( Thing->IsDead() )
+	//		continue;
+	//	// No chyba sam ze sob¹ nie mo¿na siê zderzyæ... :D
+	//	if( Dum == Thing )
+	//		continue;
+	//	if( Dum != &MainPlayer && Thing->GetType() == ACTOR_TYPE::ACTOR_ENEMY )
+	//		continue;
+	//	// Sprawdzamy odleg³oœæ ( ja jeszcze doda³em dwie jednostki, by sprawdzanie rozpocze³o siê wczeœniej )
+	//	if( mathDistSq( Thing->Pos, Dum->NextPos ) > POW( Thing->Radius + Dum->Radius + 2.0f ) )
+	//		continue;
 
-		// Tworzymy p³aszczyzne i punkt przeciêcia.
-		Normal = ( Dum->NextPos - Thing->NextPos ).Normalize();
-		V = Thing->Pos + Normal * Thing->Radius;
-		D = -V.Dot( Normal );
+	//	// Tworzymy p³aszczyzne i punkt przeciêcia.
+	//	Normal = ( Dum->NextPos - Thing->NextPos ).Normalize();
+	//	V = Thing->Pos + Normal * Thing->Radius;
+	//	D = -V.Dot( Normal );
 
-		// Aktualna pozycja
-		A = Dum->Pos;// + Normal.Reverse() * R;
-		// Nastêpna pozycja
-		B = Dum->NextPos + Normal.Reverse() * Dum->Radius;
+	//	// Aktualna pozycja
+	//	A = Dum->Pos;// + Normal.Reverse() * R;
+	//	// Nastêpna pozycja
+	//	B = Dum->NextPos + Normal.Reverse() * Dum->Radius;
 
-		// Powtarzamy poprzedni¹ regu³ke...
-		wynik = ( Normal.Dot( A ) + D ) * ( Normal.Dot( B ) + D );
-		if( wynik >= 0 ) 
-			continue;
-		V = A - B;
-		W = ( Normal.Dot( B ) + D ) / Normal.Dot( V );
-		P = B - V * W;
+	//	// Powtarzamy poprzedni¹ regu³ke...
+	//	wynik = ( Normal.Dot( A ) + D ) * ( Normal.Dot( B ) + D );
+	//	if( wynik >= 0 ) 
+	//		continue;
+	//	V = A - B;
+	//	W = ( Normal.Dot( B ) + D ) / Normal.Dot( V );
+	//	P = B - V * W;
 
-		is = true;
-		// i tworzymy now¹ pozycjê.
-		Dum->NextPos = P + Normal * Dum->Radius;
-	}
+	//	is = true;
+	//	// i tworzymy now¹ pozycjê.
+	//	Dum->NextPos = P + Normal * Dum->Radius;
+	//}
 
 	return is;
 }

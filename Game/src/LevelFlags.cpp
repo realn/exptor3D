@@ -1,4 +1,6 @@
 #include "Level.h"
+#include "GamePlayer.h"
+#include "Weapon.h"
 
 /*	KLASA gameWLFlags
 S³u¿y do sprawdzania warunków wygranej jak i przegranej.
@@ -19,12 +21,12 @@ gameWLFlags::gameWLFlags() :
 // Sprawdzamy, czy wszyscy nie ¿yj¹ ( poza graczem (
 bool gameWLFlags::IsAllDead()
 {
-	if( ThingManager.GetAllCount() == 0 )
-		return false;
+	//if( ThingManager.GetAllCount() == 0 )
+	//	return false;
 
-	if( ThingManager.GetLifeCount() == 0 )
-		return true;
-	else return false;
+	//if( ThingManager.GetLifeCount() == 0 )
+	//	return true;
+	//else return false;
 
 	return false;
 }
@@ -32,9 +34,9 @@ bool gameWLFlags::IsAllDead()
 // Sprawdzamy, czy gracz jest w odpowiednim bloku
 bool gameWLFlags::IsInBlock()
 {
-	if( pGLevel->GetBlock( MainPlayer.GetBlockPos() ) == Block )
-		return true;
-	else return false;
+	//if( pGLevel->GetBlock( MainPlayer.GetBlockPos() ) == Block )
+	//	return true;
+	//else return false;
 
 	return false;
 }

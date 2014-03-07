@@ -87,7 +87,6 @@
     <ClCompile Include="src\EffectSprite.cpp" />
     <ClCompile Include="src\GameActor.cpp" />
     <ClCompile Include="src\GameActorStats.cpp" />
-    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameEnemy.cpp" />
     <ClCompile Include="src\CollisionManager.cpp" />
     <ClCompile Include="src\GamePlayer.cpp" />
@@ -128,7 +127,6 @@
     <ClInclude Include="src\CollisionFace.h" />
     <ClInclude Include="src\defines.h" />
     <ClInclude Include="src\Effect.h" />
-    <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameActor.h" />
     <ClInclude Include="src\GameEnemy.h" />
     <ClInclude Include="src\CollisionManager.h" />
