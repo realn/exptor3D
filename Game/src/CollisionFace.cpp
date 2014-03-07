@@ -2,6 +2,12 @@
 
 CCollisionFace::CCollisionFace()
 {
+
+}
+
+CCollisionFace::CCollisionFace( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3, const Vector3f& v4 )
+{
+	Set( v1, v2, v3, v4 );
 }
 
 void	CCollisionFace::Set( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3, const Vector3f& v4 )

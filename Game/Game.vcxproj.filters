@@ -159,6 +159,9 @@
     <ClCompile Include="src\Scene.cpp">
       <Filter>Source\Level</Filter>
     </ClCompile>
+    <ClCompile Include="src\CollisionBlock.cpp">
+      <Filter>Source\Logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="src\Scene.h">
       <Filter>Source\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollisionBlock.h">
+      <Filter>Source\Logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

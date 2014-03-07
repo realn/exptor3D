@@ -1,11 +1,55 @@
 #include "CollisionManager.h"
 
-CCollisionManager::CCollisionManager()
+CCollisionManager::CCollisionManager() : 
+	Cols( 0 ),
+	Rows( 0 ),
+	BlockWidth( 0.0f ),
+	BlockHeight( 0.0f )
 {
 }
 
 CCollisionManager::~CCollisionManager()
 {
+}
+
+void	CCollisionManager::SetBlockSize( const float width, const float height )
+{
+	BlockWidth = width;
+	BlockHeight = height;
+}
+
+void	CCollisionManager::SetLevelSize( const unsigned rows, const unsigned cols )
+{
+	Rows = rows;
+	Cols = cols;
+}
+
+void	CCollisionManager::AddBlock( const CCollisionBlock& block )
+{
+	Blocks.push_back( block );
+}
+
+void	CCollisionManager::ClearBlocks()
+{
+	Blocks.clear();
+}
+
+void	CCollisionManager::FindSideBlocks()
+{
+	for( unsigned row = 0; row < Rows; row++ )
+	{
+		for( unsigned col = 0; col < Cols; col++ )
+		{
+			CCollisionBlock* pBlock = GetBlock( row, col );
+			if( pBlock == nullptr )
+				continue;
+
+			pBlock->AddSideBlock( GetBlock( row - 1, col ) );
+			pBlock->AddSideBlock( GetBlock( row + 1, col ) );
+			pBlock->AddSideBlock( GetBlock( row , col - 1 ) );
+			pBlock->AddSideBlock( GetBlock( row , col + 1) );
+		}
+	}
 }
 
 const bool	CCollisionManager::Contains(CObject* pObject) const
@@ -98,4 +142,34 @@ void	CCollisionManager::Solve()
 			}
 		}
 	}
+}
+
+CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned col )
+{
+	if( row >= Rows || col >= Cols )
+		return nullptr;
+	
+	return &Blocks[ Cols * row + col ];
+}
+
+const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point )
+{
+	auto scl = point / Vector3f( BlockWidth, 1.0f, BlockHeight );
+
+	unsigned x = (unsigned)scl.X;
+	unsigned y = (unsigned)scl.Z;
+
+	return y * Cols + x;
+}
+
+const bool	CCollisionManager::SolveBlockCollision( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane )
+{
+	for( unsigned i = 0; i < block.GetFaceNumber(); i++ )
+	{
+		auto& face = block.GetFace( i );
+
+		
+	}
+
+	return false;
 }
