@@ -1,8 +1,7 @@
 #pragma once
 
 #include "3dMath.h"
-#include "glm.h"
-#include "GameEntity.h"
+#include "Updateable.h"
 
 enum class ACTOR_TYPE
 {
@@ -95,9 +94,9 @@ public:
 	sztucznej inteligencji.
 */
 class CActor : 
-	public IEntity,
 	public CDynamic,
-	public CActorStats
+	public CActorStats,
+	public IUpdateable
 {
 protected:
 	const ACTOR_TYPE	Type;
@@ -125,7 +124,6 @@ public:
 	virtual void	DoRotate( const float angle );
 
 	virtual void Update( const float fTD ) override;
-	virtual void Render() override;
 
 	virtual void Reset() override;
 

@@ -12,7 +12,7 @@ CItemWeapon::~CItemWeapon()
 {
 }
 
-const bool	CItemWeapon::LoadGraphic( CTexManager& texManager, GLModelManager& modelManager )
+const bool	CItemWeapon::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
 {
 	switch (WeaponType)
 	{

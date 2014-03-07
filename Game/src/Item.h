@@ -1,10 +1,10 @@
 #pragma once
 
 #include "3dMath.h"
-#include "GameEntity.h"
 #include "glm.h"
 
 #include "Renderable.h"
+#include "Updateable.h"
 
 enum class ITEM_TYPE
 {
@@ -18,7 +18,7 @@ enum class ITEM_TYPE
 class CItem : 
 	public CObject,
 	public IRenderable,
-	public IEntity
+	public IUpdateable
 {
 protected:
 	const ITEM_TYPE Type;
@@ -29,8 +29,8 @@ public:
 	CItem(const ITEM_TYPE type);
 	virtual ~CItem();
 
-	virtual void Render() override;
-	virtual void Update( const float fTD ) override;
+	virtual void	Render() override;
+	virtual void	Update( const float fTD ) override;
 
 	virtual void	SetActive( const bool set );
 

@@ -99,7 +99,6 @@
     <ClCompile Include="src\ItemAmmo.cpp" />
     <ClCompile Include="src\ItemArmor.cpp" />
     <ClCompile Include="src\ItemHealth.cpp" />
-    <ClCompile Include="src\ItemManager.cpp" />
     <ClCompile Include="src\ItemWeapon.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\LevelBlock.cpp" />
@@ -114,6 +113,7 @@
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\UpdateList.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
     <ClCompile Include="src\WeaponBullet.cpp" />
     <ClCompile Include="src\WeaponBulletBomb.cpp" />
@@ -131,7 +131,6 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameActor.h" />
     <ClInclude Include="src\GameEnemy.h" />
-    <ClInclude Include="src\GameEntity.h" />
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\GamePlayer.h" />
     <ClInclude Include="src\GameStaticObject.h" />
@@ -142,11 +141,9 @@
     <ClInclude Include="src\ItemAmmo.h" />
     <ClInclude Include="src\ItemArmor.h" />
     <ClInclude Include="src\ItemHealth.h" />
-    <ClInclude Include="src\ItemManager.h" />
     <ClInclude Include="src\ItemWeapon.h" />
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Log.h" />
-    <ClInclude Include="src\main.h" />
     <ClInclude Include="src\ModelManager.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Renderable.h" />
@@ -155,6 +152,8 @@
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\Updateable.h" />
+    <ClInclude Include="src\UpdateList.h" />
     <ClInclude Include="src\Weapon.h" />
     <ClInclude Include="src\WeaponBullet.h" />
     <ClInclude Include="src\WeaponBulletBomb.h" />

@@ -13,7 +13,6 @@ Opis:	Patrz -> Level.h
 #include "GamePlayer.h"
 #include "WeaponBulletManager.h"
 
-#include "ItemManager.h"
 #include "ItemAmmo.h"
 #include "ItemArmor.h"
 #include "ItemHealth.h"
@@ -25,7 +24,7 @@ CLevel* pGLevel = nullptr;
 Patrz -> definicja klasy
 */
 /*	KONSTRUKTOR	*/
-CLevel::CLevel( CTexManager& texManager, GLModelManager& modelManager ) :
+CLevel::CLevel( CTexManager& texManager, CModelManager& modelManager ) :
 	TexManager( texManager ),
 	ModelManager( modelManager ),
 	RenderList( texManager, modelManager ),
@@ -78,9 +77,11 @@ CLevel::~CLevel()
 
 void	CLevel::Update( const float fTD )
 {
+	UpdateList.Update( fTD );
+	CollisionMng.Solve();
+
 	RenderList.PreLoad();
 	RenderList.Sort();
-	CollisionMng.Solve();
 }
 
 void	CLevel::Render()
@@ -168,7 +169,6 @@ bool CLevel::LoadLevel( const std::string &filename )
 		Free();
 		ThingManager.Clear();
 		WManager.Clear();
-		BonusMan.Clear();
 		MainPlayer.Reset();
 		BManager.Clear();
 	}
@@ -1321,8 +1321,9 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 			{
 				item->Pos = GetBlockPos( x, y );
 				RenderList.Add( item );
+				UpdateList.Add( item );
 				CollisionMng.AddObject( item );
-				BonusMan.AddBonus( item );
+				//BonusMan.AddBonus( item );
 			}
 		}
 		else

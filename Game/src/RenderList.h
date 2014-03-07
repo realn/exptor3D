@@ -6,7 +6,7 @@ class CRenderList
 {
 private:
 	CTexManager&	TexManager;
-	GLModelManager&	ModelManager;
+	CModelManager&	ModelManager;
 
 	std::vector<IRenderable*>	List;
 	std::vector<IRenderable*>	ToLoad;
@@ -15,7 +15,7 @@ private:
 	std::vector<IRenderable*>	TransparentList;
 
 public:
-	CRenderList( CTexManager& texManager, GLModelManager& modelManager );
+	CRenderList( CTexManager& texManager, CModelManager& modelManager );
 	
 	void	Add( IRenderable* pObj );
 

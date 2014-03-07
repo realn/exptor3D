@@ -13,7 +13,7 @@
 //	public CActor
 //{
 //private:
-//	GLModelManager& ModelManager;
+//	CModelManager& ModelManager;
 //
 //	std::string		file;
 //	std::string		name;
@@ -29,7 +29,7 @@
 //
 //	const std::string GetStr( std::fstream& fileStream );
 //public:
-//	CEnemy( GLModelManager& modelManager ) :
+//	CEnemy( CModelManager& modelManager ) :
 //		ModelManager( modelManager )
 //	{	Type = GAME_THING_ENEMY; file = "-";	};
 //

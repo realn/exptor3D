@@ -1,23 +1,23 @@
 #include "ModelManager.h"
 #include "Log.h"
 
-GLModelManager::GLModelManager( const std::string& strDataDir, CTexManager& texManager ) :
+CModelManager::CModelManager( const std::string& strDataDir, CTexManager& texManager ) :
 	DataDir( strDataDir ),
 	TexManager( texManager )
 {
 }
 
-GLModelManager::~GLModelManager()
+CModelManager::~CModelManager()
 {
 	//Clear();
 }
 
-CTexManager& GLModelManager::GetTexMng()
+CTexManager& CModelManager::GetTexMng()
 {
 	return TexManager;
 }
 
-GLModel* GLModelManager::Get( std::string filename )
+GLModel* CModelManager::Get( std::string filename )
 {
 	if( filename.empty() )
 	{
@@ -48,12 +48,12 @@ GLModel* GLModelManager::Get( std::string filename )
 	return Model;
 }
 
-void GLModelManager::AddModel( GLModel *Model )
+void CModelManager::AddModel( GLModel *Model )
 {
 	List.push_back( Model );
 }
 
-void GLModelManager::DeleteModel( unsigned int index )
+void CModelManager::DeleteModel( unsigned int index )
 {
 	if( index >= List.size() )
 		return;
@@ -62,7 +62,7 @@ void GLModelManager::DeleteModel( unsigned int index )
 	List.erase( List.begin() + index );
 }
 
-GLModel* GLModelManager::GetModel( unsigned int index )
+GLModel* CModelManager::GetModel( unsigned int index )
 {
 	if( index >= List.size() )
 		return 0;
@@ -70,7 +70,7 @@ GLModel* GLModelManager::GetModel( unsigned int index )
 	return List[index];
 }
 
-void GLModelManager::Clear()
+void CModelManager::Clear()
 {
 	for(unsigned i = 0; i < List.size(); i++)
 	{

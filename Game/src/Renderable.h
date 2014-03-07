@@ -15,7 +15,7 @@ public:
 
 	virtual void	Render() = 0;
 
-	virtual const bool	LoadGraphic( CTexManager& texManager, GLModelManager& modelManager );
+	virtual const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager );
 
 	virtual void	SetVisible( const bool );
 	virtual void	SetGfxLoaded( const bool );

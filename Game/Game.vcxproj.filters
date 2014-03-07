@@ -105,9 +105,6 @@
     <ClCompile Include="src\ItemArmor.cpp">
       <Filter>Source\Game\Item</Filter>
     </ClCompile>
-    <ClCompile Include="src\ItemManager.cpp">
-      <Filter>Source\Game\Item</Filter>
-    </ClCompile>
     <ClCompile Include="src\Render.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
@@ -156,6 +153,9 @@
     <ClCompile Include="src\CollisionFace.cpp">
       <Filter>Source\Logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\UpdateList.cpp">
+      <Filter>Source\Logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -171,9 +171,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\Log.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\main.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\Timer.h">
@@ -236,9 +233,6 @@
     <ClInclude Include="src\ItemArmor.h">
       <Filter>Source\Game\Item</Filter>
     </ClInclude>
-    <ClInclude Include="src\ItemManager.h">
-      <Filter>Source\Game\Item</Filter>
-    </ClInclude>
     <ClInclude Include="src\Render.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
@@ -266,13 +260,16 @@
     <ClInclude Include="src\RenderList.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameEntity.h">
-      <Filter>Source\Game</Filter>
-    </ClInclude>
     <ClInclude Include="src\CollisionManager.h">
       <Filter>Source\Logic</Filter>
     </ClInclude>
     <ClInclude Include="src\CollisionFace.h">
+      <Filter>Source\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updateable.h">
+      <Filter>Source\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UpdateList.h">
       <Filter>Source\Logic</Filter>
     </ClInclude>
   </ItemGroup>

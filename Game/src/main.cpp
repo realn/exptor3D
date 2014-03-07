@@ -11,16 +11,24 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#include "main.h"
-
+#include "Render.h"
+#include "gui.h"
+#include "Special.h"
+#include "inifile.h"
 #include "ModelManager.h"
 #include "GamePlayer.h"
 #include "WeaponBulletManager.h"
-#include "ItemManager.h"
 
 bool CanDoWLScr = true;
+GLModel*	MenuModel;
+bool    Keys[255];           //Tablica bool od klawiatury
+bool    fullscreen = true;   //Bool od pe³nego ekranu
+bool    active=true;          
 
-bool Init( CTexManager& texManager, GLModelManager& modelManager )    //Inicjalizacja OpenGL
+void Mouse();
+void LoadLevel( std::string filename );
+
+bool Init( CTexManager& texManager, CModelManager& modelManager )    //Inicjalizacja OpenGL
 {
 	glDepthFunc( GL_LEQUAL );				//Metoda testowania G³êbokoœci (ta jest lepsza)
 	glEnable( GL_TEXTURE_2D );
@@ -124,7 +132,6 @@ void Update(const float fTD)	// Logika gry
 	{
 		MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
 		WManager.Update( &MainPlayer, 1, fTD );
-		BonusMan.Update( &MainPlayer, fTD );
 	}
 	MainPlayer.ApplyNextPos();
 
@@ -388,7 +395,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 	}
 
 	CTexManager texManager( "Data/Textures/" );
-	GLModelManager modelManager( "Data/Models/", texManager );
+	CModelManager modelManager( "Data/Models/", texManager );
 	CLevel level( texManager, modelManager );
 
 	pGLevel = &level;
@@ -402,6 +409,8 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 		Log.Error( "B³¹d inicjalizacji" );
 		return 0;
 	}
+
+	LoadLevel( "newlevel.txt" );
 
 	const float	TIME_STEP = 0.005f;
 	float	frameTime = 0.0f;

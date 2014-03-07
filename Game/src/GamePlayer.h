@@ -18,7 +18,7 @@ class CPlayer :
 	public CActor
 {
 private:
-	GLModelManager* ModelManager;
+	CModelManager* ModelManager;
 
 	// Postaæ biega?
 	bool run;
@@ -38,7 +38,7 @@ public:
 	CPlayer();
 	~CPlayer();
 
-	void	Init( GLModelManager& modelManager );
+	void	Init( CModelManager& modelManager );
 
 	void	OnDie() override;
 	void	OnDead() override;

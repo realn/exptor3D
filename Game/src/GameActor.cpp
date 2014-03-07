@@ -53,11 +53,6 @@ void CActor::Update( const float fTD )
 	SolveActions( fTD );
 }
 
-void CActor::Render()
-{
-	// Dla niezdefiniowanych obiektów to pole pozostaje puste
-}
-
 /*
 bool CActor::IsEnemyInFront()
 {

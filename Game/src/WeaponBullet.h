@@ -1,8 +1,8 @@
 #pragma once
 
 #include "3dMath.h"
-#include "GameEntity.h"
 #include "GameActor.h"
+#include "Renderable.h"
 
 #define BULLET_TYPE_NORMAL	0
 #define BULLET_TYPE_RAY		1
@@ -14,7 +14,8 @@
 /*	KLASY POCISKÓW	*/
 class CBullet : 
 	public CDynamic,
-	public IEntity
+	public IUpdateable,
+	public IRenderable
 {
 protected:
 	CActor* Owner;

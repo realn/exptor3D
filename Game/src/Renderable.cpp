@@ -10,7 +10,7 @@ IRenderable::~IRenderable()
 {
 }
 
-const bool	IRenderable::LoadGraphic( CTexManager& texManager, GLModelManager& modelManager )
+const bool	IRenderable::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
 {
 	return true;
 }

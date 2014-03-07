@@ -1,6 +1,6 @@
 #include "RenderList.h"
 
-CRenderList::CRenderList( CTexManager& texManager, GLModelManager& modelManager ) :
+CRenderList::CRenderList( CTexManager& texManager, CModelManager& modelManager ) :
 	TexManager( texManager ),
 	ModelManager( modelManager )
 {

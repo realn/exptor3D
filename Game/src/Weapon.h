@@ -3,7 +3,6 @@
 #include "3dMath.h"
 #include "glm.h"
 #include "ModelManager.h"
-#include "GameEntity.h"
 #include "GamePlayer.h"
 
 enum class WEAPON_TYPE
@@ -88,9 +87,9 @@ public:
 	const WEAPON_TYPE GetType() const;
 
 	// Funkcja podnoszenia broni
-	void	PickUp( CPlayer& Player, const unsigned ammo, GLModelManager& modelManager );
+	void	PickUp( CPlayer& Player, const unsigned ammo, CModelManager& modelManager );
 
-	virtual void Init( GLModelManager& modelManager );
+	virtual void Init( CModelManager& modelManager );
 	virtual void Update( const float fTD );
 	virtual void Render();
 	virtual void Shot();
@@ -118,7 +117,7 @@ public:
 	weSaw();
 
 	// Funckja inicjuj¹ca
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 
@@ -139,7 +138,7 @@ public:
 	wePistol();
 
 	// Inicjalizacja
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 
@@ -159,7 +158,7 @@ public:
 	weMiniPhazer();
 
 	// Inicjalizacja
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -177,7 +176,7 @@ public:
 	wePhazer();
 
 	// Inicjalizacja
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -194,7 +193,7 @@ private:
 public:
 	weMiniGun();
 
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -203,7 +202,7 @@ public:
 class weROCKET_LUNCHERcher : public weWeapon
 {
 private:
-	GLModelManager* ModelManager;
+	CModelManager* ModelManager;
 	float Time;
 	bool back;
 	float BackA;
@@ -211,7 +210,7 @@ private:
 public:
 	weROCKET_LUNCHERcher();
 
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -221,7 +220,7 @@ public:
 class weATOM_BOMBb : public weWeapon
 {
 private:
-	GLModelManager* ModelManager;
+	CModelManager* ModelManager;
 	float Time;
 	bool armed;
 	bool puted;
@@ -230,7 +229,7 @@ private:
 public:
 	weATOM_BOMBb();
 
-	void Init( GLModelManager& modelManager );
+	void Init( CModelManager& modelManager );
 	void Update( const float fTD ) override;
 	void Render();
 	void Shot();
@@ -251,7 +250,7 @@ public:
 	void Update( CPlayer* Players, int PlayerCount, const float fTD );
 	void Render();
 
-	void AddWeapon( GLModelManager& modelManager, weWeapon* weapon );
+	void AddWeapon( CModelManager& modelManager, weWeapon* weapon );
 	void DeleteWeapon( unsigned int index );
 	weWeapon* GetWeapon( unsigned int index );
 	void Clear();

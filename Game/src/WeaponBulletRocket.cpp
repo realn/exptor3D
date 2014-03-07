@@ -9,7 +9,7 @@
 KLASA weBullRocked
 Rakieta z wyrzutni
 ====================*/
-CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, GLModelManager& modelManager ) :
+CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, CModelManager& modelManager ) :
 	CBullet( owner, damage, pos, vector, speed ),
 	TexManager( modelManager.GetTexMng() )
 {

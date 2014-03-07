@@ -14,7 +14,7 @@ private:
 	float Sec;
 
 public:
-	CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, GLModelManager& modelManager );
+	CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, CModelManager& modelManager );
 
 	void Update( const float fTD ) override;
 	void Render() override;

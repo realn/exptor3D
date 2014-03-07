@@ -3,7 +3,6 @@
 #include "Weapon.h"
 #include "gui.h"
 #include "Level.h"
-#include "ItemManager.h"
 #include "ItemHealth.h"
 #include "ItemAmmo.h"
 #include "ItemArmor.h"
@@ -51,7 +50,7 @@ CPlayer::~CPlayer()
 	delete Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB];
 }
 
-void	CPlayer::Init( GLModelManager& modelManager )
+void	CPlayer::Init( CModelManager& modelManager )
 {
 	ModelManager = &modelManager;
 }

@@ -29,6 +29,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "GameEnemy.h"
 #include "Item.h"
 #include "RenderList.h"
+#include "UpdateList.h"
 #include "CollisionManager.h"
 
 /*	DEFINICJE MAKROWE
@@ -111,10 +112,11 @@ public:
 class CLevel
 {
 private:
-	GLModelManager&	ModelManager;
+	CModelManager&	ModelManager;
 	CTexManager&	TexManager;
 
 	CRenderList			RenderList;
+	CUpdateList			UpdateList;
 	CCollisionManager	CollisionMng;
 
 	CTexture*		Tex[3];
@@ -173,7 +175,7 @@ private:
 
 public:
 	// Konstruktor i destruktor
-	CLevel( CTexManager& texManager, GLModelManager& modelManager );
+	CLevel( CTexManager& texManager, CModelManager& modelManager );
 	~CLevel();
 
 	void	Update( const float fTD );

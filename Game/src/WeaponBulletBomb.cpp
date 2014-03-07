@@ -8,7 +8,7 @@
 	KLASA CBullBomb
 	Jest to bomba
 ====================*/
-CBullBomb::CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, GLModelManager& modelManager ) :
+CBullBomb::CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, CModelManager& modelManager ) :
 	CBullet( owner, damage, pos, Vector3f(), 0.0f )
 {
 	BoomTime = time;

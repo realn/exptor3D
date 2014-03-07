@@ -12,7 +12,7 @@ private:
 	GLModel* Model;
 
 public:
-	CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, GLModelManager& modelManager );
+	CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, CModelManager& modelManager );
 
 	void Update( const float fTD ) override;
 	void Render() override;

@@ -127,7 +127,7 @@ void CActorManager::Render()
 		if( mathDistSq( MainPlayer.Pos, Thing->Pos ) > POW(100.0f) )
 			continue;
 
-		Thing->Render();
+		//Thing->Render();
 	}
 }
 
@@ -259,7 +259,7 @@ void gameWeaponManager::Render()
 	}
 }
 
-void gameWeaponManager::AddWeapon( GLModelManager& modelManager, weWeapon* weapon )
+void gameWeaponManager::AddWeapon( CModelManager& modelManager, weWeapon* weapon )
 {
 	if( weapon == NULL )
 		return;

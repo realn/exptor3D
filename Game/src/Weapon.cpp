@@ -70,7 +70,7 @@ void weWeapon::Rotate( const float fTD )
 /*	Ta funkcja jest wywo³ywana, gdy
 	jakaœ postaæ podniesie broñ.
 */
-void weWeapon::PickUp( CPlayer& Player, const unsigned ammo, GLModelManager& modelManager )
+void weWeapon::PickUp( CPlayer& Player, const unsigned ammo, CModelManager& modelManager )
 {
 	if( !InHand )
 	{
@@ -167,7 +167,7 @@ void weWeapon::Render()
 
 }
 
-void weWeapon::Init( GLModelManager& modelManager )
+void weWeapon::Init( CModelManager& modelManager )
 {
 
 }
@@ -223,7 +223,7 @@ weSaw::weSaw() :
 	plików, ale to by siê zesz³o zbyt
 	d³ugo :P 
 */
-void weSaw::Init( GLModelManager& modelManager )
+void weSaw::Init( CModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -374,7 +374,7 @@ wePistol::wePistol() :
 {
 }
 
-void wePistol::Init( GLModelManager& modelManager )
+void wePistol::Init( CModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -513,7 +513,7 @@ weMiniPhazer::weMiniPhazer() :
 {
 }
 
-void weMiniPhazer::Init( GLModelManager& modelManager )
+void weMiniPhazer::Init( CModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -654,7 +654,7 @@ wePhazer::wePhazer() :
 {
 }
 
-void wePhazer::Init( GLModelManager& modelManager )
+void wePhazer::Init( CModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -792,7 +792,7 @@ weMiniGun::weMiniGun() :
 {
 }
 
-void weMiniGun::Init( GLModelManager& modelManager )
+void weMiniGun::Init( CModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -947,7 +947,7 @@ weROCKET_LUNCHERcher::weROCKET_LUNCHERcher() :
 {
 }
 
-void weROCKET_LUNCHERcher::Init( GLModelManager& modelManager )
+void weROCKET_LUNCHERcher::Init( CModelManager& modelManager )
 {
 	if( inited ) 
 		return;
@@ -1091,7 +1091,7 @@ weATOM_BOMBb::weATOM_BOMBb() :
 {
 }
 
-void weATOM_BOMBb::Init( GLModelManager& modelManager )
+void weATOM_BOMBb::Init( CModelManager& modelManager )
 {
 	if( inited )
 		return;

@@ -2,7 +2,7 @@
 
 #include "glm.h"
 
-class GLModelManager
+class CModelManager
 {
 private:
 	const std::string	DataDir;
@@ -10,8 +10,8 @@ private:
 	std::vector<GLModel*> List;
 
 public:
-	GLModelManager( const std::string& strDataDir, CTexManager& texManager );
-	~GLModelManager();
+	CModelManager( const std::string& strDataDir, CTexManager& texManager );
+	~CModelManager();
 
 	CTexManager& GetTexMng();
 
