@@ -1,8 +1,8 @@
 #include "WeaponBulletBomb.h"
 #include "WeaponBulletExplosion.h"
+#include "Level.h"
 
 #include "gui.h"
-#include "WeaponBulletManager.h"
 
 /*====================
 	KLASA CBullBomb
@@ -28,9 +28,9 @@ void CBullBomb::Update( const float fTD )
 	ThisTime += fTD * GUI.GetSpeed();
 	if( ThisTime >= BoomTime )
 	{
-		CanDelete = true;
+		DeleteThis = true;
 		CBullExplosion* bull = new CBullExplosion( nullptr, this->Damage, Pos, 60.0f, 10.0f );
-		BManager.AddBullet( bull );
+		pGLevel->AddBullet( bull );
 	}
 }
 

@@ -9,7 +9,7 @@ class CBullBomb : public CBullet
 private:
 	float BoomTime;
 	float ThisTime;
-	GLModel* Model;
+	CModel* Model;
 
 public:
 	CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, CModelManager& modelManager );

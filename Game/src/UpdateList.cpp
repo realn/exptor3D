@@ -20,6 +20,9 @@ void	CUpdateList::Update( const float fTD )
 {
 	for( unsigned i = 0; i < List.size(); i++ )
 	{
+		if( !List[i]->IsActive() )		
+			continue;
+
 		List[i]->Update( fTD );
 	}
 }

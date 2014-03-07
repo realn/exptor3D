@@ -1,8 +1,11 @@
 #include "GamePlayer.h"
 
 #include "Weapon.h"
+#include "WeaponRocketLuncher.h"
+
 #include "gui.h"
 #include "Level.h"
+
 #include "ItemHealth.h"
 #include "ItemAmmo.h"
 #include "ItemArmor.h"
@@ -14,7 +17,8 @@ KLASA CPlayer
 
 =========================*/
 CPlayer::CPlayer() :
-	CActor( ACTOR_TYPE::ACTOR_PLAYER )
+	CActor( ACTOR_TYPE::ACTOR_PLAYER ),
+	Hand( WEAPON_HAND::RIGHT )
 {
 	run = true;
 	Angle = 0.0f;
@@ -30,29 +34,30 @@ CPlayer::CPlayer() :
 	for( unsigned i = 0; i < WEAPON_COUNT; i++ )
 		Weapon[i] = nullptr;
 
-	Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
-	Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
-	Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
-	Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
-	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new weROCKET_LUNCHERcher();
-	Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
-	Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
+	//Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
+	//Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
+	//Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
+	//Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
+	//Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
+	//Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
 }
 
 CPlayer::~CPlayer()
 {
-	delete Weapon[(unsigned)WEAPON_TYPE::SAW];
-	delete Weapon[(unsigned)WEAPON_TYPE::PISTOL];
-	delete Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER];
-	delete Weapon[(unsigned)WEAPON_TYPE::MINIGUN];
-	delete Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER];
-	delete Weapon[(unsigned)WEAPON_TYPE::PHAZER];
-	delete Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB];
+	for( unsigned i = 0 ; i < WEAPON_COUNT; i++ )
+	{
+		if( Weapon[i] != nullptr )
+		{
+			delete Weapon[i];
+			Weapon[i] = nullptr;
+		}
+	}
 }
 
 void	CPlayer::Init( CModelManager& modelManager )
 {
 	ModelManager = &modelManager;
+	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( modelManager );
 }
 
 void	CPlayer::OnDie()
@@ -70,7 +75,7 @@ void CPlayer::ApplyNextPos()
 
 void CPlayer::Render()
 {
-	if( Weapon[CurrWeap]->GetHave() )
+	if( Weapon[CurrWeap] != nullptr && Weapon[CurrWeap]->GetHave() )
 		Weapon[CurrWeap]->Render();
 }
 
@@ -78,32 +83,14 @@ void CPlayer::Update( const float fTD )
 {
 	CActor::Update( fTD );
 
-	float an = Angle;
-	switch( GUI.GetHandPos() )
-	{
-	case GAME_RIGHT_HAND :
-		an += 50.0f;
-		break;
-	case GAME_LEFT_HAND :
-		an -= 50.0f;
-		break;
-	case GAME_CENTER_HAND :
-	default:
-		an = 0.0f;			
-	}
-	Vector3f temp;
-	temp.X = sinf( an * PIOVER180 ) * 1.2f;
-	temp.Z = -cosf( an * PIOVER180 ) * 1.2f;
-	temp.Y = -1.0f;
-
 	GUI.PInfo.WeapName = "---";
-	if( Weapon[CurrWeap]->GetHave() )
+	if( Weapon[CurrWeap] != nullptr && Weapon[CurrWeap]->GetHave() )
 	{
-		Weapon[CurrWeap]->Pos = Pos + temp;
 		Weapon[CurrWeap]->Update( fTD );
+
 		GUI.PInfo.AMMO = Weapon[CurrWeap]->GetAmmo();
-		GUI.PInfo.CLIPS = Weapon[CurrWeap]->GetClip();
-		GUI.PInfo.WeapName = Weapon[CurrWeap]->Name;
+		GUI.PInfo.CLIPS = 0;
+		GUI.PInfo.WeapName = Weapon[CurrWeap]->GetName();
 	}
 }
 
@@ -143,12 +130,12 @@ void CPlayer::ParseKeys( const bool* Keys )
 	else Speed = WalkStep;
 }
 
-unsigned int CPlayer::GetHand()
+const WEAPON_HAND CPlayer::GetHand() const
 {
 	return Hand;
 }
 
-void CPlayer::TestWeapon( weWeapon* Weap )
+void CPlayer::TestWeapon( CWeapon* Weap )
 {
 	//if( mathDistSq( Pos, Weap->Pos ) <= POW(Radius + Weap->Radius) )
 	//{
@@ -213,18 +200,21 @@ void CPlayer::ModHealth( const float mod )
 void CPlayer::Reset()
 {
 	CActor::Reset();
-	for( int i = 0; i < 10; i++ )
+	for( unsigned i = 0; i < WEAPON_COUNT; i++ )
 	{
 		if( Weapon[i] != nullptr )
+		{
 			delete Weapon[i];
+			Weapon[i] = nullptr;
+		}
 	}
-	Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
-	Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
-	Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
-	Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
-	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new weROCKET_LUNCHERcher();
-	Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
-	Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
+	//Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
+	//Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
+	//Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
+	//Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
+	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( *ModelManager );
+	//Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
+	//Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
 	GUI.PInfo.FRAGS = 0;
 }
 
@@ -238,9 +228,9 @@ const bool	CPlayer::OnCollision( CObject* pObject )
 		case ITEM_TYPE::WEAPON:
 			{
 				CItemWeapon* pWeap = dynamic_cast<CItemWeapon*>(pItem);
-				if(pItem != nullptr)
+				if(pWeap != nullptr && Weapon[(unsigned)pWeap->GetWeaponType()] != nullptr)
 				{
-					Weapon[(unsigned)pWeap->GetWeaponType()]->PickUp( *this, pWeap->GetAmmoCount(), *ModelManager );
+					Weapon[(unsigned)pWeap->GetWeaponType()]->PickUp( *this, pWeap->GetAmmoCount() );
 					pWeap->SetActive( false );
 					return false;
 				}
@@ -257,8 +247,8 @@ const bool	CPlayer::OnCollision( CObject* pObject )
 
 void	CPlayer::SolveActions( const float fTD )
 {
-	if( Actions & (unsigned)GAME_ACTION::DO_ATTACK )
-		this->Weapon[this->CurrWeap]->Shot();
+	if( (Actions & (unsigned)GAME_ACTION::DO_ATTACK) && Weapon[CurrWeap] != nullptr )
+		Weapon[CurrWeap]->Shot();
 
 	CActor::SolveActions( fTD );
 }

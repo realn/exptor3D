@@ -21,7 +21,6 @@ protected:
 	CActor* Owner;
 	unsigned int Type;
 	Vector3f Veloc;
-	bool DoDelete;
 	float Damage;
 	GLUquadric* obj;
 
@@ -36,8 +35,5 @@ public:
 
 	virtual float DoTest( CDynamic* Dum, float Armor = 0.0f );
 
-	virtual void OnDelete();
-
-	bool CanDelete;
-	bool Visible;
+	virtual void OnDelete() override;
 };

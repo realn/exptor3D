@@ -27,6 +27,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 
 #include "GameEnemy.h"
 #include "Item.h"
+#include "WeaponBullet.h"
 #include "RenderList.h"
 #include "UpdateList.h"
 #include "CollisionManager.h"
@@ -179,6 +180,8 @@ public:
 
 	void	Update( const float fTD );
 	void	Render();
+
+	void	AddBullet( CBullet* pBullet );
 
 	std::string GetLevelName();
 

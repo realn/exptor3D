@@ -17,11 +17,10 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 #include "inifile.h"
 #include "ModelManager.h"
 #include "GamePlayer.h"
-#include "WeaponBulletManager.h"
 #include "Weapon.h"
 
 bool CanDoWLScr = true;
-GLModel*	MenuModel;
+CModel*	MenuModel;
 bool    Keys[255];           //Tablica bool od klawiatury
 bool    fullscreen = true;   //Bool od pe³nego ekranu
 bool    active=true;          
@@ -130,13 +129,13 @@ void Update(const float fTD)	// Logika gry
 
 	if( GUI.GetCliping() )
 	{
-		MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
+		//MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
 	}
 	MainPlayer.ApplyNextPos();
 
 	SEManager.Update( fTD );
 	SMBlur.Update( fTD );
-	BManager.Update( fTD );
+	//BManager.Update( fTD );
 
 	GUI.PInfo.HEALTH = MainPlayer.GetHealth();
 	GUI.PInfo.ARMOR = MainPlayer.GetArmor();
@@ -189,7 +188,7 @@ void RenderLevel()	// Wizualizacja gry
 
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
 	pGLevel->Render();
-	BManager.Render();
+	//BManager.Render();
 
 	glDepthMask( 0 );
 	SEManager.Render();

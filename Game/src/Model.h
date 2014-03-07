@@ -1,6 +1,6 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
-Plik:	glm.h
+Plik:	Model.h
 Autor:	Real_Noname (real_noname@wp.pl)
 (C):	CODE RULERS (Real_Noname)
 WWW:	www.coderulers.prv.pl
@@ -20,7 +20,7 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 
 /*	G³ówna klasa modeli OpenGL
 */
-class GLModel
+class CModel
 {
 private:
 	// Lista tekstur
@@ -52,8 +52,8 @@ private:
 
 
 public:
-	GLModel();
-	~GLModel();
+	CModel();
+	~CModel();
 
 	bool LoadModel( CTexManager& texManager, std::string filename );
 	void Free();

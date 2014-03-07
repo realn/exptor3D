@@ -8,13 +8,14 @@ class CBullRocket :
 	public CBullet
 {
 private:
-	CTexManager& TexManager;
-	GLModel* Model;
+	CModel* Model;
 	float Angle;
 	float Sec;
 
 public:
-	CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, CModelManager& modelManager );
+	CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed );
+
+	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
 
 	void Update( const float fTD ) override;
 	void Render() override;

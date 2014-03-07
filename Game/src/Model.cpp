@@ -4,18 +4,18 @@ Plik:	glm.cpp
 Autor:	Real_Noname (real_noname@wp.pl)
 (C):	CODE RULERS (Real_Noname)
 WWW:	www.coderulers.prv.pl
-Opis:	Patrz -> glm.h
+Opis:	Patrz -> Model.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#include "glm.h"
+#include "Model.h"
 #include "Log.h"
 #include "StrEx.h"
 
 const unsigned BUFFER_SIZE = 1024;
 
 /*=====KONSTRUKTOR=====*/
-GLModel::GLModel() :
+CModel::CModel() :
 	List(0),
 	ListCount(0),
 	Frame(0),
@@ -32,7 +32,7 @@ GLModel::GLModel() :
 }
 
 /*=====DESTRUKTOR=====*/
-GLModel::~GLModel()
+CModel::~CModel()
 {
 	// Zwolnienie pamiêci
 	Free();
@@ -42,7 +42,7 @@ GLModel::~GLModel()
 	Czyœci podan¹ liniê ze spacji, tablulacji
 	i znaków nowej linii.
 */
-std::string GLModel::NoSpace( const std::string &str )
+std::string CModel::NoSpace( const std::string &str )
 {
 	std::string result = "";
 
@@ -62,7 +62,7 @@ std::string GLModel::NoSpace( const std::string &str )
 	nawiasami ( ) odzielonymi przecinkiem i je
 	wpisuje do podanej tablicy.
 */
-bool GLModel::GetParams( const std::string &str, const int from, std::vector<std::string>& param, const std::string &Com )
+bool CModel::GetParams( const std::string &str, const int from, std::vector<std::string>& param, const std::string &Com )
 {
 	if( param.size() == 0 )
 		return true;
@@ -87,12 +87,12 @@ bool GLModel::GetParams( const std::string &str, const int from, std::vector<std
 
 	if( curparam > param.size() )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Za du¿o parametrów polecenia: " + Com );
+		Log.Error( "CModel( " + file + " ): Za du¿o parametrów polecenia: " + Com );
 		return false;
 	}
 	else if( curparam != param.size() - 1 )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Za ma³o parametrów polecenia: " + Com );	
+		Log.Error( "CModel( " + file + " ): Za ma³o parametrów polecenia: " + Com );	
 		return false;
 	}
 
@@ -103,7 +103,7 @@ bool GLModel::GetParams( const std::string &str, const int from, std::vector<std
 	Metoda zwraca sta³¹ z OpenGL, w zale¿noœci od nazwy
 	i nazwy polecenia, do jakiej jest potrzebna.
 */
-int GLModel::GetConst( const std::string &str, const std::string &Com )
+int CModel::GetConst( const std::string &str, const std::string &Com )
 {
 	if( Com == "glEnable" || Com == "glDisable" )
 	{
@@ -234,7 +234,7 @@ int GLModel::GetConst( const std::string &str, const std::string &Com )
 			return GL_FALSE;
 	}
 
-	Log.Error( "GLMODEL( " + file + " ): Nieznana sta³a ( " + str + " ) w poleceniu: " + Com );
+	Log.Error( "CModel( " + file + " ): Nieznana sta³a ( " + str + " ) w poleceniu: " + Com );
 	return atoi( str.c_str() );
 }
 
@@ -252,7 +252,7 @@ bool	CheckParams(std::vector<std::string>& param)
 	Analizuje linie, szuka nazwy komendy OpenGL, pobiera
 	dla niej argumenty i j¹ wykonuje.
 */
-void GLModel::ParseGLCommand( const std::string &fullstr )
+void CModel::ParseGLCommand( const std::string &fullstr )
 {
 	std::string param[6], str;
 	bool presult = false;
@@ -278,7 +278,7 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 			if( k >= 0 && k < Textures.size() )
 				Textures[k]->Activate();
 			else 
-				Log.Error( "GLMODEL( " + file + " ): B³êdny parametr polecenia: " + Com );
+				Log.Error( "CModel( " + file + " ): B³êdny parametr polecenia: " + Com );
 			return;
 		}
 	}
@@ -291,7 +291,7 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 			if( k >= 0 && k < ListCount )
 				glCallList( List + k );
 			else 
-				Log.Error( "GLMODEL( " + file + " ): B³êdny parametr polecenia: " + Com );
+				Log.Error( "CModel( " + file + " ): B³êdny parametr polecenia: " + Com );
 			return;
 		}
 	}
@@ -512,13 +512,13 @@ void GLModel::ParseGLCommand( const std::string &fullstr )
 		}
 	}
 
-	Log.Error( "GLMODEL( " + file + " ): B³êdne, lub z niew³aœciwymi parametrami polecenie: " + Com + ", oryginalny ci¹g: " + str );
+	Log.Error( "CModel( " + file + " ): B³êdne, lub z niew³aœciwymi parametrami polecenie: " + Com + ", oryginalny ci¹g: " + str );
 }
 
 /*=====METODA CallObject=====
 	Wywo³uje dan¹ listê wyœwietlania
 */
-void GLModel::CallObject( unsigned int index )
+void CModel::CallObject( unsigned int index )
 {
 
 	if( !loaded )
@@ -533,7 +533,7 @@ void GLModel::CallObject( unsigned int index )
 /*=====METODA ReadHeader=====
 	Czyta nag³ówek pliku GLM.
 */
-bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
+bool CModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 {
 	std::string str;
 
@@ -541,7 +541,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "TEXCOUNT %u", &texCount ) )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby tekstur!" );
+		Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ liczby tekstur!" );
 		return false;
 	}
 
@@ -549,7 +549,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "LISTCOUNT %u", &ListCount ) )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby obiektów!" );
+		Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ liczby obiektów!" );
 		return false;
 	}
 
@@ -557,7 +557,7 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "ANIMATION %u", &animation ) )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ animacji!" );
+		Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ animacji!" );
 		return false;
 	}
 
@@ -565,19 +565,19 @@ bool GLModel::ReadHeader( std::fstream& fileStream, unsigned& texCount )
 	str = GetLine( fileStream );
 	if( str != "END HEADER" )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Brak koñca nag³ówka!" );
+		Log.Error( "CModel( " + file + " ): Brak koñca nag³ówka!" );
 		return false;
 	}
 
 	return true;
 }
 
-bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
+bool CModel::LoadModel( CTexManager& texManager, std::string filename )
 {
 	// Sprawdzamy czy ³añcuch nie jest pusty
 	if( filename.empty() )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Pusty ci¹g nazwy pliku!" );
+		Log.Error( "CModel( " + file + " ): Pusty ci¹g nazwy pliku!" );
 		return false;
 	}
 	
@@ -595,7 +595,7 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 	// Sprawdzamy po³¹czenie
 	if( !fileStream )
 	{
-		Log.Error( "GLMODEL( " + file + " ): plik " + filename + " nie istnieje lub œcie¿ka niew³aœciwa." );
+		Log.Error( "CModel( " + file + " ): plik " + filename + " nie istnieje lub œcie¿ka niew³aœciwa." );
 		return false;
 	}
 
@@ -605,25 +605,25 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 	// Skanujemy liniê w poszukiwaniu numeru wersji
 	if( !sscanf_s( str.c_str(), "GLM %d", &Version ) )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Nieprawid³owa pierwsza linia pliku " + filename + "!" );
+		Log.Error( "CModel( " + file + " ): Nieprawid³owa pierwsza linia pliku " + filename + "!" );
 		return false;
 	}
 
 	// Sprawdzamy wersjê
 	if( Version > GLM_VERSION )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Zbyt wysoka wersja pliku!" );
+		Log.Error( "CModel( " + file + " ): Zbyt wysoka wersja pliku!" );
 		return false;
 	}
 
 	// Teraz sprawdzamy, czy ju¿ jakiœ obiekt nie by³ za³adowany
 	if( loaded )
 	{
-		Log.Report( "GLMODEL( " + file + " ): Prze³adowanie pliku na " + filename );
+		Log.Report( "CModel( " + file + " ): Prze³adowanie pliku na " + filename );
 		Free();
 	}
 
-	Log.Log( "GLMODEL( " + file + " ): £adowanie modelu z pliku " + filename );
+	Log.Log( "CModel( " + file + " ): £adowanie modelu z pliku " + filename );
 	file = filename;
 
 	str = GetLine( fileStream );
@@ -635,13 +635,13 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 	{
 		if( !ReadHeader( fileStream, texCount ) )
 		{
-			Log.Error( "GLMODEL( " + file + " ): B³¹d w nag³ówku!" );
+			Log.Error( "CModel( " + file + " ): B³¹d w nag³ówku!" );
 			return false;
 		}
 	}
 	else
 	{
-		Log.Error( "GLMODEL( " + file + " ): Brak nag³ówka!" );
+		Log.Error( "CModel( " + file + " ): Brak nag³ówka!" );
 		return false;
 	}
 
@@ -654,13 +654,13 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 		{
 			if( !ReadAnimHeader( fileStream ) )
 			{
-				Log.Error( "GLMODEL( " + file + " ): B³¹d w nag³ówku animacji!" );
+				Log.Error( "CModel( " + file + " ): B³¹d w nag³ówku animacji!" );
 				return false;
 			}
 		}
 		else
 		{
-			Log.Error( "GLMODEL( " + file + " ): Brak nag³ówka animacji!" );
+			Log.Error( "CModel( " + file + " ): Brak nag³ówka animacji!" );
 			return false;
 		}
 	}
@@ -681,12 +681,12 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 
 				if( !( Textures[i] = texManager.Get( str ) ) )
 				{
-					Log.Error( "GLMODEL( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
+					Log.Error( "CModel( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
 				}
 
 				if( str == "END TEXLIST" )
 				{
-					Log.Error( "GLMODEL( " + file + " ): Przedwczesny koniec listy tekstur!" );
+					Log.Error( "CModel( " + file + " ): Przedwczesny koniec listy tekstur!" );
 					break;
 				}
 			}
@@ -696,7 +696,7 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 				str = GetLine( fileStream );
 				if( str != "END TEXLIST" )
 				{
-					Log.Error( "GLMODEL( " + file + " ): Brak koñca listy tekstur!" );
+					Log.Error( "CModel( " + file + " ): Brak koñca listy tekstur!" );
 					Free();
 					return false;
 				}
@@ -704,7 +704,7 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 		}
 		else
 		{
-			Log.Error( "GLMODEL( " + file + " ): Brak listy tekstur!" );
+			Log.Error( "CModel( " + file + " ): Brak listy tekstur!" );
 			Free();
 			return false;
 		}
@@ -728,7 +728,7 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 			
 			if( i != j )
 			{
-				Log.Error( "GLMODEL( " + file + " ): B³¹d, z³a kolejnoœæ modeli!" );
+				Log.Error( "CModel( " + file + " ): B³¹d, z³a kolejnoœæ modeli!" );
 				Free();
 				return false;
 			}
@@ -766,7 +766,7 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 				
 				if( i != j )
 				{
-					Log.Error( "GLMODEL( " + file + " ): B³¹d, z³a kolejnoœæ klatek!" );
+					Log.Error( "CModel( " + file + " ): B³¹d, z³a kolejnoœæ klatek!" );
 					Free();
 					return false;				
 				}
@@ -797,11 +797,11 @@ bool GLModel::LoadModel( CTexManager& texManager, std::string filename )
 		return true;
 	}
 
-	Log.Error( "GLMODEL( " + file + " ): Brak koñca pliku!" );
+	Log.Error( "CModel( " + file + " ): Brak koñca pliku!" );
 	return false;
 }
 
-void GLModel::Free()
+void CModel::Free()
 {
 	if( Textures.size() > 0 )
 	{
@@ -831,18 +831,18 @@ void GLModel::Free()
 	loaded = false;
 }
 
-std::string GLModel::GetFile()
+std::string CModel::GetFile()
 {
 	return file;
 }
 
-unsigned int GLModel::GetObjCount()
+unsigned int CModel::GetObjCount()
 {
 	return ListCount;
 }
 
 //===========METODY NIETESTOWANE!!!============
-bool GLModel::ReadAnimHeader( std::fstream& fileStream )
+bool CModel::ReadAnimHeader( std::fstream& fileStream )
 {
 	std::string str;
 
@@ -850,7 +850,7 @@ bool GLModel::ReadAnimHeader( std::fstream& fileStream )
 	str = GetLine( fileStream );
 	if( !sscanf_s( str.c_str(), "FRAMECOUNT %u", &FrameCount ) )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Nie mo¿na odczytaæ liczby klatek animacji!" );
+		Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ liczby klatek animacji!" );
 		return false;
 	}
 
@@ -858,14 +858,14 @@ bool GLModel::ReadAnimHeader( std::fstream& fileStream )
 	str = GetLine( fileStream );
 	if( str != "END ANIMHEADER" )
 	{
-		Log.Error( "GLMODEL( " + file + " ): Brak koñca nag³ówka animacji!" );
+		Log.Error( "CModel( " + file + " ): Brak koñca nag³ówka animacji!" );
 		return false;
 	}
 
 	return true;
 }
 
-void GLModel::PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip )
+void CModel::PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip )
 {
 	if( !animation )
 		return;
@@ -882,7 +882,7 @@ void GLModel::PlayAnim( unsigned int fromframe, unsigned int toframe, bool cansk
 	playing = true;
 }
 
-void GLModel::UpdateAnim()
+void CModel::UpdateAnim()
 {
 	if( !playing )
 		return;
@@ -893,7 +893,7 @@ void GLModel::UpdateAnim()
 		playing = false;
 }
 
-void GLModel::RenderAnim( unsigned int index )
+void CModel::RenderAnim( unsigned int index )
 {
 	if( !animation || !playing )
 	{

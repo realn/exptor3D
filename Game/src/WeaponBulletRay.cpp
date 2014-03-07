@@ -11,7 +11,7 @@ CBullRay::CBullRay( CActor* owner, const float damage, const Vector3f& pos, cons
 {
 	Radius = 0.1f;
 	Type = BULLET_TYPE_RAY;
-	CanDelete = false;
+	DeleteThis = false;
 
 	CEffectRay* Effect = new CEffectRay( *pGLevel, pos, vector );
 
@@ -40,7 +40,7 @@ float CBullRay::DoTest( CDynamic* Dum, float Armor )
 
 void CBullRay::Update( const float fTD )
 {
-	CanDelete = true;
+	DeleteThis = true;
 }
 
 void CBullRay::Render()

@@ -3,24 +3,28 @@
 
 #include "Level.h"
 #include "Special.h"
-#include "WeaponBulletManager.h"
 
 /*====================
 KLASA weBullRocked
 Rakieta z wyrzutni
 ====================*/
-CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed, CModelManager& modelManager ) :
-	CBullet( owner, damage, pos, vector, speed ),
-	TexManager( modelManager.GetTexMng() )
+CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed ) :
+	CBullet( owner, damage, pos, vector, speed )
 {
 	Angle = ::GetAngle( Pos, Pos + Vector );
 	Sec = 0.0f;
 	Radius = 0.3f;
 	//glEnable( GL_LIGHT0 );
 
-	Model = modelManager.Get( "Missle.glm" );
-
 	Type = BULLET_TYPE_ROCKET;
+}
+
+const bool	CBullRocket::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
+{
+	Model = modelManager.Get( "Missle.glm" );
+	GfxLoaded = Model != nullptr;
+
+	return true;
 }
 
 void CBullRocket::Render()
@@ -52,20 +56,15 @@ void CBullRocket::Update( const float fTD )
 			Tail = Tail.Reverse();
 			Sec = 0.0f;
 
-			SEManager.AddEffect( new CEffectSprite( TexManager, Pos + Tail, 1.0f, 0.7f, 0.0f ) );
+			//SEManager.AddEffect( new CEffectSprite( TexManager, Pos + Tail, 1.0f, 0.7f, 0.0f ) );
 		}
 		if( pGLevel->GetBlock( this->GetBlockPos() ) == NULL )
-			DoDelete = true;
+			DeleteThis = true;
 	}
-	else DoDelete = true;
-
-	if( DoDelete )
-		OnDelete();
 }
 
 void CBullRocket::OnDelete()
 {
-	CanDelete = true;
-	BManager.AddBullet( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 20.0f ) );
+	pGLevel->AddBullet( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 20.0f ) );
 }
 

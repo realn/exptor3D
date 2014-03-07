@@ -1,7 +1,7 @@
 #pragma once
 
 #include "3dMath.h"
-#include "glm.h"
+#include "Model.h"
 
 #include "Renderable.h"
 #include "Updateable.h"
@@ -23,7 +23,7 @@ class CItem :
 protected:
 	const ITEM_TYPE Type;
 	bool	Active;
-	GLModel* Model;
+	CModel* Model;
 
 public:
 	CItem(const ITEM_TYPE type);

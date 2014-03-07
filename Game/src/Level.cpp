@@ -11,7 +11,6 @@ Opis:	Patrz -> Level.h
 #include "Level.h"
 
 #include "GamePlayer.h"
-#include "WeaponBulletManager.h"
 
 #include "ItemAmmo.h"
 #include "ItemArmor.h"
@@ -96,6 +95,12 @@ void	CLevel::Render()
 	glDepthMask( 1 );
 }
 
+void	CLevel::AddBullet( CBullet* pBullet )
+{
+	UpdateList.Add( pBullet );
+	RenderList.Add( pBullet );
+}
+
 // Zwraca, czy poziom jest za³adowany i gotowy
 bool CLevel::GetLoaded()
 {
@@ -168,7 +173,6 @@ bool CLevel::LoadLevel( const std::string &filename )
 		Log.Report( "GLEVEL( " + file + " ): Prze³adowanie poziomu na : " + filename );
 		Free();
 		MainPlayer.Reset();
-		BManager.Clear();
 	}
 
 	Log.Log( "GLEVEL( " + file + " ): Wczytywanie poziomu: " + filename );
@@ -238,7 +242,7 @@ bool CLevel::LoadLevel( const std::string &filename )
 
 			sscanf_s( str.c_str(), "%d=%d", &j, &k );
 
-			weWeapon* Weap;
+			CWeapon* Weap;
 			switch( k )
 			{
 			case WEAPON_TYPE::SAW :
@@ -258,7 +262,7 @@ bool CLevel::LoadLevel( const std::string &filename )
 				break;
 
 			case WEAPON_TYPE::ROCKET_LUNCHER :
-				Weap = new weROCKET_LUNCHERcher;
+				Weap = new CWeaponRocketLuncher;
 				break;
 
 				//case GAME_WEAP_PICK_A_BOO	:

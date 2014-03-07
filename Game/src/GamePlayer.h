@@ -3,8 +3,10 @@
 #include "GameActor.h"
 #include "ModelManager.h"
 
-class weWeapon;
+class CWeapon;
 class CItem;
+
+enum class WEAPON_HAND;
 
 #define WEAPON_COUNT 10
 
@@ -20,6 +22,8 @@ class CPlayer :
 private:
 	CModelManager* ModelManager;
 
+	WEAPON_HAND	Hand;
+
 	// Postaæ biega?
 	bool run;
 
@@ -31,9 +35,8 @@ private:
 	
 	// Aktualna Broñ
 	unsigned int CurrWeap;
-	unsigned int Hand;
 public:
-	weWeapon* Weapon[WEAPON_COUNT];
+	CWeapon* Weapon[WEAPON_COUNT];
 
 	CPlayer();
 	~CPlayer();
@@ -49,9 +52,9 @@ public:
 
 	void SwichWeap( unsigned int index );
 
-	unsigned int GetHand();
+	const WEAPON_HAND GetHand() const;
 
-	void TestWeapon( weWeapon* Weap );
+	void TestWeapon( CWeapon* Weap );
 	void TestBonus( CItem* Bonus );
 	void ApplyNextPos();
 

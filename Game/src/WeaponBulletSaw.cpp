@@ -12,7 +12,7 @@ CBullSaw::CBullSaw( CActor* owner, const float damage, const Vector3f& pos ) :
 
 void CBullSaw::Update( const float fTD )
 {
-	CanDelete = true;
+	DeleteThis = true;
 }
 
 float CBullSaw::DoTest( CDynamic* Dum, float Armor )
@@ -20,7 +20,6 @@ float CBullSaw::DoTest( CDynamic* Dum, float Armor )
 	if( Dum != NULL && Dum != Owner && mathDistSq( Dum->NextPos, Pos ) < POW( 5.0f )  )
 	{
 		float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-		CanDelete = true;
 		return Damage * ArmorMod;
 	}
 	return 0.0f;

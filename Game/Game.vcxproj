@@ -91,7 +91,7 @@
     <ClCompile Include="src\CollisionManager.cpp" />
     <ClCompile Include="src\GamePlayer.cpp" />
     <ClCompile Include="src\GameStaticObject.cpp" />
-    <ClCompile Include="src\glm.cpp" />
+    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\inifile.cpp" />
     <ClCompile Include="src\Item.cpp" />
@@ -117,10 +117,10 @@
     <ClCompile Include="src\WeaponBullet.cpp" />
     <ClCompile Include="src\WeaponBulletBomb.cpp" />
     <ClCompile Include="src\WeaponBulletExplosion.cpp" />
-    <ClCompile Include="src\WeaponBulletManager.cpp" />
     <ClCompile Include="src\WeaponBulletRay.cpp" />
     <ClCompile Include="src\WeaponBulletRocket.cpp" />
     <ClCompile Include="src\WeaponBulletSaw.cpp" />
+    <ClCompile Include="src\WeaponRocketLuncher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h" />
@@ -132,7 +132,7 @@
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\GamePlayer.h" />
     <ClInclude Include="src\GameStaticObject.h" />
-    <ClInclude Include="src\glm.h" />
+    <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\inifile.h" />
     <ClInclude Include="src\Item.h" />
@@ -156,10 +156,10 @@
     <ClInclude Include="src\WeaponBullet.h" />
     <ClInclude Include="src\WeaponBulletBomb.h" />
     <ClInclude Include="src\WeaponBulletExplosion.h" />
-    <ClInclude Include="src\WeaponBulletManager.h" />
     <ClInclude Include="src\WeaponBulletRay.h" />
     <ClInclude Include="src\WeaponBulletRocket.h" />
     <ClInclude Include="src\WeaponBulletSaw.h" />
+    <ClInclude Include="src\WeaponRocketLuncher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

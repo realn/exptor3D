@@ -17,7 +17,7 @@ CTexManager& CModelManager::GetTexMng()
 	return TexManager;
 }
 
-GLModel* CModelManager::Get( std::string filename )
+CModel* CModelManager::Get( std::string filename )
 {
 	if( filename.empty() )
 	{
@@ -27,7 +27,7 @@ GLModel* CModelManager::Get( std::string filename )
 
 	auto path = DataDir + filename;
 
-	GLModel* Model;
+	CModel* Model;
 	for( unsigned i = 0; i < List.size(); i++ )
 	{
 		Model = GetModel( i );
@@ -35,7 +35,7 @@ GLModel* CModelManager::Get( std::string filename )
 			return Model;
 	}
 
-	Model = new GLModel;
+	Model = new CModel;
 	if( !Model->LoadModel( TexManager, path ) )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
@@ -48,7 +48,7 @@ GLModel* CModelManager::Get( std::string filename )
 	return Model;
 }
 
-void CModelManager::AddModel( GLModel *Model )
+void CModelManager::AddModel( CModel *Model )
 {
 	List.push_back( Model );
 }
@@ -62,7 +62,7 @@ void CModelManager::DeleteModel( unsigned int index )
 	List.erase( List.begin() + index );
 }
 
-GLModel* CModelManager::GetModel( unsigned int index )
+CModel* CModelManager::GetModel( unsigned int index )
 {
 	if( index >= List.size() )
 		return 0;

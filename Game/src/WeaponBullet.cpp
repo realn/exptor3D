@@ -13,9 +13,6 @@ CBullet::CBullet(CActor* owner, const float damage, const Vector3f& pos, const V
 	CDynamic(0.1f),
 	Owner(owner),
 	Damage(damage),
-	CanDelete( false ),
-	DoDelete( false ),
-	Visible( true ),
 	obj( nullptr )
 {
 	Pos = pos;
@@ -45,12 +42,8 @@ void CBullet::Update( const float fTD )
 		Pos = NextPos;
 		NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
 		if( pGLevel->GetBlock( this->GetBlockPos() ) == NULL )
-			DoDelete = true;
+			DeleteThis = true;
 	}
-	else DoDelete = true;
-
-	if( DoDelete )
-		OnDelete();
 }
 
 float CBullet::DoTest( CDynamic* Dum, float Armor )
@@ -58,7 +51,7 @@ float CBullet::DoTest( CDynamic* Dum, float Armor )
 	if( Dum != NULL && Dum != Owner && TestCollDum( Dum, this ) )
 	{
 		float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-		DoDelete = true;
+		DeleteThis = true;
 		return Damage * ArmorMod;
 	}
 	return 0.0f;
@@ -82,5 +75,4 @@ void CBullet::Render()
 void CBullet::OnDelete()
 {
 	SEManager.AddEffect( new CEffectSprite( SEManager.GetTexMng(), NextPos, 0.5f, 0.5f, 0.5f ) );
-	CanDelete = true;
 }

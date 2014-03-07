@@ -1,7 +1,7 @@
 #pragma once
 
 #include "3dMath.h"
-#include "glm.h"
+#include "Model.h"
 #include "ModelManager.h"
 
 /*	KLASA gameStatObj
@@ -11,7 +11,7 @@
 //	public CObject
 //{
 //private:
-//	GLModel*	Model;
+//	CModel*	Model;
 //	std::string	file;
 //
 //	std::string GetStr( FILE* fp );

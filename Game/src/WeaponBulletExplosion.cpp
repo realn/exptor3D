@@ -41,7 +41,7 @@ void CBullExplosion::Update( const float fTD )
 
 	if( thisPower >= Power )
 	{
-		CanDelete = true;
+		DeleteThis = true;
 	}
 }
 
