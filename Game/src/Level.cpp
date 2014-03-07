@@ -167,7 +167,6 @@ bool CLevel::LoadLevel( const std::string &filename )
 	{
 		Log.Report( "GLEVEL( " + file + " ): Prze³adowanie poziomu na : " + filename );
 		Free();
-		WManager.Clear();
 		MainPlayer.Reset();
 		BManager.Clear();
 	}

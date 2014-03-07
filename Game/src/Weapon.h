@@ -234,27 +234,3 @@ public:
 	void Render();
 	void Shot();
 };
-
-/*	KLASA gameWeaponManager
-	S³u¿y do zarz¹dzania broni¹ le¿¹c¹ na ziemi
-	na poziomie. z tej klasy g³ównie korzysta gracz.
-	( i nikt poza nim :) )
-*/
-class gameWeaponManager
-{
-private:
-	std::vector <weWeapon*> List;
-public:
-	gameWeaponManager();
-	~gameWeaponManager();
-	void Update( CPlayer* Players, int PlayerCount, const float fTD );
-	void Render();
-
-	void AddWeapon( CModelManager& modelManager, weWeapon* weapon );
-	void DeleteWeapon( unsigned int index );
-	weWeapon* GetWeapon( unsigned int index );
-	void Clear();
-	void LoadFromLevel();
-};
-
-extern gameWeaponManager WManager;

@@ -131,7 +131,6 @@ void Update(const float fTD)	// Logika gry
 	if( GUI.GetCliping() )
 	{
 		MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
-		WManager.Update( &MainPlayer, 1, fTD );
 	}
 	MainPlayer.ApplyNextPos();
 
@@ -162,7 +161,6 @@ void RenderLevel()	// Wizualizacja gry
 		ThingManager.Render();
 		
 		glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-		WManager.Render();
 		BManager.Render();
 		BonusMan.Render();
 		pGLevel->Render();
@@ -188,13 +186,10 @@ void RenderLevel()	// Wizualizacja gry
 
 	glRotatef( MainPlayer.GetAngle(), 0.0f, 1.0f, 0.0f );
 	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
-	//ThingManager.Render();
 
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-	//WManager.Render();
 	pGLevel->Render();
 	BManager.Render();
-	//BonusMan.Render();
 
 	glDepthMask( 0 );
 	SEManager.Render();
@@ -476,7 +471,6 @@ void LoadLevel( std::string filename )
 		pGLevel->InitLevel();
 		
 		GUI.LevName = pGLevel->GetLevelName();
-		WManager.LoadFromLevel();
 		GUI.EnableMainEngine();
 		GUI.EnableGGUI();
 
