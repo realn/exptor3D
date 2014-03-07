@@ -77,6 +77,9 @@ CLevel::~CLevel()
 void	CLevel::Update( const float fTD )
 {
 	UpdateList.Update( fTD );
+
+	FlushDeleted();
+
 	CollisionMng.Solve();
 
 	RenderList.PreLoad();
@@ -95,10 +98,50 @@ void	CLevel::Render()
 	glDepthMask( 1 );
 }
 
-void	CLevel::AddBullet( CBullet* pBullet )
+const bool	CLevel::AddEntity( ISceneEntity* pEntity )
 {
-	UpdateList.Add( pBullet );
-	RenderList.Add( pBullet );
+	if( CScene::AddEntity( pEntity ) )
+	{
+		IRenderable* pRender = dynamic_cast<IRenderable*>( pEntity );
+		IUpdateable* pUpdate = dynamic_cast<IUpdateable*>( pEntity );
+		CObject* pObject = dynamic_cast<CObject*>( pEntity );
+
+		if( pRender != nullptr )
+			RenderList.Add( pRender );
+
+		if( pUpdate != nullptr )
+			UpdateList.Add( pUpdate );
+
+		if( pObject != nullptr )
+			CollisionMng.AddObject( pObject );
+
+		return true;
+	}
+
+	return false;
+}
+
+const bool	CLevel::RemoveEntity( ISceneEntity* pEntity )
+{
+	if( CScene::RemoveEntity( pEntity ) )
+	{
+		IRenderable* pRender = dynamic_cast<IRenderable*>( pEntity );
+		IUpdateable* pUpdate = dynamic_cast<IUpdateable*>( pEntity );
+		CObject* pObject = dynamic_cast<CObject*>( pEntity );
+
+		if( pRender != nullptr )
+			RenderList.Remove( pRender );
+
+		if( pUpdate != nullptr )
+			UpdateList.Remove( pUpdate );
+
+		if( pObject != nullptr )
+			CollisionMng.DeleteObject( pObject );
+
+		return true;
+	}
+
+	return false;
 }
 
 // Zwraca, czy poziom jest za³adowany i gotowy
@@ -979,6 +1022,22 @@ void CLevel::Free()
 	loaded = false;
 }
 
+void	CLevel::OnDeleteEntity( ISceneEntity* pEntity )
+{
+	IRenderable* pRender = dynamic_cast<IRenderable*>( pEntity );
+	IUpdateable* pUpdate = dynamic_cast<IUpdateable*>( pEntity );
+	CObject* pObject = dynamic_cast<CObject*>( pEntity );
+
+	if( pRender != nullptr )
+		RenderList.Remove( pRender );
+
+	if( pUpdate != nullptr )
+		UpdateList.Remove( pUpdate );
+
+	if( pObject != nullptr )
+		CollisionMng.DeleteObject( pObject );
+}
+
 const bool	CLevel::ParseCoords(const std::string& str, int& x, int& y)
 {
 	if(str.empty())
@@ -1322,10 +1381,7 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 			if(item != nullptr)
 			{
 				item->Pos = GetBlockPos( x, y );
-				RenderList.Add( item );
-				UpdateList.Add( item );
-				CollisionMng.AddObject( item );
-				//BonusMan.AddBonus( item );
+				AddEntity( item );
 			}
 		}
 		else

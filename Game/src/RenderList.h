@@ -18,6 +18,7 @@ public:
 	CRenderList( CTexManager& texManager, CModelManager& modelManager );
 	
 	void	Add( IRenderable* pObj );
+	void	Remove( IRenderable* pObj );
 
 	void	PreLoad();
 	void	Sort();

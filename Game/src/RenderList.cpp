@@ -16,6 +16,13 @@ void	CRenderList::Add( IRenderable* pObj )
 	}
 }
 
+void	CRenderList::Remove( IRenderable* pObj )
+{
+	auto it = std::find( List.cbegin(), List.cend(), pObj );
+	if( it != List.cend() )
+		List.erase( it );
+}
+
 void	CRenderList::PreLoad()
 {
 	if( ToLoad.empty() )

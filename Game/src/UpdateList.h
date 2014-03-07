@@ -14,6 +14,7 @@ public:
 	~CUpdateList();
 
 	void	Add( IUpdateable* pObj );
+	void	Remove( IUpdateable* pObj );
 
 	void	Update( const float fTD );
 };

@@ -174,6 +174,7 @@ public:
 	Vector3f GetBlockPos();
 
 	virtual const bool	OnCollision( CObject* pObject ){ return false; };
+	virtual const bool	OnCollision( const Vector3f& point, const Planef& plane ){ return false; }
 };
 
 extern const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 );

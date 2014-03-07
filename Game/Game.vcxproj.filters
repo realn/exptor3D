@@ -156,6 +156,9 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Source\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -268,6 +271,12 @@
     </ClInclude>
     <ClInclude Include="src\Model.h">
       <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneEntity.h">
+      <Filter>Source\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>Source\Level</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

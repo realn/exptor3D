@@ -65,6 +65,6 @@ void CBullRocket::Update( const float fTD )
 
 void CBullRocket::OnDelete()
 {
-	pGLevel->AddBullet( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 20.0f ) );
+	pGLevel->AddEntity( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 20.0f ) );
 }
 

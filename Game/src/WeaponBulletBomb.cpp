@@ -30,7 +30,7 @@ void CBullBomb::Update( const float fTD )
 	{
 		DeleteThis = true;
 		CBullExplosion* bull = new CBullExplosion( nullptr, this->Damage, Pos, 60.0f, 10.0f );
-		pGLevel->AddBullet( bull );
+		pGLevel->AddEntity( bull );
 	}
 }
 

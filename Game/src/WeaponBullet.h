@@ -3,6 +3,7 @@
 #include "3dMath.h"
 #include "GameActor.h"
 #include "Renderable.h"
+#include "SceneEntity.h"
 
 #define BULLET_TYPE_NORMAL	0
 #define BULLET_TYPE_RAY		1
@@ -15,7 +16,8 @@
 class CBullet : 
 	public CDynamic,
 	public IUpdateable,
-	public IRenderable
+	public IRenderable,
+	public ISceneEntity
 {
 protected:
 	CActor* Owner;

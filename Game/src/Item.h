@@ -5,6 +5,7 @@
 
 #include "Renderable.h"
 #include "Updateable.h"
+#include "SceneEntity.h"
 
 enum class ITEM_TYPE
 {
@@ -18,7 +19,8 @@ enum class ITEM_TYPE
 class CItem : 
 	public CObject,
 	public IRenderable,
-	public IUpdateable
+	public IUpdateable,
+	public ISceneEntity
 {
 protected:
 	const ITEM_TYPE Type;

@@ -108,6 +108,7 @@
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderList.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Special.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -127,6 +128,8 @@
     <ClInclude Include="src\CollisionFace.h" />
     <ClInclude Include="src\defines.h" />
     <ClInclude Include="src\Effect.h" />
+    <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\SceneEntity.h" />
     <ClInclude Include="src\GameActor.h" />
     <ClInclude Include="src\GameEnemy.h" />
     <ClInclude Include="src\CollisionManager.h" />

@@ -31,6 +31,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "RenderList.h"
 #include "UpdateList.h"
 #include "CollisionManager.h"
+#include "Scene.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -109,7 +110,8 @@ public:
 	pliki txt z poziomami, i
 	tworz¹ ich wizualn¹ wersjê.
 */
-class CLevel
+class CLevel :
+	public CScene
 {
 private:
 	CModelManager&	ModelManager;
@@ -181,7 +183,8 @@ public:
 	void	Update( const float fTD );
 	void	Render();
 
-	void	AddBullet( CBullet* pBullet );
+	const bool	AddEntity( ISceneEntity* pEntity ) override;
+	const bool	RemoveEntity( ISceneEntity* pEntity ) override;
 
 	std::string GetLevelName();
 
@@ -217,6 +220,8 @@ public:
 	void Free();
 
 private:
+	void	OnDeleteEntity( ISceneEntity* pEntity ) override;
+
 	const bool	ParseCoords(const std::string& str, int& x, int& y);
 	const bool	ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& type, std::vector<std::string>& params);
 	const bool	LoadHeader( std::fstream& stream );

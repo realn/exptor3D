@@ -67,5 +67,5 @@ void	CWeaponRocketLuncher::OnFired()
 
 	CBullet* pRocket = new CBullRocket( Owner, damage, pos, vector, 20.0f );
 
-	pGLevel->AddBullet( pRocket );
+	pGLevel->AddEntity( pRocket );
 }
