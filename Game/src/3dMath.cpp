@@ -276,6 +276,25 @@ void	Planef::Set( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 )
 	D = -Normal.Dot( v1 );
 }
 
+const float	Planef::Distance( const Vector3f& pos ) const
+{
+	return Normal.Dot( pos ) + D;
+}
+
+const bool	Planef::Intersects( const Vector3f& origin, const Vector3f& dest, Vector3f& outIntersect ) const
+{
+	float w = Distance( origin ) * Distance( dest );
+	if( w >= 0.0f )
+		return false;
+
+	auto vec = dest - origin;
+
+	auto counter = Distance( origin );
+	auto denom = -Normal.Dot( vec );
+
+	outIntersect = origin + vec * ( counter / denom );
+	return true;
+}
 
 
 const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 )

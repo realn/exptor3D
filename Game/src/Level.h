@@ -43,6 +43,17 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #define	LEV_WALL_LEFT	4
 #define	LEV_WALL_RIGHT	8
 
+enum class LEV_SURFACE : unsigned
+{
+	NONE		= 0x00000000,
+	WALL_FAR	= 0x00000001,
+	WALL_NEAR	= 0x00000002,
+	WALL_LEFT	= 0x00000004,
+	WALL_RIGHT	= 0x00000008,
+	CEILING		= 0x00000010,
+	FLOOR		= 0x00000020,
+};
+
 #define	WLFLAG_ALL_ENEM_DEAD	1
 #define WLFLAG_GO_TO_BLOCK		2
 #define	WLFLAG_GET_WEAP			4
@@ -76,6 +87,53 @@ public:
 	bool CheckOneFlag();
 };
 
+class CLvlMesh
+{
+public:
+	std::vector<Vector3f>		Verts;
+	std::vector<Vector2f>		TexCoords;
+	std::vector<unsigned short>	Indices;
+
+	void	AddVertex( const Vector3f& vert, const Vector2f& texCoord )
+	{
+		for( unsigned i = 0; i < Verts.size(); i++ )
+		{
+			if( Verts[i] == vert && TexCoords[i] == texCoord )
+			{
+				Indices.push_back( i );
+				return;
+			}
+		}
+
+		Indices.push_back( Verts.size() );
+		Verts.push_back( vert );
+		TexCoords.push_back( texCoord );
+	}
+	void	Clear()
+	{
+		Verts.clear();
+		TexCoords.clear();
+		Indices.clear();
+	}
+
+	void	Render()
+	{
+		if( Indices.empty() )
+			return;
+
+		glEnableClientState( GL_VERTEX_ARRAY );
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+
+		glVertexPointer( 3, GL_FLOAT, 0, &Verts[0] );
+		glTexCoordPointer( 2, GL_FLOAT, 0, &TexCoords[0] );
+
+		glDrawElements( GL_QUADS, Indices.size(), GL_UNSIGNED_SHORT, &Indices[0] );
+
+		glDisableClientState( GL_VERTEX_ARRAY );
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	}
+};
+
 /*	KLASA CLvlBlock
 	Przechowuje dane potrzebne
 	do stworzenia, inicjalizacji
@@ -85,6 +143,11 @@ public:
 class CLvlBlock
 {
 public:
+	unsigned Row;
+	unsigned Col;
+
+	Vector3f	Origin;
+
 	// Wektor trzymaj¹cy rogi sektora
 	Vector3f Corner[4];
 	// Wektor trzyma rogi, o które gracz ma siê zatrzymywaæ (rogi œcian)
@@ -102,7 +165,11 @@ public:
 public:
 	CLvlBlock();
 
+	void	Set( const unsigned row, const unsigned col, const float width, const float height, const float depth );
+
 	void	LoadWalls( const std::string& str );
+
+	void	GetVerts( std::vector<Vector3f>& verts );
 };
 
 /*	KLASA CLevel
@@ -149,10 +216,11 @@ private:
 	int AllWin;
 	int AllLose;
 
+	CLvlMesh	Floor;
+	CLvlMesh	Ceiling;
+	CLvlMesh	Wall;
+
 	// Listy wyœwietlania
-	unsigned int Floor;
-	unsigned int Top;
-	unsigned int Wall;
 	unsigned int Reflect;
 
 	// Czy poziom ju¿ jest za³adowany
@@ -189,7 +257,7 @@ public:
 	std::string GetLevelName();
 
 	unsigned int GetBlockCount();
-	CLvlBlock* GetBlock( unsigned int i, unsigned int j ) const;
+	CLvlBlock* GetBlock( const unsigned col, const unsigned row ) const;
 	CLvlBlock* GetBlock( Vector3f Pos ) const;
 	CLvlBlock* GetBlock( unsigned int i ) const;
 
@@ -228,6 +296,8 @@ private:
 	const bool	LoadTextures( std::fstream& stream );
 	const bool	LoadWalls( std::fstream& stream );
 	const bool	LoadItemList( std::fstream& stream );
+
+	void	GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& verts );
 };
 
 extern bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing = false );

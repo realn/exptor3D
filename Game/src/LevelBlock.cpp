@@ -2,20 +2,32 @@
 
 CLvlBlock::CLvlBlock() :
 	walls( 0 ),
-	CornerCount( 0 )
+	CornerCount( 0 ),
+	Row( 0 ),
+	Col( 0 )
 {
 
 }
 
+void	CLvlBlock::Set( const unsigned row, const unsigned col, const float width, const float height, const float depth )
+{
+	Row = row;
+	Col = col;
+	Origin.X = (float)col * width;// + ( width / 2.0f );
+	Origin.Y = 0.0f;//height / 2.0f;
+	Origin.Z = -(float)row * depth;// - ( depth / 2.0f );
+}
+
 void CLvlBlock::LoadWalls( const std::string& str )
 {
-	walls = 0;
+	walls = (unsigned)LEV_SURFACE::CEILING | (unsigned)LEV_SURFACE::FLOOR;
+
 	if( ContainsString( str, "L" ) )
-		walls |= LEV_WALL_LEFT;
+		walls |= (unsigned)LEV_SURFACE::WALL_LEFT;
 	if( ContainsString( str, "R" ) )
-		walls |= LEV_WALL_RIGHT;
+		walls |= (unsigned)LEV_SURFACE::WALL_RIGHT;
 	if( ContainsString( str, "F" ) )
-		walls |= LEV_WALL_TOP;
+		walls |= (unsigned)LEV_SURFACE::WALL_FAR;
 	if( ContainsString( str, "N" ) )
-		walls |= LEV_WALL_BOTTOM;
+		walls |= (unsigned)LEV_SURFACE::WALL_NEAR;
 }

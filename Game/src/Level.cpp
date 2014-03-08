@@ -39,9 +39,6 @@ CLevel::CLevel( CTexManager& texManager, CModelManager& modelManager ) :
 	Version = 0;
 
 	// I zerujemy listê wyœwietlania
-	Floor = 0;
-	Top = 0;
-	Wall = 0;
 	Reflect = 0;
 
 	PlayerStartBlock = 0;
@@ -265,6 +262,14 @@ bool CLevel::LoadLevel( const std::string &filename )
 		}
 		else
 			Log.Error( "GLEVEL( " + file + " ): Nierozpoznany ci¹g " + str + "!" );
+	}
+
+	for( unsigned row = 0; row < Rows; row++ )
+	{
+		for( unsigned col = 0; col < Cols; col++ )
+		{
+			GetBlock( col, row )->Set( row, col, blockWidth, blockHeight, blockDepth );
+		}
 	}
 
 	/*
@@ -582,12 +587,7 @@ void CLevel::BuildVisual()
 
 	GUI.SendConMsg( "Poziom: Tworzenie czesci wizualnej...", false );
 	// Zmienne pomocnicze
-	int i, j, blk;
 
-	// Generujemy listê
-	Top = glGenLists( 1 );
-	Wall = glGenLists( 1 );
-	Floor = glGenLists( 1 );
 	/*	Teraz tworzymy listê. Listy wyœwietlania
 	maj¹ te zalete, ¿e raz stworzone BARDZO
 	przyspieszaj¹ wyœwietlanie, dlatego op³aca
@@ -597,79 +597,41 @@ void CLevel::BuildVisual()
 	/*	Ta czêœæ kodu tysuje pod³oge, na ca³ej
 	powieszchni poziomu.
 	*/
-	glNewList( Floor, GL_COMPILE );
-	glPushMatrix();
-	glTranslatef( 5, 0, -5 );
-	for( i = 0; i < Rows; i++ )
+
+	std::vector<Vector2f> texCoord;
+	texCoord.push_back( Vector2f( 0.0f, 0.0f ) );
+	texCoord.push_back( Vector2f( 1.0f, 0.0f ) );
+	texCoord.push_back( Vector2f( 1.0f, 1.0f ) );
+	texCoord.push_back( Vector2f( 0.0f, 1.0f ) );
+
+	for( unsigned row = 0; row < Rows; row++ )
 	{
-		for( j = 0; j < Cols; j++ )
+		for( unsigned col = 0; col < Cols; col++ )
 		{
-			glPushMatrix();
+			auto pBlock = GetBlock( col, row );
+			std::vector<Vector3f> vertFloor;
+			std::vector<Vector3f> vertCeiling;
+			std::vector<Vector3f> vertWall;
 
-			glTranslatef( j*10, 0, -(i*10) );
+			GenSurfaceVerts( LEV_SURFACE::FLOOR, vertFloor );
+			GenSurfaceVerts( LEV_SURFACE::CEILING, vertCeiling );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_FAR) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_LEFT) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_NEAR) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_RIGHT) ), vertWall );
 
-			DrawFloor();
+			for( unsigned i = 0; i < vertFloor.size(); i++ )
+			{
+				Floor.AddVertex( pBlock->Origin + vertFloor[i], texCoord[i] );
+				Ceiling.AddVertex( pBlock->Origin + vertCeiling[i], texCoord[i] );
+			}
 
-			glPopMatrix();
+			for( unsigned i = 0; i < vertWall.size(); i++ )
+			{
+				Wall.AddVertex( pBlock->Origin + vertWall[i], texCoord[ i % 4 ] );
+			}
 		}
 	}
-	glPopMatrix();
-	glEndList();
-	// To samo co poprzednio, tylko, ¿e z sufitem
-	glNewList( Top, GL_COMPILE );
-	glPushMatrix();
-	glTranslatef( 5, 0, -5 );
-	for( i = 0; i < Rows; i++ )
-	{
-		for( j = 0; j < Cols; j++ )
-		{
-			glPushMatrix();
-
-			glTranslatef( j*10, 0, -(i*10) );
-
-			DrawTop();
-
-			glPopMatrix();
-		}
-	}
-	glPopMatrix();
-	glEndList();
-	/*	W tej pêtli s¹ rysowane œciany
-	w zale¿noœci jaka œciana jest zawarta
-	w fladze, tak¹ rysujemy.
-	*/
-	glNewList( Wall, GL_COMPILE );
-	glPushMatrix();
-	glTranslatef( 5, 0, -5 );
-	for( i = 0; i < Rows; i++ )
-	{
-		for( j = 0; j < Cols; j++ )
-		{
-			glPushMatrix();
-
-			glTranslatef( j*10, 0.0f, -(i*10) );
-
-			int in = i * Cols + j;
-
-			blk = block[ in ].walls;
-
-			if( blk & LEV_WALL_TOP )
-				DrawWall( LEV_WALL_TOP );
-
-			if( blk & LEV_WALL_BOTTOM )
-				DrawWall( LEV_WALL_BOTTOM );
-
-			if( blk & LEV_WALL_LEFT )
-				DrawWall( LEV_WALL_LEFT );
-
-			if( blk & LEV_WALL_RIGHT )
-				DrawWall( LEV_WALL_RIGHT );
-
-			glPopMatrix();
-		}
-	}
-	glPopMatrix();
-	glEndList();
 }
 
 /*	Ta metoda jest odpowiedzilna, za czêœæ fizyczn¹ poziomu
@@ -866,7 +828,7 @@ void CLevel::DrawAllTop()
 		return;
 
 	Tex[1]->Activate( GUI.GetTexDLevel() );
-	glCallList( Top );
+	Ceiling.Render();
 }
 
 void CLevel::DrawAllWall()
@@ -875,7 +837,7 @@ void CLevel::DrawAllWall()
 		return;
 
 	Tex[0]->Activate( GUI.GetTexDLevel() );
-	glCallList( Wall );
+	Wall.Render();
 }
 
 void CLevel::DrawAllFloor()
@@ -884,7 +846,7 @@ void CLevel::DrawAllFloor()
 		return;
 
 	Tex[2]->Activate( GUI.GetTexDLevel() );
-	glCallList( Floor );
+	Floor.Render();
 }
 
 void CLevel::DrawReflect()
@@ -912,16 +874,12 @@ std::string CLevel::GetLevelName()
 
 /*	Ta zwraca dany block z okreœlonego wiersza i kolumny
 */
-CLvlBlock* CLevel::GetBlock( unsigned int i, unsigned int j ) const
+CLvlBlock* CLevel::GetBlock( const unsigned col, const unsigned row ) const
 {
-	if( i >= 0 && j >= 0 )
-	{
-		if( j < Rows && i < Cols )
-		{
-			return (CLvlBlock*)&block[ j * Cols + i ];
-		}
-	}
-	return NULL;
+	if( col >= Cols || row >= Rows )
+		return nullptr;
+
+	return const_cast<CLvlBlock*>(&block[ row * Cols + col ]);
 }
 
 CLvlBlock* CLevel::GetBlock( Vector3f Pos ) const
@@ -1008,12 +966,10 @@ void CLevel::Free()
 	WinFlags.flags = 0;
 	LoseFlags.flags = 0;
 
-	glDeleteLists( Top, 1 );
-	Top = 0;
-	glDeleteLists( Wall, 1 );
-	Wall = 0;
-	glDeleteLists( Floor, 1 );
-	Floor = 0;
+	//glDeleteLists( Top, 1 );
+	Floor.Clear();
+	Ceiling.Clear();
+	Wall.Clear();
 
 	Tex[0] = NULL;
 	Tex[1] = NULL;
@@ -1394,6 +1350,60 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 	return false;
 }
 
+void	CLevel::GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& verts )
+{
+	float halfX = blockWidth / 2.0f;
+	float halfY = blockHeight / 2.0f;
+	float halfZ = blockDepth / 2.0f;
+
+	switch (surf)
+	{
+	case LEV_SURFACE::CEILING:
+		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		break;
+
+	case LEV_SURFACE::FLOOR:
+		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
+		break;
+
+	case LEV_SURFACE::WALL_FAR:
+		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		break;
+
+	case LEV_SURFACE::WALL_NEAR:
+		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		break;
+
+	case LEV_SURFACE::WALL_LEFT:
+		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		break;
+
+	case LEV_SURFACE::WALL_RIGHT:
+		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		break;
+
+	default:
+		break;
+	}
+}
 
 /*	To jest odzielna funkcja sprawdzaj¹ca kolizje
 obiektu CDynamic, ze œcianami podanego bloku.

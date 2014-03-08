@@ -77,6 +77,15 @@ public:
 	Vector3f operator/=( const Vector3f &V1 );
 	Vector3f operator/=( const float &V1 );	
 
+	const bool	operator==( const Vector3f& vert ) const
+	{
+		return X == vert.X && Y == vert.Y && Z == vert.Z;
+	}
+	const bool	operator!=( const Vector3f& vert ) const
+	{
+		return !(*this == vert);
+	}
+
 	/*	METODY SPECJALNE
 		W grafice 3D wystêpuje kilka
 		bardzo przydatnych wzorów, które
@@ -106,6 +115,26 @@ public:
 	Vector3f Reverse() const;
 };
 
+class Vector2f
+{
+public:
+	float	X;
+	float	Y;
+
+	Vector2f() : X( 0.0f ), Y( 0.0f ){}
+	Vector2f( const float x, const float y ) : X( x ), Y( y ){}
+	Vector2f( const Vector2f& vert ) : X(vert.X), Y(vert.Y){}
+
+	const bool	operator==( const Vector2f& vert ) const
+	{
+		return X == vert.X && Y == vert.Y;
+	}
+	const bool	operator!=( const Vector2f& vert ) const
+	{
+		return !(*this == vert);
+	}
+};
+
 /*	KLASA P£ASZCZYZN
 	P³aszczyzna, to niczym nie ograniczona
 	powieszchnia, która posiada tylko kierunek
@@ -124,6 +153,9 @@ public:
 	Planef(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
 
 	void	Set(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
+
+	const float	Distance( const Vector3f& pos ) const;
+	const bool	Intersects( const Vector3f& origin, const Vector3f& dest, Vector3f& outIntersect ) const;
 };
 
 /// <summary>
