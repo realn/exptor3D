@@ -44,10 +44,16 @@ void	CCollisionManager::FindSideBlocks()
 			if( pBlock == nullptr )
 				continue;
 
-			pBlock->AddSideBlock( GetBlock( row - 1, col ) );
-			pBlock->AddSideBlock( GetBlock( row + 1, col ) );
-			pBlock->AddSideBlock( GetBlock( row , col - 1 ) );
-			pBlock->AddSideBlock( GetBlock( row , col + 1) );
+			pBlock->AddSideBlock( GetBlock( row - 1, col + 1 ) );
+			pBlock->AddSideBlock( GetBlock( row + 0, col + 1 ) );
+			pBlock->AddSideBlock( GetBlock( row + 1, col + 1 ) );
+
+			pBlock->AddSideBlock( GetBlock( row - 1, col + 0 ) );
+			pBlock->AddSideBlock( GetBlock( row + 1, col + 0 ) );
+			
+			pBlock->AddSideBlock( GetBlock( row - 1, col - 1 ) );
+			pBlock->AddSideBlock( GetBlock( row + 0, col - 1 ) );
+			pBlock->AddSideBlock( GetBlock( row + 1, col - 1 ) );
 		}
 	}
 }
@@ -110,6 +116,20 @@ void	CCollisionManager::Solve()
 		if( !pDynamic->IsCollidable() )
 			continue;
 
+		CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
+		if( pBlock != nullptr )
+		{
+			Planef plane; Vector3f point;
+			if( SolveFullBlockCollisions( *pBlock, *pDynamic, point, plane ) )
+			{
+				if( pDynamic->OnCollision( point, plane ) )
+					pDynamic->NextPos = point;
+
+				continue;
+			}
+		}
+
+
 		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
 		{
 			CObject* pObject = ObjectList[obj];
@@ -162,13 +182,44 @@ const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point )
 	return y * Cols + x;
 }
 
+CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point )
+{
+	auto index = FindBlockIndex( point );
+	if( index >= Blocks.size() )
+		return nullptr;
+	return &Blocks[index];
+}
+
 const bool	CCollisionManager::SolveBlockCollision( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane )
 {
 	for( unsigned i = 0; i < block.GetFaceNumber(); i++ )
 	{
 		auto& face = block.GetFace( i );
 
-		
+		Vector3f point;
+		if( face.Plane.Intersects( dynamic.Pos, dynamic.NextPos, point ) ){
+			if( face.CheckPointInFace( point ) )
+				continue;
+
+			outPoint = point;
+			outPlane = face.Plane;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool	CCollisionManager::SolveFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane )
+{
+	if( SolveBlockCollision( block, dynamic, outPoint, outPlane ) )
+		return true;
+
+	for( unsigned i = 0; i < block.GetSideBlockNumber(); i++ )
+	{
+		if( SolveBlockCollision( block.GetSideBlock( i ), dynamic, outPoint, outPlane ) )
+			return true;
 	}
 
 	return false;

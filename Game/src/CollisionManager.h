@@ -35,7 +35,9 @@ public:
 
 private:
 	CCollisionBlock*	GetBlock( const unsigned row, const unsigned col );
-	const unsigned	FindBlockIndex( const Vector3f& point );
+	const unsigned		FindBlockIndex( const Vector3f& point );
+	CCollisionBlock*	FindBlock( const Vector3f& point );
 
 	const bool	SolveBlockCollision( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane );
+	const bool	SolveFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane );
 };

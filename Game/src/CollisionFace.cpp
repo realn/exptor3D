@@ -23,3 +23,13 @@ void	CCollisionFace::Set( const Vector3f& v1, const Vector3f& v2, const Vector3f
 		Edge[ i ].D = -Edge[ i ].Normal.Dot( Vert[ i ] );
 	}
 }
+
+const bool	CCollisionFace::CheckPointInFace( const Vector3f& point ) const
+{
+	for( unsigned i = 0; i < 4; i++ )
+	{
+		if( Edge[i].Distance( point ) < 0.0f )
+			return false;
+	}
+	return true;
+}
