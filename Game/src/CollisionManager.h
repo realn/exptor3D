@@ -49,6 +49,6 @@ private:
 	const unsigned		FindBlockIndex( const Vector3f& point );
 	CCollisionBlock*	FindBlock( const Vector3f& point );
 
-	const bool	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions );
-	const bool	FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collision );
+	void	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions );
+	void	FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collision );
 };

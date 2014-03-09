@@ -123,16 +123,7 @@ void	CCollisionManager::Solve()
 		//{
 		for( unsigned i = 0; i < Blocks.size(); i++ )
 		{
-			Planef plane; Vector3f point;
-			if( FindFullBlockCollisions( Blocks[i], *pDynamic, collisions ) )
-			{
-				if( pDynamic->OnCollision( point, plane ) )
-				{
-					pDynamic->NextPos = point + plane.Normal * pDynamic->Radius;
-				}
-
-				continue;
-			}
+			FindFullBlockCollisions( Blocks[i], *pDynamic, collisions );
 		}
 		//}
 
@@ -216,7 +207,7 @@ CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point )
 	return &Blocks[index];
 }
 
-const bool	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
+void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
 {
 	for( unsigned i = 0; i < block.GetFaceNumber(); i++ )
 	{
@@ -232,21 +223,27 @@ const bool	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block,
 
 			collisions.push_back( CCollision( point, face.Plane ) );
 		}
-	}
 
-	return false;
+		for( unsigned i = 0; i < 4; i++ )
+		{
+			auto pos = face.GetEdgeClosestPoint( i, dynamic.NextPos );
+			if( DistanceSq( pos, dynamic.NextPos ) > POW( dynamic.Radius ) )
+				continue;
+
+			Planef colPlane( (dynamic.NextPos - pos).Normalize(), pos );
+			posCorrect = -colPlane.Normal * dynamic.Radius;
+			if( colPlane.Intersects( dynamic.Pos, dynamic.NextPos + posCorrect, point ) )
+				collisions.push_back( CCollision( point, colPlane ) );
+		}
+	}
 }
 
-const bool	CCollisionManager::FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
+void	CCollisionManager::FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
 {
-	if( FindBlockCollisions( block, dynamic, collisions ) )
-		return true;
+	FindBlockCollisions( block, dynamic, collisions );
 
 	for( unsigned i = 0; i < block.GetSideBlockNumber(); i++ )
 	{
-		if( FindBlockCollisions( block.GetSideBlock( i ), dynamic, collisions ) )
-			return true;
+		FindBlockCollisions( block.GetSideBlock( i ), dynamic, collisions );
 	}
-
-	return false;
 }

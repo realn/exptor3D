@@ -33,3 +33,23 @@ const bool	CCollisionFace::CheckPointInFace( const Vector3f& point ) const
 	}
 	return true;
 }
+
+const Vector3f	CCollisionFace::GetEdgeClosestPoint( const unsigned edge, const Vector3f& pos ) const
+{
+	auto& v1 = Vert[edge % 4];
+	auto& v2 = Vert[ ( edge + 1 ) % 4 ];
+
+	auto edgeVec = v2 - v1;
+	auto edgeLen = edgeVec.Length();
+	auto edgeNorm = edgeVec / edgeLen;
+	auto posVec = pos - v1;
+
+	float dist = edgeNorm.Dot( posVec );
+
+	if( dist < 0.0f )
+		return v1;
+	if( dist > edgeLen )
+		return v2;
+
+	return v1 + edgeNorm * dist;
+}

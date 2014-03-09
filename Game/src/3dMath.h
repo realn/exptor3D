@@ -155,9 +155,11 @@ public:
 public:
 	Planef();
 	Planef(const Vector3f& normal, const float distance);
+	Planef(const Vector3f& normal, const Vector3f& point);
 	Planef(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
 
 	void	Set(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
+	void	Set(const Vector3f& normal, const Vector3f& pos);
 
 	const float	Distance( const Vector3f& pos ) const;
 	const bool	Intersects( const Vector3f& origin, const Vector3f& dest, Vector3f& outIntersect ) const;

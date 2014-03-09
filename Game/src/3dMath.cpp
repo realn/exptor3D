@@ -265,6 +265,12 @@ Planef::Planef( const Vector3f& normal, const float distance ) :
 	D( distance )
 {}
 
+Planef::Planef( const Vector3f& normal, const Vector3f& pos ) :
+	D( 0.0f )
+{
+	Set( normal, pos );
+}
+
 Planef::Planef( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 ) :
 	D( 0.0f )
 {
@@ -275,6 +281,12 @@ void	Planef::Set( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 )
 {
 	Normal = MakeNormal( v1, v2, v3 );
 	D = -Normal.Dot( v1 );
+}
+
+void	Planef::Set( const Vector3f& normal, const Vector3f& pos )
+{
+	Normal = normal;
+	D = -Normal.Dot( pos );
 }
 
 const float	Planef::Distance( const Vector3f& pos ) const
