@@ -58,7 +58,7 @@ void CWeaponRocketLuncher::Render()
 
 void	CWeaponRocketLuncher::OnFired()
 {
-	Vector3f fireCorr = CorrectByHandPos( Vector3f( -0.5f, 0.5f, 1.0f ) );
+	Vector3f fireCorr = CorrectByHandPos( Vector3f( -0.6f, 0.6f, 0.0f ) );
 	auto pos = GenWorldPos( GenPos() + GenShakePos() + fireCorr );
 	//auto vector = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
 	//vector = (vector - pos).Normalize();

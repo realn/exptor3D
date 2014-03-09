@@ -117,13 +117,14 @@ void	CCollisionManager::Solve()
 		if( !pDynamic->IsCollidable() )
 			continue;
 
+		std::vector<CCollision> collisions;
 		//CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
 		//if( pBlock != nullptr )
 		//{
 		for( unsigned i = 0; i < Blocks.size(); i++ )
 		{
 			Planef plane; Vector3f point;
-			if( SolveFullBlockCollisions( Blocks[i], *pDynamic, point, plane ) )
+			if( FindFullBlockCollisions( Blocks[i], *pDynamic, collisions ) )
 			{
 				if( pDynamic->OnCollision( point, plane ) )
 				{
@@ -134,6 +135,25 @@ void	CCollisionManager::Solve()
 			}
 		}
 		//}
+
+		if( !collisions.empty() )
+		{
+			float dist = DistanceSq( pDynamic->NextPos, collisions[0].Point );
+			unsigned index = 0;
+			for( unsigned i = 1; i < collisions.size(); i++ )
+			{
+				float newDist = DistanceSq( pDynamic->NextPos, collisions[i].Point );
+				if( newDist < dist )
+				{
+					index = i;
+					dist = newDist;
+				}
+			}
+
+			auto& closest = collisions[index];
+			if( pDynamic->OnCollision( closest.Point, closest.Plane ) )
+				pDynamic->NextPos = closest.Point + closest.Plane.Normal * pDynamic->Radius;
+		}
 
 
 		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
@@ -196,7 +216,7 @@ CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point )
 	return &Blocks[index];
 }
 
-const bool	CCollisionManager::SolveBlockCollision( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane )
+const bool	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
 {
 	for( unsigned i = 0; i < block.GetFaceNumber(); i++ )
 	{
@@ -210,24 +230,21 @@ const bool	CCollisionManager::SolveBlockCollision( const CCollisionBlock& block,
 			if( !face.CheckPointInFace( point ) )
 				continue;
 
-			outPoint = point;
-			outPlane = face.Plane;
-
-			return true;
+			collisions.push_back( CCollision( point, face.Plane ) );
 		}
 	}
 
 	return false;
 }
 
-const bool	CCollisionManager::SolveFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane )
+const bool	CCollisionManager::FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
 {
-	if( SolveBlockCollision( block, dynamic, outPoint, outPlane ) )
+	if( FindBlockCollisions( block, dynamic, collisions ) )
 		return true;
 
 	for( unsigned i = 0; i < block.GetSideBlockNumber(); i++ )
 	{
-		if( SolveBlockCollision( block.GetSideBlock( i ), dynamic, outPoint, outPlane ) )
+		if( FindBlockCollisions( block.GetSideBlock( i ), dynamic, collisions ) )
 			return true;
 	}
 

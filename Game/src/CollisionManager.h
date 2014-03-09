@@ -5,6 +5,17 @@
 #include "3dMath.h"
 #include "CollisionBlock.h"
 
+class CCollision
+{
+public:
+	Vector3f	Point;
+	Planef		Plane;
+
+	CCollision( const Vector3f& point, const Planef& plane ) :
+		Point( point ), Plane( plane )
+	{}
+};
+
 class CCollisionManager
 {
 private:
@@ -38,6 +49,6 @@ private:
 	const unsigned		FindBlockIndex( const Vector3f& point );
 	CCollisionBlock*	FindBlock( const Vector3f& point );
 
-	const bool	SolveBlockCollision( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane );
-	const bool	SolveFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, Vector3f& outPoint, Planef& outPlane );
+	const bool	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions );
+	const bool	FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collision );
 };

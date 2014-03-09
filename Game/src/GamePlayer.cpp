@@ -24,7 +24,7 @@ CPlayer::CPlayer() :
 	Angle = 0.0f;
 	WalkStep = 2.5f;
 	RunStep = 5.0f;
-	Radius = 3.0f;
+	Radius = 4.0f;
 	Pos.Set( 5.0f, 0.0f, -5.0f );
 
 	Armor = 0.0f;
