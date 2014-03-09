@@ -1,4 +1,5 @@
 #include "CollisionManager.h"
+#include "Log.h"
 
 CCollisionManager::CCollisionManager() : 
 	Cols( 0 ),
@@ -116,18 +117,23 @@ void	CCollisionManager::Solve()
 		if( !pDynamic->IsCollidable() )
 			continue;
 
-		CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
-		if( pBlock != nullptr )
+		//CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
+		//if( pBlock != nullptr )
+		//{
+		for( unsigned i = 0; i < Blocks.size(); i++ )
 		{
 			Planef plane; Vector3f point;
-			if( SolveFullBlockCollisions( *pBlock, *pDynamic, point, plane ) )
+			if( SolveFullBlockCollisions( Blocks[i], *pDynamic, point, plane ) )
 			{
 				if( pDynamic->OnCollision( point, plane ) )
-					pDynamic->NextPos = point;
+				{
+					pDynamic->NextPos = point + plane.Normal * pDynamic->Radius;
+				}
 
 				continue;
 			}
 		}
+		//}
 
 
 		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
@@ -143,7 +149,7 @@ void	CCollisionManager::Solve()
 				continue;
 
 			auto distFromDyn = pDynamic->GetMoveVector().Dot( toObjVec );
-			auto distFromObjSq = POW( toObjVec.Leangth() ) - POW ( distFromDyn );
+			auto distFromObjSq = POW( toObjVec.Length() ) - POW ( distFromDyn );
 
 			if( distFromObjSq >= POW( pDynamic->Radius + pObject->Radius ) )
 				continue;
@@ -153,7 +159,7 @@ void	CCollisionManager::Solve()
 
 			auto collisionDist = distFromDyn - reverse;
 
-			if( collisionDist > pDynamic->GetMoveVector().Leangth() )
+			if( collisionDist > pDynamic->GetMoveVector().Length() )
 				continue;
 
 			if( pDynamic->OnCollision( pObject ) )
@@ -174,7 +180,7 @@ CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned
 
 const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point )
 {
-	auto scl = point / Vector3f( BlockWidth, 1.0f, BlockHeight );
+	auto scl = point / Vector3f( BlockWidth, 1.0f, -BlockHeight );
 
 	unsigned x = (unsigned)scl.X;
 	unsigned y = (unsigned)scl.Z;
@@ -197,8 +203,11 @@ const bool	CCollisionManager::SolveBlockCollision( const CCollisionBlock& block,
 		auto& face = block.GetFace( i );
 
 		Vector3f point;
-		if( face.Plane.Intersects( dynamic.Pos, dynamic.NextPos, point ) ){
-			if( face.CheckPointInFace( point ) )
+
+		auto posCorrect = -face.Plane.Normal * dynamic.Radius;
+
+		if( face.Plane.Intersects( dynamic.Pos, dynamic.NextPos + posCorrect, point ) ){
+			if( !face.CheckPointInFace( point ) )
 				continue;
 
 			outPoint = point;

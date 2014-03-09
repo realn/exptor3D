@@ -62,6 +62,7 @@ public:
 	void Reset() override;
 
 	const bool	OnCollision( CObject* pObject ) override;
+	const bool	OnCollision( const Vector3f& point, const Planef& plane ) override;
 
 private:
 	virtual void	SolveActions( const float fTD ) override;

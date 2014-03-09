@@ -26,7 +26,7 @@ void CItem::Render()
 
 	glPushMatrix();
 	
-	glTranslatef( Pos.X, Pos.Y - 3.0f, Pos.Z );
+	glTranslatef( Pos.X, Pos.Y - 3.0f, -Pos.Z );
 	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 	Model->CallObject( 0 );
 	

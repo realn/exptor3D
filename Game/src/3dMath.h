@@ -13,6 +13,7 @@ Opis:	Zawiera definicje klas i funkcji u³atwiaj¹ce
 #define _3DMATH_H_
 
 #include <math.h>
+#include "StrEx.h"
 
 #define PIOVER180  0.0174532925199432957692369076848861f
 #define POW(P) (P*P)
@@ -103,16 +104,20 @@ public:
 	const float Dot( const Vector3f &V1 ) const;
 
 	// D³ugoœæ wektora
-	const float Leangth() const;
+	const float Length() const;
 
 	// D³ugoœæ wektora, ale niespierwiastkowana
-	const float LeangthSq() const;
+	const float LengthSq() const;
 
 	// Normalizacja
 	Vector3f Normalize() const;
 
 	// Odwrócenie
 	Vector3f Reverse() const;
+
+	const std::string	ToString() const{
+		return "VEC3F( " + FloatToStr( X ) + ", " + FloatToStr( Y ) + ", " + FloatToStr( Z ) + " )";
+	}
 };
 
 class Vector2f
@@ -156,6 +161,11 @@ public:
 
 	const float	Distance( const Vector3f& pos ) const;
 	const bool	Intersects( const Vector3f& origin, const Vector3f& dest, Vector3f& outIntersect ) const;
+
+	const std::string	ToString() const
+	{
+		return "PLANEF( " + Normal.ToString() + ", " + FloatToStr( D ) + " )";
+	}
 };
 
 /// <summary>
@@ -211,8 +221,8 @@ public:
 
 extern const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 );
 extern const Vector3f	MakeVectorXZ( const float angle );
-extern float		mathDist( const Vector3f& V1, const Vector3f& V2 );
-extern float		mathDistSq( const Vector3f& V1, const Vector3f& V2 );
+extern const float		Distance( const Vector3f& V1, const Vector3f& V2 );
+extern const float		DistanceSq( const Vector3f& V1, const Vector3f& V2 );
 extern const float	TriangleSide( const float A, const float B);
 extern Vector3f		ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
 extern float		GetAngle( const Vector3f &V1, const Vector3f &V2 );

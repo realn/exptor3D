@@ -137,7 +137,7 @@ const WEAPON_HAND CPlayer::GetHand() const
 
 void CPlayer::TestWeapon( CWeapon* Weap )
 {
-	//if( mathDistSq( Pos, Weap->Pos ) <= POW(Radius + Weap->Radius) )
+	//if( DistanceSq( Pos, Weap->Pos ) <= POW(Radius + Weap->Radius) )
 	//{
 	//	if( !Weapon[(unsigned)Weap->GetType()]->GetInited() )
 	//		this->SwichWeap( (unsigned)Weap->GetType() );
@@ -148,7 +148,7 @@ void CPlayer::TestWeapon( CWeapon* Weap )
 
 void CPlayer::TestBonus( CItem* Bonus )
 {
-	if( mathDistSq( Bonus->Pos, this->NextPos ) < POW( Radius ) )
+	if( DistanceSq( Bonus->Pos, this->NextPos ) < POW( Radius ) )
 	{
 		switch( Bonus->GetType() )
 		{
@@ -242,6 +242,11 @@ const bool	CPlayer::OnCollision( CObject* pObject )
 		}
 	}
 
+	return true;
+}
+
+const bool	CPlayer::OnCollision( const Vector3f& point, const Planef& plane )
+{
 	return true;
 }
 

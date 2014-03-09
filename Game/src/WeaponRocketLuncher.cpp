@@ -14,7 +14,7 @@ CWeaponRocketLuncher::CWeaponRocketLuncher( CModelManager& modelManager ) :
 
 	MaxAmmo = 20;
 
-	Pos.Set( 1.5f, -1.5f, -3.5f );
+	Pos.Set( 1.5f, -1.5f, 3.5f );
 
 	Model = modelManager.Get( "rocketlun-model.glm" );
 }
@@ -47,7 +47,7 @@ void CWeaponRocketLuncher::Render()
 		break;
 	}
 
-	glTranslatef( pos.X, pos.Y, pos.Z + Zcorr );
+	glTranslatef( pos.X, pos.Y, -(pos.Z - Zcorr) );
 
 	glRotatef( 180.0f, 0.0f, 1.0f, 0.0f );
 	Model->CallObject( 0 );
@@ -58,14 +58,14 @@ void CWeaponRocketLuncher::Render()
 
 void	CWeaponRocketLuncher::OnFired()
 {
-	Vector3f fireCorr( -0.1f, 0.2f, -1.0f );
+	Vector3f fireCorr = CorrectByHandPos( Vector3f( -0.5f, 0.5f, 1.0f ) );
 	auto pos = GenWorldPos( GenPos() + GenShakePos() + fireCorr );
-	auto vector = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
-	vector = (vector - pos).Normalize();
+	//auto vector = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
+	//vector = (vector - pos).Normalize();
 
 	auto damage = GenDamage();
 
-	CBullet* pRocket = new CBullRocket( Owner, damage, pos, vector, 20.0f );
+	CBullet* pRocket = new CBullRocket( Owner, damage, pos, Owner->Vector, 20.0f );
 
 	pGLevel->AddEntity( pRocket );
 }

@@ -9,6 +9,7 @@ Opis:	Patrz -> 3dMath.h
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "3dMath.h"
+#include "Log.h"
 
 /*	KONTRUKTORY */
 Vector3f::Vector3f()
@@ -211,12 +212,12 @@ const float Vector3f::Dot( const Vector3f &V1 ) const
 	metoda jest po prostu rozwiniêciem
 	wzoru Pitagorasa ( dodano 3 wymiar :) )
 */
-const float Vector3f::Leangth() const
+const float Vector3f::Length() const
 {
-	return sqrtf( LeangthSq() );
+	return sqrtf( LengthSq() );
 }
 
-const float Vector3f::LeangthSq() const
+const float Vector3f::LengthSq() const
 {
 	return Dot( *this );
 }
@@ -229,7 +230,7 @@ const float Vector3f::LeangthSq() const
 */
 Vector3f Vector3f::Normalize() const
 {
-	float len = Leangth();
+	float len = Length();
 	if( len == 0.0f )
 		return Vector3f();
 
@@ -310,7 +311,7 @@ const Vector3f	MakeVectorXZ( const float angle )
 	return Vector3f(
 		sinf( angle * PIOVER180 ),
 		0.0f,
-		-cosf( angle * PIOVER180 )
+		cosf( angle * PIOVER180 )
 		);
 }
 
@@ -318,16 +319,16 @@ const Vector3f	MakeVectorXZ( const float angle )
 	Ta funkcja oblicza odleg³oœæ
 	miêdzy dwoma punktami.
 */
-float mathDist( const Vector3f& V1, const Vector3f& V2 )
+const float Distance( const Vector3f& V1, const Vector3f& V2 )
 {
 	Vector3f vect = V2 - Vector3f(V1);
-	return vect.Leangth();
+	return vect.Length();
 }
 
-float mathDistSq( const Vector3f& V1, const Vector3f& V2 )
+const float DistanceSq( const Vector3f& V1, const Vector3f& V2 )
 {
 	Vector3f vect = V2 - V1;
-	return vect.LeangthSq();
+	return vect.LengthSq();
 }
 
 const float	TriangleSide( const float a, const float b )
@@ -341,7 +342,7 @@ Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &P
 	Vect1 = Point - V1;
 	Vect2 = V2 - V1;
 	Vect2.Normalize();
-	float d = mathDist( V1, V2 );
+	float d = Distance( V1, V2 );
 	float t = Vect2.Dot( Vect1 );
 
 	if( t <= 0 )
@@ -357,33 +358,12 @@ Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &P
 
 float GetAngle( const Vector3f &V1, const Vector3f &V2 )
 {
-	
-	float R = mathDist( V1, V2 );
+	auto vec1 = V2 - V1;
+	Vector3f origin( 0.0f, 0.0f, 1.0f );
 
-	float sinus = ( V2.X - V1.X ) / R; 
-	float cosinus = ( V2.Z - V1.Z ) / R;
+	float angRad = atan2f( vec1.Z, vec1.X ) - atan2f( origin.Z, origin.X );
 
-	//wyliczamy dwa nowe katy na podstawie arc sin i cos
-	float kat = asinf(sinus) / PIOVER180;
-	float kat2 = acosf(cosinus) / PIOVER180;
-
-	//porównujemy, je¿eli oba k¹ty s¹ wiêksze 
-	//od zera to zwracamy ten oparty na arc cos
-	if(kat >= 0 && kat2 >= 0)
-	{
-		return kat2;
-	}
-	//jednak je¿eli k¹t na podstawie arc sin jest mniejszy od zera
-	//to zwracamy k¹t jaki powstanie gdy od pe³nego okrêgu odejmniemy
-	//k¹t na podstawie arc cos (jest dodatni) wtedy uzyskamy prawdziwy
-	//k¹t
-	else if(kat < 0 && kat2 > 0)
-	{
-		float rkat = 360.0f - kat2;
-
-		return rkat;
-	}
-	else return 0.0f;
+	return angRad / PIOVER180;
 }
 
 const float SwapAngle( const float &Angle )

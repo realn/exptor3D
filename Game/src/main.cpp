@@ -67,7 +67,7 @@ bool Init( CTexManager& texManager, CModelManager& modelManager )    //Inicjaliz
 
 	glEnable( GL_CLIP_PLANE0 );
 	glEnable( GL_COLOR_MATERIAL );
-	glDisable( GL_CULL_FACE );
+	//glDisable( GL_CULL_FACE );
 	glDisable( GL_LIGHTING );
 
 #ifdef LIGHT_TEST
@@ -120,18 +120,18 @@ void Update(const float fTD)	// Logika gry
 
 	Mouse();
 
+	MainPlayer.Update( fTD );
 	pGLevel->Update( fTD );
 	pGLevel->CheckWLFlags();
 
 	MainPlayer.ParseKeys( Keys );
 
-	MainPlayer.Update( fTD );
 
 	if( GUI.GetCliping() )
 	{
 		//MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
 	}
-	MainPlayer.ApplyNextPos();
+	//MainPlayer.ApplyNextPos();
 
 	SEManager.Update( fTD );
 	SMBlur.Update( fTD );
@@ -184,7 +184,7 @@ void RenderLevel()	// Wizualizacja gry
 	glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
 	glRotatef( MainPlayer.GetAngle(), 0.0f, 1.0f, 0.0f );
-	glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
+	glTranslatef( -MainPlayer.Pos.X, 0, MainPlayer.Pos.Z );
 
 	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
 	pGLevel->Render();

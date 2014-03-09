@@ -22,7 +22,7 @@ float CBullExplosion::DoTest( CDynamic *Dum, float Armor )
 		return 0.0f;
 
 	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
-	float dist = mathDist( Pos, Dum->NextPos );
+	float dist = Distance( Pos, Dum->NextPos );
 
 	if( dist < Dum->Radius + this->thisPower )
 	{

@@ -43,6 +43,7 @@ void	CActor::DoRotate( const float angle )
 
 void CActor::Update( const float fTD )
 {
+
 	UpdateStats( fTD );
 
 	if( State == ACTOR_STATE::DEAD )
@@ -51,6 +52,11 @@ void CActor::Update( const float fTD )
 	Pos = NextPos;
 
 	SolveActions( fTD );
+
+	if( Pos != NextPos )
+	{
+		Log.Log( " DIFF2 " );
+	}
 }
 
 /*
@@ -77,11 +83,11 @@ void CActor::DoAI()
 			HasTarget = true;
 			Target = Enemy->NextPos;
 
-			if( mathDist( Pos, Target ) < 70.0f )
+			if( Distance( Pos, Target ) < 70.0f )
 			{
 				if( this->AIflags & AI_ATTACK_CLOSE )
 				{
-					if( mathDist( Pos, Target ) > 5.0f )
+					if( Distance( Pos, Target ) > 5.0f )
 						this->AIWalk();
 					else this->AIAttackTarget();
 				}
@@ -217,7 +223,7 @@ void CActor::AIWalk()
 
 	this->GoToAngle( Ang );
 
-	if( mathDist( Pos, Target ) < 0.5f )
+	if( Distance( Pos, Target ) < 0.5f )
 	{
 		AIState = AI_STATE_NOTHING;
 		return;
@@ -313,7 +319,7 @@ void	CActor::SolveActions( const float fTD )
 	if( Actions & (unsigned)GAME_ACTION::MOVE_STRAFE_RIGHT )
 		temp += MakeVectorXZ( Angle + 90 );
 
-	if( temp.LeangthSq() == 0.0f )
+	if( temp.LengthSq() == 0.0f )
 		NextPos = Pos;
 	else
 		NextPos = Pos + temp.Normalize() * Speed * GUI.GetSpeed() * fTD;

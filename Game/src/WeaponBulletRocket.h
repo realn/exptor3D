@@ -21,5 +21,7 @@ public:
 	void Render() override;
 
 	void OnDelete() override;
+
+	const bool OnCollision( const Vector3f& point, const Planef& plane ) override;
 };
 

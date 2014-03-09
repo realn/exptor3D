@@ -174,28 +174,22 @@ const float	CWeapon::GenDamage() const
 
 const Vector3f	CWeapon::GenPos() const
 {
-	switch (Hand)
-	{
-	case WEAPON_HAND::CENTER:
-		return Vector3f( 0.0f, Pos.Y, Pos.Z );
-	case WEAPON_HAND::LEFT:
-		return Vector3f( -Pos.X, Pos.Y, Pos.Z );
-	default:
-	case WEAPON_HAND::RIGHT:
-		return Vector3f( Pos.X, Pos.Y, Pos.Z );
-	}
+	return CorrectByHandPos( Pos );
 }
 
 const Vector3f	CWeapon::GenWorldPos( const Vector3f pos ) const
 {
 	Vector3f result;
 
-	float fx = cosf( Owner->GetAngle() * PIOVER180 );
-	float fy = sinf( Owner->GetAngle() * PIOVER180 );
+	float angDeg = Owner->GetAngle() * PIOVER180;
 
-	result.X = fx * pos.X - fy * pos.Z;
+	float rcos = cosf( angDeg );
+	float rsin = sinf( angDeg );
+
+	result.X = pos.Z * rsin + pos.X * rcos;
+	result.Z = pos.Z * rcos - pos.X * rsin;
+
 	result.Y = pos.Y;
-	result.Z = fy * pos.X + fx * pos.Z;
 
 	return Owner->Pos + result;
 }
@@ -209,6 +203,20 @@ const Vector3f	CWeapon::GenShakePos() const
 	pos.Z = sinf( Shake * PIOVER180 * ShakeSpeed.Z ) * cosf( Shake * PIOVER180 * ShakeSpeed.Z ) * ShakeRadius.Z;
 
 	return pos;
+}
+
+const Vector3f	CWeapon::CorrectByHandPos( const Vector3f& pos ) const
+{
+	switch (Hand)
+	{
+	case WEAPON_HAND::CENTER:
+		return Vector3f( 0.0f, pos.Y, pos.Z );
+	case WEAPON_HAND::LEFT:
+		return Vector3f( -pos.X, pos.Y, pos.Z );
+	default:
+	case WEAPON_HAND::RIGHT:
+		return Vector3f( pos.X, pos.Y, pos.Z );
+	}
 }
 
 void	CWeapon::OnShot()

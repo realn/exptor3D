@@ -110,6 +110,7 @@ protected:
 	const Vector3f	GenPos() const;
 	const Vector3f	GenWorldPos( const Vector3f pos ) const;
 	const Vector3f	GenShakePos() const;
+	const Vector3f	CorrectByHandPos( const Vector3f& pos ) const;
 
 	virtual void	OnShot();
 	virtual void	OnFired();

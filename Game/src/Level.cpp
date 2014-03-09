@@ -85,6 +85,7 @@ void	CLevel::Update( const float fTD )
 
 void	CLevel::Render()
 {
+	glEnable( GL_CULL_FACE );
 	DrawLevel();
 	RenderList.Render( true );
 	
@@ -609,27 +610,28 @@ void CLevel::BuildVisual()
 		for( unsigned col = 0; col < Cols; col++ )
 		{
 			auto pBlock = GetBlock( col, row );
+			if( pBlock == nullptr )
+				continue;
+
 			std::vector<Vector3f> vertFloor;
 			std::vector<Vector3f> vertCeiling;
 			std::vector<Vector3f> vertWall;
 
-			GenSurfaceVerts( LEV_SURFACE::FLOOR, vertFloor );
-			GenSurfaceVerts( LEV_SURFACE::CEILING, vertCeiling );
-			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_FAR) ), vertWall );
-			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_LEFT) ), vertWall );
-			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_NEAR) ), vertWall );
-			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ((unsigned)LEV_SURFACE::WALL_RIGHT) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::FLOOR) ), vertFloor );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::CEILING) ), vertCeiling );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_FAR) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_LEFT) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_NEAR) ), vertWall );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_RIGHT) ), vertWall );
 
 			for( unsigned i = 0; i < vertFloor.size(); i++ )
-			{
-				Floor.AddVertex( pBlock->Origin + vertFloor[i], texCoord[i] );
-				Ceiling.AddVertex( pBlock->Origin + vertCeiling[i], texCoord[i] );
-			}
+				Floor.AddVertex( (pBlock->Origin + vertFloor[i]) * Vector3f( 1.0f, 1.0f, -1.0f ), texCoord[i] );
+
+			for( unsigned i = 0; i < vertCeiling.size(); i++ )
+				Ceiling.AddVertex( (pBlock->Origin + vertCeiling[i]) * Vector3f( 1.0f, 1.0f, -1.0f ), texCoord[i] );
 
 			for( unsigned i = 0; i < vertWall.size(); i++ )
-			{
-				Wall.AddVertex( pBlock->Origin + vertWall[i], texCoord[ i % 4 ] );
-			}
+				Wall.AddVertex( (pBlock->Origin + vertWall[i]) * Vector3f( 1.0f, 1.0f, -1.0f ), texCoord[ i % 4 ] );
 		}
 	}
 }
@@ -644,6 +646,41 @@ void CLevel::BuildPhysic()
 		return;
 
 	GUI.SendConMsg( "Poziom: Tworzenie czesci fizycznej...", false );
+
+	CollisionMng.SetBlockSize( blockWidth, blockDepth );
+	CollisionMng.SetLevelSize( Rows, Cols );
+	for( unsigned row = 0; row < Rows; row++ )
+	{
+		for( unsigned col = 0; col < Cols; col++ )
+		{
+			auto pBlock = this->GetBlock( col, row );
+
+			CCollisionBlock block( GetBlockIndex( col, row ) );
+
+			std::vector<Vector3f> verts;
+
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::FLOOR) ), verts );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::CEILING) ), verts );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_FAR) ), verts );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_LEFT) ), verts );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_NEAR) ), verts );
+			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_RIGHT) ), verts );
+
+			for( unsigned faceIndex = 0; faceIndex < verts.size() / 4; faceIndex++ )
+			{
+				auto v1 = verts[ faceIndex * 4 + 0 ] + pBlock->Origin;
+				auto v2 = verts[ faceIndex * 4 + 1 ] + pBlock->Origin;
+				auto v3 = verts[ faceIndex * 4 + 2 ] + pBlock->Origin;
+				auto v4 = verts[ faceIndex * 4 + 3 ] + pBlock->Origin;
+
+				block.AddFace( v1, v2, v3, v4 );
+			}
+
+			CollisionMng.AddBlock( block );
+		}
+	}
+	//CollisionMng.FindSideBlocks();
+
 	// Zmienne pomocznicze
 	int i, j, k, ai, aj;
 	CLvlBlock* blk;
@@ -907,7 +944,15 @@ const Vector3f	CLevel::GetBlockPos( const int x, const int y ) const
 	float halfW = blockWidth / 2.0f;
 	float halfD = blockDepth / 2.0f;
 
-	return Vector3f( (float)(x) * blockWidth + halfW, 0.0f, -(float)(y) * blockDepth - halfD );
+	return Vector3f( (float)(x) * blockWidth + halfW, 0.0f, (float)(y) * blockDepth + halfD );
+}
+
+const unsigned	CLevel::GetBlockIndex( const unsigned col, const unsigned row ) const
+{
+	if( col >= Cols || row >= Rows )
+		return 0;
+
+	return row * Cols + col;
 }
 
 void CLevel::CheckWLFlags()
@@ -1359,45 +1404,45 @@ void	CLevel::GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& ver
 	switch (surf)
 	{
 	case LEV_SURFACE::CEILING:
-		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
 		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
 		break;
 
 	case LEV_SURFACE::FLOOR:
-		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
 		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_FAR:
-		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_NEAR:
-		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_LEFT:
-		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
 		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
 		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_RIGHT:
-		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
 		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
 		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
 		break;
 
 	default:
@@ -1497,7 +1542,7 @@ bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 
 	for( i = 0; i < Block->CornerCount; i++ )
 	{
-		if( mathDistSq( Dum->NextPos, Block->TCorner[i] ) > POW(Dum->Radius) )
+		if( DistanceSq( Dum->NextPos, Block->TCorner[i] ) > POW(Dum->Radius) )
 			continue;
 
 		// liczymy wektor od rogu, do pozycji
@@ -1549,7 +1594,7 @@ bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing )
 	//	if( Dum != &MainPlayer && Thing->GetType() == ACTOR_TYPE::ACTOR_ENEMY )
 	//		continue;
 	//	// Sprawdzamy odleg³oœæ ( ja jeszcze doda³em dwie jednostki, by sprawdzanie rozpocze³o siê wczeœniej )
-	//	if( mathDistSq( Thing->Pos, Dum->NextPos ) > POW( Thing->Radius + Dum->Radius + 2.0f ) )
+	//	if( DistanceSq( Thing->Pos, Dum->NextPos ) > POW( Thing->Radius + Dum->Radius + 2.0f ) )
 	//		continue;
 
 	//	// Tworzymy p³aszczyzne i punkt przeciêcia.
@@ -1587,7 +1632,7 @@ poprzedniej funkcji.
 */
 const Vector3f RayCast( const Vector3f& pos, const Vector3f& vector, const float step, const CLevel& level )
 {
-	if(vector.LeangthSq() == 0.0f)
+	if(vector.LengthSq() == 0.0f)
 		return pos;
 
 	CDynamic Dum;
@@ -1625,7 +1670,7 @@ bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 )
 {
 	Vector3f V1 = ClosestPoint( Dum2->Pos, Dum2->NextPos, Dum->NextPos );
 
-	if( mathDistSq( V1, Dum->NextPos ) < POW(Dum->Radius) )
+	if( DistanceSq( V1, Dum->NextPos ) < POW(Dum->Radius) )
 		return true;
 	else return false;
 }

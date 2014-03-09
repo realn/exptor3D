@@ -264,6 +264,8 @@ public:
 	const Vector3f GetBlockPos( const unsigned i ) const;
 	const Vector3f GetBlockPos( const int x, const int y ) const;
 
+	const unsigned	GetBlockIndex( const unsigned col, const unsigned row ) const;
+
 	bool GetLoaded();
 	unsigned int GetEnemyCount();
 	unsigned int GetSObjCount();
