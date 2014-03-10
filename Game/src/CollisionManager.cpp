@@ -114,90 +114,72 @@ void	CCollisionManager::Solve()
 	{
 		CDynamic* pDynamic = DynamicList[dyn];
 
-		if( !pDynamic->IsCollidable() )
-			continue;
-
-		std::vector<CCollision> collisions;
-		//CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
-		//if( pBlock != nullptr )
-		//{
-		//	FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
-		//}
-		//for( unsigned i = 0; i < Blocks.size(); i++ )
-		//{
-		//	FindFullBlockCollisions( Blocks[i], *pDynamic, collisions );
-		//}
-
-		CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
-		if( pBlock != nullptr )
-			FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
-		pBlock = FindBlock( pDynamic->NextPos );
-		if( pBlock != nullptr )
-			FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
-
-
-		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
+		CCollision collision;
+		if( FindCollisionForDynamic( *pDynamic, collision, false ) )
 		{
-			CObject* pObject = ObjectList[obj];
-
-			if( !pObject->IsCollidable() )
-				continue;
-
-			auto toObjVec = pObject->Pos - pDynamic->Pos;
-
-			if( toObjVec.Dot( pDynamic->Vector ) <= 0.0f )
-				continue;
-
-			auto distFromDyn = pDynamic->GetMoveVector().Dot( toObjVec );
-			auto distFromObjSq = POW( toObjVec.Length() ) - POW ( distFromDyn );
-
-			if( distFromObjSq >= POW( pDynamic->Radius + pObject->Radius ) )
-				continue;
-
-			auto reverseSq = POW( pDynamic->Radius + pObject->Radius ) - distFromObjSq;
-			auto reverse = sqrtf( reverseSq );
-
-			auto collisionDist = distFromDyn - reverse;
-
-			if( POW(collisionDist) > pDynamic->GetMoveVector().LengthSq() )
-				continue;
-
-			auto collPoint = pDynamic->Pos + pDynamic->Vector * collisionDist - pDynamic->Vector * pDynamic->Radius;
-
-			collisions.push_back( CCollision( collPoint, pObject ) );
-		}
-
-		if( !collisions.empty() )
-		{
-			float dist = DistanceSq( pDynamic->Pos, collisions[0].Point );
-			unsigned index = 0;
-			for( unsigned i = 1; i < collisions.size(); i++ )
-			{
-				float newDist = DistanceSq( pDynamic->Pos, collisions[i].Point );
-				if( newDist < dist )
-				{
-					index = i;
-					dist = newDist;
-				}
-			}
-
-			auto& closest = collisions[index];
-			switch (closest.Type)
+			switch (collision.Type)
 			{
 			case CCollision::COLLISION_TYPE::SURFACE:
-				if( pDynamic->OnCollision( closest.Point, closest.Plane ) )
-					pDynamic->NextPos = closest.Point + closest.Plane.Normal * pDynamic->Radius;
+				if( pDynamic->OnCollision( collision.Point, collision.Plane ) )
+					pDynamic->NextPos = collision.Point + collision.Plane.Normal * pDynamic->Radius;
 				break;
 
 			case CCollision::COLLISION_TYPE::OBJECT:
-				if( pDynamic->OnCollision( closest.pObject ) )
-					pDynamic->NextPos = closest.Point + pDynamic->Vector * pDynamic->Radius;
+				if( pDynamic->OnCollision( collision.pObject ) )
+					pDynamic->NextPos = collision.Point + pDynamic->Vector * pDynamic->Radius;
 
 			default:
 				break;
 			}
 		}
 	}
+}
+
+const Vector3f	CCollisionManager::RayCast( const Vector3f& origin, const Vector3f& vector, const float step , const bool ignoreObjects )
+{
+	CDynamic dynamic( 0.1f );
+
+	dynamic.Pos = origin;
+	dynamic.Vector = vector;
+	dynamic.NextPos = origin + vector * step;
+	
+	do
+	{
+		if( FindBlock( dynamic.Pos ) == nullptr )
+			return dynamic.Pos;
+
+		CCollision collision;
+		if( FindCollisionForDynamic( dynamic, collision, ignoreObjects ) )
+			return collision.Point;
+
+		dynamic.Pos = dynamic.NextPos;
+		dynamic.NextPos = dynamic.Pos + vector * step;
+	}
+	while( true );
+
+	return origin;
+}
+
+const bool	CCollisionManager::IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps, const bool ignoreObjects )
+{
+	CDynamic dynamic( 0.1f );
+
+	float singleStep = (dest - origin).LengthSq() / (float)steps;
+	dynamic.Pos = origin;
+	dynamic.Vector = (dest - origin).Normalize();
+	dynamic.NextPos = origin + dynamic.Vector * singleStep;
+
+	for( unsigned i = 0; i < steps - 1; i++ )
+	{
+		CCollision collision;
+		if( FindCollisionForDynamic( dynamic, collision, ignoreObjects ) )
+			return false;
+
+		dynamic.Pos = dynamic.NextPos;
+		dynamic.NextPos = dynamic.Pos + dynamic.Vector * singleStep;
+	}
+
+	return true;
 }
 
 CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned col )
@@ -224,6 +206,86 @@ CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point )
 	if( index >= Blocks.size() )
 		return nullptr;
 	return &Blocks[index];
+}
+
+const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects )
+{
+	if( !dynamic.IsCollidable() )
+		return false;
+
+	std::vector<CCollision> collisions;
+	//CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
+	//if( pBlock != nullptr )
+	//{
+	//	FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
+	//}
+	//for( unsigned i = 0; i < Blocks.size(); i++ )
+	//{
+	//	FindFullBlockCollisions( Blocks[i], *pDynamic, collisions );
+	//}
+
+	CCollisionBlock* pBlock = FindBlock( dynamic.Pos );
+	if( pBlock != nullptr )
+		FindFullBlockCollisions( *pBlock, dynamic, collisions );
+	pBlock = FindBlock( dynamic.NextPos );
+	if( pBlock != nullptr )
+		FindFullBlockCollisions( *pBlock, dynamic, collisions );
+
+
+	if( !ignoreObjects )
+	{
+		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
+		{
+			CObject* pObject = ObjectList[obj];
+
+			if( !pObject->IsCollidable() )
+				continue;
+
+			auto toObjVec = pObject->Pos - dynamic.Pos;
+
+			if( toObjVec.Dot( dynamic.Vector ) <= 0.0f )
+				continue;
+
+			auto distFromDyn = dynamic.GetMoveVector().Dot( toObjVec );
+			auto distFromObjSq = POW( toObjVec.Length() ) - POW ( distFromDyn );
+
+			if( distFromObjSq >= POW( dynamic.Radius + pObject->Radius ) )
+				continue;
+
+			auto reverseSq = POW( dynamic.Radius + pObject->Radius ) - distFromObjSq;
+			auto reverse = sqrtf( reverseSq );
+
+			auto collisionDist = distFromDyn - reverse;
+
+			if( POW(collisionDist) > dynamic.GetMoveVector().LengthSq() )
+				continue;
+
+			auto collPoint = dynamic.Pos + dynamic.Vector * collisionDist - dynamic.Vector * dynamic.Radius;
+
+			collisions.push_back( CCollision( collPoint, pObject ) );
+		}
+	}
+
+	if( !collisions.empty() )
+	{
+		float dist = DistanceSq( dynamic.Pos, collisions[0].Point );
+		unsigned index = 0;
+		for( unsigned i = 1; i < collisions.size(); i++ )
+		{
+			float newDist = DistanceSq( dynamic.Pos, collisions[i].Point );
+			if( newDist < dist )
+			{
+				index = i;
+				dist = newDist;
+			}
+		}
+
+		outCollision = collisions[index];
+
+		return true;
+	}
+
+	return false;
 }
 
 void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )

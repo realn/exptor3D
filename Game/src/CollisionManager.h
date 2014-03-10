@@ -10,8 +10,9 @@ class CCollision
 public:
 	enum class COLLISION_TYPE
 	{
-		SURFACE = 0,
-		OBJECT = 1,
+		NONE	= 0,
+		SURFACE = 1,
+		OBJECT	= 2,
 	};
 
 	COLLISION_TYPE	Type;
@@ -19,6 +20,9 @@ public:
 	Planef			Plane;
 	CObject*		pObject;
 
+	CCollision() :
+		Type( COLLISION_TYPE::NONE ), pObject( nullptr )
+	{}
 	CCollision( const Vector3f& point, const Planef& plane ) :
 		Type( COLLISION_TYPE::SURFACE ), Point( point ), Plane( plane ), pObject( nullptr )
 	{}
@@ -54,12 +58,15 @@ public:
 	void	Clear();
 
 	void	Solve();
+	const Vector3f	RayCast( const Vector3f& origin, const Vector3f& vector, const float step = 1.0f, const bool ignoreObjects = false );
+	const bool		IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps = 10, const bool ignoreObjects = false );
 
 private:
 	CCollisionBlock*	GetBlock( const unsigned row, const unsigned col );
 	const unsigned		FindBlockIndex( const Vector3f& point );
 	CCollisionBlock*	FindBlock( const Vector3f& point );
 
+	const bool	FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects = false );
 	void	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions );
 	void	FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collision );
 };
