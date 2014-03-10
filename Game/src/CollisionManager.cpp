@@ -51,7 +51,7 @@ void	CCollisionManager::FindSideBlocks()
 
 			pBlock->AddSideBlock( GetBlock( row - 1, col + 0 ) );
 			pBlock->AddSideBlock( GetBlock( row + 1, col + 0 ) );
-			
+
 			pBlock->AddSideBlock( GetBlock( row - 1, col - 1 ) );
 			pBlock->AddSideBlock( GetBlock( row + 0, col - 1 ) );
 			pBlock->AddSideBlock( GetBlock( row + 1, col - 1 ) );
@@ -121,30 +121,19 @@ void	CCollisionManager::Solve()
 		//CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
 		//if( pBlock != nullptr )
 		//{
-		for( unsigned i = 0; i < Blocks.size(); i++ )
-		{
-			FindFullBlockCollisions( Blocks[i], *pDynamic, collisions );
-		}
+		//	FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
+		//}
+		//for( unsigned i = 0; i < Blocks.size(); i++ )
+		//{
+		//	FindFullBlockCollisions( Blocks[i], *pDynamic, collisions );
 		//}
 
-		if( !collisions.empty() )
-		{
-			float dist = DistanceSq( pDynamic->NextPos, collisions[0].Point );
-			unsigned index = 0;
-			for( unsigned i = 1; i < collisions.size(); i++ )
-			{
-				float newDist = DistanceSq( pDynamic->NextPos, collisions[i].Point );
-				if( newDist < dist )
-				{
-					index = i;
-					dist = newDist;
-				}
-			}
-
-			auto& closest = collisions[index];
-			if( pDynamic->OnCollision( closest.Point, closest.Plane ) )
-				pDynamic->NextPos = closest.Point + closest.Plane.Normal * pDynamic->Radius;
-		}
+		CCollisionBlock* pBlock = FindBlock( pDynamic->Pos );
+		if( pBlock != nullptr )
+			FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
+		pBlock = FindBlock( pDynamic->NextPos );
+		if( pBlock != nullptr )
+			FindFullBlockCollisions( *pBlock, *pDynamic, collisions );
 
 
 		for( unsigned obj = 0; obj < ObjectList.size(); obj++ )
@@ -170,12 +159,42 @@ void	CCollisionManager::Solve()
 
 			auto collisionDist = distFromDyn - reverse;
 
-			if( collisionDist > pDynamic->GetMoveVector().Length() )
+			if( POW(collisionDist) > pDynamic->GetMoveVector().LengthSq() )
 				continue;
 
-			if( pDynamic->OnCollision( pObject ) )
+			auto collPoint = pDynamic->Pos + pDynamic->Vector * collisionDist - pDynamic->Vector * pDynamic->Radius;
+
+			collisions.push_back( CCollision( collPoint, pObject ) );
+		}
+
+		if( !collisions.empty() )
+		{
+			float dist = DistanceSq( pDynamic->Pos, collisions[0].Point );
+			unsigned index = 0;
+			for( unsigned i = 1; i < collisions.size(); i++ )
 			{
-				pDynamic->NextPos = pDynamic->Pos + pDynamic->Vector * collisionDist;
+				float newDist = DistanceSq( pDynamic->Pos, collisions[i].Point );
+				if( newDist < dist )
+				{
+					index = i;
+					dist = newDist;
+				}
+			}
+
+			auto& closest = collisions[index];
+			switch (closest.Type)
+			{
+			case CCollision::COLLISION_TYPE::SURFACE:
+				if( pDynamic->OnCollision( closest.Point, closest.Plane ) )
+					pDynamic->NextPos = closest.Point + closest.Plane.Normal * pDynamic->Radius;
+				break;
+
+			case CCollision::COLLISION_TYPE::OBJECT:
+				if( pDynamic->OnCollision( closest.pObject ) )
+					pDynamic->NextPos = closest.Point + pDynamic->Vector * pDynamic->Radius;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -185,13 +204,13 @@ CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned
 {
 	if( row >= Rows || col >= Cols )
 		return nullptr;
-	
+
 	return &Blocks[ Cols * row + col ];
 }
 
 const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point )
 {
-	auto scl = point / Vector3f( BlockWidth, 1.0f, -BlockHeight );
+	auto scl = point / Vector3f( BlockWidth, 1.0f, BlockHeight );
 
 	unsigned x = (unsigned)scl.X;
 	unsigned y = (unsigned)scl.Z;
@@ -218,16 +237,14 @@ void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const
 		auto posCorrect = -face.Plane.Normal * dynamic.Radius;
 
 		if( face.Plane.Intersects( dynamic.Pos, dynamic.NextPos + posCorrect, point ) ){
-			if( !face.CheckPointInFace( point ) )
-				continue;
-
-			collisions.push_back( CCollision( point, face.Plane ) );
+			if( face.CheckPointInFace( point ) )
+				collisions.push_back( CCollision( point, face.Plane ) );
 		}
 
 		for( unsigned i = 0; i < 4; i++ )
 		{
-			auto pos = face.GetEdgeClosestPoint( i, dynamic.NextPos );
-			if( DistanceSq( pos, dynamic.NextPos ) > POW( dynamic.Radius ) )
+			auto pos = face.GetEdgeClosestPoint( i, dynamic.Pos );
+			if( DistanceSq( pos, dynamic.Pos ) > POW( dynamic.Radius ) )
 				continue;
 
 			Planef colPlane( (dynamic.NextPos - pos).Normalize(), pos );
@@ -243,7 +260,5 @@ void	CCollisionManager::FindFullBlockCollisions( const CCollisionBlock& block, c
 	FindBlockCollisions( block, dynamic, collisions );
 
 	for( unsigned i = 0; i < block.GetSideBlockNumber(); i++ )
-	{
 		FindBlockCollisions( block.GetSideBlock( i ), dynamic, collisions );
-	}
 }

@@ -8,11 +8,22 @@
 class CCollision
 {
 public:
-	Vector3f	Point;
-	Planef		Plane;
+	enum class COLLISION_TYPE
+	{
+		SURFACE = 0,
+		OBJECT = 1,
+	};
+
+	COLLISION_TYPE	Type;
+	Vector3f		Point;
+	Planef			Plane;
+	CObject*		pObject;
 
 	CCollision( const Vector3f& point, const Planef& plane ) :
-		Point( point ), Plane( plane )
+		Type( COLLISION_TYPE::SURFACE ), Point( point ), Plane( plane ), pObject( nullptr )
+	{}
+	CCollision( const Vector3f& point, CObject* pObject ) :
+		Type( COLLISION_TYPE::OBJECT ), Point( point ), pObject( pObject )
 	{}
 };
 

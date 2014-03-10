@@ -679,7 +679,7 @@ void CLevel::BuildPhysic()
 			CollisionMng.AddBlock( block );
 		}
 	}
-	//CollisionMng.FindSideBlocks();
+	CollisionMng.FindSideBlocks();
 
 	// Zmienne pomocznicze
 	int i, j, k, ai, aj;

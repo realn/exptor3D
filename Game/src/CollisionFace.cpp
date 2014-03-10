@@ -39,17 +39,5 @@ const Vector3f	CCollisionFace::GetEdgeClosestPoint( const unsigned edge, const V
 	auto& v1 = Vert[edge % 4];
 	auto& v2 = Vert[ ( edge + 1 ) % 4 ];
 
-	auto edgeVec = v2 - v1;
-	auto edgeLen = edgeVec.Length();
-	auto edgeNorm = edgeVec / edgeLen;
-	auto posVec = pos - v1;
-
-	float dist = edgeNorm.Dot( posVec );
-
-	if( dist < 0.0f )
-		return v1;
-	if( dist > edgeLen )
-		return v2;
-
-	return v1 + edgeNorm * dist;
+	return ClosestPoint( v1, v2, pos );
 }

@@ -353,7 +353,8 @@ Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &P
 	Vector3f Vect1, Vect2;
 	Vect1 = Point - V1;
 	Vect2 = V2 - V1;
-	Vect2.Normalize();
+	Vect2 = Vect2.Normalize();
+
 	float d = Distance( V1, V2 );
 	float t = Vect2.Dot( Vect1 );
 
