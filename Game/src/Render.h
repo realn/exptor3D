@@ -7,8 +7,7 @@
 			OpenGL.
 --------------------------------------------*/
 
-#ifndef _RENDER_H_
-#define _RENDER_H_
+#pragma once
 
 #include <windows.h>	// Nag³ówek funkcji Windows
 #include <gl/gl.h>		// Nag³ówek funkcji OpenGL
@@ -53,7 +52,7 @@ public:
 	void Resize( unsigned int width, unsigned int height );
 
 	// Tworzenie Okna ( zwraca true, jezeli udane lub false, jezeli sie nie powiod³o )
-	bool GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullscreen, WNDPROC wndProc, bool initGL = true );
+	bool GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullscreen, WNDPROC wndProc, void* pUserData, bool initGL = true );
 	bool EnableGL(unsigned colorBits = 0, unsigned depthBits = 0, unsigned stencilBits = 0);
 
 	// Niszczenie Okna ( nic nie zwraca, bo i tak jak siê coœ zwali, to nic nie zaszkodzi )
@@ -84,7 +83,3 @@ public:
 
 	std::string GetRndInfo( RENDER_INFO info );
 };
-
-extern CRender GLRender;
-
-#endif

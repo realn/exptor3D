@@ -10,8 +10,6 @@ Opis:	Patrz -> Render.h
 ///////////////////////////////////////////////////////*/
 #include "Render.h"
 
-CRender GLRender;
-
 const std::string	WINDOW_CLASS_NAME = "OpenGLWindowClass";
 
 /* KONSTRUKTOR
@@ -54,7 +52,7 @@ CRender::~CRender()
 	FullScr	- Czy ma byæ na pe³nym ekranie
 	WndProc	- Funkcja obs³ugi komunikatów Windowsa ( musi byæ z zewn¹trz, takie zasady C++ :P )
 */
-bool CRender::GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullScreen, WNDPROC wndProc, bool initGL )
+bool CRender::GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullScreen, WNDPROC wndProc, void* pUserData, bool initGL )
 {
 	if(isWindowCreated)
 	{
@@ -186,6 +184,7 @@ bool CRender::GLCreateWindow( std::string title, unsigned int width, unsigned in
 		return false;	//koñczymy dzia³anie
 	}
 
+	SetWindowLongPtr( hWnd, GWLP_USERDATA, (LONG_PTR)pUserData );
 	isWindowCreated = true;
 
 	if(initGL)
@@ -433,6 +432,7 @@ void CRender::GLDestroyWindow(bool deinitGL)
 	// Teraz potrzeba usun¹æ okno
 	if (hWnd != 0)
 	{
+		SetWindowLongPtr( hWnd, GWLP_USERDATA, 0 );
 		if(!DestroyWindow(hWnd))
 		{
 			// alala kotki dwa

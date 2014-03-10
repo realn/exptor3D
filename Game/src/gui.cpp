@@ -12,7 +12,6 @@ Opis:	Patrz -> gio.h
 #include "StrEx.h"
 
 guiMain GUI;
-extern bool CanDoWLScr;
 
 const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",
 								"RefLevel", "WireFrame", "Note", "SaveRndInfo",
@@ -203,7 +202,6 @@ bool guiMain::GetMotionBlur()
 */
 void guiMain::ShowWinScr( float Time, std::string text )
 {
-	if( !CanDoWLScr )
 		return;
 	WLScrColor[0] = 0.5f;
 	WLScrColor[1] = 1.0f;
@@ -215,12 +213,10 @@ void guiMain::ShowWinScr( float Time, std::string text )
 	ThisWLScrTime = 0.0f;
 	CanShowWinScr = true;
 	CanShowLoseScr = false;
-	CanDoWLScr = false;
 }
 
 void guiMain::ShowLoseScr( float Time, std::string text )
 {
-	if( !CanDoWLScr )
 		return;
 	WLScrColor[0] = 0.1f;
 	WLScrColor[1] = 0.1f;
@@ -232,7 +228,6 @@ void guiMain::ShowLoseScr( float Time, std::string text )
 	ThisWLScrTime = 0.0f;
 	CanShowWinScr = false;
 	CanShowLoseScr = true;
-	CanDoWLScr = false;
 }
 
 void guiMain::ResetWLScr()
@@ -469,7 +464,7 @@ void guiMain::SetEyeAngle( float set )
 void guiMain::EnableMainEngine()
 {
 	MainEngineEnabled = true;
-	//ConsoleOn = false;
+	ConsoleOn = false;
 	Menu.Disable();
 }
 
@@ -564,7 +559,7 @@ void guiMain::DoGUIDraw()
 
 		TText.EndPrint();
 
-		GLRender.SetOrtho( -2.0f, 2.0f, -2.0f, 2.0f );
+		CRender::SetOrtho( -2.0f, 2.0f, -2.0f, 2.0f );
 		CH[0].Activate( TexDetailLevel );
 		{
 			glBlendFunc( GL_ONE, GL_ONE );
@@ -600,7 +595,7 @@ void guiMain::DoGUIDraw()
 	//	this->DrawWLScr();
 	//else
 	//{
-		this->ConsoleDraw();
+		//this->ConsoleDraw();
 		this->Menu.Render();
 	//}
 
@@ -880,69 +875,69 @@ void guiMain::ParseConMsg( std::string msg )
 		Log.Note( param[0] );
 		return;
 	}
-	if( func == "SaveRndInfo" )
-	{
-		GetParams( msg, j, param, 1 );
-		FILE* fp = 0;
-		fopen_s(&fp, param[0].c_str(), "wt" );
-		if( !fp )
-		{
-			this->SendConMsg( "Nieprawidlowa sciezka", false );
-			return;
-		}
-		std::string save = GLRender.GetRndInfo( RENDER_RENDERER ) + "\n";
-		fputs( save.c_str(), fp );
-		save = GLRender.GetRndInfo( RENDER_VERSION ) + "\n";
-		fputs( save.c_str(), fp );
-		save = GLRender.GetRndInfo( RENDER_VENDOR ) + "\n";
-		fputs( save.c_str(), fp );
-		save = GLRender.GetRndInfo( RENDER_EXTLIST ) + "\n";
-		fputs( save.c_str(), fp );
-		this->SendConMsg( "Informacje zapisane...", false );
-		Log.Report( "Zapis inforamcji do pliku: " + param[0] );
-		fclose( fp );
-		return;
-	}
-	if( func == "SearchExt" )
-	{
-		GetParams( msg, j, param, 1 );
-		if( guiIsInStr( GLRender.GetRndInfo( RENDER_EXTLIST ), param[0] ) )
-		{
-			this->SendConMsg( "Rozszerzenie " + param[0] + " jest obslugiwane", false );
-		}
-		else
-		{
-			this->SendConMsg( "Rozszerzenie " + param[0] + " nie jest obslugiwane", false );
-		}
-		return;
-	}
-	if( func == "GetRndInfo" )
-	{
-		this->SendConMsg( "Wersja OpenGL: " + GLRender.GetRndInfo( RENDER_VERSION ), false );
-		this->SendConMsg( "Sterownik OpenGL: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
-		this->SendConMsg( "Dostawca OpenGL: " + GLRender.GetRndInfo( RENDER_VENDOR ), false );
-		return;
-	}
-	if( func == "GetExtList" )
-	{
-		int i = 0, j = 0;
-		std::string tostr;
-		for( i = 0; i < GLRender.GetRndInfo( RENDER_EXTLIST ).length(); i++ )
-		{
-			tostr += GLRender.GetRndInfo( RENDER_EXTLIST )[i];
-			if( GLRender.GetRndInfo( RENDER_EXTLIST )[i] == ' ' )
-			{
-				if( j >= 2 )
-				{
-					j = 0;
-					this->SendConMsg( tostr, false );
-					tostr = "";
-				}
-				else j++;
-			}
-		}
-		return;
-	}
+	//if( func == "SaveRndInfo" )
+	//{
+	//	GetParams( msg, j, param, 1 );
+	//	FILE* fp = 0;
+	//	fopen_s(&fp, param[0].c_str(), "wt" );
+	//	if( !fp )
+	//	{
+	//		this->SendConMsg( "Nieprawidlowa sciezka", false );
+	//		return;
+	//	}
+	//	std::string save = GLRender.GetRndInfo( RENDER_RENDERER ) + "\n";
+	//	fputs( save.c_str(), fp );
+	//	save = GLRender.GetRndInfo( RENDER_VERSION ) + "\n";
+	//	fputs( save.c_str(), fp );
+	//	save = GLRender.GetRndInfo( RENDER_VENDOR ) + "\n";
+	//	fputs( save.c_str(), fp );
+	//	save = GLRender.GetRndInfo( RENDER_EXTLIST ) + "\n";
+	//	fputs( save.c_str(), fp );
+	//	this->SendConMsg( "Informacje zapisane...", false );
+	//	Log.Report( "Zapis inforamcji do pliku: " + param[0] );
+	//	fclose( fp );
+	//	return;
+	//}
+	//if( func == "SearchExt" )
+	//{
+	//	GetParams( msg, j, param, 1 );
+	//	if( guiIsInStr( GLRender.GetRndInfo( RENDER_EXTLIST ), param[0] ) )
+	//	{
+	//		this->SendConMsg( "Rozszerzenie " + param[0] + " jest obslugiwane", false );
+	//	}
+	//	else
+	//	{
+	//		this->SendConMsg( "Rozszerzenie " + param[0] + " nie jest obslugiwane", false );
+	//	}
+	//	return;
+	//}
+	//if( func == "GetRndInfo" )
+	//{
+	//	this->SendConMsg( "Wersja OpenGL: " + GLRender.GetRndInfo( RENDER_VERSION ), false );
+	//	this->SendConMsg( "Sterownik OpenGL: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
+	//	this->SendConMsg( "Dostawca OpenGL: " + GLRender.GetRndInfo( RENDER_VENDOR ), false );
+	//	return;
+	//}
+	//if( func == "GetExtList" )
+	//{
+	//	int i = 0, j = 0;
+	//	std::string tostr;
+	//	for( i = 0; i < GLRender.GetRndInfo( RENDER_EXTLIST ).length(); i++ )
+	//	{
+	//		tostr += GLRender.GetRndInfo( RENDER_EXTLIST )[i];
+	//		if( GLRender.GetRndInfo( RENDER_EXTLIST )[i] == ' ' )
+	//		{
+	//			if( j >= 2 )
+	//			{
+	//				j = 0;
+	//				this->SendConMsg( tostr, false );
+	//				tostr = "";
+	//			}
+	//			else j++;
+	//		}
+	//	}
+	//	return;
+	//}
 	if( func == "LoadLevel" )
 	{
 		GetParams( msg, j, param, 1 );
@@ -1021,16 +1016,16 @@ void guiMain::ParseConMsg( std::string msg )
 		DrawGGUI = false;
 		return;
 	}
-	if( func == "EnableFullScreen" )
-	{
-		GLRender.EnableFullScreen();
-		return;
-	}
-	if( func == "DisableFullScreen" )
-	{
-		GLRender.DisableFullScreen();
-		return;
-	}
+	//if( func == "EnableFullScreen" )
+	//{
+	//	GLRender.EnableFullScreen();
+	//	return;
+	//}
+	//if( func == "DisableFullScreen" )
+	//{
+	//	GLRender.DisableFullScreen();
+	//	return;
+	//}
 	if( func == "Smoke" )
 	{
 		GetParams( msg, j, param, 1 );
@@ -1090,11 +1085,11 @@ void guiMain::SendConMsg( std::string msg, bool parse, bool hist )
 
 	if( !MainEngineEnabled && !Menu.IsEnabled() )
 	{
-		GLRender.SetOrtho();
+		//GLRender.SetOrtho();
 		//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		//this->ConsoleEng();
 		this->ConsoleDraw();
-		GLRender.SwapBuffers();
+		//GLRender.SwapBuffers();
 	}
 }
 
@@ -1198,7 +1193,7 @@ void guiMain::ConsoleDraw()
 	float PrintFrom = 0.0f, y;
 
 	glPushMatrix();
-	GLRender.SetOrtho();
+	//GLRender.SetOrtho();
 	glDisable( GL_TEXTURE_2D );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	glEnable( GL_BLEND );

@@ -24,7 +24,7 @@ public:
 	void Free();
 	void SetSize( unsigned int wid, unsigned int hei );
 	void SetColor( float R, float G, float B, float Alpha = 1.0f );
-	void StartPrint();
+	void StartPrint( const float aspect = 4.0f/3.0f );
 	void EndPrint();
 	void Print( float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f );
 };

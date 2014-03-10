@@ -64,7 +64,7 @@ void CTextRenderer::Free()
 	loaded = false;
 }
 
-void CTextRenderer::StartPrint()
+void CTextRenderer::StartPrint( const float aspect )
 {
 	glLoadIdentity();
 
@@ -77,7 +77,7 @@ void CTextRenderer::StartPrint()
 	glDisable( GL_DEPTH_TEST );
 	glEnable( GL_BLEND );
 	glDisable( GL_LIGHTING );
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Tex->Activate();
 
 	glMatrixMode(GL_PROJECTION);				
@@ -95,9 +95,9 @@ void CTextRenderer::Print( float x, float y, std::string text, float ScaleX, flo
 	glTranslatef( x, y, 0 );
 	glScalef( ScaleX, ScaleY, 1.0f );
 	glColor4f( C[0], C[1], C[2], C[3] );
-	glPushMatrix();
-	glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
-	glPopMatrix();
+	//glPushMatrix();
+	//glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
+	//glPopMatrix();
 	glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
 	glPopMatrix();
 }

@@ -85,7 +85,6 @@ void	CLevel::Update( const float fTD )
 
 void	CLevel::Render()
 {
-	glEnable( GL_CULL_FACE );
 	DrawLevel();
 	RenderList.Render( true );
 	
@@ -190,7 +189,6 @@ bool CLevel::LoadLevel( const std::string &filename )
 
 	// definiujemy zmienne pomocnicze
 	std::string str;
-	int i, j, k, l;
 
 	// Pobieramy wersje poziomu oraz j¹ sprawdzamy
 	str = GetClearLine( stream );

@@ -177,6 +177,12 @@
     <ClCompile Include="src\GUIMenuItem.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\ScriptParser.cpp">
+      <Filter>Source\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -304,6 +310,15 @@
     </ClInclude>
     <ClInclude Include="src\GUIMenu.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ScriptParser.h">
+      <Filter>Source\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AppSettings.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

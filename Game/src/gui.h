@@ -22,6 +22,7 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 
 #include "TextureText.h"
 #include "GUIMenu.h"
+#include "ScriptParser.h"
 
 struct guiPlayerInfo
 {
@@ -124,6 +125,7 @@ public:
 	guiMainMenu Menu;
 	guiPlayerInfo PInfo;
 	std::string LevName;
+	CScriptParser	ScriptParser;
 
 	guiMain();
 

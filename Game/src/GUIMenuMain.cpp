@@ -80,8 +80,8 @@ void guiMainMenu::Render()
 
 void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
 {
-	float ax = 800.0f / (float)GLRender.GetWidth();
-	float ay = 600.0f / (float)GLRender.GetHeight();
+	float ax = 1.0f;//800.0f / (float)GLRender.GetWidth();
+	float ay = 1.0f;//600.0f / (float)GLRender.GetHeight();
 
 	curX = ax * (float)X;
 	curY = ay * (float)Y;
@@ -91,8 +91,8 @@ void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
 
 void guiMainMenu::SetCursor( unsigned int X, unsigned int Y )
 {
-	float ax = 800.0f / (float)GLRender.GetWidth();
-	float ay = 600.0f / (float)GLRender.GetHeight();
+	float ax = 1.0f;//800.0f / (float)GLRender.GetWidth();
+	float ay = 1.0f;//600.0f / (float)GLRender.GetHeight();
 
 	curX = ax * (float)X;
 	curY = ay * (float)Y;

@@ -68,7 +68,8 @@ void guiMenuItem::Render( CTextRenderer *TText )
 
 void guiMenuItem::DoAction()
 {
-	GUI.SendConMsg( Action, true, false );
+	GUI.ScriptParser.Execute( Action );
+	//GUI.SendConMsg( Action, true, false );
 }
 
 void guiMenuItem::DoGoTo()
