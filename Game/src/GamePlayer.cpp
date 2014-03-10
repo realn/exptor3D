@@ -155,14 +155,14 @@ void CPlayer::TestBonus( CItem* Bonus )
 		case ITEM_TYPE::AMMO :
 			if( Weapon[(unsigned)((CItemAmmo*)Bonus)->GetWeaponType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
 			{
-				GUI.SendMsg( "Podniosles: " + guiIntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
+				GUI.SendMsg( "Podniosles: " + IntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
 				Bonus->CanDelete = true;
 			}
 			break;
 		case ITEM_TYPE::HEALTH :
 			if( Health != MaxHealth )
 			{
-				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
+				GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
 				ModHealth( ((CItemHealth*)Bonus)->GetHealth() );
 				Bonus->CanDelete = true;
 			}
@@ -170,7 +170,7 @@ void CPlayer::TestBonus( CItem* Bonus )
 		case ITEM_TYPE::ARMOR :
 			if( Armor != MaxArmor )
 			{
-				GUI.SendMsg( "Podniosles: " + guiFloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
+				GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
 				ModArmor( ((CItemArmor*)Bonus)->GetArmor() );
 				Bonus->CanDelete = true;
 			}

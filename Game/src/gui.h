@@ -20,59 +20,7 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include <vector>
 #include "Timer.h"
 
-class guiTextureText
-{
-private:
-	CTexture *Tex;
-
-	unsigned int base;
-	unsigned int list;
-
-	unsigned int Height;
-	unsigned int Width;
-
-	float C[4];
-
-	bool loaded;
-public:
-	guiTextureText();
-	~guiTextureText();
-
-	void Init( CTexture *font );
-	void Free();
-	void SetSize( unsigned int wid, unsigned int hei );
-	void SetColor( float R, float G, float B, float Alpha = 1.0f );
-	void StartPrint();
-	void EndPrint();
-	void Print( float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f );
-};
-
-class guiIntro
-{
-private:
-	CTexture		*Tex;
-	guiTextureText	TText;
-	unsigned int Time;
-	unsigned int TimePerChar;
-	float Alpha;
-	std::vector<std::string> Text;
-	bool Started, Ended;
-	int CurChar;
-	int CurStr;
-	std::vector<std::string> RenText;
-public:
-	guiIntro();
-	~guiIntro();
-
-	bool Init( CTexture *Font );
-
-	void AddStr( std::string str, int tpc );
-
-	void Start();
-	void Update();
-	void Render();
-	bool IsEnd();
-};
+#include "TextureText.h"
 
 struct guiPlayerInfo
 {
@@ -359,10 +307,6 @@ public:
 
 extern guiMain GUI;
 
-extern std::string guiIntToStr(const long int x);
-extern std::string guiFloatToStr(const float x);
-extern std::string guiDoubleToStr(const long double x);
-extern std::string guiBoolToStr(const bool x);
 extern bool guiIsExtSupported( const std::string findExt );
 extern bool guiIsInStr( const std::string where, const std::string what );
 

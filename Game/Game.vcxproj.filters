@@ -162,6 +162,9 @@
     <ClCompile Include="src\WeaponProjectile.cpp">
       <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClCompile>
+    <ClCompile Include="src\TextureText.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -283,6 +286,9 @@
     </ClInclude>
     <ClInclude Include="src\WeaponProjectile.h">
       <Filter>Source\Game\Weapon\Bullets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TextureText.h">
+      <Filter>Source\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

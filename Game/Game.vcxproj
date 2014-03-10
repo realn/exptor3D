@@ -113,6 +113,7 @@
     <ClCompile Include="src\Special.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TextureText.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\UpdateList.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="src\Special.h" />
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\TextureText.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Updateable.h" />
     <ClInclude Include="src\UpdateList.h" />
