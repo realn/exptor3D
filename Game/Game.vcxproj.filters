@@ -28,12 +28,12 @@
     <Filter Include="Source\Game\Weapon\Bullets">
       <UniqueIdentifier>{df7b5fb0-cbe4-4bdd-9e1b-9e17b4673f0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GUI">
+      <UniqueIdentifier>{7e3938a9-e0b7-43f8-b302-9aed0d91cfdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\inifile.cpp">
@@ -165,15 +165,24 @@
     <ClCompile Include="src\TextureText.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="src\gui.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUIMenuMain.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUIMenu.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUIMenuItem.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\defines.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gui.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\inifile.h">
@@ -289,6 +298,12 @@
     </ClInclude>
     <ClInclude Include="src\TextureText.h">
       <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUIMenu.h">
+      <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

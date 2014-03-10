@@ -2,7 +2,7 @@
 
 #include "Texture.h"
 
-class guiTextureText
+class CTextRenderer
 {
 private:
 	CTexture *Tex;
@@ -17,8 +17,8 @@ private:
 
 	bool loaded;
 public:
-	guiTextureText();
-	~guiTextureText();
+	CTextRenderer();
+	~CTextRenderer();
 
 	void Init( CTexture *font );
 	void Free();

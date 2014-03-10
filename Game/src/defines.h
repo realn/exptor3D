@@ -26,14 +26,6 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 #define GAME_MINUTE			1
 #define GAME_HOUR			2
 
-#define MENU_ERROR			-1
-#define MENU_NAME			0
-#define MENU_ITEM_NAME		1
-#define MENU_ITEM_POSX		2
-#define MENU_ITEM_POSY		3
-#define MENU_ITEM_ACTION	4
-#define MENU_ITEM_GOTO		5
-
 #define GAME_TEX_WALL		0
 #define GAME_TEX_FLOOR		1
 #define GAME_TEX_TOP		2

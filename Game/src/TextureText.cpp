@@ -1,10 +1,10 @@
 #include "TextureText.h"
 
 /*========================
-	KLASA guiTextureText
+	KLASA CTextRenderer
 	Jest odpowiedzialna za rysowanie tekstów na ekranie.
 =========================*/
-guiTextureText::guiTextureText()
+CTextRenderer::CTextRenderer()
 {
 	loaded = false;
 	Tex = NULL;
@@ -15,12 +15,12 @@ guiTextureText::guiTextureText()
 	C[2] = 1.0f;
 }
 
-guiTextureText::~guiTextureText()
+CTextRenderer::~CTextRenderer()
 {
 	Free();
 }
 
-void guiTextureText::Init( CTexture* font )
+void CTextRenderer::Init( CTexture* font )
 {
 	if( !font )
 		return;
@@ -54,7 +54,7 @@ void guiTextureText::Init( CTexture* font )
 	loaded = true;
 }
 
-void guiTextureText::Free()
+void CTextRenderer::Free()
 {
 	if( !loaded )
 		return;
@@ -64,7 +64,7 @@ void guiTextureText::Free()
 	loaded = false;
 }
 
-void guiTextureText::StartPrint()
+void CTextRenderer::StartPrint()
 {
 	glLoadIdentity();
 
@@ -87,7 +87,7 @@ void guiTextureText::StartPrint()
 	glLoadIdentity();
 }
 
-void guiTextureText::Print( float x, float y, std::string text, float ScaleX, float ScaleY )
+void CTextRenderer::Print( float x, float y, std::string text, float ScaleX, float ScaleY )
 {
 	char stext[255];
 	strcpy_s( stext, 255 * sizeof(char), text.c_str() );
@@ -102,7 +102,7 @@ void guiTextureText::Print( float x, float y, std::string text, float ScaleX, fl
 	glPopMatrix();
 }
 
-void guiTextureText::EndPrint()
+void CTextRenderer::EndPrint()
 {
 	glPopMatrix();
 	glPopAttrib();
@@ -110,13 +110,13 @@ void guiTextureText::EndPrint()
 	glColor3f( 1.0f, 1.0f ,1.0f );
 }
 
-void guiTextureText::SetSize( unsigned int wid, unsigned int hei )
+void CTextRenderer::SetSize( unsigned int wid, unsigned int hei )
 {
 	Width = wid;
 	Height = hei;
 }
 
-void guiTextureText::SetColor( float R, float G, float B, float Alpha )
+void CTextRenderer::SetColor( float R, float G, float B, float Alpha )
 {
 	C[0] = R;
 	C[1] = G;
