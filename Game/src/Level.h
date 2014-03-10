@@ -27,7 +27,7 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 
 #include "GameEnemy.h"
 #include "Item.h"
-#include "WeaponBullet.h"
+#include "WeaponProjectile.h"
 #include "RenderList.h"
 #include "UpdateList.h"
 #include "CollisionManager.h"
@@ -234,11 +234,6 @@ private:
 	// Plik ostatnio za³adowanego poziomu
 	std::string file;
 
-	// Metody wykorzystywane przy wizualizacji
-	void DrawWall( unsigned int wall );
-	void DrawFloor();
-	void DrawTop();
-
 	// Metody inicjuj¹ce
 	void BuildVisual();
 	void BuildPhysic();
@@ -253,6 +248,8 @@ public:
 
 	const bool	AddEntity( ISceneEntity* pEntity ) override;
 	const bool	RemoveEntity( ISceneEntity* pEntity ) override;
+
+	const CCollisionManager&	GetCollisionManager() const;
 
 	std::string GetLevelName();
 
@@ -301,10 +298,5 @@ private:
 
 	void	GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& verts );
 };
-
-extern bool TestCollBlock( CDynamic* Dum, CLvlBlock* Block, bool testthing = false );
-extern const Vector3f RayCast( const Vector3f& pos, const Vector3f& vector, const float step, const CLevel& level );
-extern bool TestCollDum( CDynamic* Dum, CDynamic* Dum2 );
-extern bool IsCollOnRay( Vector3f V1, Vector3f V2, int Steps = 10 );
 
 extern CLevel* pGLevel;

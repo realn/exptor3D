@@ -20,6 +20,11 @@ CEffectExplosion::~CEffectExplosion()
 	}
 }
 
+const bool	CEffectExplosion::IsTransparent() const
+{
+	return true;
+}
+
 void CEffectExplosion::Update( const float fTD )
 {
 	if( Radius < MaxRadius )
@@ -28,7 +33,7 @@ void CEffectExplosion::Update( const float fTD )
 
 		Alpha = 1.0f - ( Radius / MaxRadius );
 	}
-	else CanDelete = true;
+	else DeleteThis = true;
 }
 
 void CEffectExplosion::Render()
@@ -40,7 +45,7 @@ void CEffectExplosion::Render()
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	glEnable( GL_BLEND );
 
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
+	glTranslatef( Pos.X, Pos.Y, -Pos.Z );
 
 	glColor4f( 1.0f, 0.0f, 0.0f, Alpha );
 	gluSphere( Obj, Radius / 2.0f, 16, 16 );

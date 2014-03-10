@@ -135,7 +135,7 @@ void	CCollisionManager::Solve()
 	}
 }
 
-const Vector3f	CCollisionManager::RayCast( const Vector3f& origin, const Vector3f& vector, const float step , const bool ignoreObjects )
+const Vector3f	CCollisionManager::RayCast( const Vector3f& origin, const Vector3f& vector, const float step , const bool ignoreObjects ) const
 {
 	CDynamic dynamic( 0.1f );
 
@@ -160,7 +160,7 @@ const Vector3f	CCollisionManager::RayCast( const Vector3f& origin, const Vector3
 	return origin;
 }
 
-const bool	CCollisionManager::IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps, const bool ignoreObjects )
+const bool	CCollisionManager::IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps, const bool ignoreObjects ) const
 {
 	CDynamic dynamic( 0.1f );
 
@@ -182,15 +182,15 @@ const bool	CCollisionManager::IsClearLine( const Vector3f& origin, const Vector3
 	return true;
 }
 
-CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned col )
+CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned col ) const
 {
 	if( row >= Rows || col >= Cols )
 		return nullptr;
 
-	return &Blocks[ Cols * row + col ];
+	return const_cast<CCollisionBlock*>(&Blocks[ Cols * row + col ]);
 }
 
-const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point )
+const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point ) const
 {
 	auto scl = point / Vector3f( BlockWidth, 1.0f, BlockHeight );
 
@@ -200,15 +200,15 @@ const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point )
 	return y * Cols + x;
 }
 
-CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point )
+CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point ) const
 {
 	auto index = FindBlockIndex( point );
 	if( index >= Blocks.size() )
 		return nullptr;
-	return &Blocks[index];
+	return const_cast<CCollisionBlock*>(&Blocks[index]);
 }
 
-const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects )
+const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects ) const
 {
 	if( !dynamic.IsCollidable() )
 		return false;
@@ -257,7 +257,8 @@ const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, 
 
 			auto collisionDist = distFromDyn - reverse;
 
-			if( POW(collisionDist) > dynamic.GetMoveVector().LengthSq() )
+			float moveLen = dynamic.GetMoveVector().Length();
+			if( collisionDist > moveLen )
 				continue;
 
 			auto collPoint = dynamic.Pos + dynamic.Vector * collisionDist - dynamic.Vector * dynamic.Radius;
@@ -288,7 +289,7 @@ const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, 
 	return false;
 }
 
-void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
+void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions ) const
 {
 	for( unsigned i = 0; i < block.GetFaceNumber(); i++ )
 	{
@@ -317,7 +318,7 @@ void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const
 	}
 }
 
-void	CCollisionManager::FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions )
+void	CCollisionManager::FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions ) const
 {
 	FindBlockCollisions( block, dynamic, collisions );
 

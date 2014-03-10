@@ -8,12 +8,12 @@
 	eksplozja
 ====================*/
 CBullExplosion::CBullExplosion( CActor* owner, const float damage, const Vector3f& pos, const float radius, const float speed ) :
-	CBullet( owner, damage, pos, Vector3f(), 0.0f ),
+	CProjectile( PROJECTILE_TYPE::EXPLOSION, owner, damage, pos, Vector3f(), 0.0f ),
 	Speed( speed ),
 	Power( radius ),
 	thisPower( 0.0f )
 {
-	SEManager.AddEffect( new CEffectExplosion( Pos, Power, speed ) );
+	pGLevel->AddEntity( new CEffectExplosion( Pos, Power, speed ) );
 }
 
 float CBullExplosion::DoTest( CDynamic *Dum, float Armor )
@@ -47,9 +47,9 @@ void CBullExplosion::Update( const float fTD )
 
 void CBullExplosion::Render()
 {
-#ifdef LIGHT_TEST
-	float t[] = { Pos.X, Pos.Y, Pos.Z, 1.0f };
-	glLightfv( GL_LIGHT1, GL_POSITION, t );
-#endif
+//#ifdef LIGHT_TEST
+//	float t[] = { Pos.X, Pos.Y, Pos.Z, 1.0f };
+//	glLightfv( GL_LIGHT1, GL_POSITION, t );
+//#endif
 	// Nic...
 }

@@ -10,98 +10,98 @@ Opis:	Patrz -> Special.h
 ///////////////////////////////////////////////////////*/
 #include "Special.h"
 
-CSpecialEffectManager SEManager;
-
-CSpecialEffectManager::CSpecialEffectManager() :
-	TexManager( nullptr )
-{
-}
-
-CSpecialEffectManager::~CSpecialEffectManager()
-{
-
-}
-
-void	CSpecialEffectManager::Init( CTexManager& texManager )
-{
-	TexManager = &texManager;
-}
-
-CTexManager&	CSpecialEffectManager::GetTexMng()
-{
-	return *TexManager;
-}
-
-void CSpecialEffectManager::AddEffect( CEffect* effect )
-{
-	if( GUI.GetMaxSpecial() > 0 )
-		if( List.size() >= GUI.GetMaxSpecial() )
-			return;
-
-	List.push_back( effect );
-}
-
-void CSpecialEffectManager::DeleteEffect( unsigned int index )
-{
-	delete List[index];
-	List.erase( List.begin() + index );
-}
-
-CEffect* CSpecialEffectManager::GetEffect( unsigned int index )
-{
-	return List[index];
-}
-
-void CSpecialEffectManager::Update( const float fTD )
-{
-	CEffect* effect;
-	for( int i = List.size()-1; i >= 0; i-- )
-	{
-		effect = List[i];
-		effect->Update( fTD );
-		if( effect->CanDelete )
-		{
-			DeleteEffect( i );
-		}
-	}
-}
-
-void CSpecialEffectManager::Render()
-{
-	unsigned int i;
-	CEffect* effect;
-	for( i = 0; i < List.size(); i++ )
-	{
-		effect = List[i];
-
-		if( !effect->Visible )
-			continue;
-
-		effect->Render();
-	}
-	if( GUI.GetReflection() )
-	{
-		glPushMatrix();
-		glTranslatef( 0.0f, -10.0f, 0.0f );
-		glScalef( 1.0f, -1.0f, 1.0f );
-		glDisable( GL_CLIP_PLANE0 );
-		glEnable( GL_CLIP_PLANE1 );
-		glFrontFace( GL_CW );
-		for( i = 0; i < List.size(); i++ )
-		{
-			effect = List[i];
-
-			if( !effect->Visible )
-				continue;
-
-			effect->Render();
-		}
-		glFrontFace( GL_CCW );
-		glDisable( GL_CLIP_PLANE1 );
-		glEnable( GL_CLIP_PLANE0 );
-		glPopMatrix();
-	}
-}
+//CSpecialEffectManager SEManager;
+//
+//CSpecialEffectManager::CSpecialEffectManager() :
+//	TexManager( nullptr )
+//{
+//}
+//
+//CSpecialEffectManager::~CSpecialEffectManager()
+//{
+//
+//}
+//
+//void	CSpecialEffectManager::Init( CTexManager& texManager )
+//{
+//	TexManager = &texManager;
+//}
+//
+//CTexManager&	CSpecialEffectManager::GetTexMng()
+//{
+//	return *TexManager;
+//}
+//
+//void CSpecialEffectManager::AddEffect( CEffect* effect )
+//{
+//	if( GUI.GetMaxSpecial() > 0 )
+//		if( List.size() >= GUI.GetMaxSpecial() )
+//			return;
+//
+//	List.push_back( effect );
+//}
+//
+//void CSpecialEffectManager::DeleteEffect( unsigned int index )
+//{
+//	delete List[index];
+//	List.erase( List.begin() + index );
+//}
+//
+//CEffect* CSpecialEffectManager::GetEffect( unsigned int index )
+//{
+//	return List[index];
+//}
+//
+//void CSpecialEffectManager::Update( const float fTD )
+//{
+//	CEffect* effect;
+//	for( int i = List.size()-1; i >= 0; i-- )
+//	{
+//		effect = List[i];
+//		effect->Update( fTD );
+//		if( effect->CanDelete )
+//		{
+//			DeleteEffect( i );
+//		}
+//	}
+//}
+//
+//void CSpecialEffectManager::Render()
+//{
+//	unsigned int i;
+//	CEffect* effect;
+//	for( i = 0; i < List.size(); i++ )
+//	{
+//		effect = List[i];
+//
+//		if( !effect->Visible )
+//			continue;
+//
+//		effect->Render();
+//	}
+//	if( GUI.GetReflection() )
+//	{
+//		glPushMatrix();
+//		glTranslatef( 0.0f, -10.0f, 0.0f );
+//		glScalef( 1.0f, -1.0f, 1.0f );
+//		glDisable( GL_CLIP_PLANE0 );
+//		glEnable( GL_CLIP_PLANE1 );
+//		glFrontFace( GL_CW );
+//		for( i = 0; i < List.size(); i++ )
+//		{
+//			effect = List[i];
+//
+//			if( !effect->Visible )
+//				continue;
+//
+//			effect->Render();
+//		}
+//		glFrontFace( GL_CCW );
+//		glDisable( GL_CLIP_PLANE1 );
+//		glEnable( GL_CLIP_PLANE0 );
+//		glPopMatrix();
+//	}
+//}
 
 
 specMotionBlur::specMotionBlur()

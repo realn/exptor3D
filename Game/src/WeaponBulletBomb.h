@@ -1,10 +1,10 @@
 #pragma once
 
-#include "WeaponBullet.h"
+#include "WeaponProjectile.h"
 #include "ModelManager.h"
 
 // Bomba
-class CBullBomb : public CBullet
+class CBullBomb : public CProjectile
 {
 private:
 	float BoomTime;

@@ -1,22 +1,38 @@
 #include "Effect.h"
 
-CEffectSprite::CEffectSprite( CTexManager& texManager, const Vector3f& pos, const float R, const float G, const float B ) :
+CEffectSprite::CEffectSprite( const Vector3f& pos, const float R, const float G, const float B ) :
 	Pos( pos ),
 	Alpha( 1.0f ),
 	Speed( 0.4f ),
 	Texture( nullptr )
 {
-	Texture = texManager.Get( "Part.tga" );
+	GfxLoaded = false;
 	C[0] = R;
 	C[1] = G;
 	C[2] = B;
+}
+
+CEffectSprite::~CEffectSprite()
+{
+}
+
+const bool	CEffectSprite::IsTransparent() const
+{
+	return true;
+}
+
+const bool	CEffectSprite::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
+{
+	Texture = texManager.Get( "Part.tga" );
+	GfxLoaded = Texture != nullptr;
+	return GfxLoaded;
 }
 
 void CEffectSprite::Update( const float fTD )
 {
 	Alpha -= Speed * GUI.GetSpeed() * fTD;
 	if( Alpha <= 0.0f )
-		CanDelete = true;
+		DeleteThis = true;
 }
 
 void CEffectSprite::Render()
@@ -29,7 +45,7 @@ void CEffectSprite::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glEnable( GL_BLEND );
 
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
+	glTranslatef( Pos.X, Pos.Y, -Pos.Z );
 	glRotatef( -(GUI.PInfo.angle - 180.0f), 0.0f, 1.0f, 0.0f );
 
 	Texture->Activate();

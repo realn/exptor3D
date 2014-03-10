@@ -60,12 +60,11 @@ void	CWeaponRocketLuncher::OnFired()
 {
 	Vector3f fireCorr = CorrectByHandPos( Vector3f( -0.6f, 0.6f, 0.0f ) );
 	auto pos = GenWorldPos( GenPos() + GenShakePos() + fireCorr );
-	//auto vector = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
-	//vector = (vector - pos).Normalize();
-
+	auto vector = pGLevel->GetCollisionManager().RayCast( Owner->Pos, Owner->Vector, 0.5f );
+	vector = (vector - pos).Normalize();
 	auto damage = GenDamage();
 
-	CBullet* pRocket = new CBullRocket( Owner, damage, pos, Owner->Vector, 20.0f );
+	CProjectile* pRocket = new CBullRocket( Owner, damage, pos, vector, 30.0f );
 
 	pGLevel->AddEntity( pRocket );
 }

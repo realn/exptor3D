@@ -132,9 +132,6 @@
     <ClCompile Include="src\UpdateList.cpp">
       <Filter>Source\Logic</Filter>
     </ClCompile>
-    <ClCompile Include="src\WeaponBullet.cpp">
-      <Filter>Source\Game\Weapon\Bullets</Filter>
-    </ClCompile>
     <ClCompile Include="src\WeaponBulletBomb.cpp">
       <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClCompile>
@@ -161,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="src\CollisionBlock.cpp">
       <Filter>Source\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponProjectile.cpp">
+      <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,9 +251,6 @@
     <ClInclude Include="src\UpdateList.h">
       <Filter>Source\Logic</Filter>
     </ClInclude>
-    <ClInclude Include="src\WeaponBullet.h">
-      <Filter>Source\Game\Weapon\Bullets</Filter>
-    </ClInclude>
     <ClInclude Include="src\WeaponBulletBomb.h">
       <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClInclude>
@@ -283,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="src\CollisionBlock.h">
       <Filter>Source\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WeaponProjectile.h">
+      <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

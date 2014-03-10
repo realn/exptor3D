@@ -60,12 +60,12 @@ bool Init( CTexManager& texManager, CModelManager& modelManager )    //Inicjaliz
 	glFogfv( GL_FOG_COLOR, fc );
 	glEnable( GL_FOG );
 
-	double p1[] = { 0.0, 1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, 1.0f, 0.0f ) ) };
-	double p2[] = { 0.0, -1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, -1.0f, 0.0f ) ) };
-	glClipPlane( GL_CLIP_PLANE0, p1 );
-	glClipPlane( GL_CLIP_PLANE1, p2 );
+	//double p1[] = { 0.0, 1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, 1.0f, 0.0f ) ) };
+	//double p2[] = { 0.0, -1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, -1.0f, 0.0f ) ) };
+	//glClipPlane( GL_CLIP_PLANE0, p1 );
+	//glClipPlane( GL_CLIP_PLANE1, p2 );
 
-	glEnable( GL_CLIP_PLANE0 );
+	//glEnable( GL_CLIP_PLANE0 );
 	glEnable( GL_COLOR_MATERIAL );
 	//glDisable( GL_CULL_FACE );
 	glDisable( GL_LIGHTING );
@@ -90,7 +90,7 @@ bool Init( CTexManager& texManager, CModelManager& modelManager )    //Inicjaliz
 	MenuModel = modelManager.Get( "menumodel.glm" );
 	MainPlayer.SetArmor( 100.0f );
 	GUI.Menu.LoadMenu( "Data/menu.mnu" );
-	SEManager.MaxSpec = 100;
+	//SEManager.MaxSpec = 100;
 	srand( GetTickCount() );
 
 	GUI.SendConMsg( "Zakonczono", false );
@@ -133,7 +133,7 @@ void Update(const float fTD)	// Logika gry
 	}
 	//MainPlayer.ApplyNextPos();
 
-	SEManager.Update( fTD );
+	//SEManager.Update( fTD );
 	SMBlur.Update( fTD );
 	//BManager.Update( fTD );
 
@@ -186,12 +186,12 @@ void RenderLevel()	// Wizualizacja gry
 	glRotatef( MainPlayer.GetAngle(), 0.0f, 1.0f, 0.0f );
 	glTranslatef( -MainPlayer.Pos.X, 0, MainPlayer.Pos.Z );
 
-	glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
+	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 	pGLevel->Render();
 	//BManager.Render();
 
 	glDepthMask( 0 );
-	SEManager.Render();
+	//SEManager.Render();
 	//pGLevel->DrawReflect();
 	glDepthMask( 1 );
 
@@ -394,7 +394,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 
 	pGLevel = &level;
 
-	SEManager.Init( texManager );
+	//SEManager.Init( texManager );
 	MainPlayer.Init( modelManager );
 
 	Log.Log( "Inicjalizacja OpenGL" );

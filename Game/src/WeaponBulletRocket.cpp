@@ -9,14 +9,13 @@ KLASA weBullRocked
 Rakieta z wyrzutni
 ====================*/
 CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed ) :
-	CBullet( owner, damage, pos, vector, speed )
+	CProjectile(PROJECTILE_TYPE::ROCKET, owner, damage, pos, vector, speed )
 {
+	GfxLoaded = false;
 	Angle = ::GetAngle( Pos, Pos + Vector );
 	Sec = 0.0f;
 	Radius = 0.3f;
 	//glEnable( GL_LIGHT0 );
-
-	Type = BULLET_TYPE_ROCKET;
 }
 
 const bool	CBullRocket::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
@@ -48,20 +47,15 @@ void CBullRocket::Update( const float fTD )
 	Pos = NextPos;
 	NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
 
-	//if( !TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ) ) )
-	//{
-	//	Sec += fTD * GUI.GetSpeed();
-	//	if( Sec > 0.1f )
-	//	{
-	//		Vector3f Tail = Veloc.Normalize();
-	//		Tail = Tail.Reverse();
-	//		Sec = 0.0f;
+	Sec += fTD * GUI.GetSpeed();
+	if( Sec > 0.1f )
+	{
+		Vector3f Tail = Veloc.Normalize();
+		Tail = Tail.Reverse();
+		Sec = 0.0f;
 
-	//		//SEManager.AddEffect( new CEffectSprite( TexManager, Pos + Tail, 1.0f, 0.7f, 0.0f ) );
-	//	}
-	//	if( pGLevel->GetBlock( this->GetBlockPos() ) == NULL )
-	//		DeleteThis = true;
-	//}
+		pGLevel->AddEntity( new CEffectSprite( Pos + Tail, 1.0f, 0.7f, 0.0f ) );
+	}
 }
 
 void CBullRocket::OnDelete()
@@ -71,7 +65,6 @@ void CBullRocket::OnDelete()
 
 const bool	CBullRocket::OnCollision( const Vector3f& point, const Planef& plane )
 {
-	Veloc = Vector3f();
-
+	DeleteThis = true;
 	return true;
 }

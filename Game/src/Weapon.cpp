@@ -476,7 +476,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //			Vector3f temp;
 //			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, *pGLevel );
 //			temp = (temp - Pos).Normalize();
-//			CBullet* Bull = new CBullet( Owner, Damage[0], Pos, temp, 10.0f );
+//			CProjectile* Bull = new CProjectile( Owner, Damage[0], Pos, temp, 10.0f );
 //			BManager.AddBullet( Bull );
 //		}
 //		Shake[0] = 0.0f;
@@ -604,7 +604,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 //
-//				CBullet* Bull = new CBullRay( Owner, damage, Pos, temp );
+//				CProjectile* Bull = new CBullRay( Owner, damage, Pos, temp );
 //				BManager.AddBullet( Bull );
 //
 //				back = true;
@@ -744,7 +744,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //				float damage = this->Damage[0] + float( rand() % int( this->Damage[1] - this->Damage[0]) );
 //
-//				CBullet* Bull = new CBullRay( Owner, damage, Pos, temp );
+//				CProjectile* Bull = new CBullRay( Owner, damage, Pos, temp );
 //				BManager.AddBullet( Bull );
 //
 //				back = true;
@@ -891,7 +891,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, *pGLevel );
 //				temp = (temp - Pos).Normalize();
 //
-//				CBullet* Bull = new CBullet( Owner, Damage[0] * 0.1f, Pos, temp, 10.0f ); 
+//				CProjectile* Bull = new CProjectile( Owner, Damage[0] * 0.1f, Pos, temp, 10.0f ); 
 //				Bull->Visible = false;
 //				
 //				BManager.AddBullet( Bull );

@@ -19,28 +19,28 @@ Opis:	Zawiera definicje klas odpowiedzialnych za efekty specjalne
 
 #include "Effect.h"
 
-class CSpecialEffectManager
-{
-private:
-	CTexManager*	TexManager;
-	std::vector<CEffect*> List;
-
-public:
-	int MaxSpec;
-
-	CSpecialEffectManager();
-	virtual ~CSpecialEffectManager();
-	
-	void Init( CTexManager& texManager );
-	CTexManager&	GetTexMng();
-
-	void AddEffect( CEffect* effect );
-	void DeleteEffect( unsigned int index );
-	CEffect* GetEffect( unsigned int index );
-	
-	void Update( const float fTD );
-	void Render();
-};
+//class CSpecialEffectManager
+//{
+//private:
+//	CTexManager*	TexManager;
+//	std::vector<CEffect*> List;
+//
+//public:
+//	int MaxSpec;
+//
+//	CSpecialEffectManager();
+//	virtual ~CSpecialEffectManager();
+//	
+//	void Init( CTexManager& texManager );
+//	CTexManager&	GetTexMng();
+//
+//	void AddEffect( CEffect* effect );
+//	void DeleteEffect( unsigned int index );
+//	CEffect* GetEffect( unsigned int index );
+//	
+//	void Update( const float fTD );
+//	void Render();
+//};
 
 class specMotionBlur
 {
@@ -61,7 +61,7 @@ public:
 	void Free();
 };
 
-extern CSpecialEffectManager SEManager;
+//extern CSpecialEffectManager SEManager;
 extern specMotionBlur SMBlur;
 
 #endif

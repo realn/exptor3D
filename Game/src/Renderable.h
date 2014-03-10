@@ -22,5 +22,5 @@ public:
 
 	const bool	IsVisible() const;
 	const bool	IsGfxLoaded() const;
-	const bool	IsTransparent() const;
+	virtual const bool	IsTransparent() const;
 };

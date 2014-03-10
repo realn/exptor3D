@@ -1,11 +1,11 @@
 #pragma once
 
-#include "WeaponBullet.h"
+#include "WeaponProjectile.h"
 #include "ModelManager.h"
 
 // Rakieta
 class CBullRocket : 
-	public CBullet
+	public CProjectile
 {
 private:
 	CModel* Model;

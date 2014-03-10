@@ -2,7 +2,7 @@
 
 IRenderable::IRenderable() :
 	Visible( true ),
-	GfxLoaded( false )
+	GfxLoaded( true )
 {
 }
 

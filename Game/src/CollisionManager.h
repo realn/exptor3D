@@ -58,15 +58,15 @@ public:
 	void	Clear();
 
 	void	Solve();
-	const Vector3f	RayCast( const Vector3f& origin, const Vector3f& vector, const float step = 1.0f, const bool ignoreObjects = false );
-	const bool		IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps = 10, const bool ignoreObjects = false );
+	const Vector3f	RayCast( const Vector3f& origin, const Vector3f& vector, const float step = 1.0f, const bool ignoreObjects = false ) const;
+	const bool		IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps = 10, const bool ignoreObjects = false ) const;
 
 private:
-	CCollisionBlock*	GetBlock( const unsigned row, const unsigned col );
-	const unsigned		FindBlockIndex( const Vector3f& point );
-	CCollisionBlock*	FindBlock( const Vector3f& point );
+	CCollisionBlock*	GetBlock( const unsigned row, const unsigned col ) const;
+	const unsigned		FindBlockIndex( const Vector3f& point ) const;
+	CCollisionBlock*	FindBlock( const Vector3f& point ) const;
 
-	const bool	FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects = false );
-	void	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions );
-	void	FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collision );
+	const bool	FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects = false ) const;
+	void	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions ) const;
+	void	FindFullBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collision ) const;
 };

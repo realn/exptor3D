@@ -116,7 +116,7 @@
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\UpdateList.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
-    <ClCompile Include="src\WeaponBullet.cpp" />
+    <ClCompile Include="src\WeaponProjectile.cpp" />
     <ClCompile Include="src\WeaponBulletBomb.cpp" />
     <ClCompile Include="src\WeaponBulletExplosion.cpp" />
     <ClCompile Include="src\WeaponBulletRay.cpp" />
@@ -158,7 +158,7 @@
     <ClInclude Include="src\Updateable.h" />
     <ClInclude Include="src\UpdateList.h" />
     <ClInclude Include="src\Weapon.h" />
-    <ClInclude Include="src\WeaponBullet.h" />
+    <ClInclude Include="src\WeaponProjectile.h" />
     <ClInclude Include="src\WeaponBulletBomb.h" />
     <ClInclude Include="src\WeaponBulletExplosion.h" />
     <ClInclude Include="src\WeaponBulletRay.h" />

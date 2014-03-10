@@ -4,37 +4,36 @@
 #include "Texture.h"
 #include "Level.h"
 #include "Renderable.h"
+#include "Updateable.h"
+#include "SceneEntity.h"
 
-class CEffect
+class CEffect :
+	public IRenderable,
+	public IUpdateable,
+	public ISceneEntity
 {
 public:
 	CEffect();
 	virtual ~CEffect();
-
-	virtual void Update( const float fTD ) = 0;
-	virtual void Render() = 0;
-
-	bool Visible;
-	bool CanDelete;
 };
 
-class CEffectRay : 
-	public CEffect
-{
-private:
-	Vector3f FromPos;
-	Vector3f ToPos;
-	float Alpha;
-
-public:
-	CEffectRay( const CLevel& level, const Vector3f& pos, const Vector3f& vector );
-
-	void Render() override;
-	void Update( const float fTD ) override;
-
-	const Vector3f	GetFromPos() const;
-	const Vector3f	GetToPos() const;
-};
+//class CEffectRay : 
+//	public CEffect
+//{
+//private:
+//	Vector3f FromPos;
+//	Vector3f ToPos;
+//	float Alpha;
+//
+//public:
+//	CEffectRay( const Vector3f& origin, const Vector3f& dest );
+//
+//	void Render() override;
+//	void Update( const float fTD ) override;
+//
+//	const Vector3f	GetFromPos() const;
+//	const Vector3f	GetToPos() const;
+//};
 
 class CEffectExplosion : 
 	public CEffect
@@ -51,6 +50,8 @@ public:
 	CEffectExplosion( const Vector3f& pos, const float radius, float speed );
 	virtual ~CEffectExplosion();
 
+	const bool	IsTransparent() const override;
+
 	void Render() override;
 	void Update( const float fTD ) override;
 };
@@ -66,7 +67,12 @@ private:
 	float C[3];
 
 public:
-	CEffectSprite( CTexManager& texManager, const Vector3f& pos, const float R = 1.0f, const float G = 1.0f, const float B = 1.0f );
+	CEffectSprite( const Vector3f& pos, const float R = 1.0f, const float G = 1.0f, const float B = 1.0f );
+	virtual ~CEffectSprite();
+
+	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
+
+	const bool	IsTransparent() const override;
 
 	void Render() override;
 	void Update( const float fTD ) override;

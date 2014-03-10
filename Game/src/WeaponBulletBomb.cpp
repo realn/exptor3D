@@ -9,12 +9,11 @@
 	Jest to bomba
 ====================*/
 CBullBomb::CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, CModelManager& modelManager ) :
-	CBullet( owner, damage, pos, Vector3f(), 0.0f )
+	CProjectile( PROJECTILE_TYPE::BOMB, owner, damage, pos, Vector3f(), 0.0f )
 {
 	BoomTime = time;
 	ThisTime = 0.0f;
 	Model = modelManager.Get( "bomb-model.glm" );
-	Type = BULLET_TYPE_BOMB;
 }
 
 float CBullBomb::DoTest(CDynamic *Dum, float Armor )

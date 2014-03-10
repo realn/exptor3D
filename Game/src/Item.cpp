@@ -10,6 +10,7 @@ CItem::CItem(const ITEM_TYPE type) :
 	Active( true )
 {
 	Radius = 3.0f;
+	GfxLoaded = false;
 }
 
 CItem::~CItem()

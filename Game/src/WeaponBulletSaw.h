@@ -1,9 +1,9 @@
 #pragma once
 
-#include "WeaponBullet.h"
+#include "WeaponProjectile.h"
 
 class CBullSaw : 
-	public CBullet
+	public CProjectile
 {
 public:
 	CBullSaw( CActor* owner, const float damage, const Vector3f& pos );

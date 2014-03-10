@@ -5,30 +5,34 @@
 #include "Renderable.h"
 #include "SceneEntity.h"
 
-#define BULLET_TYPE_NORMAL	0
-#define BULLET_TYPE_RAY		1
-#define BULLET_TYPE_ROCKET	2
-#define	BULLET_TYPE_EXPLODE	3
-#define BULLET_TYPE_BOMB	4
-#define BULLET_TYPE_SAW		5
+enum class PROJECTILE_TYPE
+{
+	UNKNOWN = 0,
+	BULLET,
+	RAY,
+	ROCKET,
+	EXPLOSION,
+	BOMB,
+	MELEE,
+};
 
 /*	KLASY POCISKÓW	*/
-class CBullet : 
+class CProjectile : 
 	public CDynamic,
 	public IUpdateable,
 	public IRenderable,
 	public ISceneEntity
 {
 protected:
+	const PROJECTILE_TYPE Type;
 	CActor* Owner;
-	unsigned int Type;
 	Vector3f Veloc;
 	float Damage;
 	GLUquadric* obj;
 
 public:
-	CBullet(CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed);
-	virtual ~CBullet();
+	CProjectile(const PROJECTILE_TYPE type, CActor* owner, const float damage, const Vector3f& origin, const Vector3f& vector, const float speed );
+	virtual ~CProjectile();
 
 	CActor*	GetOwner() const;
 

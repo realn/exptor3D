@@ -4,10 +4,9 @@
 	KLASA CBullSaw
 ====================*/
 CBullSaw::CBullSaw( CActor* owner, const float damage, const Vector3f& pos ) :
-	CBullet( owner, damage, pos, Vector3f(), 0.0f )
+	CProjectile(PROJECTILE_TYPE::MELEE, owner, damage, pos, Vector3f(), 0.0f )
 {
 	Radius = 0.5f;
-	Type = BULLET_TYPE_SAW;
 }
 
 void CBullSaw::Update( const float fTD )

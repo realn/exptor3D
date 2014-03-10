@@ -6,22 +6,18 @@
 	KLASA CBullRay
 	promieñ phazer'a
 ====================*/
-CBullRay::CBullRay( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector ) :
-	CBullet( owner, damage, pos, vector, 1.0f )
+CBullRay::CBullRay( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& target ) :
+	CProjectile( PROJECTILE_TYPE::RAY, owner, damage, pos, (target - pos).Normalize(), 1.0f )
 {
 	Radius = 0.1f;
-	Type = BULLET_TYPE_RAY;
 	DeleteThis = false;
+	NextPos = target;
 
-	CEffectRay* Effect = new CEffectRay( *pGLevel, pos, vector );
+	//CEffectRay* Effect = new CEffectRay( Pos, NextPos);
+	//CEffectSprite* Spr = new CEffectSprite( SEManager.GetTexMng(), Effect->GetToPos() + ( Vector.Reverse() * 0.2f ), 1.0f, 0.8f, 0.0f );
 
-	Pos = Effect->GetFromPos();
-	NextPos = Effect->GetToPos();
-
-	CEffectSprite* Spr = new CEffectSprite( SEManager.GetTexMng(), Effect->GetToPos() + ( Vector.Reverse() * 0.2f ), 1.0f, 0.8f, 0.0f );
-
-	SEManager.AddEffect( Effect );
-	SEManager.AddEffect( Spr );
+	//SEManager.AddEffect( Effect );
+	//SEManager.AddEffect( Spr );
 }
 
 float CBullRay::DoTest( CDynamic* Dum, float Armor )
@@ -29,11 +25,11 @@ float CBullRay::DoTest( CDynamic* Dum, float Armor )
 	float ArmorMod = 1.0f - ( ( Armor * 0.5f ) / 100.0f );
 	if( Dum != NULL && Dum != Owner )
 	{
-		if( TestCollDum( Dum, this ) )
-		{
-			SEManager.AddEffect( new CEffectSprite( SEManager.GetTexMng(), Dum->NextPos, 1.0f, 2.0f, 0.0f ) );
-			return Damage * ArmorMod;
-		}
+		//if( TestCollDum( Dum, this ) )
+		//{
+		//	//SEManager.AddEffect( new CEffectSprite( SEManager.GetTexMng(), Dum->NextPos, 1.0f, 2.0f, 0.0f ) );
+		//	return Damage * ArmorMod;
+		//}
 	}
 	return 0.0f;
 }

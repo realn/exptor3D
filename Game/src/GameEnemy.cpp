@@ -211,20 +211,20 @@
 //	{
 //	case WEAPON_TYPE::PISTOL :
 //		{
-//			CBullet* Bull = new CBullet( this, 1.0f, Pos, FireVeloc, 12.0f );
+//			CProjectile* Bull = new CProjectile( this, 1.0f, Pos, FireVeloc, 12.0f );
 //			BManager.AddBullet( Bull );
 //			return;
 //		}
 //	case WEAPON_TYPE::MINIPHAZER :
 //	case WEAPON_TYPE::PHAZER :
 //		{
-//			CBullet* Bull = new CBullRay( this, 50.0f, temp, FireVeloc );
+//			CProjectile* Bull = new CBullRay( this, 50.0f, temp, FireVeloc );
 //			BManager.AddBullet( Bull );
 //			return;
 //		}
 //	case WEAPON_TYPE::ROCKET_LUNCHER :
 //		{
-//			CBullet* Bull = new CBullRocket( this, 10.0f, temp, FireVeloc, 2.0f, ModelManager );
+//			CProjectile* Bull = new CBullRocket( this, 10.0f, temp, FireVeloc, 2.0f, ModelManager );
 //			BManager.AddBullet( Bull );
 //			return;
 //		}

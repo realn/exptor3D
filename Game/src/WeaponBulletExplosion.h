@@ -1,10 +1,10 @@
 #pragma once
 
-#include "WeaponBullet.h"
+#include "WeaponProjectile.h"
 
 // Wybuch
 class CBullExplosion : 
-	public CBullet
+	public CProjectile
 {
 private:
 	float Speed;
