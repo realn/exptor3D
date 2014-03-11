@@ -13,7 +13,9 @@ public:
 class IEventObserver
 {
 public:
-	virtual void	ProcessEvent(CEvent& event) = 0;
+	virtual ~IEventObserver(){}
+
+	virtual void	ProcessEvent( const CEvent& event) = 0;
 };
 
 class CEventManager

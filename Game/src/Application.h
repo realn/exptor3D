@@ -3,6 +3,7 @@
 #include "Render.h"
 #include "Texture.h"
 #include "EventManager.h"
+#include "GameController.h"
 
 enum class GAME_STATE
 {
@@ -15,8 +16,14 @@ class CApplication
 private:
 	CRender	GLRender;
 	CEventManager	EventManager;
+	CControllerList	ControllerList;
 
 	GAME_STATE	State;
+	unsigned	WindowWidth;
+	unsigned	WindowHeight;
+	int		MouseX;
+	int		MouseY;
+
 	bool	active;
 	bool	Keys[256];
 

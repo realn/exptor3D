@@ -91,9 +91,11 @@
     <ClCompile Include="src\EventManager.cpp" />
     <ClCompile Include="src\GameActor.cpp" />
     <ClCompile Include="src\GameActorStats.cpp" />
+    <ClCompile Include="src\GameController.cpp" />
     <ClCompile Include="src\GameEnemy.cpp" />
     <ClCompile Include="src\CollisionManager.cpp" />
     <ClCompile Include="src\GamePlayer.cpp" />
+    <ClCompile Include="src\GamePlayerController.cpp" />
     <ClCompile Include="src\GameStaticObject.cpp" />
     <ClCompile Include="src\GUIMenu.cpp" />
     <ClCompile Include="src\GUIMenuItem.cpp" />
@@ -142,6 +144,8 @@
     <ClInclude Include="src\Effect.h" />
     <ClInclude Include="src\EventInput.h" />
     <ClInclude Include="src\EventManager.h" />
+    <ClInclude Include="src\GameController.h" />
+    <ClInclude Include="src\GamePlayerController.h" />
     <ClInclude Include="src\GUIMenu.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneEntity.h" />

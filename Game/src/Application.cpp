@@ -1,5 +1,8 @@
 #include "Application.h"
 #include "EventInput.h"
+#include "GamePlayerController.h"
+
+#include <windowsx.h>
 
 #include "gui.h"
 #include "GamePlayer.h"
@@ -9,9 +12,20 @@
 
 CApplication::CApplication() :
 	active( true ),
-	State(GAME_STATE::MAINMENU)
+	State(GAME_STATE::MAINMENU),
+	WindowWidth( 640 ),
+	WindowHeight( 480 ),
+	MouseX( 0 ),
+	MouseY( 0 )
 {
 	memset( Keys, 0, sizeof(bool) * 256 );
+
+	POINT cursorPos;
+	if( GetCursorPos( &cursorPos ) )
+	{
+		MouseX = cursorPos.x;
+		MouseY = cursorPos.y;
+	}
 
 	RegScript();
 }
@@ -52,15 +66,15 @@ int	CApplication::Run()
 	// Czytamy plik ini, by odpowiednio wszystko ustawiæ
 	IniFile ini;
 	ini.Open( "config.ini" );
-	int Szer = ini.ReadInt( "GRAPHIC", "WIDTH", 640 );
-	int Wys = ini.ReadInt( "GRAPHIC", "HEIGHT", 480 );
+	WindowWidth = ini.ReadInt( "GRAPHIC", "WIDTH", 640 );
+	WindowHeight = ini.ReadInt( "GRAPHIC", "HEIGHT", 480 );
 	bool fullscreen = ini.ReadBool( "GRAPHIC", "FULLSCREEN", false );
 	GUI.SetMaxSpecial( ini.ReadInt( "SPECIAL", "MAXCOUNT", 0 ) );
 	GUI.SetCanSmoke( ini.ReadBool( "SPECIAL", "SMOKE", true ) );
 	ini.Close();
 
 	// Stwórz okno
-	if ( !GLRender.GLCreateWindow( "Expert 3D Tournament", Szer, Wys, fullscreen, (WNDPROC)WndProc, this ) )
+	if ( !GLRender.GLCreateWindow( "Expert 3D Tournament", WindowWidth, WindowHeight, fullscreen, (WNDPROC)WndProc, this ) )
 		return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
 
 	CTexManager texManager( "Data/Textures/" );
@@ -68,8 +82,9 @@ int	CApplication::Run()
 	CLevel level( texManager, modelManager );
 
 	pGLevel = &level;
-
-	//SEManager.Init( texManager );
+	CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
+	ControllerList.AddController( pController );
+	EventManager.AddObserver( pController );
 
 	Log.Log( "Inicjalizacja OpenGL" );
 
@@ -177,7 +192,23 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 			GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
 			return true;								
 		}
+
+	case WM_MOUSEMOVE:
+		{
+			int x = GET_X_LPARAM(lParam);
+			int y = GET_Y_LPARAM(lParam);
+
+			CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVE, x, y, x - MouseX, y - MouseY );
+			
+			MouseX = x;
+			MouseY = y;
+
+			EventManager.AddEvent( *((CEvent*)&MouseEvent) );
+
+			return true;
+		}
 	}
+
 	return false;
 }
 
@@ -316,7 +347,7 @@ void	CApplication::Mouse()
 	2 sk³adowe ( x, y ) :P
 	*/
 	POINT mpos;
-
+	
 	/*	Teraz musimy mieæ punk oparcia o ile ruszono
 	mysz¹. Ja wybra³em œrodek ekranu, z t¹d
 	korzystam z klasy UIRender by uzyskaæ szerokoœæ
@@ -343,7 +374,7 @@ void	CApplication::Mouse()
 	if( pGLevel != nullptr )
 	{
 		/*	Modyfikujemy stopieñ obrotu gracza.	*/
-		pGLevel->GetPlayer().ModAngle( mov_x );
+		//pGLevel->GetPlayer().ModAngle( mov_x );
 	}
 
 	// W koñcu ustawiamy kursor na œrodek ekranu.
@@ -358,25 +389,12 @@ void	CApplication::Update( const float fTD )
 	if( State != GAME_STATE::LEVEL )
 		return;
 
-	//if( GUI.IsShowingWLScr() )
-	//	return;
+	ControllerList.Update();
 
 	Mouse();
 
 	pGLevel->Update( fTD );
-	pGLevel->CheckWLFlags();
 	pGLevel->GetPlayer().ParseKeys( Keys );
-
-
-	if( GUI.GetCliping() )
-	{
-		//MainPlayer.ModHealth( -BManager.DoTest( &MainPlayer, MainPlayer.GetArmor() ) );
-	}
-	//MainPlayer.ApplyNextPos();
-
-	//SEManager.Update( fTD );
-	//SMBlur.Update( fTD );
-	//BManager.Update( fTD );
 
 	GUI.PInfo.HEALTH = pGLevel->GetPlayer().GetHealth();
 	GUI.PInfo.ARMOR = pGLevel->GetPlayer().GetArmor();

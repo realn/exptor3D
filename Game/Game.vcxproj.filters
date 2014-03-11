@@ -34,6 +34,9 @@
     <Filter Include="Source\Logic\Events">
       <UniqueIdentifier>{6065f9d4-b7eb-4c9e-9794-f1d4d30e5d27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\Controllers">
+      <UniqueIdentifier>{a8b40efb-acd1-4a3f-b692-b08688053bee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -192,6 +195,12 @@
     <ClCompile Include="src\EventManager.cpp">
       <Filter>Source\Logic\Events</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameController.cpp">
+      <Filter>Source\Game\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GamePlayerController.cpp">
+      <Filter>Source\Game\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -334,6 +343,12 @@
     </ClInclude>
     <ClInclude Include="src\EventInput.h">
       <Filter>Source\Logic\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameController.h">
+      <Filter>Source\Game\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GamePlayerController.h">
+      <Filter>Source\Game\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

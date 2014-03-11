@@ -17,7 +17,7 @@ public:
 	EVENT_INPUT_TYPE	Type;
 	unsigned			Key;
 
-	CEventKey();
+	CEventKey(){}
 	CEventKey( const EVENT_INPUT_TYPE type, const unsigned key ) :
 		Type( type ), Key( key )
 	{}
@@ -30,7 +30,7 @@ public:
 	char	Character;
 	wchar_t	WideCharacter;
 
-	CEventChar();
+	CEventChar(){}
 	CEventChar( const EVENT_INPUT_TYPE type, const char character, const wchar_t wideCharacter ) :
 		Type( type ), Character( character ), WideCharacter( wideCharacter )
 	{}
@@ -42,9 +42,11 @@ public:
 	EVENT_INPUT_TYPE	Type;
 	int	X;
 	int	Y;
+	int Xdelta;
+	int Ydelta;
 
-	CEventMouse();
-	CEventMouse( const EVENT_INPUT_TYPE type, const int x, const int y ) :
-		Type( type ), X( x ), Y( y )
+	CEventMouse(){}
+	CEventMouse( const EVENT_INPUT_TYPE type, const int x, const int y, const int xd, const int yd ) :
+		Type( type ), X( x ), Y( y ), Xdelta( xd ), Ydelta( yd )
 	{}
 };

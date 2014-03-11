@@ -93,20 +93,20 @@ void CPlayer::Update( const float fTD )
 
 void CPlayer::ParseKeys( const bool* Keys )
 {
-	if( Keys['W'] || Keys[VK_UP] )
-		DoAction( GAME_ACTION::MOVE_FORWARD );
-	if( Keys['S'] || Keys[VK_DOWN] )
-		DoAction( GAME_ACTION::MOVE_BACK );
-	if( Keys[VK_LEFT] )
-		ModAngle( -1.5f );
-	if( Keys[VK_RIGHT] )
-		ModAngle( 1.5f );
-	if( Keys['A'] )
-		DoAction( GAME_ACTION::MOVE_STRAFE_LEFT );
-	if( Keys['D'] )
-		DoAction( GAME_ACTION::MOVE_STRAFE_RIGHT );
-	if( Keys[VK_LBUTTON] || Keys[VK_CONTROL] )
-		DoAction( GAME_ACTION::DO_ATTACK );
+	//if( Keys['W'] || Keys[VK_UP] )
+	//	DoAction( GAME_ACTION::MOVE_FORWARD );
+	//if( Keys['S'] || Keys[VK_DOWN] )
+	//	DoAction( GAME_ACTION::MOVE_BACK );
+	//if( Keys[VK_LEFT] )
+	//	ModAngle( -1.5f );
+	//if( Keys[VK_RIGHT] )
+	//	ModAngle( 1.5f );
+	//if( Keys['A'] )
+	//	DoAction( GAME_ACTION::MOVE_STRAFE_LEFT );
+	//if( Keys['D'] )
+	//	DoAction( GAME_ACTION::MOVE_STRAFE_RIGHT );
+	//if( Keys[VK_LBUTTON] || Keys[VK_CONTROL] )
+	//	DoAction( GAME_ACTION::DO_ATTACK );
 	if( Keys['0'] )
 		SwichWeap( 0 );
 	if( Keys['1'] )
