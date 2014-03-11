@@ -259,15 +259,13 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 	std::string Com = "";
 	int i = 0, k;
 
-	str = NoSpace( fullstr );
+	str = ClearWhiteSpace( fullstr );
 
-	for( i = 0; i < str.length(); i++ )
-	{
-		if( str[i] == '(' )
-			break;
-
-		Com += str[i];
-	}
+	i = str.find("(");
+	if( i != std::string::npos )
+		Com = str.substr(0, i);
+	else
+		Com = str;
 
 	if( Com == "glBindTexture" )
 	{

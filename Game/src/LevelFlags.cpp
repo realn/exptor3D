@@ -44,13 +44,13 @@ bool gameWLFlags::IsInBlock()
 // Sprawdzamy, czy gracz znalaz³ odpowiedni¹ broñ
 bool gameWLFlags::GotWeap()
 {
-	return MainPlayer.Weapon[WeapID]->GetHave();	
+	return false;//return MainPlayer.Weapon[WeapID]->GetHave();	
 }
 
 // Sprawdzamy, czy gracz nie ¿yje
 bool gameWLFlags::IsSelfDead()
 {
-	return MainPlayer.IsDead();
+	return false;//return MainPlayer.IsDead();
 }
 
 // Sprawdzamy, czy okreœlony stwór nie ¿yje

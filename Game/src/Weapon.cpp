@@ -105,7 +105,7 @@ bool CWeapon::ModAmmo( int ammo )
 		return false;
 
 	Ammo += ammo;
-	if( Ammo > MaxAmmo )
+	if( Ammo > (int)MaxAmmo )
 		Ammo = MaxAmmo;
 
 	return true;

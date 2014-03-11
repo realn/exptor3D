@@ -183,6 +183,9 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\Application_Script.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">

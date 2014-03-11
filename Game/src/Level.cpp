@@ -27,6 +27,7 @@ CLevel::CLevel( CTexManager& texManager, CModelManager& modelManager ) :
 	TexManager( texManager ),
 	ModelManager( modelManager ),
 	RenderList( texManager, modelManager ),
+	Player( modelManager ),
 	blockWidth( 10.0f ),
 	blockHeight( 10.0f ),
 	blockDepth( 10.0f ),
@@ -146,6 +147,11 @@ const CCollisionManager&	CLevel::GetCollisionManager() const
 	return CollisionMng;
 }
 
+CPlayer&	CLevel::GetPlayer()
+{
+	return Player;
+}
+
 // Zwraca, czy poziom jest za³adowany i gotowy
 bool CLevel::GetLoaded()
 {
@@ -216,7 +222,7 @@ bool CLevel::LoadLevel( const std::string &filename )
 	{
 		Log.Report( "GLEVEL( " + file + " ): Prze³adowanie poziomu na : " + filename );
 		Free();
-		MainPlayer.Reset();
+		Player.Reset();
 	}
 
 	Log.Log( "GLEVEL( " + file + " ): Wczytywanie poziomu: " + filename );
@@ -444,11 +450,11 @@ bool CLevel::LoadLevel( const std::string &filename )
 	}
 	*/
 
-	MainPlayer.SetStartPos( this->GetBlockPos( PlayerStartBlock ) );
-	MainPlayer.SetStartAngle( (float)PlayerStartAngle );
-	MainPlayer.Reset();
+	Player.SetStartPos( this->GetBlockPos( PlayerStartBlock ) );
+	Player.SetStartAngle( (float)PlayerStartAngle );
+	Player.Reset();
 
-	CollisionMng.AddObject( &MainPlayer );
+	this->AddEntity( &Player );
 
 	loaded = true;
 

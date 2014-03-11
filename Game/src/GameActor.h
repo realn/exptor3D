@@ -2,6 +2,7 @@
 
 #include "3dMath.h"
 #include "Updateable.h"
+#include "SceneEntity.h"
 
 enum class ACTOR_TYPE
 {
@@ -96,7 +97,8 @@ public:
 class CActor : 
 	public CDynamic,
 	public CActorStats,
-	public IUpdateable
+	public IUpdateable,
+	public ISceneEntity
 {
 protected:
 	const ACTOR_TYPE	Type;

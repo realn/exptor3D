@@ -5,48 +5,38 @@
 #include "Level.h"
 #include "inifile.h"
 
-void LoadLevel( void* pData, const std::vector<std::string>& params )
-{
-	if( pGLevel->LoadLevel( params[0] ) )
-	{
-		pGLevel->InitLevel();
-		
-		GUI.LevName = pGLevel->GetLevelName();
-		GUI.EnableMainEngine();
-		GUI.EnableGGUI();
-	}
-	else
-	{
-		GUI.SendConMsg( "Nie mozna znalesc pliku", false );
-	}
-}
 
 CApplication::CApplication() :
 	active( true )
 {
 	memset( Keys, 0, sizeof(bool) * 256 );
-	GUI.ScriptParser.AddFunc( "LoadLevel", LoadLevel, 1 );
+
+	RegScript();
+}
+
+CApplication::~CApplication()
+{
 
 }
 
 /*	FUNKCJA KOMUNIKATÓW
-	By okno sprawnie pracowa³o, potrzebna
-	jest funkcja komunikatów, tzw. Window Processing.
-	Interpretujemy tutaj komunikaty by okno, np. Zmieni³o
-	szerokoœæ. Tu w³aœnie siê pojawia znany problem "Program
-	Nie Odpowiada", bo pewnie jest tak zajêty, ¿e nie ma czasu
-	uruchomiæ funkcji komunikatów.
+By okno sprawnie pracowa³o, potrzebna
+jest funkcja komunikatów, tzw. Window Processing.
+Interpretujemy tutaj komunikaty by okno, np. Zmieni³o
+szerokoœæ. Tu w³aœnie siê pojawia znany problem "Program
+Nie Odpowiada", bo pewnie jest tak zajêty, ¿e nie ma czasu
+uruchomiæ funkcji komunikatów.
 */
 LRESULT CALLBACK WndProc(	HWND	hWnd,			// Uchwyt do okna
-							UINT	uMsg,			// Komunikaty
-							WPARAM	wParam,			// Dodatkowe informacje
-							LPARAM	lParam)			// Dodatkowe informacje
+						 UINT	uMsg,			// Komunikaty
+						 WPARAM	wParam,			// Dodatkowe informacje
+						 LPARAM	lParam)			// Dodatkowe informacje
 {
 	auto ptr = GetWindowLongPtr( hWnd, GWLP_USERDATA );
 	if( ptr != 0 )
 	{
 		auto pApp = (CApplication*)ptr;
-		if(pApp->ProcessMsg( hWnd, uMsg, wParam, lParam ) == 0)
+		if(pApp->ProcessMsg( hWnd, uMsg, wParam, lParam ))
 			return 0;
 	}
 
@@ -69,9 +59,7 @@ int	CApplication::Run()
 
 	// Stwórz okno
 	if ( !GLRender.GLCreateWindow( "Expert 3D Tournament", Szer, Wys, fullscreen, (WNDPROC)WndProc, this ) )
-	{
 		return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
-	}
 
 	CTexManager texManager( "Data/Textures/" );
 	CModelManager modelManager( "Data/Models/", texManager );
@@ -80,7 +68,6 @@ int	CApplication::Run()
 	pGLevel = &level;
 
 	//SEManager.Init( texManager );
-	MainPlayer.Init( modelManager );
 
 	Log.Log( "Inicjalizacja OpenGL" );
 
@@ -93,11 +80,11 @@ int	CApplication::Run()
 	return 0;
 }
 
-int		CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lParam )
+const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	switch (uMsg)									// SprawdŸ komunikaty
 	{
-		case WM_ACTIVATE:							// komunikar Aktywnoœci
+	case WM_ACTIVATE:							// komunikar Aktywnoœci
 		{
 			if (!HIWORD(wParam))					// SprawdŸ altywnoœæ
 			{
@@ -108,69 +95,70 @@ int		CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lP
 				active=false;						// Program ju¿ nie jest aktywny
 			}
 
-			return 0;								// Spowrotem do pêtli
+			return true;								// Spowrotem do pêtli
 		}
 
-		case WM_SYSCOMMAND:							// SprawdŸ komunikaty systemowe
+	case WM_SYSCOMMAND:							// SprawdŸ komunikaty systemowe
 		{
 			switch (wParam)	
 			{
-				case SC_SCREENSAVE:					// Wygaszaczpróbuje siê w³¹czyæ?
-				case SC_MONITORPOWER:				// Monitor próbuje w³¹czyæ oszczêdzanie pr¹du?
-				return 0;							// Zapobiegaj
+			case SC_SCREENSAVE:					// Wygaszaczpróbuje siê w³¹czyæ?
+			case SC_MONITORPOWER:				// Monitor próbuje w³¹czyæ oszczêdzanie pr¹du?
+				return true;							// Zapobiegaj
 			}
-			break;									// wyjdŸ
+			return false;									// wyjdŸ
 		}
 
-		case WM_CLOSE:								// Komunikat zamkniêcia
+	case WM_CLOSE:								// Komunikat zamkniêcia
 		{
 			PostQuitMessage(0);						// Wysy³amy zamkniêcie
-			return 0;								
+			return true;								
 		}
 
-		case WM_LBUTTONDOWN:
+	case WM_LBUTTONDOWN:
 		{
 			Keys[VK_LBUTTON] = true;
-			return 0;
+			return true;
 		}
 
-		case WM_LBUTTONUP:
+	case WM_LBUTTONUP:
 		{
 			Keys[VK_LBUTTON] = false;
-			return 0;
+			return true;
 		}
 
-		case WM_RBUTTONDOWN:
+	case WM_RBUTTONDOWN:
 		{
 			Keys[VK_RBUTTON] = true;
-			return 0;
+			return true;
 		}
 
-		case WM_RBUTTONUP:
+	case WM_RBUTTONUP:
 		{
 			Keys[VK_RBUTTON] = false;
-			return 0;
+			return true;
 		}
 
-		case WM_KEYDOWN:							// Klawisz jest naciœnieniêty?
+	case WM_KEYDOWN:							// Klawisz jest naciœnieniêty?
 		{
 			GUI.ParseKey( (char)wParam );
 			Keys[wParam] = true;					// Zaznacz ¿e jest wciœniêty
-			return 0;								
+			return true;								
 		}
 
-		case WM_KEYUP:								// Klawisz jest puszczony?
+	case WM_KEYUP:								// Klawisz jest puszczony?
 		{
 			Keys[wParam] = false;					// Zaznacz ¿e jest wolny
-			return 0;								
+			return true;								
 		}
 
-		case WM_SIZE:								// Zmiana rozmiarów
+	case WM_SIZE:								// Zmiana rozmiarów
 		{
 			GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
-			return 0;								
+			return true;								
 		}
 	}
+	return false;
 }
 
 void	CApplication::InitGraphics( CTexManager& texManager )
@@ -302,15 +290,15 @@ void	CApplication::MainLoop()
 void	CApplication::Mouse()
 {
 	/*	Najpierw standardowa strukturka windows.
-		Jest to eee... PUNKT :) który zawiera A¯
-		2 sk³adowe ( x, y ) :P
+	Jest to eee... PUNKT :) który zawiera A¯
+	2 sk³adowe ( x, y ) :P
 	*/
 	POINT mpos;
 
 	/*	Teraz musimy mieæ punk oparcia o ile ruszono
-		mysz¹. Ja wybra³em œrodek ekranu, z t¹d
-		korzystam z klasy UIRender by uzyskaæ szerokoœæ
-		i wysokoœæ oraz dziele je na pó³.
+	mysz¹. Ja wybra³em œrodek ekranu, z t¹d
+	korzystam z klasy UIRender by uzyskaæ szerokoœæ
+	i wysokoœæ oraz dziele je na pó³.
 	*/
 	int m_wid = GLRender.GetWidth() / 2;
 	int m_hei = GLRender.GetHeight() / 2;
@@ -319,19 +307,22 @@ void	CApplication::Mouse()
 	float mov_x;// mov_y,
 
 	/*	U¿ywamy piêknej funkcji Windows, by wychwyciæ po³orzenie
-		kursora wzglêdem okna.
+	kursora wzglêdem okna.
 	*/
 	GetCursorPos( &mpos );
 
 	/*	Wyliczamy róznice miêdzy po³orzeniem 
-		punktu na ekranie, a œrodkiem ekranu
-		i zmniejszamy j¹ dziesiêciokrotnie.
-		( by³aby za du¿a ).
+	punktu na ekranie, a œrodkiem ekranu
+	i zmniejszamy j¹ dziesiêciokrotnie.
+	( by³aby za du¿a ).
 	*/
 	mov_x = (float)(mpos.x - m_wid) / 10.0f;
 
-	/*	Modyfikujemy stopieñ obrotu gracza.	*/
-	MainPlayer.ModAngle( mov_x );
+	if( pGLevel != nullptr )
+	{
+		/*	Modyfikujemy stopieñ obrotu gracza.	*/
+		pGLevel->GetPlayer().ModAngle( mov_x );
+	}
 
 	// W koñcu ustawiamy kursor na œrodek ekranu.
 	SetCursorPos( m_wid, m_hei );
@@ -350,11 +341,9 @@ void	CApplication::Update( const float fTD )
 
 	Mouse();
 
-	MainPlayer.Update( fTD );
 	pGLevel->Update( fTD );
 	pGLevel->CheckWLFlags();
-
-	MainPlayer.ParseKeys( Keys );
+	pGLevel->GetPlayer().ParseKeys( Keys );
 
 
 	if( GUI.GetCliping() )
@@ -367,9 +356,9 @@ void	CApplication::Update( const float fTD )
 	//SMBlur.Update( fTD );
 	//BManager.Update( fTD );
 
-	GUI.PInfo.HEALTH = MainPlayer.GetHealth();
-	GUI.PInfo.ARMOR = MainPlayer.GetArmor();
-	GUI.PInfo.angle = MainPlayer.GetAngle();
+	GUI.PInfo.HEALTH = pGLevel->GetPlayer().GetHealth();
+	GUI.PInfo.ARMOR = pGLevel->GetPlayer().GetArmor();
+	GUI.PInfo.angle = pGLevel->GetPlayer().GetAngle();
 }
 
 void	CApplication::Render()
@@ -417,8 +406,8 @@ void	CApplication::Render()
 		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
-		glRotatef( MainPlayer.GetAngle(), 0.0f, 1.0f, 0.0f );
-		glTranslatef( -MainPlayer.Pos.X, 0, MainPlayer.Pos.Z );
+		glRotatef( pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f );
+		glTranslatef( -pGLevel->GetPlayer().Pos.X, 0, pGLevel->GetPlayer().Pos.Z );
 
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 		pGLevel->Render();
@@ -432,7 +421,7 @@ void	CApplication::Render()
 		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
 		glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
 		glLoadIdentity();
-		MainPlayer.Render();
+		pGLevel->GetPlayer().Render();
 
 		//if( GUI.GetMotionBlur() )
 		//	SMBlur.Render();
@@ -447,7 +436,22 @@ void	CApplication::Render()
 	//	glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
 	//	MenuModel->CallObject( 0 );
 	//}
-	
+
 	GUI.DoGUIDraw();
 }
 
+void	CApplication::LoadLevel( const std::string& filename )
+{
+	if( pGLevel->LoadLevel( filename ) )
+	{
+		pGLevel->InitLevel();
+
+		GUI.LevName = pGLevel->GetLevelName();
+		GUI.EnableMainEngine();
+		GUI.EnableGGUI();
+	}
+	else
+	{
+		GUI.SendConMsg( "Nie mozna znalesc pliku", false );
+	}
+}

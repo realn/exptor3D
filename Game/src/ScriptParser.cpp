@@ -43,4 +43,5 @@ CScriptFunc*	CScriptParser::FindFunc( const std::string& name )
 		if( FuncList[i].Name == name )
 			return &FuncList[i];
 	}
+	return nullptr;
 }

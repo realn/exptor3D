@@ -16,10 +16,12 @@ KLASA CPlayer
 
 
 =========================*/
-CPlayer::CPlayer() :
+CPlayer::CPlayer( CModelManager& modelManager ) :
 	CActor( ACTOR_TYPE::ACTOR_PLAYER ),
+	ModelManager( modelManager ),
 	Hand( WEAPON_HAND::RIGHT )
 {
+
 	run = true;
 	Angle = 0.0f;
 	WalkStep = 5.0f;
@@ -34,6 +36,7 @@ CPlayer::CPlayer() :
 	for( unsigned i = 0; i < WEAPON_COUNT; i++ )
 		Weapon[i] = nullptr;
 
+	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( modelManager );
 	//Weapon[(unsigned)WEAPON_TYPE::SAW] = new weSaw();
 	//Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
 	//Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
@@ -52,12 +55,6 @@ CPlayer::~CPlayer()
 			Weapon[i] = nullptr;
 		}
 	}
-}
-
-void	CPlayer::Init( CModelManager& modelManager )
-{
-	ModelManager = &modelManager;
-	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( modelManager );
 }
 
 void	CPlayer::OnDie()
@@ -212,7 +209,7 @@ void CPlayer::Reset()
 	//Weapon[(unsigned)WEAPON_TYPE::PISTOL] = new wePistol();
 	//Weapon[(unsigned)WEAPON_TYPE::MINIPHAZER] = new weMiniPhazer();
 	//Weapon[(unsigned)WEAPON_TYPE::MINIGUN] = new weMiniGun();
-	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( *ModelManager );
+	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( ModelManager );
 	//Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
 	//Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
 	GUI.PInfo.FRAGS = 0;
@@ -257,5 +254,3 @@ void	CPlayer::SolveActions( const float fTD )
 
 	CActor::SolveActions( fTD );
 }
-
-CPlayer MainPlayer;

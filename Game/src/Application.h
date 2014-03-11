@@ -13,11 +13,13 @@ private:
 
 public:
 	CApplication();
+	~CApplication();
 
 	int		Run();
-	int		ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	const bool	ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 private:
+	void	RegScript();
 	void	InitGraphics( CTexManager& texManager );
 
 	void	MainLoop();
@@ -25,4 +27,7 @@ private:
 	void	Mouse();
 	void	Update( const float fTD );
 	void	Render();
+
+public:
+	void	LoadLevel( const std::string& filename );
 };

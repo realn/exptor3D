@@ -20,7 +20,7 @@ class CPlayer :
 	public CActor
 {
 private:
-	CModelManager* ModelManager;
+	CModelManager& ModelManager;
 
 	WEAPON_HAND	Hand;
 
@@ -38,10 +38,8 @@ private:
 public:
 	CWeapon* Weapon[WEAPON_COUNT];
 
-	CPlayer();
+	CPlayer( CModelManager& modelManager );
 	~CPlayer();
-
-	void	Init( CModelManager& modelManager );
 
 	void	OnDie() override;
 	void	OnDead() override;
@@ -67,5 +65,3 @@ public:
 private:
 	virtual void	SolveActions( const float fTD ) override;
 };
-
-extern CPlayer MainPlayer;

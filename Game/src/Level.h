@@ -25,13 +25,13 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 
-#include "GameEnemy.h"
 #include "Item.h"
 #include "WeaponProjectile.h"
 #include "RenderList.h"
 #include "UpdateList.h"
 #include "CollisionManager.h"
 #include "Scene.h"
+#include "GamePlayer.h"
 
 /*	DEFINICJE MAKROWE
 	Te synonimy s¹ dla u³atwienia.
@@ -189,6 +189,8 @@ private:
 	CCollisionManager	CollisionMng;
 
 	CTexture*		Tex[3];
+
+	CPlayer	Player;
 	
 	float blockWidth;
 	float blockHeight;
@@ -250,6 +252,7 @@ public:
 	const bool	RemoveEntity( ISceneEntity* pEntity ) override;
 
 	const CCollisionManager&	GetCollisionManager() const;
+	CPlayer&	GetPlayer();
 
 	std::string GetLevelName();
 

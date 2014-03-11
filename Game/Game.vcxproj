@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Application_Script.cpp" />
     <ClCompile Include="src\CollisionBlock.cpp" />
     <ClCompile Include="src\CollisionFace.cpp" />
     <ClCompile Include="src\Effect.cpp" />
