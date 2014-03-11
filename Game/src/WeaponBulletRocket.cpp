@@ -45,9 +45,9 @@ void CBullRocket::Render()
 void CBullRocket::Update( const float fTD )
 {
 	Pos = NextPos;
-	NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
+	NextPos = Pos + ( Veloc * fTD );
 
-	Sec += fTD * GUI.GetSpeed();
+	Sec += fTD;
 	if( Sec > 0.1f )
 	{
 		Vector3f Tail = Veloc.Normalize();

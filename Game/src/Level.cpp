@@ -226,7 +226,7 @@ bool CLevel::LoadLevel( const std::string &filename )
 	}
 
 	Log.Log( "GLEVEL( " + file + " ): Wczytywanie poziomu: " + filename );
-	GUI.SendConMsg( "Wczytywanie poziomu: " + filename, false );
+	//GUI.SendConMsg( "Wczytywanie poziomu: " + filename, false );
 	file = filename;
 
 	while( stream )
@@ -486,7 +486,7 @@ void CLevel::BuildVisual()
 	if( !loaded )
 		return;
 
-	GUI.SendConMsg( "Poziom: Tworzenie czesci wizualnej...", false );
+	//GUI.SendConMsg( "Poziom: Tworzenie czesci wizualnej...", false );
 	// Zmienne pomocnicze
 
 	/*	Teraz tworzymy listê. Listy wyœwietlania
@@ -545,7 +545,7 @@ void CLevel::BuildPhysic()
 	if( !loaded )
 		return;
 
-	GUI.SendConMsg( "Poziom: Tworzenie czesci fizycznej...", false );
+	//GUI.SendConMsg( "Poziom: Tworzenie czesci fizycznej...", false );
 
 	CollisionMng.SetBlockSize( blockWidth, blockDepth );
 	CollisionMng.SetLevelSize( Rows, Cols );
@@ -590,30 +590,30 @@ void CLevel::DrawLevel()
 	if( !loaded )
 		return;
 
-	if( GUI.GetReflection() )
-	{
-		this->DrawAllTop();
-		this->DrawAllWall();
+	//if( GUI.GetReflection() )
+	//{
+	//	this->DrawAllTop();
+	//	this->DrawAllWall();
 
-		glPushMatrix();
-		glTranslatef( 0.0f, -10.0f, 0.0f );
-		glScalef( 1.0f, -1.0f, 1.0f );
-		//glDisable( GL_CLIP_PLANE0 );
-		//glEnable( GL_CLIP_PLANE1 );
-		glFrontFace( GL_CW );
-		this->DrawAllTop();
-		this->DrawAllWall();
-		glFrontFace( GL_CCW );
-		//glDisable( GL_CLIP_PLANE1 );
-		//glEnable( GL_CLIP_PLANE0 );
-		glPopMatrix();
-	}
-	else
-	{
+	//	glPushMatrix();
+	//	glTranslatef( 0.0f, -10.0f, 0.0f );
+	//	glScalef( 1.0f, -1.0f, 1.0f );
+	//	//glDisable( GL_CLIP_PLANE0 );
+	//	//glEnable( GL_CLIP_PLANE1 );
+	//	glFrontFace( GL_CW );
+	//	this->DrawAllTop();
+	//	this->DrawAllWall();
+	//	glFrontFace( GL_CCW );
+	//	//glDisable( GL_CLIP_PLANE1 );
+	//	//glEnable( GL_CLIP_PLANE0 );
+	//	glPopMatrix();
+	//}
+	//else
+	//{
 		this->DrawAllTop();
 		this->DrawAllWall();
 		this->DrawAllFloor();
-	}
+	//}
 }
 
 void CLevel::DrawAllTop()
@@ -621,7 +621,7 @@ void CLevel::DrawAllTop()
 	if( !loaded )
 		return;
 
-	Tex[1]->Activate( GUI.GetTexDLevel() );
+	Tex[1]->Activate();
 	Ceiling.Render();
 }
 
@@ -630,7 +630,7 @@ void CLevel::DrawAllWall()
 	if( !loaded )
 		return;
 
-	Tex[0]->Activate( GUI.GetTexDLevel() );
+	Tex[0]->Activate();
 	Wall.Render();
 }
 
@@ -639,23 +639,23 @@ void CLevel::DrawAllFloor()
 	if( !loaded )
 		return;
 
-	Tex[2]->Activate( GUI.GetTexDLevel() );
+	Tex[2]->Activate();
 	Floor.Render();
 }
 
 void CLevel::DrawReflect()
 {
-	if( !GUI.GetReflection() )
-		return;
+	//if( !GUI.GetReflection() )
+	//	return;
 
-	glPushMatrix();
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glColor4f( 1.0f, 1.0f, 1.0f, GUI.GetRefLevel() );
-	glEnable( GL_BLEND );
-	this->DrawAllFloor();
-	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	glDisable( GL_BLEND );
-	glPopMatrix();
+	//glPushMatrix();
+	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	//glColor4f( 1.0f, 1.0f, 1.0f, GUI.GetRefLevel() );
+	//glEnable( GL_BLEND );
+	//this->DrawAllFloor();
+	//glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+	//glDisable( GL_BLEND );
+	//glPopMatrix();
 }
 
 /*	Ta metoda zwraca nazwê poziomu wyczytan¹ z pliku
@@ -714,32 +714,32 @@ const unsigned	CLevel::GetBlockIndex( const unsigned col, const unsigned row ) c
 
 void CLevel::CheckWLFlags()
 {
-	if( !this->loaded )
-		return;
-	if( GUI.IsShowingWLScr() )
-		return;
+	//if( !this->loaded )
+	//	return;
+	//if( GUI.IsShowingWLScr() )
+	//	return;
 
-	if( AllWin )
-	{
-		if( this->WinFlags.CheckAllFlags() )
-		{
-			GUI.ShowWinScr();
-		}
-	}
-	else if( this->WinFlags.CheckOneFlag() )
-	{
-		GUI.ShowWinScr();
-	}
+	//if( AllWin )
+	//{
+	//	if( this->WinFlags.CheckAllFlags() )
+	//	{
+	//		GUI.ShowWinScr();
+	//	}
+	//}
+	//else if( this->WinFlags.CheckOneFlag() )
+	//{
+	//	GUI.ShowWinScr();
+	//}
 
-	if( AllLose )
-	{
-		if( this->LoseFlags.CheckAllFlags() )
-			GUI.ShowLoseScr();
-	}
-	else if( this->LoseFlags.CheckOneFlag() )
-	{
-		GUI.ShowLoseScr();
-	}	
+	//if( AllLose )
+	//{
+	//	if( this->LoseFlags.CheckAllFlags() )
+	//		GUI.ShowLoseScr();
+	//}
+	//else if( this->LoseFlags.CheckOneFlag() )
+	//{
+	//	GUI.ShowLoseScr();
+	//}	
 }
 
 
@@ -750,8 +750,6 @@ void CLevel::Free()
 {
 	if( !loaded )
 		return;
-
-	GUI.SendConMsg( "Poziom: Zwalnianie pamieci...", false );
 
 	block.clear();
 

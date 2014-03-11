@@ -30,23 +30,20 @@ const bool	CEffectSprite::LoadGraphic( CTexManager& texManager, CModelManager& m
 
 void CEffectSprite::Update( const float fTD )
 {
-	Alpha -= Speed * GUI.GetSpeed() * fTD;
+	Alpha -= Speed * fTD;
 	if( Alpha <= 0.0f )
 		DeleteThis = true;
 }
 
 void CEffectSprite::Render()
 {
-	if( !GUI.GetCanSmoke() )
-		return;
-
 	glPushMatrix();
 	glDisable( GL_CULL_FACE );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glEnable( GL_BLEND );
 
 	glTranslatef( Pos.X, Pos.Y, -Pos.Z );
-	glRotatef( -(GUI.PInfo.angle - 180.0f), 0.0f, 1.0f, 0.0f );
+	glRotatef( -180.0f, 0.0f, 1.0f, 0.0f );
 
 	Texture->Activate();
 	glBegin( GL_TRIANGLE_STRIP );

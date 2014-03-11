@@ -12,7 +12,6 @@ Opis:	Zawiera definicje klas odpowiedzialnych za efekty specjalne
 #ifndef _SPECIAL_H_
 #define _SPECIAL_H_
 
-#include "gui.h"
 #include "3dMath.h"
 #include "Level.h"
 #include "vector"

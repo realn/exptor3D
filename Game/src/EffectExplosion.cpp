@@ -29,7 +29,7 @@ void CEffectExplosion::Update( const float fTD )
 {
 	if( Radius < MaxRadius )
 	{
-		Radius += Speed * GUI.GetSpeed() * fTD;
+		Radius += Speed * fTD;
 
 		Alpha = 1.0f - ( Radius / MaxRadius );
 	}

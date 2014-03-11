@@ -2,13 +2,15 @@
 
 #include "Render.h"
 
+#include <fstream>
+
 /*===========================
-	KLASA guiMainMenu
+	KLASA CMenuMain
 	Steruje g³ównym menu gry.
 ===========================*/
-guiMainMenu::guiMainMenu()
+CMenuMain::CMenuMain() : 
+	MenuToShow( nullptr )
 {
-	Enabled = false;
 	Clicked = false;
 	IsSliding = false;
 	file = "-";
@@ -17,12 +19,12 @@ guiMainMenu::guiMainMenu()
 	slide = 0.0f;
 }
 
-guiMainMenu::~guiMainMenu()
+CMenuMain::~CMenuMain()
 {
 	Free();
 }
 
-void guiMainMenu::Init( CTextRenderer *text, CTexture* cursor )
+void CMenuMain::Init( CTextRenderer *text, CTexture* cursor )
 {
 	TText = text;
 	Cursor = cursor;
@@ -30,208 +32,189 @@ void guiMainMenu::Init( CTextRenderer *text, CTexture* cursor )
 	curY = 0.0f;
 }
 
-void guiMainMenu::Update()
+void CMenuMain::Update( const float fTD )
 {
-	if( !Enabled )
+	if( Stack.empty() )
 		return;
 
-	if( List.size() <= 0 || CurMenu >= List.size() || CurMenu < 0 )
-		return;
-
-	if( IsSliding )
+	auto pMenu = Stack.back();
+	if( !pMenu->IsVisible() && !pMenu->IsAnimating() )
 	{
-		if( slide < 800.0f )
-			slide += 10.0f;
+		if( MenuToShow != nullptr )
+		{
+			Stack.push_back( MenuToShow );
+			pMenu = MenuToShow;
+			MenuToShow->SetVisible( true, true );
+			MenuToShow = nullptr;
+		}
 		else
 		{
-			CurMenu = ToMenu;
-			IsSliding = false;
-			slide = 800.0f;
+			Stack.pop_back();
+			if( !Stack.empty() )
+			{
+				pMenu = Stack.back();
+				pMenu->SetVisible( true, true );
+			}
+			else
+				return;
 		}
+	}
+	pMenu->Update( fTD );
+}
+
+void CMenuMain::Render()
+{
+	if( Stack.empty() )
+		return;
+
+	Stack.back()->Render( *TText );
+}
+
+void	CMenuMain::Push( const std::string& id )
+{
+	auto menu = FindMenu( id );
+	if( menu == nullptr )
+		return;
+
+	if( !Stack.empty() )
+	{
+		Stack.back()->SetVisible( false, true );
+		MenuToShow = menu;
 	}
 	else
 	{
-		if( slide > 0.0f )
-			slide -= 10.0f;
-		else slide = 0.0f;
+		menu->SetVisible( true, true );
+		Stack.push_back( menu );
 	}
-
-	guiMenu* Menu;
-	Menu = List[CurMenu];
-	Menu->slide = slide;
-
-	Menu->Update( curX, curY, Clicked );
-	Clicked = false;
 }
 
-void guiMainMenu::Render()
+void	CMenuMain::Pop()
 {
-	if( !Enabled )
+	if( Stack.empty() )
 		return;
 
-	if( List.size() <= 0 || CurMenu >= List.size() || CurMenu < 0 )
-		return;
-
-	guiMenu* Menu;
-	Menu = List[CurMenu];
-
-	Menu->Render( TText, Cursor );
+	Stack.back()->SetVisible( false, true );
 }
 
-void guiMainMenu::Click( unsigned int X, unsigned int Y, bool click )
+CMenu*	CMenuMain::FindMenu( const std::string& id )
 {
-	float ax = 1.0f;//800.0f / (float)GLRender.GetWidth();
-	float ay = 1.0f;//600.0f / (float)GLRender.GetHeight();
-
-	curX = ax * (float)X;
-	curY = ay * (float)Y;
-
-	Clicked = click;
-}
-
-void guiMainMenu::SetCursor( unsigned int X, unsigned int Y )
-{
-	float ax = 1.0f;//800.0f / (float)GLRender.GetWidth();
-	float ay = 1.0f;//600.0f / (float)GLRender.GetHeight();
-
-	curX = ax * (float)X;
-	curY = ay * (float)Y;
-}
-
-void guiMainMenu::GoToMenu( unsigned int index )
-{
-	if( List.size() <= 0 || CurMenu >= List.size() || CurMenu < 0 )
-		return;
-
-	ToMenu = index;
-	IsSliding = true;
-}
-
-void guiMainMenu::Disable()
-{
-	Enabled = false;
-	CurMenu = 0;
-}
-
-void guiMainMenu::Enable()
-{
-	Enabled = true;
-}
-
-bool guiMainMenu::IsEnabled()
-{
-	return Enabled;
-}
-
-void guiMainMenu::AddMenu( guiMenu *Menu )
-{
-	List.push_back( Menu );
-}
-
-void guiMainMenu::DeleteMenu( unsigned int index )
-{
-	delete List[index];
-	List.erase( List.begin() + index );
-}
-
-void guiMainMenu::Free()
-{
-	for( int i = List.size()-1; i >= 0; i-- )
+	for( unsigned i = 0; i < List.size(); i++ )
 	{
-		DeleteMenu( i );
+		if( List[i]->GetID() == id )
+			return List[i];
 	}
+	return nullptr;
 }
 
-std::string guiMainMenu::GetStr( FILE* fp )
+void	CMenuMain::EventMouseMove( const Vector2f& pos )
 {
-	char buf[512];
-	do fgets( buf, 512, fp );
-	while( buf[0] == '\n' );
-	return buf;
+	if( Stack.empty() )
+		return;
+	
+	auto menu = Stack.back();
+	if( menu->IsAnimating() )
+		return;
+
+	menu->EventMouseMove( pos );
 }
 
-std::string guiMainMenu::GetParamStr( std::string str )
+void	CMenuMain::EventEnter()
 {
-	int i;
-	std::string zwrot = "";
+	if( Stack.empty() )
+		return;
+	
+	auto menu = Stack.back();
+	if( menu->IsAnimating() )
+		return;
 
-	for( i = 0; i < str.length(); i++ )
-	{
-		if( str[i] == '=' )
-			break;
-	}
+	menu->EvetnEnter();
+}
 
-	if( str[i] != '=' )
+void	CMenuMain::EventMoveDown()
+{
+	if( Stack.empty() )
+		return;
+	
+	auto menu = Stack.back();
+	if( menu->IsAnimating() )
+		return;
+
+	menu->EventMoveDown();
+}
+
+void	CMenuMain::EventMoveUp()
+{
+	if( Stack.empty() )
+		return;
+	
+	auto menu = Stack.back();
+	if( menu->IsAnimating() )
+		return;
+
+	menu->EventMoveUp();
+}
+
+void CMenuMain::Free()
+{
+	for( unsigned i = 0; i < List.size(); i++ )
+		delete List[i];
+	List.clear();
+	Stack.clear();
+}
+
+std::string CMenuMain::GetParamStr( std::string str )
+{
+	auto pos = str.find( "=" );
+	if( pos == std::string::npos )
 	{
 		Log.Error( "MAINMENU( " + file + " ): B³¹d: nie mo¿na znaleœæ znaku = w ³añcuchu: " + str );
 		return "ERROR";
 	}
 
-	for( i++; i < str.length(); i++ )
-	{
-		if( str[i] == '\n' )
-			continue;
-
-		zwrot += str[i];
-	}
-
-	return zwrot;
+	return str.substr( pos + 1 );
 }
 
-float guiMainMenu::GetParamFloat( std::string str )
+const MENU_TAG CMenuMain::GetMenuType( std::string str )
 {
-	return atof( GetParamStr( str ).c_str() );
-}
-
-int guiMainMenu::GetMenuType( std::string str )
-{
-	int i;
-	std::string temp;
-	for( i = 0; i < str.length(); i++ )
-	{
-		if( str[i] == '=' )
-			break;
-
-		temp += str[i];
-	}
-
-	if( str[i] != '=' )
+	auto pos = str.find( "=" );
+	if( pos == std::string::npos )
 	{
 		Log.Error( "MAINMENU( " + file + " ): B³¹d: nie mo¿na znaleœæ znaku = w ³añcuchu: " + str );
-		return MENU_ERROR;
+		return MENU_TAG::UNKNOWN;
 	}
 
-	if( temp == "MENU" )
-		return MENU_NAME;
-	if( temp == "MENUITEM" )
-		return MENU_ITEM_NAME;
-	if( temp == "MENUITEMPOSX" )
-		return MENU_ITEM_POSX;
-	if( temp == "MENUITEMPOSY" )
-		return MENU_ITEM_POSY;
-	if( temp == "MENUITEMACTION" )
-		return MENU_ITEM_ACTION;
-	if( temp == "MENUITEMGOTO" )
-		return MENU_ITEM_GOTO;
+	std::string temp = str.substr( 0, pos );
 
-	return MENU_ERROR;
+	if( temp == "MENU" )
+		return MENU_TAG::ID;
+	if( temp == "MENUTITLE" )
+		return MENU_TAG::NAME;
+	if( temp == "MENUITEM" )
+		return MENU_TAG::ITEM_ID;
+	if( temp == "MENUITEMTITLE" )
+		return MENU_TAG::ITEM_NAME;
+	if( temp == "MENUITEMPOSX" )
+		return MENU_TAG::ITEM_POSX;
+	if( temp == "MENUITEMPOSY" )
+		return MENU_TAG::ITEM_POSY;
+	if( temp == "MENUITEMACTION" )
+		return MENU_TAG::ITEM_ACTION;
+
+	return MENU_TAG::UNKNOWN;
 }
 
-bool guiMainMenu::LoadMenu( std::string filename )
+bool CMenuMain::Load( const std::string& filename )
 {
-	if( filename == "" )
+	if( filename.empty() )
 	{
 		Log.Error( "MAINMENU( " + file + " ): Pusty ci¹g znaków w œcie¿ce do pliku" );
 		return false;
 	}
 
-	// Uchwyt do pliku
-	FILE* fp = 0;
-
-	fopen_s(&fp, filename.c_str(), "rt" );
+	std::fstream fileStream( filename, std::ios::in );
 
 	// sprawdzamy uchwyt
-	if( !fp )
+	if( !fileStream )
 	{
 		Log.Error( "MAINMENU( " + file + " ): B³êdna œcie¿ka" );
 		return false;
@@ -241,77 +224,80 @@ bool guiMainMenu::LoadMenu( std::string filename )
 
 	file = filename;
 	std::string str = "";
-	guiMenu* Menu = NULL;
-	guiMenuItem* Item = NULL;
+	CMenu*		Menu = nullptr;
+	CMenuItem*	Item = nullptr;
+	Vector2f	pos;
 
-	while( !feof( fp )  )
+	while( fileStream  )
 	{
-		str = GetStr( fp );
+		str = GetLine( fileStream );
 
 		switch( GetMenuType( str ) )
 		{
-		case MENU_NAME :
-			Item = NULL;
-			Menu = new guiMenu;
-			this->AddMenu( Menu );
-			Menu->MainCaption = GetParamStr( str );
+		case MENU_TAG::ID:
+			Item = nullptr;
+			Menu = new CMenu( GetParamStr( str ) );
+			List.push_back( Menu );
 			break;
 
-		case MENU_ITEM_NAME :
-			if( Menu == NULL )
+		case MENU_TAG::NAME:
+			if( Menu != nullptr )
+				Menu->SetTitle( GetParamStr( str ) );
+			break;
+
+		case MENU_TAG::ITEM_ID:
+			Item = nullptr;
+			if( Menu != nullptr )
 			{
+				Item = new CMenuItem( GetParamStr( str ) );
+				Menu->AddMenuItem( Item );
+			}
+			else
 				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma menu, by dodaæ pozycje, ³añcuch: " + str );
-				break;
-			}
-			Item = new guiMenuItem;
-			Menu->AddMenuItem( Item );
-			Item->Caption = GetParamStr( str );
 			break;
 
-		case MENU_ITEM_POSX :
-			if( Item == NULL )
-			{
-				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
-				break;
-			}
-			Item->X = GetParamFloat( str );
+		case MENU_TAG::ITEM_NAME:
+			if( Item != nullptr )
+				Item->SetTitle( GetParamStr( str ) );
 			break;
 
-		case MENU_ITEM_POSY :
-			if( Item == NULL )
+		case MENU_TAG::ITEM_POSX:
+			if( Item != nullptr )
 			{
-				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
+				pos.X = StrToFloat( GetParamStr( str ) );
+				Item->SetPos( pos );
 				break;
 			}
-			Item->Y = GetParamFloat( str );
+			else
+				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
 			break;
 
-		case MENU_ITEM_ACTION :
-			if( Item == NULL )
+		case MENU_TAG::ITEM_POSY:
+			if( Item != nullptr )
 			{
-				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
+				pos.Y = StrToFloat( GetParamStr( str ) );
+				Item->SetPos( pos );
 				break;
 			}
-			Item->Action = GetParamStr( str );
+			else
+				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
 			break;
 
-		case MENU_ITEM_GOTO :
-			if( Item == NULL )
+		case MENU_TAG::ITEM_ACTION:
+			if( Item != nullptr )
 			{
-				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
-				break;
+				Item->SetScript( GetParamStr( str ) );
 			}
-			Item->GoTo = (int)GetParamFloat( str );
+			else
+				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
 			break;
 
 		default:
-		case MENU_ERROR :
+		case MENU_TAG::UNKNOWN :
 			Log.Error( "MAINMENU( " + file + " ): Nierozpoznano typu: " + str );
 			break;
 		}
 	}
-
-	fclose( fp );
 
 	return true;
 }

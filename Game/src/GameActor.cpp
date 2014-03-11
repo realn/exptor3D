@@ -1,5 +1,4 @@
 #include "GameActor.h"
-#include "gui.h"
 #include "Level.h"
 #include "GamePlayer.h"
 
@@ -322,7 +321,7 @@ void	CActor::SolveActions( const float fTD )
 	if( temp.LengthSq() == 0.0f )
 		NextPos = Pos;
 	else
-		NextPos = Pos + temp.Normalize() * Speed * GUI.GetSpeed() * fTD;
+		NextPos = Pos + temp.Normalize() * Speed * fTD;
 
 	Vector = MakeVectorXZ( Angle );
 

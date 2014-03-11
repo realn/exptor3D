@@ -3,7 +3,6 @@
 #include "Weapon.h"
 #include "WeaponRocketLuncher.h"
 
-#include "gui.h"
 #include "Level.h"
 
 #include "ItemHealth.h"
@@ -80,15 +79,8 @@ void CPlayer::Update( const float fTD )
 {
 	CActor::Update( fTD );
 
-	GUI.PInfo.WeapName = "---";
 	if( Weapon[CurrWeap] != nullptr && Weapon[CurrWeap]->GetHave() )
-	{
 		Weapon[CurrWeap]->Update( fTD );
-
-		GUI.PInfo.AMMO = Weapon[CurrWeap]->GetAmmo();
-		GUI.PInfo.CLIPS = 0;
-		GUI.PInfo.WeapName = Weapon[CurrWeap]->GetName();
-	}
 }
 
 void CPlayer::ParseKeys( const bool* Keys )
@@ -152,14 +144,14 @@ void CPlayer::TestBonus( CItem* Bonus )
 		case ITEM_TYPE::AMMO :
 			if( Weapon[(unsigned)((CItemAmmo*)Bonus)->GetWeaponType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
 			{
-				GUI.SendMsg( "Podniosles: " + IntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
+				//GUI.SendMsg( "Podniosles: " + IntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
 				Bonus->CanDelete = true;
 			}
 			break;
 		case ITEM_TYPE::HEALTH :
 			if( Health != MaxHealth )
 			{
-				GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
+				//GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
 				ModHealth( ((CItemHealth*)Bonus)->GetHealth() );
 				Bonus->CanDelete = true;
 			}
@@ -167,7 +159,7 @@ void CPlayer::TestBonus( CItem* Bonus )
 		case ITEM_TYPE::ARMOR :
 			if( Armor != MaxArmor )
 			{
-				GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
+				//GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
 				ModArmor( ((CItemArmor*)Bonus)->GetArmor() );
 				Bonus->CanDelete = true;
 			}
@@ -184,12 +176,12 @@ void CPlayer::ModHealth( const float mod )
 {
 	if( mod < 0.0f )
 	{
-		GUI.ActiveFScrColor( 1.0f, 0.0f, 0.0f, 0.25f );
+		//GUI.ActiveFScrColor( 1.0f, 0.0f, 0.0f, 0.25f );
 		ModArmor( mod * 1.5f );
 	}
 	else if( mod > 0.0f )
 	{
-		GUI.ActiveFScrColor( 1.0f, 1.0f, 0.0f );
+		//GUI.ActiveFScrColor( 1.0f, 1.0f, 0.0f );
 	}	
 	CActor::ModHealth( mod );
 }
@@ -212,7 +204,7 @@ void CPlayer::Reset()
 	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( ModelManager );
 	//Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
 	//Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
-	GUI.PInfo.FRAGS = 0;
+	//GUI.PInfo.FRAGS = 0;
 }
 
 const bool	CPlayer::OnCollision( CObject* pObject )

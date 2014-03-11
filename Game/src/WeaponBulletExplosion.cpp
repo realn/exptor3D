@@ -1,6 +1,5 @@
 #include "WeaponBulletExplosion.h"
 
-#include "gui.h"
 #include "Special.h"
 
 /*====================
@@ -29,7 +28,7 @@ float CBullExplosion::DoTest( CDynamic *Dum, float Armor )
 		if( dist < Dum->Radius + ( this->thisPower / 2.0f ) )
 			ArmorMod *= 2.0f;
 
-		return Damage * ArmorMod * GUI.GetSpeed();
+		return Damage * ArmorMod;
 	}
 
 	return 0.0f;

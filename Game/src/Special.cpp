@@ -189,11 +189,11 @@ void specMotionBlur::CopyImage()
 void specMotionBlur::Update( const float fTD )
 {
 	tick++;
-	if( tick >= GUI.GetMBKeyFrames() )
-	{
-		CanCopy = true;
-		tick = 0;
-	}
+	//if( tick >= GUI.GetMBKeyFrames() )
+	//{
+	//	CanCopy = true;
+	//	tick = 0;
+	//}
 }
 
 void specMotionBlur::Render()

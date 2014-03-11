@@ -130,6 +130,17 @@ public:
 	Vector2f( const float x, const float y ) : X( x ), Y( y ){}
 	Vector2f( const Vector2f& vert ) : X(vert.X), Y(vert.Y){}
 
+	const Vector2f	operator*( const Vector2f& vert ) const
+	{
+		return Vector2f( X * vert.X, Y * vert.Y );
+	}
+
+	void	operator=( const Vector2f& vert )
+	{
+		X = vert.X;
+		Y = vert.Y;
+	}
+
 	const bool	operator==( const Vector2f& vert ) const
 	{
 		return X == vert.X && Y == vert.Y;

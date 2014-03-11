@@ -273,13 +273,12 @@ void	CApplication::InitGraphics( CTexManager& texManager )
 	//SMBlur.Init();
 	//MenuModel = modelManager.Get( "menumodel.glm" );
 	//MainPlayer.SetArmor( 100.0f );
-	GUI.Menu.LoadMenu( "Data/menu.mnu" );
+	GUI.Menu.Load( "Data/menu.mnu" );
 	//SEManager.MaxSpec = 100;
 	srand( GetTickCount() );
 
 	GUI.SendConMsg( "Zakonczono", false );
 	GUI.SendConMsg( "INICJALIZACJA GLOWNA ZAKONCZONA", false );
-	GUI.Menu.Enable();
 
 }
 

@@ -74,13 +74,13 @@ void CWeapon::PickUp( CPlayer& Player, const unsigned ammo )
 		Owner = &Player;
 
 		SetAmmo( ammo );
-		GUI.SendMsg( "Podniosles: " + Name, 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.5f, 0.5f );
+		//GUI.SendMsg( "Podniosles: " + Name, 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.5f, 0.5f );
 		State = WEAPON_STATE::READY;
 	}
 	else
 	{
 		ModAmmo( ammo );
-		GUI.SendMsg( "Podniosles " + IntToStr( ammo ) + " amunicji.", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 1.0f, 0.5f );		
+		//GUI.SendMsg( "Podniosles " + IntToStr( ammo ) + " amunicji.", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 1.0f, 0.5f );		
 	}
 }
 

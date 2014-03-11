@@ -40,7 +40,7 @@ void CProjectile::Update( const float fTD )
 	//if( !TestCollBlock( this, pGLevel->GetBlock( this->GetBlockPos() ) ) )
 	//{
 	//	Pos = NextPos;
-	//	NextPos = Pos + ( Veloc * GUI.GetSpeed() * fTD );
+	//	NextPos = Pos + ( Veloc * fTD );
 	//	if( pGLevel->GetBlock( this->GetBlockPos() ) == NULL )
 	//		DeleteThis = true;
 	//}

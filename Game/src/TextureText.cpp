@@ -1,4 +1,5 @@
 #include "TextureText.h"
+#include "Render.h"
 
 /*========================
 	KLASA CTextRenderer
@@ -8,8 +9,6 @@ CTextRenderer::CTextRenderer()
 {
 	loaded = false;
 	Tex = NULL;
-	Width = 800;
-	Height = 600;
 	C[0] = 1.0f;
 	C[1] = 1.0f;
 	C[2] = 1.0f;
@@ -64,7 +63,7 @@ void CTextRenderer::Free()
 	loaded = false;
 }
 
-void CTextRenderer::StartPrint( const float aspect )
+void CTextRenderer::StartPrint( const float width, const float height )
 {
 	glLoadIdentity();
 
@@ -80,10 +79,8 @@ void CTextRenderer::StartPrint( const float aspect )
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Tex->Activate();
 
-	glMatrixMode(GL_PROJECTION);				
-	glLoadIdentity();		
-	glOrtho( 0, (double)Width, (double)Height, 0, -1.0, 1.0 );
-	glMatrixMode(GL_MODELVIEW);	
+	CRender::SetOrtho( 0.0f, width, height, 0.0f );
+
 	glLoadIdentity();
 }
 
@@ -92,12 +89,11 @@ void CTextRenderer::Print( float x, float y, std::string text, float ScaleX, flo
 	char stext[255];
 	strcpy_s( stext, 255 * sizeof(char), text.c_str() );
 	glPushMatrix();
+	
 	glTranslatef( x, y, 0 );
 	glScalef( ScaleX, ScaleY, 1.0f );
 	glColor4f( C[0], C[1], C[2], C[3] );
-	//glPushMatrix();
-	//glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
-	//glPopMatrix();
+
 	glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
 	glPopMatrix();
 }
@@ -110,16 +106,15 @@ void CTextRenderer::EndPrint()
 	glColor3f( 1.0f, 1.0f ,1.0f );
 }
 
-void CTextRenderer::SetSize( unsigned int wid, unsigned int hei )
-{
-	Width = wid;
-	Height = hei;
-}
-
 void CTextRenderer::SetColor( float R, float G, float B, float Alpha )
 {
 	C[0] = R;
 	C[1] = G;
 	C[2] = B;
 	C[3] = Alpha;
+}
+
+const Vector2f	CTextRenderer::GetTextSize( const std::string& text ) const
+{
+	return Vector2f( (float)text.size() * 14.0f, 16.0f );
 }

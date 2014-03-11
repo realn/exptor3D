@@ -1,78 +1,110 @@
 #pragma once
 
 #include "TextureText.h"
+#include "EventManager.h"
 
-#define MENU_ERROR			-1
-#define MENU_NAME			0
-#define MENU_ITEM_NAME		1
-#define MENU_ITEM_POSX		2
-#define MENU_ITEM_POSY		3
-#define MENU_ITEM_ACTION	4
-#define MENU_ITEM_GOTO		5
+enum class MENU_TAG
+{
+	UNKNOWN			= -1,
+	ID				= 0,
+	NAME			= 1,
+	ITEM_ID			= 2,
+	ITEM_NAME		= 3,
+	ITEM_POSX		= 4,
+	ITEM_POSY		= 5,
+	ITEM_ACTION		= 6,
+};
 
-class guiMenuItem
+enum class MENU_ITEM_TYPE
+{
+	UNKNOWN = 0,
+	BUTTON = 1,
+};
+
+class CMenuItem
 {
 private:
-	bool Enabled;
+	const std::string	ID;
+	std::string	Title;
+	std::string Script;
+
+	MENU_ITEM_TYPE	Type;
+
 	bool Highlight;
-	float scrollX;
-	float scrollY;
+
+	Vector2f	Pos;
+	Vector2f	Size;
+	Vector2f	Scroll;
+	Vector2f	ScrollStep;
+	float	Color;
+
 public:
-	std::string ID;
-	std::string Caption;
-	float X;
-	float Y;
-	float Color;
-	float Alpha;
-	unsigned int GoTo;
-	std::string Action;
+	CMenuItem( const std::string& id );
 
-	guiMenuItem();
+	void	Update( const float fTD );
+	void	Render( CTextRenderer& TText );
 
-	void Update();
-	void Render( CTextRenderer* TText );
+	void	SetTitle( const std::string& title );
+	void	SetType( const MENU_ITEM_TYPE type );
+	void	SetPos( const Vector2f& pos );
+	void	SetSize( const Vector2f& size );
+	void	SetHighlight( const bool set );
+	void	SetScript( const std::string& script );
 
-	void Enable();
-	void Disable();
-
-	void HighLight();
-	void DontHighLight();
-
-	void DoAction();
-	void DoGoTo();
-	
+	const std::string	GetScript() const;	
+	const bool	Contains( const Vector2f& point ) const;
 };
 
-class guiMenu
+class CMenu
 {
 private:
-	float scroll;
-	std::vector<guiMenuItem*> List;
-	float x, y;
+	const std::string	ID;
+	std::string	Title;
+
+	std::vector<CMenuItem*> List;
+	Vector2f	TitlePos;
+	Vector2f	Size;
+
+	CMenuItem*	pSelectedItem;
+
+	bool	Visible;
+	float	Scroll;
+
 public:
-	std::string ID;
-	std::string MainCaption;
-	float slide;
+	CMenu( const std::string& id );
+	~CMenu();
 
-	guiMenu();
-	~guiMenu();
-	void Free();
+	void	Update( const float fTD );
+	void	Render( CTextRenderer& TText );
 
-	void Update( float cX, float cY, bool click );
-	void Render( CTextRenderer* TText, CTexture* cursor );
-	void AddMenuItem( guiMenuItem* item );
-	void DeleteMenuItem( unsigned int index );
+	void	EventMouseMove( const Vector2f& pos );
+	void	EventMoveUp();
+	void	EventMoveDown();
+	void	EvetnEnter();
+
+	void	AddMenuItem( CMenuItem* item );
+
+	void	SetTitle( const std::string& title );
+	void	SetTitlePos( const Vector2f& pos );
+	void	SetSize( const Vector2f& size );
+	void	SetVisible( const bool visible, const bool animate );
+
+	const std::string&	GetID() const;
+	const bool	IsVisible() const;
+	const bool	IsAnimating() const;
 };
 
 
-class guiMainMenu
+class CMenuMain
 {
 private:
 	CTextRenderer* TText;
 	CTexture* Cursor;
-	std::vector<guiMenu*> List;
 
-	bool Enabled;
+	std::vector<CMenu*> List;
+	std::vector<CMenu*>	Stack;
+	CMenu*	MenuToShow;
+
 	bool Clicked;
 	bool WasClick;
 	bool IsSliding;
@@ -83,31 +115,29 @@ private:
 	unsigned int ToMenu;
 
 	std::string file;
-
-	void AddMenu( guiMenu* Menu );
-	void DeleteMenu( unsigned int index );
-	std::string GetStr( FILE* fp );
 	std::string GetParamStr( std::string str );
-	float GetParamFloat( std::string str );
-	int GetMenuType( std::string str );
+	const MENU_TAG GetMenuType( std::string str );
+
 public:
-	guiMainMenu();
-	~guiMainMenu();
+	CMenuMain();
+	~CMenuMain();
 
 	void Init( CTextRenderer* text, CTexture* cursor );
 	void Free();
 
-	void Click( unsigned int X, unsigned int Y, bool click );
-	void SetCursor( unsigned int X, unsigned int Y );
+	void	EventMouseMove( const Vector2f& pos );
+	void	EventMoveUp();
+	void	EventMoveDown();
+	void	EventEnter();
 
-	void GoToMenu( unsigned int index );
-
-	void Update();
+	void Update( const float fTD );
 	void Render();
 
-	void Enable();
-	void Disable();
-	bool IsEnabled();
+	bool Load( const std::string& filename );
 
-	bool LoadMenu( std::string filename );
+private:
+	void	Push( const std::string& id );
+	void	Pop();
+
+	CMenu*	FindMenu( const std::string& id );
 };

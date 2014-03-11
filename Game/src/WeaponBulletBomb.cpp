@@ -2,8 +2,6 @@
 #include "WeaponBulletExplosion.h"
 #include "Level.h"
 
-#include "gui.h"
-
 /*====================
 	KLASA CBullBomb
 	Jest to bomba
@@ -24,7 +22,7 @@ float CBullBomb::DoTest(CDynamic *Dum, float Armor )
 
 void CBullBomb::Update( const float fTD )
 {
-	ThisTime += fTD * GUI.GetSpeed();
+	ThisTime += fTD;
 	if( ThisTime >= BoomTime )
 	{
 		DeleteThis = true;

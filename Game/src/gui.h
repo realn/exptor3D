@@ -121,7 +121,7 @@ private:
 	void	EngineWLScr( const float fTD );
 
 public:
-	guiMainMenu Menu;
+	CMenuMain Menu;
 	guiPlayerInfo PInfo;
 	std::string LevName;
 	CScriptParser	ScriptParser;

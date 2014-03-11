@@ -1,7 +1,5 @@
 #include "Item.h"
 
-#include "gui.h"
-
 /*	KLASA BONUSÓW	*/
 CItem::CItem(const ITEM_TYPE type) :
 	Model( nullptr ),
@@ -39,7 +37,7 @@ void CItem::Update( const float fTD )
 	if( !Active )
 		return;
 
-	Angle += fTD * 60.0f * GUI.GetSpeed();
+	Angle += fTD * 60.0f;
 	Angle = SwapAngle( Angle );
 }
 
