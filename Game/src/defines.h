@@ -18,10 +18,6 @@ Opis:	Zawiera wiêkszoœæ definicji, makr oraz zapowiedzi klas.
 
 #define GAME_VERSION 100
 
-#define	GAME_RIGHT_HAND		0
-#define	GAME_LEFT_HAND		1
-#define	GAME_CENTER_HAND	2
-
 #define GAME_SECOND			0
 #define GAME_MINUTE			1
 #define GAME_HOUR			2

@@ -88,6 +88,7 @@
     <ClCompile Include="src\EffectExplosion.cpp" />
     <ClCompile Include="src\EffectRay.cpp" />
     <ClCompile Include="src\EffectSprite.cpp" />
+    <ClCompile Include="src\EventManager.cpp" />
     <ClCompile Include="src\GameActor.cpp" />
     <ClCompile Include="src\GameActorStats.cpp" />
     <ClCompile Include="src\GameEnemy.cpp" />
@@ -139,6 +140,8 @@
     <ClInclude Include="src\CollisionFace.h" />
     <ClInclude Include="src\defines.h" />
     <ClInclude Include="src\Effect.h" />
+    <ClInclude Include="src\EventInput.h" />
+    <ClInclude Include="src\EventManager.h" />
     <ClInclude Include="src\GUIMenu.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneEntity.h" />

@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "EventInput.h"
 
 #include "gui.h"
 #include "GamePlayer.h"
@@ -7,7 +8,8 @@
 
 
 CApplication::CApplication() :
-	active( true )
+	active( true ),
+	State(GAME_STATE::MAINMENU)
 {
 	memset( Keys, 0, sizeof(bool) * 256 );
 
@@ -117,30 +119,45 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 
 	case WM_LBUTTONDOWN:
 		{
+			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, VK_LBUTTON );
+			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
+			
 			Keys[VK_LBUTTON] = true;
 			return true;
 		}
 
 	case WM_LBUTTONUP:
 		{
+			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, VK_LBUTTON );
+			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
+
 			Keys[VK_LBUTTON] = false;
 			return true;
 		}
 
 	case WM_RBUTTONDOWN:
 		{
+			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, VK_RBUTTON );
+			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
+
 			Keys[VK_RBUTTON] = true;
 			return true;
 		}
 
 	case WM_RBUTTONUP:
 		{
+			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, VK_RBUTTON );
+			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
+
 			Keys[VK_RBUTTON] = false;
 			return true;
 		}
 
 	case WM_KEYDOWN:							// Klawisz jest naciœnieniêty?
 		{
+			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, (unsigned)wParam );
+			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
+
 			GUI.ParseKey( (char)wParam );
 			Keys[wParam] = true;					// Zaznacz ¿e jest wciœniêty
 			return true;								
@@ -148,6 +165,9 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 
 	case WM_KEYUP:								// Klawisz jest puszczony?
 		{
+			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, (unsigned)wParam );
+			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
+
 			Keys[wParam] = false;					// Zaznacz ¿e jest wolny
 			return true;								
 		}
@@ -239,6 +259,7 @@ void	CApplication::MainLoop()
 	const float	TIME_STEP = 0.005f;
 	float	frameTime = 0.0f;
 	CTimer	timer;
+
 	while(!done)									// Pêtla g³ówna (dopuki done nie jest true)
 	{
 		frameTime += timer.GetDT();
@@ -270,6 +291,7 @@ void	CApplication::MainLoop()
 			{
 				Render();						// Rysujemy scene
 
+				EventManager.ProcessEvents();
 				for(unsigned i = 0; i < 20 && frameTime > TIME_STEP; i++)
 				{
 					Update(TIME_STEP);
@@ -333,7 +355,7 @@ void	CApplication::Update( const float fTD )
 	GUI.ParseKeys( Keys );
 	GUI.DoGUIEngine(fTD);
 
-	if( !GUI.CanDoMainEng() )
+	if( State != GAME_STATE::LEVEL )
 		return;
 
 	//if( GUI.IsShowingWLScr() )
@@ -365,44 +387,8 @@ void	CApplication::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
 
-	if( GUI.CanDoMainDraw() )
+	if( State == GAME_STATE::LEVEL )
 	{
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
-		/*
-		if( GUI.GetMotionBlur() )
-		{
-		GLRender.Resize( 512, 512 );
-		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
-		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
-
-		glRotatef( MainPlayer.GetAng(), 0.0f, 1.0f, 0.0f );
-		glTranslatef( -MainPlayer.Pos.X, 0, -MainPlayer.Pos.Z );
-
-		pGLevel->DrawLevel();
-
-		ThingManager.Render();
-
-		glColor4f( 1.0f, 1.0f, 1.0f ,1.0f );
-		BManager.Render();
-		BonusMan.Render();
-		pGLevel->Render();
-
-		glDepthMask( 0 );
-		SEManager.Render();
-		pGLevel->DrawReflect();
-		glDepthMask( 1 );
-
-		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
-		glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
-		glLoadIdentity();
-		MainPlayer.Render();
-
-		SMBlur.CopyImage();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
-		GLRender.Resize( GLRender.GetWidth(), GLRender.GetHeight() );
-		}
-		*/
-
 		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
@@ -411,7 +397,6 @@ void	CApplication::Render()
 
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 		pGLevel->Render();
-		//BManager.Render();
 
 		glDepthMask( 0 );
 		//SEManager.Render();
@@ -422,9 +407,6 @@ void	CApplication::Render()
 		glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
 		glLoadIdentity();
 		pGLevel->GetPlayer().Render();
-
-		//if( GUI.GetMotionBlur() )
-		//	SMBlur.Render();
 	}
 
 	//if( GUI.Menu.IsEnabled() && !pGLevel->GetLoaded() )
@@ -449,6 +431,7 @@ void	CApplication::LoadLevel( const std::string& filename )
 		GUI.LevName = pGLevel->GetLevelName();
 		GUI.EnableMainEngine();
 		GUI.EnableGGUI();
+		State = GAME_STATE::LEVEL;
 	}
 	else
 	{

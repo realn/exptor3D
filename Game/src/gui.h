@@ -73,7 +73,6 @@ private:
 	float	ThisWLScrTime;
 	float	WLScrColor[4];
 
-	unsigned int	HandPos;
 	unsigned int	LastTick;
 	unsigned int	ThisTick;
 	unsigned int	MiliSecPass;
@@ -180,7 +179,6 @@ public:
 
 	void	ParseKeys( bool *Keys );
 	void	ParseKey( char Key );
-	unsigned int	GetHandPos();
 
 	void	DoGUIEngine(const float fTD);
 	void	DoGUIDraw();

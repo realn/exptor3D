@@ -31,6 +31,9 @@
     <Filter Include="Source\GUI">
       <UniqueIdentifier>{7e3938a9-e0b7-43f8-b302-9aed0d91cfdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Logic\Events">
+      <UniqueIdentifier>{6065f9d4-b7eb-4c9e-9794-f1d4d30e5d27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -186,6 +189,9 @@
     <ClCompile Include="src\Application_Script.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\EventManager.cpp">
+      <Filter>Source\Logic\Events</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -322,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="src\AppSettings.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EventManager.h">
+      <Filter>Source\Logic\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EventInput.h">
+      <Filter>Source\Logic\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

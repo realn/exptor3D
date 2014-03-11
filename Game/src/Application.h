@@ -2,12 +2,21 @@
 
 #include "Render.h"
 #include "Texture.h"
+#include "EventManager.h"
+
+enum class GAME_STATE
+{
+	MAINMENU,
+	LEVEL,
+};
 
 class CApplication
 {
 private:
-	CRender GLRender;
+	CRender	GLRender;
+	CEventManager	EventManager;
 
+	GAME_STATE	State;
 	bool	active;
 	bool	Keys[256];
 

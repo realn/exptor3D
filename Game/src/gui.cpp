@@ -34,7 +34,6 @@ guiMain::guiMain()
 	MaxTexDLevel = 2;
 	TexDetailLevel = 2;
 	MotionBlur = false;
-	HandPos = GAME_RIGHT_HAND;
 	FrameRate = 0;
 	Frame = 0;
 	Second = 0;
@@ -418,16 +417,6 @@ bool guiMain::CanDoMainDraw()
 bool guiMain::CanDoMainEng()
 {
 	return DoMainEngine;
-}
-
-/*	Raczej œmieszna metoda: pocz¹tkowo mia³ byc w grze wybór
-	rêki, w której gracz trzyma d³oñ ( baa, s¹ nawet odpowiednie metody
-	w broniach ), ale jakoœ nie chcia³o mi siê tego dokoñczyæ :/. W ka¿dym
-	razie - metoda zwraca ID rêki, w której gracz trzyma broñ.
-*/
-unsigned int guiMain::GetHandPos()
-{
-	return HandPos;
 }
 
 /*	A tu siê pojawia ca³y Matrix ( Reloaded :) ). Wartoœæ Speed
