@@ -9,14 +9,10 @@
 	Steruje g³ównym menu gry.
 ===========================*/
 CMenuMain::CMenuMain() : 
-	MenuToShow( nullptr )
+	MenuToShow( nullptr ),
+	AspectRatio( 1.0f ),
+	file("-")
 {
-	Clicked = false;
-	IsSliding = false;
-	file = "-";
-	CurMenu = 0;
-	ToMenu = 0;
-	slide = 0.0f;
 }
 
 CMenuMain::~CMenuMain()
@@ -24,12 +20,11 @@ CMenuMain::~CMenuMain()
 	Free();
 }
 
-void CMenuMain::Init( CTextRenderer *text, CTexture* cursor )
+void CMenuMain::Init( CTextRenderer *text, CTexture* cursor, const float aspectRatio )
 {
+	AspectRatio = aspectRatio;
 	TText = text;
 	Cursor = cursor;
-	curX = 0.0f;
-	curY = 0.0f;
 }
 
 void CMenuMain::Update( const float fTD )
@@ -162,7 +157,7 @@ void CMenuMain::Free()
 	Stack.clear();
 }
 
-std::string CMenuMain::GetParamStr( std::string str )
+const std::string CMenuMain::GetParamStr( const std::string& str ) const
 {
 	auto pos = str.find( "=" );
 	if( pos == std::string::npos )
@@ -172,6 +167,22 @@ std::string CMenuMain::GetParamStr( std::string str )
 	}
 
 	return str.substr( pos + 1 );
+}
+
+const float	CMenuMain::GetParamFloat( const std::string& str ) const
+{
+	return StrToFloat( GetParamStr( str ) );
+}
+
+const Vector2f	CMenuMain::GetParamVector2( const std::string& str ) const
+{
+	auto temp = GetParamStr( str );
+	std::vector<std::string> list;
+	SplitString( temp, ",", list );
+	if( list.size() != 2 )
+		return Vector2f();
+
+	return Vector2f( StrToFloat(list[0]), StrToFloat(list[1]) );
 }
 
 const MENU_TAG CMenuMain::GetMenuType( std::string str )
@@ -186,17 +197,21 @@ const MENU_TAG CMenuMain::GetMenuType( std::string str )
 	std::string temp = str.substr( 0, pos );
 
 	if( temp == "MENU" )
-		return MENU_TAG::ID;
+		return MENU_TAG::MENU_ID;
 	if( temp == "MENUTITLE" )
-		return MENU_TAG::NAME;
+		return MENU_TAG::MENU_NAME;
+	if( temp == "MENUSIZE" )
+		return MENU_TAG::MENU_SIZE;
+	if( temp == "MENUMARGIN" )
+		return MENU_TAG::MENU_MARGIN;
+	if( temp == "MENUSTEP" )
+		return MENU_TAG::MENU_STEP;
 	if( temp == "MENUITEM" )
 		return MENU_TAG::ITEM_ID;
 	if( temp == "MENUITEMTITLE" )
 		return MENU_TAG::ITEM_NAME;
-	if( temp == "MENUITEMPOSX" )
-		return MENU_TAG::ITEM_POSX;
-	if( temp == "MENUITEMPOSY" )
-		return MENU_TAG::ITEM_POSY;
+	if( temp == "MENUITEMPOS" )
+		return MENU_TAG::ITEM_POS;
 	if( temp == "MENUITEMACTION" )
 		return MENU_TAG::ITEM_ACTION;
 
@@ -226,7 +241,8 @@ bool CMenuMain::Load( const std::string& filename )
 	std::string str = "";
 	CMenu*		Menu = nullptr;
 	CMenuItem*	Item = nullptr;
-	Vector2f	pos;
+	Vector2f	ItemPos;
+	Vector2f	ItemStep;
 
 	while( fileStream  )
 	{
@@ -234,15 +250,32 @@ bool CMenuMain::Load( const std::string& filename )
 
 		switch( GetMenuType( str ) )
 		{
-		case MENU_TAG::ID:
+		case MENU_TAG::MENU_ID:
 			Item = nullptr;
 			Menu = new CMenu( GetParamStr( str ) );
 			List.push_back( Menu );
 			break;
 
-		case MENU_TAG::NAME:
+		case MENU_TAG::MENU_NAME:
 			if( Menu != nullptr )
 				Menu->SetTitle( GetParamStr( str ) );
+			break;
+
+		case MENU_TAG::MENU_SIZE:
+			if( Menu != nullptr )
+			{
+				float height = GetParamFloat( str );
+				float width = AspectRatio * height;
+				Menu->SetSize( Vector2f( width, height ) );
+			}
+			break;
+
+		case MENU_TAG::MENU_MARGIN:
+			ItemPos = GetParamVector2( str );
+			break;
+
+		case MENU_TAG::MENU_STEP:
+			ItemStep = GetParamVector2( str );
 			break;
 
 		case MENU_TAG::ITEM_ID:
@@ -251,6 +284,8 @@ bool CMenuMain::Load( const std::string& filename )
 			{
 				Item = new CMenuItem( GetParamStr( str ) );
 				Menu->AddMenuItem( Item );
+				Item->SetPos( ItemPos );
+				ItemPos += ItemStep;
 			}
 			else
 				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma menu, by dodaæ pozycje, ³añcuch: " + str );
@@ -261,33 +296,16 @@ bool CMenuMain::Load( const std::string& filename )
 				Item->SetTitle( GetParamStr( str ) );
 			break;
 
-		case MENU_TAG::ITEM_POSX:
+		case MENU_TAG::ITEM_POS:
 			if( Item != nullptr )
-			{
-				pos.X = StrToFloat( GetParamStr( str ) );
-				Item->SetPos( pos );
-				break;
-			}
-			else
-				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
-			break;
-
-		case MENU_TAG::ITEM_POSY:
-			if( Item != nullptr )
-			{
-				pos.Y = StrToFloat( GetParamStr( str ) );
-				Item->SetPos( pos );
-				break;
-			}
+				Item->SetPos( GetParamVector2( str ) );
 			else
 				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
 			break;
 
 		case MENU_TAG::ITEM_ACTION:
 			if( Item != nullptr )
-			{
 				Item->SetScript( GetParamStr( str ) );
-			}
 			else
 				Log.Error( "MAINMENU( " + file + " ): B³¹d: nie ma pozycji, by dodaæ w³aœciwoœæ, ³añcuch: " + str );
 			break;

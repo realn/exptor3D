@@ -5,14 +5,16 @@
 
 enum class MENU_TAG
 {
-	UNKNOWN			= -1,
-	ID				= 0,
-	NAME			= 1,
-	ITEM_ID			= 2,
-	ITEM_NAME		= 3,
-	ITEM_POSX		= 4,
-	ITEM_POSY		= 5,
-	ITEM_ACTION		= 6,
+	UNKNOWN,
+	MENU_ID,
+	MENU_NAME,
+	MENU_SIZE,
+	MENU_MARGIN,
+	MENU_STEP,
+	ITEM_ID,
+	ITEM_NAME,
+	ITEM_POS,
+	ITEM_ACTION,
 };
 
 enum class MENU_ITEM_TYPE
@@ -103,26 +105,20 @@ private:
 
 	std::vector<CMenu*> List;
 	std::vector<CMenu*>	Stack;
-	CMenu*	MenuToShow;
-
-	bool Clicked;
-	bool WasClick;
-	bool IsSliding;
-	float curX;
-	float curY;
-	float slide;
-	unsigned int CurMenu;
-	unsigned int ToMenu;
-
 	std::string file;
-	std::string GetParamStr( std::string str );
+	CMenu*	MenuToShow;
+	float	AspectRatio;
+
+	const std::string GetParamStr( const std::string& str ) const;
+	const float		GetParamFloat( const std::string& str ) const;
+	const Vector2f	GetParamVector2( const std::string& str ) const;
 	const MENU_TAG GetMenuType( std::string str );
 
 public:
 	CMenuMain();
 	~CMenuMain();
 
-	void Init( CTextRenderer* text, CTexture* cursor );
+	void Init( CTextRenderer* text, CTexture* cursor, const float aspectRatio );
 	void Free();
 
 	void	EventMouseMove( const Vector2f& pos );

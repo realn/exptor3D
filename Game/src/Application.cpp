@@ -69,8 +69,6 @@ int	CApplication::Run()
 	WindowWidth = ini.ReadInt( "GRAPHIC", "WIDTH", 640 );
 	WindowHeight = ini.ReadInt( "GRAPHIC", "HEIGHT", 480 );
 	bool fullscreen = ini.ReadBool( "GRAPHIC", "FULLSCREEN", false );
-	GUI.SetMaxSpecial( ini.ReadInt( "SPECIAL", "MAXCOUNT", 0 ) );
-	GUI.SetCanSmoke( ini.ReadBool( "SPECIAL", "SMOKE", true ) );
 	ini.Close();
 
 	// Stwórz okno
@@ -207,7 +205,15 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 
 			return true;
 		}
+
+	case WM_CHAR:
+		{
+			CEventChar CharEvent( EVENT_INPUT_TYPE::CHARPRESS, (char)wParam, (wchar_t)wParam );
+			EventManager.AddEvent( *((CEvent*)&CharEvent) );
+			return true;
+		}
 	}
+
 
 	return false;
 }
@@ -406,7 +412,7 @@ void	CApplication::Render()
 
 	if( State == GAME_STATE::LEVEL )
 	{
-		GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
+		GLRender.SetPerspective( 60.0f, 4, 3, 1.0f, 100.0f );
 		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
 		glRotatef( pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f );

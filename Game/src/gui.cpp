@@ -10,8 +10,9 @@ Opis:	Patrz -> gio.h
 ///////////////////////////////////////////////////////*/
 #include "gui.h"
 #include "StrEx.h"
+#include "EventInput.h"
 
-guiMain GUI;
+CGUIMain GUI;
 
 const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",
 								"RefLevel", "WireFrame", "Note", "SaveRndInfo",
@@ -22,18 +23,16 @@ const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflectio
 								"Smoke", "MaxSpecial", "ShowAITarget" };
 const int ConFuncCount = 27;
 
-/*	KLASA guiMain
+/*	KLASA CGUIMain
 	To mia³a byæ tylko ma³a klasa poœrednicz¹ca pomiêdzy
 	Graczem a Gr¹, a zrobi³ siê z niej g³ówny system
 	steruj¹cy wszystkim. Tutaj dochodz¹ wszystkie metody,
 	tutaj zarz¹dza siê wszystkim i tutaj zakodowana jest konsola.
 	Wiem, wiem, mo¿na to by³o inaczej zrobiæ :/
 */
-guiMain::guiMain()
+CGUIMain::CGUIMain() :
+	Mode( GUI_MODE::MENU )
 {
-	MaxTexDLevel = 2;
-	TexDetailLevel = 2;
-	MotionBlur = false;
 	FrameRate = 0;
 	Frame = 0;
 	Second = 0;
@@ -48,476 +47,94 @@ guiMain::guiMain()
 	PInfo.FRAGS = 0;
 	PInfo.AMMO = 0;
 	PInfo.CLIPS = 0;
-	Speed = 1.0f;
-	MBKeyFrames = 1;
-	Reflection = false;
-	RefLevel = 0.5f;
 	MainEngineEnabled = false;
 	ConsoleOn = false;
 	ConsoleScroll = 0.0f;
-	TexPerWall = 2.0f;
-	TexPerTop = 4.0f;
-	TexPerFloor = 1.0f;
-	EyeAngle = 45.0f;
-	Cliping = true;
 	Quit = false;
 	DrawGGUI = true;
 }
 
-void guiMain::ParseKeys( bool *Keys )
+void	CGUIMain::ProcessEvent( const CEvent& event )
 {
-	static bool sickview = false;
-	if( !Menu.IsEnabled() )
+	CEventKey keyEvent;
+	switch (event.Type)
 	{
-		if( Keys[VK_F8] )
-		{
-			GUI.UpTexDLevel();
-			Keys[VK_F8] = false;
-		}
-		if( Keys[VK_F7] )
-		{
-			GUI.DownTexDLevel();
-			Keys[VK_F7] = false;
-		}
-		if( Keys[VK_F4] )
-		{
-			this->Reflection = !this->Reflection;
-			Keys[VK_F4] = false;
-		}
-		if( Keys[VK_F5] )
-		{
-			if( !sickview )
-			{
-				this->SetMBKeyFrames( 4 );
-				this->EnableMotionBlur();
-				this->SetEyeAngle( 100.0f );
-				this->SetSpeed( 0.4f );
-			}
-			else
-			{
-				this->DisableMotionBlur();
-				this->SetEyeAngle( 60.0f );
-				this->SetSpeed( 1.0f );
-			}
-			sickview = !sickview;
-			Keys[VK_F5] = false;
-		}
-		if( Keys[VK_F6] )
-		{
-			if( Speed == 1.0f )
-				Speed = 0.01f;
-			else Speed = 1.0f;
-			Keys[VK_F6] = false;
-		}
-		if( Keys[VK_ESCAPE] )
-		{
-			Menu.Enable();
-			this->DisableGGUI();
-			Keys[VK_ESCAPE] = false;
-		}
-	}
-	else
-	{
-		POINT mpos;
-		GetCursorPos( &mpos );
-		Menu.SetCursor( mpos.x, mpos.y );
-		if( Keys[VK_LBUTTON] )
-		{
-			Menu.Click( mpos.x, mpos.y, true );
-			Keys[VK_LBUTTON] = false;
-		}
-		if( Keys[VK_ESCAPE] )
-		{
-			Menu.Disable();
-			this->EnableGGUI();
-			Keys[VK_ESCAPE] = false;
-		}
-	}
-	if( Keys[192] )
-	{
-		ConsoleOn = !ConsoleOn;
-		Keys[192] = false;
-	}
-}
-
-bool guiMain::GetQuit()
-{
-	return Quit;
-}
-
-void guiMain::SetTexDLevel( unsigned short level )
-{
-	if( level < MaxTexDLevel && level >= 0 )
-		TexDetailLevel = level;
-}
-
-void guiMain::UpTexDLevel()
-{
-	if( TexDetailLevel < MaxTexDLevel )
-		TexDetailLevel++;
-}
-
-void guiMain::DownTexDLevel()
-{
-	if( TexDetailLevel > 0 )
-		TexDetailLevel--;
-}
-
-unsigned short guiMain::GetTexDLevel()
-{
-	return TexDetailLevel;
-}
-
-void guiMain::EnableMotionBlur()
-{
-	MotionBlur = true;
-}
-
-void guiMain::DisableMotionBlur()
-{
-	MotionBlur = false;
-}
-
-unsigned int guiMain::GetMBKeyFrames()
-{
-	return MBKeyFrames;
-}
-
-void guiMain::SetMBKeyFrames( unsigned int keyf )
-{
-	if( keyf > 0 )
-		MBKeyFrames = keyf;
-}
-
-bool guiMain::GetMotionBlur()
-{
-	return MotionBlur;
-}
-
-/*	Tu zaczynaj¹ siê metody pokazuj¹ce napis WYGRA£EŒ oraz napis
-	PRZEGRA£EŒ. Jest to zbiór zaledwie kilku funkcji, i wcale nie
-	s¹ przera¿aj¹ce. Po pokazaniu siê którego kolwiek  z nich
-	gracz automatycznie wraca do Menu.
-*/
-void guiMain::ShowWinScr( float Time, std::string text )
-{
-		return;
-	WLScrColor[0] = 0.5f;
-	WLScrColor[1] = 1.0f;
-	WLScrColor[2] = 0.5f;
-	WLScrColor[3] = 0.0f;
-
-	WinText = text;
-	ShowWLScrTime = Time;
-	ThisWLScrTime = 0.0f;
-	CanShowWinScr = true;
-	CanShowLoseScr = false;
-}
-
-void guiMain::ShowLoseScr( float Time, std::string text )
-{
-		return;
-	WLScrColor[0] = 0.1f;
-	WLScrColor[1] = 0.1f;
-	WLScrColor[2] = 0.1f;
-	WLScrColor[3] = 0.0f;
-
-	LoseText = text;
-	ShowWLScrTime = Time;
-	ThisWLScrTime = 0.0f;
-	CanShowWinScr = false;
-	CanShowLoseScr = true;
-}
-
-void guiMain::ResetWLScr()
-{
-	CanShowWinScr = false;
-	CanShowLoseScr = false;
-}
-
-bool guiMain::IsShowingWLScr()
-{
-	if( !CanShowWinScr && !CanShowLoseScr )
-		return false;
-	return true;
-}
-void guiMain::DrawWLScr()
-{
-	if( !CanShowWinScr && !CanShowLoseScr )
-		return;
-
-	TText.StartPrint();
-	//glEnable( GL_BLEND );
-	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glDisable( GL_TEXTURE_2D );
-	glColor4fv( WLScrColor );
-	glBegin( GL_TRIANGLE_STRIP );
-		glVertex3f( 0.0f, 0.0f, 0.0f );
-		glVertex3f( 0.0f, 600.0f, 0.0f );
-		glVertex3f( 800.0f, 0.0f, 0.0f );
-		glVertex3f( 800.0f, 600.0f, 0.0f );
-	glEnd();
-	glEnable( GL_TEXTURE_2D );
-	//glDisable( GL_BLEND );
-	
-	if( CanShowWinScr )
-	{
-		TText.Print( ( 800.0f - ( 8.0f * ( 16.0f * 1.4f ) ) ) / 2.0f , 100.0f, "WYGRALES", 1.4, 1.4 );
-		if( WinText != "" )
-			TText.Print( ( 800.0f - ( float( WinText.length() ) * 16.0f ) ) / 2.0f, 200.0f, WinText );
-	}
-	if( CanShowLoseScr )
-	{
-		TText.Print( ( 800.0f - ( 8.0f * ( 16.0f * 1.4f ) ) ) / 2.0f, 100.0f, "PRZEGRALES", 1.4, 1.4 );
-		if( LoseText != "" )
-			TText.Print( ( 800.0f - ( float( LoseText.length() ) * 16.0f ) ) / 2.0f, 200.0f, LoseText );
-	}
-	TText.EndPrint();
-}
-
-void guiMain::EngineWLScr( const float fTD )
-{
-	if( !CanShowWinScr && !CanShowLoseScr )
-		return;
-
-	this->MainEngineEnabled = false;
-
-	this->ThisWLScrTime += fTD * Speed;
-
-	this->WLScrColor[3] = ( 1.0f / ShowWLScrTime ) * this->ThisWLScrTime;
-
-	if( ThisWLScrTime >= ShowWLScrTime )
-	{
-		this->ResetWLScr();
-		this->MainEngineEnabled = false;
-		this->Menu.Enable();
-	}
-}
-
-/*	3 metody zarz¹daj¹ce mo¿liwoœci¹ wykrywania koolizji.
-*/
-void guiMain::EnableCliping()
-{
-	Cliping = true;
-}
-
-void guiMain::DisableCliping()
-{
-	Cliping = false;
-}
-
-bool guiMain::GetCliping()
-{
-	return Cliping;
-}
-
-
-/*	Dwie nastêpne metody s³u¿¹ do zezwolenia
-	Pokazywania celów przez AI.
-*/
-void guiMain::SetShowAITarget( bool set )
-{
-	ShowAITarget = set;
-}
-
-bool guiMain::GetShowAITarget()
-{
-	return ShowAITarget;
-}
-
-/*	4 nastêpne metody zarz¹dzaj¹ mo¿liwoœci¹ lustra w 
-	pod³odze. 2 ostatnie okreœlaj¹ stopieñ odbicia:
-	1 - idealny ( nie widaæ pod³ogi, tylko samo odbicie )
-	0 - niewidoczny ( widaæ pod³oge, a nie odbicie :/ )
-*/
-bool guiMain::GetReflection()
-{
-	return Reflection;
-}
-
-void guiMain::SetReflection( bool is )
-{
-	Reflection = is;
-}
-
-float guiMain::GetRefLevel()
-{
-	return RefLevel;
-}
-
-void guiMain::SetRefLevel( float set )
-{
-	RefLevel = 1.0f - set;
-}
-
-/*	Teraz 4 metody okreœlaj¹c¹, czy sprite'y powinny byæ
-	rysowany i w jakiej maksymalnej iloœci ( -1 by nie
-	by³o limitu ).
-*/
-void guiMain::SetCanSmoke( bool set )
-{
-	CanSmoke = set;
-}
-
-bool guiMain::GetCanSmoke()
-{
-	return CanSmoke;
-}
-
-void guiMain::SetMaxSpecial( int set )
-{
-	MaxSpecial = set;
-}
-
-int guiMain::GetMaxSpecial()
-{
-	return MaxSpecial;
-}
-
-/*	Ta metoda okreœla funkcjê, która bêdzie wywo³ywana
-	przy komendzie LoadLevel. A dlaczego wskaŸnik funkcji?
-	Bo inaczej siê nie da³o :/. ( no dobra, mog³em wsadziæ zapowiedŸ
-	funkcji na górze, ale to by³o by nieeleganckie )
-*/
-void guiMain::SetLoadLevelFunc( void (*func)( std::string str ) )
-{
-	LoadLevel = func;
-}
-
-/*	Ta funkca zwraca iloœæ tekstur na dan¹ powieszchnie ( czyli œciany, sufit, itp )
-	Nie mo¿na jej zmieniæ w trakcie dzia³ania programu.
-*/
-float guiMain::GetTexPerPlane( unsigned int type )
-{
-	switch( type )
-	{
-	case GAME_TEX_WALL :
-		return TexPerWall;
+	case EVENT_INPUT_TYPE::KEYDOWN:
+		memcpy( &keyEvent, &event, sizeof(CEventKey) );
+		ParseKeys( keyEvent.Key, true );
 		break;
-	case GAME_TEX_FLOOR :
-		return TexPerFloor;
+
+	case EVENT_INPUT_TYPE::KEYUP:
+		memcpy( &keyEvent, &event, sizeof(CEventKey) );
+		ParseKeys( keyEvent.Key, false );
 		break;
-	case GAME_TEX_TOP :
-		return TexPerTop;
-		break;
+
 	default:
-		return TexPerWall;
+		break;
 	}
 }
 
-/*	Te dwie metody s³u¿¹ do trzymania kontroli nad g³ównymi
-	funkcjami gry od Silnika i Renderer'a. Dziêki temu mo¿na
-	prosto zarz¹daæ nimi.
-*/
-bool guiMain::CanDoMainDraw()
+void	CGUIMain::ParseKeys( const unsigned key, const bool down )
 {
-	return DoMainDraw;
-}
+	switch (Mode)
+	{
+	case GUI_MODE::MENU:
+		if( down )
+		{
+			switch (key)
+			{
+			case VK_UP:		Menu.EventMoveUp();		break;
+			case VK_DOWN:	Menu.EventMoveDown();	break;
+			case VK_RETURN:
+			case VK_LBUTTON:	Menu.EventEnter();	break;
+			default:
+				break;
+			}
+		}
+		break;
 
-bool guiMain::CanDoMainEng()
-{
-	return DoMainEngine;
-}
+	case GUI_MODE::SCREEN:
+		break;
 
-/*	A tu siê pojawia ca³y Matrix ( Reloaded :) ). Wartoœæ Speed
-	jest mno¿ona przez ka¿d¹ wartoœæ, jaka ma wp³yw na szybkoœæ gry. Gdy
-	wynosi 1, to wszystko chodzi normalnie, a gdy jest inna to wszystko porusza
-	siê wolniej, lub szybciej... :)
-*/
-void guiMain::SetSpeed( float speed )
-{
-	Speed = speed;
-}
-
-float guiMain::GetSpeed()
-{
-	return Speed;// * Timer->GetDT();
-}
-
-/*	Jakby to powiedzieæ - tu mo¿na uzyskaæ efekt rybiego oka, jak i 
-	okular snajperki. Jest to k¹t widzenia okna. Normalny wynosi 60.
-*/
-float guiMain::GetEyeAngle()
-{
-	return EyeAngle;
-}
-
-void guiMain::SetEyeAngle( float set )
-{
-	EyeAngle = set;
-}
-
-/*	Dwie metody w³¹czaj¹ce i wy³¹czaj¹ce g³ówny silnik
-	gry ( ale nie GUI )
-*/
-void guiMain::EnableMainEngine()
-{
-	MainEngineEnabled = true;
-	ConsoleOn = false;
-	Menu.Disable();
-}
-
-void guiMain::DisableMainEngine()
-{
-	MainEngineEnabled = false;
-	//ConsoleOn = true;
-	Menu.Enable();
-}
-
-// W³¹cza i wy³¹cza GUI gracza
-void guiMain::EnableGGUI()
-{
-	DrawGGUI = true;
-}
-
-void guiMain::DisableGGUI()
-{
-	DrawGGUI = false;
-}
-
-// Zwraca ile razy trzeba wykonaæ w³aœciwy silnik, by gra toczy³a siê w dobrym tempie
-unsigned int guiMain::GetEPFTimes()
-{
-	if( FrameRate < 1 )
-		FrameRate = 1;
-	if( FrameRate < 60 )
-		return 60 / FrameRate;
-	else return 1;
+	default:
+		break;
+	}
 }
 
 /*	Pierwsza metoda wykonuje w³aœciwy silnik GUI, a druga renderuje GUI.
 	W³aœciwego silnika nie da siê wy³¹czyæ
 */
-void guiMain::DoGUIEngine(const float fTD)
+void CGUIMain::Update(const float fTD)
 {
-	if( !ConsoleOn && !Menu.IsEnabled() )
+	switch (Mode)
 	{
-		DoMainEngine = true;
+	case GUI_MODE::MENU:
+		Menu.Update( fTD );
+		break;
+
+	case GUI_MODE::SCREEN:
+		ScrMsgEng( fTD );
+		ConsoleEng( fTD );
+		EngineWLScr( fTD );
+
+		if( FScrColor[3] > 0.0f )
+			FScrColor[3] -= 0.1f * fTD;
+		else FScrColor[3] = 0.0f;
+		break;
+
+	default:
+		break;
 	}
-	else DoMainEngine = false;
 
-	DoMainDraw = true;
-
-	this->ScrMsgEng( fTD );
-	this->ConsoleEng( fTD );
-	this->Menu.Update();
-	this->EngineWLScr( fTD );
-
-	if( FScrColor[3] > 0.0f )
-		FScrColor[3] -= 0.1f * fTD;
-	else FScrColor[3] = 0.0f;
 }
 
-void guiMain::DoGUIDraw()
+void CGUIMain::Render()
 {
-	if( WireFrame )
-		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-
 	// Gdy g³ówny silnik dzia³a, rysujemy
 	if( MainEngineEnabled && DrawGGUI )
 	{
 		// zaczynamy pisaæ
-		TText.StartPrint();
+		TText.StartPrint(800.0f, 600.0f);
 
 		// Informacje po górnej lewej stronie ekranu
 		TText.SetColor( 1.0f, 1.0f, 1.0f );
@@ -549,7 +166,7 @@ void guiMain::DoGUIDraw()
 		TText.EndPrint();
 
 		CRender::SetOrtho( -2.0f, 2.0f, -2.0f, 2.0f );
-		CH[0].Activate( TexDetailLevel );
+		CH[0].Activate();
 		{
 			glBlendFunc( GL_ONE, GL_ONE );
 			glEnable( GL_BLEND );
@@ -587,13 +204,166 @@ void guiMain::DoGUIDraw()
 		//this->ConsoleDraw();
 		this->Menu.Render();
 	//}
+}
 
-	if( WireFrame )
-		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+bool CGUIMain::GetQuit()
+{
+	return Quit;
+}
+
+/*	Tu zaczynaj¹ siê metody pokazuj¹ce napis WYGRA£EŒ oraz napis
+	PRZEGRA£EŒ. Jest to zbiór zaledwie kilku funkcji, i wcale nie
+	s¹ przera¿aj¹ce. Po pokazaniu siê którego kolwiek  z nich
+	gracz automatycznie wraca do Menu.
+*/
+void CGUIMain::ShowWinScr( float Time, std::string text )
+{
+		return;
+	WLScrColor[0] = 0.5f;
+	WLScrColor[1] = 1.0f;
+	WLScrColor[2] = 0.5f;
+	WLScrColor[3] = 0.0f;
+
+	WinText = text;
+	ShowWLScrTime = Time;
+	ThisWLScrTime = 0.0f;
+	CanShowWinScr = true;
+	CanShowLoseScr = false;
+}
+
+void CGUIMain::ShowLoseScr( float Time, std::string text )
+{
+		return;
+	WLScrColor[0] = 0.1f;
+	WLScrColor[1] = 0.1f;
+	WLScrColor[2] = 0.1f;
+	WLScrColor[3] = 0.0f;
+
+	LoseText = text;
+	ShowWLScrTime = Time;
+	ThisWLScrTime = 0.0f;
+	CanShowWinScr = false;
+	CanShowLoseScr = true;
+}
+
+void CGUIMain::ResetWLScr()
+{
+	CanShowWinScr = false;
+	CanShowLoseScr = false;
+}
+
+bool CGUIMain::IsShowingWLScr()
+{
+	if( !CanShowWinScr && !CanShowLoseScr )
+		return false;
+	return true;
+}
+void CGUIMain::DrawWLScr()
+{
+	//if( !CanShowWinScr && !CanShowLoseScr )
+	//	return;
+
+	//TText.StartPrint();
+	////glEnable( GL_BLEND );
+	////glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	//glDisable( GL_TEXTURE_2D );
+	//glColor4fv( WLScrColor );
+	//glBegin( GL_TRIANGLE_STRIP );
+	//	glVertex3f( 0.0f, 0.0f, 0.0f );
+	//	glVertex3f( 0.0f, 600.0f, 0.0f );
+	//	glVertex3f( 800.0f, 0.0f, 0.0f );
+	//	glVertex3f( 800.0f, 600.0f, 0.0f );
+	//glEnd();
+	//glEnable( GL_TEXTURE_2D );
+	////glDisable( GL_BLEND );
+	//
+	//if( CanShowWinScr )
+	//{
+	//	TText.Print( ( 800.0f - ( 8.0f * ( 16.0f * 1.4f ) ) ) / 2.0f , 100.0f, "WYGRALES", 1.4, 1.4 );
+	//	if( WinText != "" )
+	//		TText.Print( ( 800.0f - ( float( WinText.length() ) * 16.0f ) ) / 2.0f, 200.0f, WinText );
+	//}
+	//if( CanShowLoseScr )
+	//{
+	//	TText.Print( ( 800.0f - ( 8.0f * ( 16.0f * 1.4f ) ) ) / 2.0f, 100.0f, "PRZEGRALES", 1.4, 1.4 );
+	//	if( LoseText != "" )
+	//		TText.Print( ( 800.0f - ( float( LoseText.length() ) * 16.0f ) ) / 2.0f, 200.0f, LoseText );
+	//}
+	//TText.EndPrint();
+}
+
+void CGUIMain::EngineWLScr( const float fTD )
+{
+	//if( !CanShowWinScr && !CanShowLoseScr )
+	//	return;
+
+	//this->MainEngineEnabled = false;
+
+	//this->ThisWLScrTime += fTD * Speed;
+
+	//this->WLScrColor[3] = ( 1.0f / ShowWLScrTime ) * this->ThisWLScrTime;
+
+	//if( ThisWLScrTime >= ShowWLScrTime )
+	//{
+	//	this->ResetWLScr();
+	//	this->MainEngineEnabled = false;
+	//	this->Menu.Enable();
+	//}
+}
+
+/*	Te dwie metody s³u¿¹ do trzymania kontroli nad g³ównymi
+	funkcjami gry od Silnika i Renderer'a. Dziêki temu mo¿na
+	prosto zarz¹daæ nimi.
+*/
+bool CGUIMain::CanDoMainDraw()
+{
+	return DoMainDraw;
+}
+
+bool CGUIMain::CanDoMainEng()
+{
+	return DoMainEngine;
+}
+
+/*	Dwie metody w³¹czaj¹ce i wy³¹czaj¹ce g³ówny silnik
+	gry ( ale nie GUI )
+*/
+void CGUIMain::EnableMainEngine()
+{
+	MainEngineEnabled = true;
+	ConsoleOn = false;
+}
+
+void CGUIMain::DisableMainEngine()
+{
+	MainEngineEnabled = false;
+	//ConsoleOn = true;
+}
+
+// W³¹cza i wy³¹cza GUI gracza
+void CGUIMain::EnableGGUI()
+{
+	DrawGGUI = true;
+}
+
+void CGUIMain::DisableGGUI()
+{
+	DrawGGUI = false;
+}
+
+// Zwraca ile razy trzeba wykonaæ w³aœciwy silnik, by gra toczy³a siê w dobrym tempie
+unsigned int CGUIMain::GetEPFTimes()
+{
+	if( FrameRate < 1 )
+		FrameRate = 1;
+	if( FrameRate < 60 )
+		return 60 / FrameRate;
+	else return 1;
 }
 
 // Wylicza czas, klatki na sekunde, minuty, godziny, milisekundy, itp.
-void guiMain::UpdateCounter()
+void CGUIMain::UpdateCounter()
 {
 	unsigned int temp = GetTickCount();
 	Frame++;
@@ -625,7 +395,7 @@ void guiMain::UpdateCounter()
 }
 
 // Dalsze trzy metody zwracaj¹ czas poziomu, klatki na sekunde i milisekundy
-unsigned int guiMain::GetTime( unsigned int time )
+unsigned int CGUIMain::GetTime( unsigned int time )
 {
 	switch( time )
 	{
@@ -639,12 +409,12 @@ unsigned int guiMain::GetTime( unsigned int time )
 		return EngPerFrame;
 	}
 }
-unsigned int guiMain::GetFrameRate()
+unsigned int CGUIMain::GetFrameRate()
 {
 	return FrameRate;
 }
 
-unsigned int guiMain::GetMiliSecPas()
+unsigned int CGUIMain::GetMiliSecPas()
 {
 	if( MiliSecPass <= 0 )
 		return 1;
@@ -653,7 +423,7 @@ unsigned int guiMain::GetMiliSecPas()
 }
 
 // Metoda inicjalizuje GUI
-void guiMain::InitGUI( CTexManager* texManager )
+void CGUIMain::InitGUI( CTexManager* texManager )
 {
 	Log.Log( "Inicjalizacja koñcowa GUI" );
 	font = texManager->Get( "Font.tga" );
@@ -665,7 +435,7 @@ void guiMain::InitGUI( CTexManager* texManager )
 }
 
 // Silnik widomoœci ekranowych wysy³anych przez silnik gry
-void guiMain::ScrMsgEng( const float fTD )
+void CGUIMain::ScrMsgEng( const float fTD )
 {
 	guiScrMsg* msg;
 	for( int i = ScrMsg.size()-1; i >= 0; i-- )
@@ -683,7 +453,7 @@ void guiMain::ScrMsgEng( const float fTD )
 }
 
 // Rendering owych wiadomoœci
-void guiMain::ScrMsgDraw()
+void CGUIMain::ScrMsgDraw()
 {
 	guiScrMsg* msg;
 	float x, y;
@@ -705,7 +475,7 @@ void guiMain::ScrMsgDraw()
 
 
 // Wys³anie wiadomoœci
-void guiMain::SendMsg( std::string msg, unsigned int Time, float X, float Y, float SclX, float SclY, float R, float G, float B ) 
+void CGUIMain::SendMsg( std::string msg, unsigned int Time, float X, float Y, float SclX, float SclY, float R, float G, float B ) 
 {
 	guiScrMsg Msg;
 	Msg.msg = msg;
@@ -720,14 +490,14 @@ void guiMain::SendMsg( std::string msg, unsigned int Time, float X, float Y, flo
 	SendMsg( Msg );
 }
 
-void guiMain::SendMsg( guiScrMsg msg )
+void CGUIMain::SendMsg( guiScrMsg msg )
 {
 	msg.ThisTime = ThisTick;
 	ScrMsg.push_back( msg );
 }
 
 // DO TESTÓW: metoda bezpoœrednio rysuje na ekranie tekst: NIE PRZEZNACZONA DO U¯YWANIA POZA DEBUG'iem
-void guiMain::Print( float x, float y, std::string text, float ScaleX, float ScaleY )
+void CGUIMain::Print( float x, float y, std::string text, float ScaleX, float ScaleY )
 {
 	TText.StartPrint();
 	TText.SetColor( 1.0f, 1.0f, 1.0f );
@@ -737,7 +507,7 @@ void guiMain::Print( float x, float y, std::string text, float ScaleX, float Sca
 
 // Tutaj aktywujemy "Full Screen Color", czyli np. Ca³y czerwony ekran od dostania kulk¹, zielony po podniesieniu apteczyki, itp.
 // Naraz mo¿e byæ tylko jeden kolor ekranu
-void guiMain::ActiveFScrColor( float R, float G, float B, float Alpha )
+void CGUIMain::ActiveFScrColor( float R, float G, float B, float Alpha )
 {
 	FScrColor[0] = R;
 	FScrColor[1] = G;
@@ -746,7 +516,7 @@ void guiMain::ActiveFScrColor( float R, float G, float B, float Alpha )
 }
 
 // Metoda prywatna - pobiera argumenty polecenia wys³anego przez konsole
-void guiMain::GetParams( std::string str, unsigned int from, std::string *param, unsigned int Count )
+void CGUIMain::GetParams( std::string str, unsigned int from, std::string *param, unsigned int Count )
 {
 	if( Count <= 0 )
 		return;
@@ -766,7 +536,7 @@ void guiMain::GetParams( std::string str, unsigned int from, std::string *param,
 }
 
 // Metoda prywatna - parsuje ³añcuch znaków przes³any przez konsole
-void guiMain::ParseConMsg( std::string msg )
+void CGUIMain::ParseConMsg( std::string msg )
 {
 	int i, j;
 	std::string func;
@@ -1060,7 +830,7 @@ void guiMain::ParseConMsg( std::string msg )
 }
 
 // Wysy³a wiadomoœæ do konsoli, mo¿e byæ przeparsowana, lub dodana do listy
-void guiMain::SendConMsg( std::string msg, bool parse, bool hist )
+void CGUIMain::SendConMsg( std::string msg, bool parse, bool hist )
 {
 	if( parse )
 	{
@@ -1083,7 +853,7 @@ void guiMain::SendConMsg( std::string msg, bool parse, bool hist )
 }
 
 // Wykonanie komendy aktualnie wpisanej przez u¿ytkownika
-void guiMain::ConExecute( bool hist )
+void CGUIMain::ConExecute( bool hist )
 {
 	if( hist )
 		ConsoleLMsg.push_back( ConsoleCMsg );
@@ -1092,14 +862,14 @@ void guiMain::ConExecute( bool hist )
 }
 
 // Dodanie jednej litery do konsoli
-void guiMain::ConAddChar( char Key )
+void CGUIMain::ConAddChar( char Key )
 {
 	this->ConsoleCMsg += Key;
 	this->ConCreatePFL();
 }
 
 // Przeparsowanie przez GUI wciœniêtego klawisza
-void guiMain::ParseKey( char Key )
+void CGUIMain::ParseKey( char Key )
 {
 	if( MainEngineEnabled )
 	{
@@ -1134,7 +904,7 @@ void guiMain::ParseKey( char Key )
 }
 
 // Stwa¿a "Liste Prawdopodobnych Funkcji" ( "Possible Function List" ) do konsoli
-void guiMain::ConCreatePFL( bool AutoRep )
+void CGUIMain::ConCreatePFL( bool AutoRep )
 {
 	PFL.clear();
 
@@ -1156,7 +926,7 @@ void guiMain::ConCreatePFL( bool AutoRep )
 }
 
 // Silnik w³aœciwy konsoli
-void	guiMain::ConsoleEng( const float fTD )
+void	CGUIMain::ConsoleEng( const float fTD )
 {
 	if( ConsoleOn )
 	{
@@ -1173,7 +943,7 @@ void	guiMain::ConsoleEng( const float fTD )
 }
 
 // Rendering konsoli
-void guiMain::ConsoleDraw()
+void CGUIMain::ConsoleDraw()
 {
 	if( MainEngineEnabled && !ConsoleOn && ConsoleScroll == 0.0f && Menu.IsEnabled() )
 		return;

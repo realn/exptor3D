@@ -70,10 +70,8 @@ void CMenu::Render( CTextRenderer& TText )
 	glTranslatef( Scroll * Size.X, 0.0f, 0.0f );
 	TText.Print( TitlePos.X, TitlePos.Y, Title, 2.5f, 2.5f );
 
-	for( int i = 0; i < List.size(); i++ )
-	{
+	for( unsigned i = 0; i < List.size(); i++ )
 		List[i]->Render( TText );
-	}
 
 	TText.EndPrint();
 }
@@ -83,7 +81,7 @@ void CMenu::EventMouseMove( const Vector2f& pos )
 	auto screenPos = pos * Size;
 	CMenuItem* Item;
 	pSelectedItem = nullptr;
-	for( int i = 0; i < List.size(); i++ )
+	for( unsigned i = 0; i < List.size(); i++ )
 	{
 		Item = List[i];
 
