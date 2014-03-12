@@ -18,8 +18,9 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include "Timer.h"
 
 #include "TextureText.h"
-#include "GUIMenu.h"
 #include "ScriptParser.h"
+#include "GUIMenu.h"
+#include "GUIConsole.h"
 
 #include "EventManager.h"
 
@@ -70,6 +71,7 @@ private:
 
 	GUI_MODE	Mode;
 	CMenuMain	Menu;
+	CGUIConsole	Console;
 	CScriptParser&	ScriptParser;
 
 	unsigned short Second;

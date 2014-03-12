@@ -33,6 +33,7 @@ CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const 
 	TextRender( texManager ),
 	ScriptParser( scriptParser ),
 	Menu( TextRender, aspectRatio ),
+	Console( scriptParser, TextRender, height, aspectRatio ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),
 	FrameTime( 0.0f ),
@@ -108,6 +109,20 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 
 void	CGUIMain::ParseKeys( const unsigned key, const bool down )
 {
+	if( Console.IsVisible() && !Console.IsAnimating() )
+	{
+		if( key == 192 && down )
+			Console.SetVisible( false, true );
+		else
+			Console.ParseKey( key, down );
+		return;
+	}
+	else
+	{
+		if( key == 192 && down )
+			Console.SetVisible( true, true );
+	}
+
 	switch (Mode)
 	{
 	case GUI_MODE::MENU:
@@ -174,7 +189,8 @@ void CGUIMain::Update(const float fTD)
 	default:
 		break;
 	}
-
+	
+	Console.Update( fTD );
 }
 
 void CGUIMain::Render()
@@ -297,6 +313,8 @@ void CGUIMain::Render()
 	default:
 		break;
 	}
+
+	Console.Render();
 }
 
 

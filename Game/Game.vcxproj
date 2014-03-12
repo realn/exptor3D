@@ -97,6 +97,7 @@
     <ClCompile Include="src\GamePlayer.cpp" />
     <ClCompile Include="src\GamePlayerController.cpp" />
     <ClCompile Include="src\GameStaticObject.cpp" />
+    <ClCompile Include="src\GUIConsole.cpp" />
     <ClCompile Include="src\GUIMenu.cpp" />
     <ClCompile Include="src\GUIMenuItem.cpp" />
     <ClCompile Include="src\GUIMenuMain.cpp" />
@@ -147,7 +148,9 @@
     <ClInclude Include="src\EventScript.h" />
     <ClInclude Include="src\GameController.h" />
     <ClInclude Include="src\GamePlayerController.h" />
+    <ClInclude Include="src\GUIConsole.h" />
     <ClInclude Include="src\GUIMenu.h" />
+    <ClInclude Include="src\GUIScreen.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneEntity.h" />
     <ClInclude Include="src\GameActor.h" />
