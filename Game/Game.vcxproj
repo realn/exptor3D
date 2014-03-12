@@ -144,6 +144,7 @@
     <ClInclude Include="src\Effect.h" />
     <ClInclude Include="src\EventInput.h" />
     <ClInclude Include="src\EventManager.h" />
+    <ClInclude Include="src\EventScript.h" />
     <ClInclude Include="src\GameController.h" />
     <ClInclude Include="src\GamePlayerController.h" />
     <ClInclude Include="src\GUIMenu.h" />

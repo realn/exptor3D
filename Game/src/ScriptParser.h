@@ -49,6 +49,8 @@ public:
 
 	void	Execute( const std::string& text );
 
+	void	SearchFuncNames( const std::string& what, std::vector<std::string>& nameList ) const;
+
 private:
 	void	ExecuteVar( const std::string& text );
 	void	ExecuteFunc( const std::string& text );

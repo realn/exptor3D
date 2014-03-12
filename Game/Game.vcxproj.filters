@@ -350,5 +350,8 @@
     <ClInclude Include="src\GamePlayerController.h">
       <Filter>Source\Game\Controllers</Filter>
     </ClInclude>
+    <ClInclude Include="src\EventScript.h">
+      <Filter>Source\Logic\Events</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

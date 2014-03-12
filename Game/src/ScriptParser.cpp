@@ -22,8 +22,8 @@ void	CScriptParser::AddVar( const std::string& name, const std::string& value )
 
 void	CScriptParser::AddFunc( const std::string& name, SCRIPT_FUNC pFunc, const unsigned minParams, void* pUserData )
 {
-	auto pFunc = FindVar( name );
-	if( pFunc == nullptr )
+	auto pSFunc = FindVar( name );
+	if( pSFunc == nullptr )
 	{
 		CScriptFunc func( name, pFunc, minParams, pUserData );
 		FuncList.push_back( func );
@@ -68,6 +68,16 @@ void	CScriptParser::Execute( const std::string& text )
 {
 	ExecuteFunc( text );
 	ExecuteVar( text );
+}
+
+void	CScriptParser::SearchFuncNames( const std::string& what, std::vector<std::string>& nameList ) const
+{
+	for( unsigned i = 0; i < FuncList.size(); i++ )
+	{
+		auto& name = FuncList[i].Name;
+		if( name.substr( 0, what.length() ) == what )
+			nameList.push_back( name );
+	}
 }
 
 void	CScriptParser::ExecuteVar( const std::string& text )
