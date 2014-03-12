@@ -13,6 +13,7 @@ private:
 	float		Scroll;
 	bool		Visible;
 	std::vector<std::string>	TextLog;
+	std::string	CurrentText;
 
 public:
 	CGUIConsole( CScriptParser& scriptParser, CTextRenderer& textRender, const unsigned height, const float aspectRatio );

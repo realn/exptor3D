@@ -84,6 +84,7 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 {
 	CEventKey	keyEvent;
 	CEventMouse	mouseEvent;
+	CEventChar	charEvent;
 
 	switch (event.Type)
 	{
@@ -100,6 +101,12 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 	case EVENT_INPUT_TYPE::MOUSEMOVEABS:
 		memcpy( &mouseEvent, &event, sizeof(CEventMouse) );
 		ParseMouseMove( mouseEvent.X, mouseEvent.Y );
+		break;
+
+	case EVENT_INPUT_TYPE::CHARPRESS:
+		memcpy( &charEvent, &event, sizeof(CEventChar) );
+		if( Console.IsVisible() && !Console.IsAnimating() )
+			Console.ParseChar( charEvent.Character );
 		break;
 
 	default:

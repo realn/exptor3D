@@ -39,6 +39,16 @@ void	CGUIConsole::Render()
 
 	glPopMatrix();
 	glPopAttrib();
+
+	float height = (float)ScreenHeight;
+	float width = height * AspectRatio;
+
+	float posY = height / 2.0f;
+
+	TextRender.StartPrint( width, height );
+	TextRender.SetColor( 1.0f, 1.0f, 1.0f );
+	TextRender.Print( 0.0f, Scroll * posY, CurrentText);
+	TextRender.EndPrint();
 }
 
 void	CGUIConsole::Update( const float fTD )
@@ -86,12 +96,27 @@ const bool	CGUIConsole::IsAnimating() const
 
 void	CGUIConsole::ParseKey( const unsigned key, const bool down )
 {
+	if( down )
+	{
+		switch (key)
+		{
+		case VK_BACK:
+			if( !CurrentText.empty() )
+				CurrentText = CurrentText.substr( 0, CurrentText.length() - 1 );
+			break;
 
+		default:
+			break;
+		}
+	}
 }
 
 void	CGUIConsole::ParseChar( const char Characted )
 {
+	if( Characted == VK_BACK )
+		return;
 
+	CurrentText += Characted;
 }
 
 void	CGUIConsole::Print( const std::string& msg )
