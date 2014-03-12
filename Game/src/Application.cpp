@@ -4,7 +4,7 @@
 
 #include <windowsx.h>
 
-#include "gui.h"
+#include "GUI.h"
 #include "GamePlayer.h"
 #include "Level.h"
 #include "inifile.h"
@@ -13,26 +13,23 @@
 CApplication::CApplication() :
 	active( true ),
 	State(GAME_STATE::MAINMENU),
-	WindowWidth( 640 ),
-	WindowHeight( 480 ),
-	MouseX( 0 ),
-	MouseY( 0 )
+	MouseMode(MOUSE_MODE::MENU),
+	GUI( nullptr )
 {
 	memset( Keys, 0, sizeof(bool) * 256 );
-
-	POINT cursorPos;
-	if( GetCursorPos( &cursorPos ) )
-	{
-		MouseX = cursorPos.x;
-		MouseY = cursorPos.y;
-	}
 
 	RegScript();
 }
 
 CApplication::~CApplication()
 {
-
+	if( GUI != nullptr )
+	{
+		delete GUI;
+		GUI = nullptr;
+	}
+	Log.Log( "Koniec pracy Aplikacji" );
+	GLRender.GLDestroyWindow();// Zniszcz okno
 }
 
 /*	FUNKCJA KOMUNIKATÓW
@@ -63,13 +60,17 @@ LRESULT CALLBACK WndProc(	HWND	hWnd,			// Uchwyt do okna
 
 int	CApplication::Run()
 {
+	srand( GetTickCount() );
+
 	// Czytamy plik ini, by odpowiednio wszystko ustawiæ
 	IniFile ini;
 	ini.Open( "config.ini" );
-	WindowWidth = ini.ReadInt( "GRAPHIC", "WIDTH", 640 );
-	WindowHeight = ini.ReadInt( "GRAPHIC", "HEIGHT", 480 );
+	int WindowWidth = ini.ReadInt( "GRAPHIC", "WIDTH", 640 );
+	int WindowHeight = ini.ReadInt( "GRAPHIC", "HEIGHT", 480 );
 	bool fullscreen = ini.ReadBool( "GRAPHIC", "FULLSCREEN", false );
 	ini.Close();
+
+	float aspectRatio = (float)WindowWidth / (float)WindowHeight;
 
 	// Stwórz okno
 	if ( !GLRender.GLCreateWindow( "Expert 3D Tournament", WindowWidth, WindowHeight, fullscreen, (WNDPROC)WndProc, this ) )
@@ -78,20 +79,23 @@ int	CApplication::Run()
 	CTexManager texManager( "Data/Textures/" );
 	CModelManager modelManager( "Data/Models/", texManager );
 	CLevel level( texManager, modelManager );
+	GUI = new CGUIMain( texManager, ScriptParser, aspectRatio, WindowHeight );
 
 	pGLevel = &level;
 	CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
 	ControllerList.AddController( pController );
+
 	EventManager.AddObserver( pController );
+	EventManager.AddObserver( GUI );
 
 	Log.Log( "Inicjalizacja OpenGL" );
 
 	InitGraphics( texManager );
 
-	MainLoop();
+	GUI->ShowMenu( "MainMenu" );
+	GUI->SetMode( GUI_MODE::MENU );
 
-	Log.Log( "Koniec pracy Aplikacji" );
-	GLRender.GLDestroyWindow();// Zniszcz okno
+	MainLoop();
 	return 0;
 }
 
@@ -170,8 +174,6 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, (unsigned)wParam );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
-
-			GUI.ParseKey( (char)wParam );
 			Keys[wParam] = true;					// Zaznacz ¿e jest wciœniêty
 			return true;								
 		}
@@ -180,7 +182,6 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, (unsigned)wParam );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
-
 			Keys[wParam] = false;					// Zaznacz ¿e jest wolny
 			return true;								
 		}
@@ -193,15 +194,15 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 
 	case WM_MOUSEMOVE:
 		{
-			int x = GET_X_LPARAM(lParam);
-			int y = GET_Y_LPARAM(lParam);
+			if( MouseMode == MOUSE_MODE::MENU )
+			{
+				int x = GET_X_LPARAM(lParam);
+				int y = GET_Y_LPARAM(lParam);
 
-			CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVE, x, y, x - MouseX, y - MouseY );
+				CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEABS, x, y );
 			
-			MouseX = x;
-			MouseY = y;
-
-			EventManager.AddEvent( *((CEvent*)&MouseEvent) );
+				EventManager.AddEvent( *((CEvent*)&MouseEvent) );
+			}
 
 			return true;
 		}
@@ -218,18 +219,41 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 	return false;
 }
 
+void	CApplication::UpdateMouse()
+{
+	if( MouseMode != MOUSE_MODE::GAME )
+		return;
+
+	unsigned halfScreenX = GLRender.GetWidth() / 2;
+	unsigned halfScreenY = GLRender.GetHeight() / 2;
+
+	POINT mousePos;
+	if( !GetCursorPos( &mousePos ) )
+		return;
+
+	int diffX = mousePos.x - (int)halfScreenX;
+	int diffY = mousePos.y - (int)halfScreenY;
+
+	if( diffX == 0 && diffY == 0 )
+		return;
+
+	CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEDIF, diffX, diffY );
+	EventManager.AddEvent( *((CEvent*)&MouseEvent) );
+
+	SetCursorPos( (int)halfScreenX, (int)halfScreenY );
+}
+
 void	CApplication::InitGraphics( CTexManager& texManager )
 {
 	glDepthFunc( GL_LEQUAL );				//Metoda testowania G³êbokoœci (ta jest lepsza)
 	glEnable( GL_TEXTURE_2D );
-	GUI.InitGUI( &texManager );
-	//GUI.SetLoadLevelFunc( LoadLevel );
-	GUI.SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
-	GUI.SendConMsg( "STEROWNIK: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
-	GUI.SendConMsg( "WERSJA: " + GLRender.GetRndInfo( RENDER_VERSION ), false );
-	GUI.SendConMsg( "INICJALIZACJA GLOWNA", false );
+	//GUI->SetLoadLevelFunc( LoadLevel );
+	//GUI->SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
+	//GUI->SendConMsg( "STEROWNIK: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
+	//GUI->SendConMsg( "WERSJA: " + GLRender.GetRndInfo( RENDER_VERSION ), false );
+	//GUI->SendConMsg( "INICJALIZACJA GLOWNA", false );
 
-	GUI.SendConMsg( "Ustawianie OpenGL...", false );
+	//GUI->SendConMsg( "Ustawianie OpenGL...", false );
 	glShadeModel( GL_SMOOTH );			    //Ustawienie £adnego cieniowania
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );	//Ustawienie koloru czyszczenia bufora kolorów
 	glClearDepth( 1.0f );					//Ustwienie glêbokoœci czyszczenia bufora g³êbokoœci
@@ -273,18 +297,16 @@ void	CApplication::InitGraphics( CTexManager& texManager )
 	glEnable( GL_LIGHTING );
 #endif
 
-	GUI.SendConMsg( "Zakonczono", false );
+	//GUI->SendConMsg( "Zakonczono", false );
 
-	GUI.SendConMsg( "Inicjalizacja silnika...", false );
-	//SMBlur.Init();
-	//MenuModel = modelManager.Get( "menumodel.glm" );
-	//MainPlayer.SetArmor( 100.0f );
-	GUI.Menu.Load( "Data/menu.mnu" );
-	//SEManager.MaxSpec = 100;
-	srand( GetTickCount() );
+	//GUI->SendConMsg( "Inicjalizacja silnika...", false );
+	////SMBlur.Init();
+	////MenuModel = modelManager.Get( "menumodel.glm" );
+	////MainPlayer.SetArmor( 100.0f );
+	////SEManager.MaxSpec = 100;
 
-	GUI.SendConMsg( "Zakonczono", false );
-	GUI.SendConMsg( "INICJALIZACJA GLOWNA ZAKONCZONA", false );
+	//GUI->SendConMsg( "Zakonczono", false );
+	//GUI->SendConMsg( "INICJALIZACJA GLOWNA ZAKONCZONA", false );
 
 }
 
@@ -314,12 +336,13 @@ void	CApplication::MainLoop()
 			}
 		}
 
-		GUI.UpdateCounter();
+		GUI->UpdateCounter( timer.GetDT() );
+		UpdateMouse();
 
 		// Rysujemy scene
 		if (active)								// Program jest aktywny?
 		{
-			if ( GUI.GetQuit() )				// Czy by³ wciœniêty ESC?
+			if ( GUI->GetQuit() )				// Czy by³ wciœniêty ESC?
 			{
 				done = true;						// Je¿eli tak to wychodzimy z pêtli
 			}
@@ -328,7 +351,7 @@ void	CApplication::MainLoop()
 				Render();						// Rysujemy scene
 
 				EventManager.ProcessEvents();
-				for(unsigned i = 0; i < 20 && frameTime > TIME_STEP; i++)
+				for( unsigned i = 0; i < 100 && frameTime > TIME_STEP; i++ )
 				{
 					Update(TIME_STEP);
 					frameTime -= TIME_STEP;
@@ -345,72 +368,37 @@ void	CApplication::MainLoop()
 	}
 }
 
-void	CApplication::Mouse()
-{
-	/*	Najpierw standardowa strukturka windows.
-	Jest to eee... PUNKT :) który zawiera A¯
-	2 sk³adowe ( x, y ) :P
-	*/
-	POINT mpos;
-	
-	/*	Teraz musimy mieæ punk oparcia o ile ruszono
-	mysz¹. Ja wybra³em œrodek ekranu, z t¹d
-	korzystam z klasy UIRender by uzyskaæ szerokoœæ
-	i wysokoœæ oraz dziele je na pó³.
-	*/
-	int m_wid = GLRender.GetWidth() / 2;
-	int m_hei = GLRender.GetHeight() / 2;
-
-	// Dwie zmienne pomocnicze, trzymaj¹ce stopieñ wychylenia
-	float mov_x;// mov_y,
-
-	/*	U¿ywamy piêknej funkcji Windows, by wychwyciæ po³orzenie
-	kursora wzglêdem okna.
-	*/
-	GetCursorPos( &mpos );
-
-	/*	Wyliczamy róznice miêdzy po³orzeniem 
-	punktu na ekranie, a œrodkiem ekranu
-	i zmniejszamy j¹ dziesiêciokrotnie.
-	( by³aby za du¿a ).
-	*/
-	mov_x = (float)(mpos.x - m_wid) / 10.0f;
-
-	if( pGLevel != nullptr )
-	{
-		/*	Modyfikujemy stopieñ obrotu gracza.	*/
-		//pGLevel->GetPlayer().ModAngle( mov_x );
-	}
-
-	// W koñcu ustawiamy kursor na œrodek ekranu.
-	SetCursorPos( m_wid, m_hei );
-}
 
 void	CApplication::Update( const float fTD )
 {
-	GUI.ParseKeys( Keys );
-	GUI.DoGUIEngine(fTD);
+	GUI->Update( fTD );
 
 	if( State != GAME_STATE::LEVEL )
 		return;
 
-	ControllerList.Update();
+	if( GUI->IsMenuAnimating() )
+		return;
+	else 
+	{
+		GUI->SetMode( GUI_MODE::SCREEN );
+		MouseMode = MOUSE_MODE::GAME;
+	}
 
-	Mouse();
+	ControllerList.Update();
 
 	pGLevel->Update( fTD );
 	pGLevel->GetPlayer().ParseKeys( Keys );
 
-	GUI.PInfo.HEALTH = pGLevel->GetPlayer().GetHealth();
-	GUI.PInfo.ARMOR = pGLevel->GetPlayer().GetArmor();
-	GUI.PInfo.angle = pGLevel->GetPlayer().GetAngle();
+	GUI->PInfo.HEALTH = pGLevel->GetPlayer().GetHealth();
+	GUI->PInfo.ARMOR = pGLevel->GetPlayer().GetArmor();
+	GUI->PInfo.angle = pGLevel->GetPlayer().GetAngle();
 }
 
 void	CApplication::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
 
-	if( State == GAME_STATE::LEVEL )
+	if( State == GAME_STATE::LEVEL && !GUI->IsMenuAnimating() )
 	{
 		GLRender.SetPerspective( 60.0f, 4, 3, 1.0f, 100.0f );
 		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
@@ -432,9 +420,9 @@ void	CApplication::Render()
 		pGLevel->GetPlayer().Render();
 	}
 
-	//if( GUI.Menu.IsEnabled() && !pGLevel->GetLoaded() )
+	//if( GUI->Menu.IsEnabled() && !pGLevel->GetLoaded() )
 	//{
-	//	GLRender.SetPerspective( GUI.GetEyeAngle(), 4, 3, 1.0f, 100.0f );
+	//	GLRender.SetPerspective( GUI->GetEyeAngle(), 4, 3, 1.0f, 100.0f );
 	//	glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
 
 	//	glTranslatef( 0.0f, 0.0f, -10.0f );
@@ -442,7 +430,7 @@ void	CApplication::Render()
 	//	MenuModel->CallObject( 0 );
 	//}
 
-	GUI.DoGUIDraw();
+	GUI->Render();
 }
 
 void	CApplication::LoadLevel( const std::string& filename )
@@ -451,13 +439,12 @@ void	CApplication::LoadLevel( const std::string& filename )
 	{
 		pGLevel->InitLevel();
 
-		GUI.LevName = pGLevel->GetLevelName();
-		GUI.EnableMainEngine();
-		GUI.EnableGGUI();
+		GUI->LevName = pGLevel->GetLevelName();
+		GUI->HideMenu();
 		State = GAME_STATE::LEVEL;
 	}
 	else
 	{
-		GUI.SendConMsg( "Nie mozna znalesc pliku", false );
+		//GUI->SendConMsg( "Nie mozna znalesc pliku", false );
 	}
 }

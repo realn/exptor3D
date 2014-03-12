@@ -9,7 +9,7 @@ CMenuItem::CMenuItem( const std::string& id ) :
 	ID(id),
 	Type( MENU_ITEM_TYPE::UNKNOWN ),
 	Highlight( false ),
-	ScrollStep( 10.0f, 0.0f ),
+	ScrollStep( 20.0f, 0.0f ),
 	Color( 1.0f )
 {
 }
@@ -19,24 +19,24 @@ void CMenuItem::Update( const float fTD )
 	if( !Highlight )
 	{
 		if( Color > 0.5f )
-			Color -= 0.5f * fTD;
+			Color -= 1.0f * fTD;
 		else 
 			Color = 0.5f;
 		
 		if( Scroll.X > 0.0f )
-			Scroll.X -= 0.5f * fTD;
+			Scroll.X -= 1.0f * fTD;
 		else 
 			Scroll.X = 0.0f;
 	}
 	else
 	{
 		if( Color < 1.0f )
-			Color += fTD;
+			Color += 2.0f * fTD;
 		else
 			Color = 1.0f;
 
 		if( Scroll.X < 1.0f )
-			Scroll.X += fTD;
+			Scroll.X += 2.0f * fTD;
 		else
 			Scroll.X = 1.0f;
 	}

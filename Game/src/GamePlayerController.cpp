@@ -39,9 +39,9 @@ void	CLocalPlayerController::ProcessEvent( const CEvent& event )
 		ProcessKey( keyEvent.Key, false );
 		break;
 
-	case EVENT_INPUT_TYPE::MOUSEMOVE:
+	case EVENT_INPUT_TYPE::MOUSEMOVEDIF:
 		memcpy( &mouseEvent, &event, sizeof(CEventMouse) );
-		Angle += (float)mouseEvent.Xdelta;
+		Angle += (float)mouseEvent.X * 0.1f;
 		break;
 
 	default:

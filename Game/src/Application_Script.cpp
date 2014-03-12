@@ -10,5 +10,5 @@ void LoadLevel( void* pData, const std::vector<std::string>& params )
 
 void	CApplication::RegScript()
 {
-	GUI.ScriptParser.AddFunc( "LoadLevel", ::LoadLevel, 1, this );
+	ScriptParser.AddFunc( "LoadLevel", ::LoadLevel, 1, this );
 }

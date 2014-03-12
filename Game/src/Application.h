@@ -4,11 +4,18 @@
 #include "Texture.h"
 #include "EventManager.h"
 #include "GameController.h"
+#include "gui.h"
 
 enum class GAME_STATE
 {
 	MAINMENU,
 	LEVEL,
+};
+
+enum class MOUSE_MODE
+{
+	MENU,
+	GAME,
 };
 
 class CApplication
@@ -17,12 +24,12 @@ private:
 	CRender	GLRender;
 	CEventManager	EventManager;
 	CControllerList	ControllerList;
+	CScriptParser	ScriptParser;
+
+	CGUIMain*	GUI;
 
 	GAME_STATE	State;
-	unsigned	WindowWidth;
-	unsigned	WindowHeight;
-	int		MouseX;
-	int		MouseY;
+	MOUSE_MODE	MouseMode;
 
 	bool	active;
 	bool	Keys[256];
@@ -40,7 +47,7 @@ private:
 
 	void	MainLoop();
 
-	void	Mouse();
+	void	UpdateMouse();
 	void	Update( const float fTD );
 	void	Render();
 

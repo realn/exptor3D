@@ -5,30 +5,16 @@
 	KLASA CTextRenderer
 	Jest odpowiedzialna za rysowanie tekstów na ekranie.
 =========================*/
-CTextRenderer::CTextRenderer()
+CTextRenderer::CTextRenderer( CTexManager& texManager ) :
+	base( 0 )
 {
-	loaded = false;
-	Tex = NULL;
+	Tex = texManager.Get( "Font.tga" );
+
 	C[0] = 1.0f;
 	C[1] = 1.0f;
 	C[2] = 1.0f;
-}
-
-CTextRenderer::~CTextRenderer()
-{
-	Free();
-}
-
-void CTextRenderer::Init( CTexture* font )
-{
-	if( !font )
-		return;
-	
-	Tex = font;
 
 	base = glGenLists(256);	// Creating 256 display lists
-	
-	Tex->Activate();
 
 	for (int loop1=0; loop1 < 256; loop1++)			// Loop through all 256 lists
 	{
@@ -48,27 +34,20 @@ void CTextRenderer::Init( CTexture* font )
 			glEnd();			// Done building our quad (Character)
 			glTranslated( 14, 0, 0);		// Move to the right of the character
 		glEndList();				// Done building the display list
-	}	
-
-	loaded = true;
+	}
 }
 
-void CTextRenderer::Free()
+CTextRenderer::~CTextRenderer()
 {
-	if( !loaded )
-		return;
-
-	glDeleteLists( base, 256 );
-	glDeleteLists( list, 2 );
-	loaded = false;
+	if( base != 0 )
+	{
+		glDeleteLists( base, 256 );
+		base = 0;
+	}
 }
 
 void CTextRenderer::StartPrint( const float width, const float height )
 {
-	glLoadIdentity();
-
-	glListBase( base - 32 );
-
 	glPushAttrib( GL_ENABLE_BIT | GL_TRANSFORM_BIT | GL_VIEWPORT_BIT );
 	glPushMatrix();
 
@@ -76,12 +55,14 @@ void CTextRenderer::StartPrint( const float width, const float height )
 	glDisable( GL_DEPTH_TEST );
 	glEnable( GL_BLEND );
 	glDisable( GL_LIGHTING );
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Tex->Activate();
 
 	CRender::SetOrtho( 0.0f, width, height, 0.0f );
-
 	glLoadIdentity();
+
+	glListBase( base - 32 );
 }
 
 void CTextRenderer::Print( float x, float y, std::string text, float ScaleX, float ScaleY )

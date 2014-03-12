@@ -8,9 +8,10 @@
 	KLASA CMenuMain
 	Steruje g³ównym menu gry.
 ===========================*/
-CMenuMain::CMenuMain() : 
+CMenuMain::CMenuMain( CTextRenderer& textRender, const float aspectRatio ) : 
 	MenuToShow( nullptr ),
-	AspectRatio( 1.0f ),
+	TextRender( textRender ),
+	AspectRatio( aspectRatio ),
 	file("-")
 {
 }
@@ -18,13 +19,6 @@ CMenuMain::CMenuMain() :
 CMenuMain::~CMenuMain()
 {
 	Free();
-}
-
-void CMenuMain::Init( CTextRenderer *text, CTexture* cursor, const float aspectRatio )
-{
-	AspectRatio = aspectRatio;
-	TText = text;
-	Cursor = cursor;
 }
 
 void CMenuMain::Update( const float fTD )
@@ -62,7 +56,7 @@ void CMenuMain::Render()
 	if( Stack.empty() )
 		return;
 
-	Stack.back()->Render( *TText );
+	Stack.back()->Render( TextRender );
 }
 
 void	CMenuMain::Push( const std::string& id )
@@ -91,6 +85,14 @@ void	CMenuMain::Pop()
 	Stack.back()->SetVisible( false, true );
 }
 
+const bool	CMenuMain::IsMenuAnimating() const
+{
+	if( Stack.empty() )
+		return false;
+
+	return Stack.back()->IsAnimating();
+}
+
 CMenu*	CMenuMain::FindMenu( const std::string& id )
 {
 	for( unsigned i = 0; i < List.size(); i++ )
@@ -113,16 +115,42 @@ void	CMenuMain::EventMouseMove( const Vector2f& pos )
 	menu->EventMouseMove( pos );
 }
 
-void	CMenuMain::EventEnter()
+const bool	CMenuMain::EventEnter( std::string& outScript )
 {
 	if( Stack.empty() )
-		return;
+		return false;
 	
 	auto menu = Stack.back();
 	if( menu->IsAnimating() )
-		return;
+		return false;
 
-	menu->EvetnEnter();
+	std::string script;
+	if( menu->EventEnter( script ) )
+	{
+		outScript.clear();
+		std::string str = ClearWhiteSpace( script );
+		if( str == "PopMenu()" )
+		{
+			Pop();
+			return true;
+		}
+
+		auto pos = str.find("(");
+		if( pos != std::string::npos && str.substr( 0, pos ) == "PushMenu" )
+		{
+			auto endpos = str.find(")");
+			if( endpos != std::string::npos )
+			{
+				Push( str.substr( pos + 1, endpos - pos - 1 ) );
+				return true;
+			}
+		}
+
+		outScript = script;
+		return true;
+	}
+
+	return false;
 }
 
 void	CMenuMain::EventMoveDown()

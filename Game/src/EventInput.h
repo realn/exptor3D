@@ -2,7 +2,8 @@
 
 enum class EVENT_INPUT_TYPE : unsigned
 {
-	MOUSEMOVE,
+	MOUSEMOVEABS,
+	MOUSEMOVEDIF,
 
 	KEYDOWN,
 	KEYUP,
@@ -42,11 +43,9 @@ public:
 	EVENT_INPUT_TYPE	Type;
 	int	X;
 	int	Y;
-	int Xdelta;
-	int Ydelta;
 
 	CEventMouse(){}
-	CEventMouse( const EVENT_INPUT_TYPE type, const int x, const int y, const int xd, const int yd ) :
-		Type( type ), X( x ), Y( y ), Xdelta( xd ), Ydelta( yd )
+	CEventMouse( const EVENT_INPUT_TYPE type, const int x, const int y ) :
+		Type( type ), X( x ), Y( y )
 	{}
 };

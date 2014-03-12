@@ -82,7 +82,7 @@ public:
 	void	EventMouseMove( const Vector2f& pos );
 	void	EventMoveUp();
 	void	EventMoveDown();
-	void	EvetnEnter();
+	const bool	EventEnter( std::string& outScript );
 
 	void	AddMenuItem( CMenuItem* item );
 
@@ -100,8 +100,7 @@ public:
 class CMenuMain
 {
 private:
-	CTextRenderer* TText;
-	CTexture* Cursor;
+	CTextRenderer& TextRender;
 
 	std::vector<CMenu*> List;
 	std::vector<CMenu*>	Stack;
@@ -115,25 +114,25 @@ private:
 	const MENU_TAG GetMenuType( std::string str );
 
 public:
-	CMenuMain();
+	CMenuMain( CTextRenderer& textRender, const float aspectRatio );
 	~CMenuMain();
-
-	void Init( CTextRenderer* text, CTexture* cursor, const float aspectRatio );
-	void Free();
 
 	void	EventMouseMove( const Vector2f& pos );
 	void	EventMoveUp();
 	void	EventMoveDown();
-	void	EventEnter();
+	const bool	EventEnter( std::string& outScript );
 
-	void Update( const float fTD );
-	void Render();
+	void	Update( const float fTD );
+	void	Render();
 
-	bool Load( const std::string& filename );
+	bool	Load( const std::string& filename );
+	void	Free();
 
-private:
 	void	Push( const std::string& id );
 	void	Pop();
 
+	const bool	IsMenuAnimating() const;
+
+private:
 	CMenu*	FindMenu( const std::string& id );
 };

@@ -9,17 +9,12 @@ private:
 	CTexture *Tex;
 
 	unsigned int base;
-	unsigned int list;
 
 	float C[4];
-
-	bool loaded;
 public:
-	CTextRenderer();
+	CTextRenderer( CTexManager& texManager );
 	~CTextRenderer();
 
-	void Init( CTexture *font );
-	void Free();
 	void SetColor( float R, float G, float B, float Alpha = 1.0f );
 	void StartPrint( const float width, const float height );
 	void EndPrint();

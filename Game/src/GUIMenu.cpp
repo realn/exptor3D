@@ -27,7 +27,7 @@ void	CMenu::Update( const float fTD )
 	if( Visible )
 	{
 		if( Scroll > 0.0f )
-			Scroll -= fTD;
+			Scroll -= fTD * 2.0f;
 		else
 		{
 			Scroll = 0.0f;
@@ -38,7 +38,7 @@ void	CMenu::Update( const float fTD )
 	else
 	{
 		if( Scroll < 1.0f )
-			Scroll += fTD;
+			Scroll += fTD * 2.0f;
 		else
 			Scroll = 1.0f;
 	}
@@ -92,13 +92,14 @@ void CMenu::EventMouseMove( const Vector2f& pos )
 	}
 }
 
-void	CMenu::EvetnEnter()
+const bool	CMenu::EventEnter( std::string& outScript )
 {
 	if( pSelectedItem != nullptr )
 	{
-		if( pSelectedItem->GetScript() == "ReturnMenu" )
-			this->SetVisible( false, true );
+		outScript = pSelectedItem->GetScript();
+		return true;
 	}
+	return false;
 }
 
 void	CMenu::EventMoveUp()
