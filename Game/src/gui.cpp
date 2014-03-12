@@ -35,7 +35,9 @@ CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const 
 	Menu( TextRender, aspectRatio ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),
-	FrameTime( 0.0f )
+	FrameTime( 0.0f ),
+	cursorX( 0 ),
+	cursorY( 0 )
 {
 	Log.Log( "Inicjalizacja GUI" );
 	Cursor = texManager.Get( "Kursor.tga" );
@@ -142,6 +144,9 @@ void	CGUIMain::ParseMouseMove( const int x, const int y )
 	if( Mode != GUI_MODE::MENU )
 		return;
 
+	cursorX = x;
+	cursorY = y;
+
 	unsigned width = (unsigned)( (float)ScreenHeight * AspectRatio );
 
 	Vector2f pos( (float)x / (float)width, (float)y / (float)ScreenHeight );
@@ -177,7 +182,44 @@ void CGUIMain::Render()
 	switch (Mode)
 	{
 	case GUI_MODE::MENU:
-		this->Menu.Render();
+		{
+			this->Menu.Render();
+
+			float height = (float)ScreenHeight;
+			float width = height * AspectRatio;
+
+			glPushAttrib( GL_ENABLE_BIT );
+			glPushMatrix();
+			
+			CRender::SetOrtho( 0.0f, width, height, 0.0f );
+
+			glEnable( GL_TEXTURE_2D );
+			glEnable( GL_BLEND );
+			glDisable( GL_CULL_FACE );
+			glDisable( GL_DEPTH_TEST );
+			glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+			glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+			Cursor->Activate();
+
+			glBegin( GL_TRIANGLE_STRIP );
+				glNormal3f( 0.0f, 0.0f, 1.0f );
+
+				glTexCoord2f( 0.0f, 0.0f );
+				glVertex3f( (float)cursorX, (float)cursorY + 50.0f, -0.1f );
+
+				glTexCoord2f( 0.0f, 1.0f );
+				glVertex3f( (float)cursorX, (float)cursorY, -0.1f );
+
+				glTexCoord2f( 1.0f, 0.0f );
+				glVertex3f( (float)cursorX + 50.0f, (float)cursorY + 50.0f, -0.1f );
+
+				glTexCoord2f( 1.0f, 1.0f );
+				glVertex3f( (float)cursorX + 50.0f, (float)cursorY, -0.1f );
+			glEnd();
+
+			glPopMatrix();
+			glPopAttrib();
+		}
 		break;
 
 	case GUI_MODE::SCREEN:

@@ -46,24 +46,6 @@ void	CMenu::Update( const float fTD )
 
 void CMenu::Render( CTextRenderer& TText )
 {
-	//TText.StartPrint();
-	//cursor->Activate();
-	//glDisable( GL_CULL_FACE );
-	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	//glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	//glBegin( GL_TRIANGLE_STRIP );
-	//glNormal3f( 0.0f, 0.0f, 1.0f );
-	//glTexCoord2f( 0.0f, 0.0f );
-	//glVertex3f( x, y+50.0f, -0.1f );
-	//glTexCoord2f( 0.0f, 1.0f );
-	//glVertex3f( x, y, -0.1f );
-	//glTexCoord2f( 1.0f, 0.0f );
-	//glVertex3f( 50.0f+x, y+50.0f, -0.1f );
-	//glTexCoord2f( 1.0f, 1.0f );
-	//glVertex3f( 50.0f+x, y, -0.1f );
-	//glEnd();
-	//TText.EndPrint();
-
 	TText.StartPrint( Size.X, Size.Y );
 	TText.SetColor( 1.0f, 1.0f, 1.0f );
 

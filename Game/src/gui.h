@@ -87,6 +87,7 @@ private:
 
 	unsigned	Frame;
 	unsigned	ScreenHeight;
+	unsigned	cursorX, cursorY;
 
 	bool	ConsoleOn;
 	bool	Quit;
