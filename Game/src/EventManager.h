@@ -32,4 +32,10 @@ public:
 
 	void	AddObserver( IEventObserver* pObserver );
 	void	RemoveObserver( IEventObserver* pObserver );
+
+	template<typename _Type>
+	void	AddEvent(const _Type& event)
+	{
+		AddEvent( *((CEvent*)&event) );
+	}
 };

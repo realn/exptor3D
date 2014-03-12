@@ -157,6 +157,18 @@ const std::string ClearWhiteSpace( const std::string& str )
 	return result;
 }
 
+const std::string ClearWhiteSpaceFront( const std::string& str )
+{
+	for( unsigned i = 0; i < str.length(); i++ )
+	{
+		if( IsWhiteSpace( str[i] ) )
+			continue;
+		
+		return str.substr( i );
+	}
+	return "";
+}
+
 const std::string GetClearLine( std::fstream& stream )
 {
 	return ClearWhiteSpace( GetLine( stream ) );

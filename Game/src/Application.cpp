@@ -14,6 +14,7 @@ CApplication::CApplication() :
 	active( true ),
 	State(GAME_STATE::MAINMENU),
 	MouseMode(MOUSE_MODE::MENU),
+	ScriptParser(EventManager),
 	GUI( nullptr )
 {
 	memset( Keys, 0, sizeof(bool) * 256 );

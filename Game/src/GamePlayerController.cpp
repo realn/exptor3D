@@ -89,6 +89,7 @@ void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
 		Move[MOVE_STRAFE_RIGHT] = down;
 		break;
 
+	case VK_LCONTROL:
 	case VK_LBUTTON:
 		FireWeapon = down;
 		break;

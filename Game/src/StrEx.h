@@ -27,6 +27,7 @@ extern const bool		StrToBool(const std::string& str);
 extern const bool	IsWhiteSpace(const char Character);
 extern const std::string GetLine( std::fstream& stream );
 extern const std::string ClearWhiteSpace( const std::string& str );
+extern const std::string ClearWhiteSpaceFront( const std::string& str );
 extern const std::string GetClearLine( std::fstream& stream );
 extern const bool	ContainsString( const std::string& where, const std::string& what );
 extern void SplitString( const std::string& str, const std::string& split, std::vector<std::string>& list );
