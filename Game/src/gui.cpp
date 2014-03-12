@@ -223,65 +223,74 @@ void CGUIMain::Render()
 		break;
 
 	case GUI_MODE::SCREEN:
-		// zaczynamy pisaæ
-		TextRender.StartPrint(800.0f, 600.0f);
-
-		// Informacje po górnej lewej stronie ekranu
-		TextRender.SetColor( 1.0f, 1.0f, 1.0f );
-		TextRender.Print( 5.0f, 5.0f, "FPS: " + IntToStr( GetFrameRate() ) + ", TD: " + IntToStr( GetMiliSecPas() ) );
-		TextRender.Print( 5.0f, 25.0f, "CZAS: " + IntToStr( Hour ) + ":" + IntToStr( Minute ) + ":" + IntToStr( Second ) );
-		TextRender.Print( 400.0f - (float)(LevName.length()*14 / 2), 5.0f, LevName );
-
-		TextRender.SetColor( 0.8f, 1.0f, 0.2f );
-		TextRender.Print( 600.0f, 5.0f, "PUNKTY: " + IntToStr( PInfo.FRAGS ), 1.3f, 1.3f );
-
-		TextRender.SetColor( 1.0f, 0.3f, 0.3f );
-		TextRender.Print( 5.0f, 570.0f, "Z: " + IntToStr( (int)PInfo.HEALTH ), 1.5f, 1.5f );
-
-		TextRender.SetColor( 0.0f, 1.0f, 1.0f );
-		TextRender.Print( 150.0f, 570.0f, "P: " + IntToStr( (int)PInfo.ARMOR ), 1.5f, 1.5f );
-
-		TextRender.SetColor( 0.2f, 1.0f, 0.2f );
-		TextRender.Print( 530.0f, 540.0f, "BRON: " + PInfo.WeapName, 1.3f, 1.3f );
-		if( PInfo.AMMO != -1 )
-			TextRender.Print( 500.0f, 570.0f, "AMUNICJA: " + IntToStr( PInfo.AMMO ), 1.3f, 1.3f );
-		else
-			TextRender.Print( 500.0f, 570.0f, "AMUNICJA: INF", 1.3f, 1.3f );
-
-		if( PInfo.CLIPS != -1 )
-			TextRender.Print( 710.0f, 570.0f, "/" + IntToStr( PInfo.CLIPS ), 1.3f, 1.3f );
-
-		TextRender.EndPrint();
-
-		CRender::SetOrtho( -2.0f, 2.0f, -2.0f, 2.0f );
-		CH[0].Activate();
 		{
-			glBlendFunc( GL_ONE, GL_ONE );
+			// zaczynamy pisaæ
+			TextRender.StartPrint(800.0f, 600.0f);
+
+			// Informacje po górnej lewej stronie ekranu
+			TextRender.SetColor( 1.0f, 1.0f, 1.0f );
+			TextRender.Print( 5.0f, 5.0f, "FPS: " + IntToStr( GetFrameRate() ) + ", TD: " + IntToStr( GetMiliSecPas() ) );
+			TextRender.Print( 5.0f, 25.0f, "CZAS: " + IntToStr( Hour ) + ":" + IntToStr( Minute ) + ":" + IntToStr( Second ) );
+			TextRender.Print( 400.0f - (float)(LevName.length()*14 / 2), 5.0f, LevName );
+
+			TextRender.SetColor( 0.8f, 1.0f, 0.2f );
+			TextRender.Print( 600.0f, 5.0f, "PUNKTY: " + IntToStr( PInfo.FRAGS ), 1.3f, 1.3f );
+
+			TextRender.SetColor( 1.0f, 0.3f, 0.3f );
+			TextRender.Print( 5.0f, 570.0f, "Z: " + IntToStr( (int)PInfo.HEALTH ), 1.5f, 1.5f );
+
+			TextRender.SetColor( 0.0f, 1.0f, 1.0f );
+			TextRender.Print( 150.0f, 570.0f, "P: " + IntToStr( (int)PInfo.ARMOR ), 1.5f, 1.5f );
+
+			TextRender.SetColor( 0.2f, 1.0f, 0.2f );
+			TextRender.Print( 530.0f, 540.0f, "BRON: " + PInfo.WeapName, 1.3f, 1.3f );
+			if( PInfo.AMMO != -1 )
+				TextRender.Print( 500.0f, 570.0f, "AMUNICJA: " + IntToStr( PInfo.AMMO ), 1.3f, 1.3f );
+			else
+				TextRender.Print( 500.0f, 570.0f, "AMUNICJA: INF", 1.3f, 1.3f );
+
+			if( PInfo.CLIPS != -1 )
+				TextRender.Print( 710.0f, 570.0f, "/" + IntToStr( PInfo.CLIPS ), 1.3f, 1.3f );
+
+			TextRender.EndPrint();
+
+			float h = 32.0f;
+			float w = h * AspectRatio;
+
+			float x = w / 2.0f;
+			float y = h / 2.0f;
+
+			glPushAttrib( GL_ENABLE_BIT );
+			glPushMatrix();
+
+			CRender::SetOrtho( 0.0f, w, 0.0f, h );
+			glLoadIdentity();
+
+			CH->Activate();
+			
 			glEnable( GL_BLEND );
+			glEnable( GL_TEXTURE_2D );
+			glDisable( GL_DEPTH_TEST );
+			glDisable( GL_CULL_FACE );
+			glBlendFunc( GL_ONE, GL_ONE );
+
+			glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 			glBegin( GL_TRIANGLE_STRIP );
-			glTexCoord2f( 1.0f, 1.0f );
-			glVertex3f( -0.05f, 0.06f, 0.0f );
-			glTexCoord2f( 1.0f, 0.0f );
-			glVertex3f( -0.05f, -0.06f, 0.0f );
-			glTexCoord2f( 0.0f, 1.0f );
-			glVertex3f( 0.05f, 0.06f, 0.0f );
-			glTexCoord2f( 0.0f, 0.0f );
-			glVertex3f( 0.05f, -0.06f, 0.0f );
+				glTexCoord2f( 1.0f, 0.0f );
+				glVertex3f( x + 1.0f, y - 1.0f, 0.0f );
+
+				glTexCoord2f( 0.0f, 0.0f );
+				glVertex3f( x - 1.0f, y - 1.0f, 0.0f );
+
+				glTexCoord2f( 1.0f, 1.0f );
+				glVertex3f( x + 1.0f, y + 1.0f, 0.0f );
+
+				glTexCoord2f( 0.0f, 1.0f );
+				glVertex3f( x - 1.0f, y + 1.0f, 0.0f );
 			glEnd();
-			if( FScrColor[3] > 0.0f )
-			{
-				glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-				glDisable( GL_TEXTURE_2D );
-				glColor4fv( FScrColor );
-				glBegin( GL_TRIANGLE_STRIP );
-					glVertex3f( -1.0f, 1.0f, 0.0f );
-					glVertex3f( -1.0f, -1.0f, 0.0f );
-					glVertex3f( 1.0f, 1.0f, 0.0f );
-					glVertex3f( 1.0f, -1.0f, 0.0f );
-				glEnd();
-				glEnable( GL_TEXTURE_2D );
-			}
-			glDisable( GL_BLEND );
+
+			glPopMatrix();
+			glPopAttrib();
 		}
 		break;
 

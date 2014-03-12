@@ -48,7 +48,7 @@ void CMenuItem::Render( CTextRenderer &TText )
 		Size = TText.GetTextSize( Title );
 
 	TText.SetColor( Color, Color, Color );
-	TText.Print( Pos.X + Scroll.X * ScrollStep.X, Pos.Y + Scroll.Y * ScrollStep.Y, this->Title, 1.5f, 1.5f );
+	TText.Print( Pos.X + Scroll.X * ScrollStep.X, Pos.Y + Scroll.Y * ScrollStep.Y, this->Title, 1.0f, 1.0f );
 }
 
 void	CMenuItem::SetTitle( const std::string& title )

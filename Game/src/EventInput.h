@@ -2,7 +2,7 @@
 
 enum class EVENT_INPUT_TYPE : unsigned
 {
-	MOUSEMOVEABS,
+	MOUSEMOVEABS = 0x10,
 	MOUSEMOVEDIF,
 
 	KEYDOWN,
