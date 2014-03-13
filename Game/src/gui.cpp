@@ -47,12 +47,7 @@ CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const 
 	CH = texManager.Get( "cel.tga" );
 
 	Menu.Load( "Data/menu.mnu" );
-
-	CGUIElement* pElement = nullptr;
-	Screen.AddTextElement( "ARMOUR: 100", ELEMENT_HALIGN::LEFT, ELEMENT_VALIGN::BOTTOM, Vector2f( 5.0f, 5.0f ) );
-	pElement = Screen.AddTextElement( "HEALTH: 100", ELEMENT_HALIGN::LEFT, ELEMENT_VALIGN::BOTTOM, Vector2f( 5.0f, 28.0f ) );
-
-	Screen.AddValueSync( pElement, "PlayerHealth", "HEALTH: " );
+	Screen.Load( "Data/guiscreen.scr" );
 
 	Frame = 0;
 	Second = 0;

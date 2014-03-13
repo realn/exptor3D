@@ -97,10 +97,52 @@ const bool	CGUIScreen::Load( const std::string& filename )
 		std::vector<std::string> params;
 		SplitString( paramline, ",", params );
 
-		if( cmd == "TEXT" && params.size() >= 5 )
+		if( cmd == "TEXT" && params.size() == 5 )
 		{
-			pElement = AddTextElement( params[0], GetElementAlignV( params[1] ), GetElementAlignH( params[2] ), Vector2f( StrToFloat( params[3] ), StrToFloat( params[4] ) ) );
-
+			pElement = AddTextElement( params[0], GetElementAlignH( params[1] ), GetElementAlignV( params[2] ), Vector2f( StrToFloat( params[3] ), StrToFloat( params[4] ) ) );
+		}
+		if( cmd == "SCALE" && params.size() == 2 )
+		{
+			if( pElement != nullptr )
+				pElement->SetScale( Vector2f( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
+		}
+		if( cmd == "COLOR" && params.size() == 4 )
+		{
+			if( pElement != nullptr )
+				pElement->SetColor( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), StrToFloat( params[3] ) );
+		}
+		if( cmd == "SYNCVALUE" && params.size() >= 1 )
+		{
+			if( pElement != nullptr )
+				AddValueSync( pElement, ClearWhiteSpace( params[0] ), params[1], params[2] );
 		}
 	}
+
+	return true;
+}
+
+const ELEMENT_HALIGN			GetElementAlignH( const std::string& align )
+{
+	auto al = ClearWhiteSpace( align );
+	if( al == "LEFT" )
+		return ELEMENT_HALIGN::LEFT;
+	if( al == "CENTER" )
+		return ELEMENT_HALIGN::CENTER;
+	if( al == "RIGHT" )
+		return ELEMENT_HALIGN::RIGHT;
+
+	return ELEMENT_HALIGN::CENTER;
+}
+
+const ELEMENT_VALIGN			GetElementAlignV( const std::string& align )
+{
+	auto al = ClearWhiteSpace( align );
+	if( al == "TOP" )
+		return ELEMENT_VALIGN::TOP;
+	if( al == "CENTER" )
+		return ELEMENT_VALIGN::CENTER;
+	if( al == "BOTTOM" )
+		return ELEMENT_VALIGN::BOTTOM;
+
+	return ELEMENT_VALIGN::CENTER;
 }

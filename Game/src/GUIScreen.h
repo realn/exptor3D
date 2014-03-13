@@ -47,6 +47,9 @@ public:
 	const Vector2f	GetMargin() const;
 	virtual const Vector2f	GetSize() const = 0;
 
+	virtual void	SetScale( const Vector2f& scale ) = 0;
+	virtual void	SetColor( const float R, const float G, const float B, const float Alpha = 1.0f ) = 0;
+
 protected:
 	const Vector2f	CreatePos( const Vector2f& size, const Vector2f& screenSize ) const;
 };
@@ -70,8 +73,8 @@ public:
 	const Vector2f	GetSize() const override;
 
 	void	SetText( const std::string& text );
-	void	SetScale( const Vector2f& scale );
-	void	SetColor( const float R, const float G, const float B, const float Alpha = 1.0f );
+	void	SetScale( const Vector2f& scale ) override;
+	void	SetColor( const float R, const float G, const float B, const float Alpha = 1.0f ) override;
 
 	const std::string	GetText() const;
 };
@@ -119,6 +122,5 @@ public:
 	const bool	Load( const std::string& filename );
 };
 
-extern const SCREEN_ELEMENT_TYPE	GetElementType( const std::string& type );
-extern const ELEMENT_HALIGN			GetElementAlignV( const std::string& align );
-extern const ELEMENT_VALIGN			GetElementAlignH( const std::string& align );
+extern const ELEMENT_HALIGN			GetElementAlignH( const std::string& align );
+extern const ELEMENT_VALIGN			GetElementAlignV( const std::string& align );
