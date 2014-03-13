@@ -449,3 +449,8 @@ void	CApplication::LoadLevel( const std::string& filename )
 		//GUI->SendConMsg( "Nie mozna znalesc pliku", false );
 	}
 }
+
+void	CApplication::Print( const std::string& text )
+{
+	GUI->PrintConsole( text );
+}

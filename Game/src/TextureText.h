@@ -15,10 +15,11 @@ public:
 	CTextRenderer( CTexManager& texManager );
 	~CTextRenderer();
 
-	void SetColor( float R, float G, float B, float Alpha = 1.0f );
+	void SetColor( const float R, const float G, const float B, const float Alpha = 1.0f );
 	void StartPrint( const float width, const float height );
 	void EndPrint();
-	void Print( float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f );
+	void Print( const float x, const float y, const std::string& text, const float ScaleX = 1.0f, const float ScaleY = 1.0f );
+	void Print( const Vector2f& pos, const std::string& text, const Vector2f& scale = Vector2f( 1.0f, 1.0f ) );
 
 	const Vector2f	GetTextSize( const std::string& text ) const;
 };

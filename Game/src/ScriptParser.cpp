@@ -64,10 +64,10 @@ const std::string	CScriptParser::GetVarValue( const std::string& name ) const
 	return pVar->Value;
 }
 
-void	CScriptParser::Execute( const std::string& text )
+void	CScriptParser::Execute( const std::string& text, const bool printResult )
 {
-	ExecuteFunc( text );
-	ExecuteVar( text );
+	ExecuteFunc( text, printResult );
+	ExecuteVar( text, printResult );
 }
 
 void	CScriptParser::SearchFuncNames( const std::string& what, std::vector<std::string>& nameList ) const
@@ -80,8 +80,19 @@ void	CScriptParser::SearchFuncNames( const std::string& what, std::vector<std::s
 	}
 }
 
-void	CScriptParser::ExecuteVar( const std::string& text )
+void	CScriptParser::ExecuteVar( const std::string& text, const bool printResult )
 {
+	if( ClearWhiteSpaceFront( text ).find( "var" ) == 0 )
+	{
+		auto name = ClearWhiteSpace( text ).substr( 3 );
+		auto pVar = FindVar( name );
+		if( pVar == nullptr )
+		{
+			AddVar( name );
+			if( printResult )
+				ExecuteFunc( "Print(Defined var " + name + ")", printResult );
+		}
+	}
 	auto pos = text.find( "=" );
 	if( pos != std::string::npos )
 	{
@@ -91,18 +102,20 @@ void	CScriptParser::ExecuteVar( const std::string& text )
 		{
 			auto value = ClearWhiteSpaceFront( text.substr( pos + 1 ) );
 			SetVar( name, value );
+			if( printResult )
+				ExecuteFunc( "Print(Var " + name + " was set to " + value + ")", printResult );
 		}
 	}
 	else
 	{
 		auto name = ClearWhiteSpace( text );
 		auto pVar = FindVar( name );
-		if( pVar != nullptr )
-			ExecuteFunc( "Print(" + pVar->Name + " = " + pVar->Value + ")" );
+		if( pVar != nullptr && printResult )
+			ExecuteFunc( "Print(Var " + pVar->Name + " has value " + pVar->Value + ")", printResult );
 	}
 }
 
-void	CScriptParser::ExecuteFunc( const std::string& text )
+void	CScriptParser::ExecuteFunc( const std::string& text, const bool printResult )
 {
 	auto pos = text.find( "(" );
 	if( pos == std::string::npos )

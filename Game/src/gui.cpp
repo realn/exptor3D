@@ -417,6 +417,11 @@ void CGUIMain::Print( float x, float y, std::string text, float ScaleX, float Sc
 	TextRender.EndPrint();
 }
 
+void	CGUIMain::PrintConsole( const std::string& text )
+{
+	Console.Print( text );
+}
+
 // Tutaj aktywujemy "Full Screen Color", czyli np. Ca³y czerwony ekran od dostania kulk¹, zielony po podniesieniu apteczyki, itp.
 // Naraz mo¿e byæ tylko jeden kolor ekranu
 void CGUIMain::ActiveFScrColor( float R, float G, float B, float Alpha )

@@ -194,6 +194,46 @@ void SplitString( const std::string& str, const std::string& split, std::vector<
 		list.push_back( str.substr( pos ) );
 }
 
+const std::string	JoinString( const std::vector<std::string>& list, const std::string& glue )
+{
+	if( list.empty() )
+		return "";
+
+	unsigned len = 0;
+	for( unsigned i = 0; i < list.size(); i++ )
+		len += list[i].length();
+	len += glue.length() * (list.size() - 1);
+
+	char* result = new char[len + 1];
+	memset( result, 0, sizeof(char) * ( len + 1 ) );
+
+	unsigned pos = 0;
+	for( unsigned i = 0; i < list.size() - 1; i++ )
+	{
+		auto& text = list[i];
+		if( !text.empty() )
+		{
+			memcpy( &result[pos], text.c_str(), sizeof(char) * text.length() );
+			pos += text.length();
+		}
+		if( glue.empty() )
+			continue;
+
+		memcpy( &result[pos], glue.c_str(), sizeof(char) * glue.length() );
+		pos += glue.length();
+	}
+	if( !list.back().empty() )
+	{
+		unsigned len = sizeof(char) * list.back().length();
+		memcpy( &result[pos], list.back().c_str(), len );
+	}
+
+	std::string ret = result;
+	delete[] result;
+
+	return ret;
+}
+
 const std::string	CorrectDirSlashes( const std::string& str )
 {
 	std::string result( str );

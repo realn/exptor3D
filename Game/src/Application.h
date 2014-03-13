@@ -53,4 +53,5 @@ private:
 
 public:
 	void	LoadLevel( const std::string& filename );
+	void	Print( const std::string& text );
 };

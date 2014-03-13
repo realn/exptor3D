@@ -43,11 +43,21 @@ void	CGUIConsole::Render()
 	float height = (float)ScreenHeight;
 	float width = height * AspectRatio;
 
-	float posY = height / 2.0f;
+	float halfY = height / 2.0f;
 
 	TextRender.StartPrint( width, height );
 	TextRender.SetColor( 1.0f, 1.0f, 1.0f );
-	TextRender.Print( 0.0f, Scroll * posY, CurrentText);
+
+	Vector2f pos( 0.0f, -halfY + Scroll * height - TextRender.GetTextSize( CurrentText ).Y );
+	TextRender.Print( pos, CurrentText );
+	pos.Y -= TextRender.GetTextSize( CurrentText ).Y;
+
+	for( auto it = TextLog.rbegin(); it != TextLog.rend() && pos.Y > -halfY; it++ )
+	{
+		TextRender.Print( pos, *it );
+		pos.Y -= TextRender.GetTextSize( *it ).Y;
+	}
+
 	TextRender.EndPrint();
 }
 
@@ -105,6 +115,14 @@ void	CGUIConsole::ParseKey( const unsigned key, const bool down )
 				CurrentText = CurrentText.substr( 0, CurrentText.length() - 1 );
 			break;
 
+		case VK_RETURN:
+			if( !CurrentText.empty() )
+			{
+				ScriptParser.Execute( CurrentText, true );
+				CurrentText.clear();
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -113,7 +131,7 @@ void	CGUIConsole::ParseKey( const unsigned key, const bool down )
 
 void	CGUIConsole::ParseChar( const char Characted )
 {
-	if( Characted == VK_BACK )
+	if( Characted < 32 )
 		return;
 
 	CurrentText += Characted;
@@ -121,5 +139,5 @@ void	CGUIConsole::ParseChar( const char Characted )
 
 void	CGUIConsole::Print( const std::string& msg )
 {
-
+	TextLog.push_back( msg );
 }

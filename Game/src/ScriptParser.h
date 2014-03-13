@@ -47,13 +47,13 @@ public:
 	const std::string	GetVarValue( const std::string& name ) const;
 	const bool			GetVarValue( const std::string& name, std::string& outValue ) const;
 
-	void	Execute( const std::string& text );
+	void	Execute( const std::string& text, const bool printResult = false );
 
 	void	SearchFuncNames( const std::string& what, std::vector<std::string>& nameList ) const;
 
 private:
-	void	ExecuteVar( const std::string& text );
-	void	ExecuteFunc( const std::string& text );
+	void	ExecuteVar( const std::string& text, const bool printResult );
+	void	ExecuteFunc( const std::string& text, const bool printResult );
 
 	CScriptVar*		FindVar( const std::string& name ) const;
 	CScriptFunc*	FindFunc( const std::string& name ) const;

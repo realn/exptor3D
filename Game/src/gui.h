@@ -126,6 +126,7 @@ public:
 	void	SendMsg( std::string msg, unsigned int Time = 2000, float X = -1.0f, float Y = -1.0f, float SclX = 1.0f, float SclY = 1.0f, float R = 1.0f, float G = 1.0f, float B = 1.0f );
 	void	SendMsg( guiScrMsg msg );
 	void	Print( float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f );
+	void	PrintConsole( const std::string& text );
 
 	void	ProcessEvent( const CEvent& event ) override;
 

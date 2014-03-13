@@ -65,7 +65,7 @@ void CTextRenderer::StartPrint( const float width, const float height )
 	glListBase( base - 32 );
 }
 
-void CTextRenderer::Print( float x, float y, std::string text, float ScaleX, float ScaleY )
+void CTextRenderer::Print( const float x, const float y, const std::string& text, const float ScaleX, const float ScaleY )
 {
 	char stext[255];
 	strcpy_s( stext, 255 * sizeof(char), text.c_str() );
@@ -77,6 +77,11 @@ void CTextRenderer::Print( float x, float y, std::string text, float ScaleX, flo
 
 	glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
 	glPopMatrix();
+}
+
+void	CTextRenderer::Print( const Vector2f& pos, const std::string& text, const Vector2f& scale )
+{
+	Print( pos.X, pos.Y, text, scale.X, scale.Y );
 }
 
 void CTextRenderer::EndPrint()
