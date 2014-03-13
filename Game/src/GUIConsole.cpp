@@ -20,7 +20,7 @@ void	CGUIConsole::Render()
 	glPushAttrib( GL_ENABLE_BIT );
 	glPushMatrix();
 
-	CRender::SetOrtho( 0.0f, 1.0f, -1.0f, 1.0f );
+	CRender::SetOrtho( 0.0f, 1.0f, 1.0f, 0.0f );
 	glLoadIdentity();
 
 	glEnable( GL_BLEND );
@@ -31,10 +31,10 @@ void	CGUIConsole::Render()
 	glColor4f( 0.0f, 0.0f, 0.0f, 0.8f );
 
 	glBegin( GL_TRIANGLE_STRIP );
-	glVertex2f( 0.0f, 1.0f - Scroll );
-	glVertex2f( 1.0f, 1.0f - Scroll );
-	glVertex2f( 0.0f, 2.0f - Scroll );
-	glVertex2f( 1.0f, 2.0f - Scroll );
+	glVertex2f( 0.0f, -1.0f + Scroll );
+	glVertex2f( 1.0f, -1.0f + Scroll );
+	glVertex2f( 0.0f, -0.5f + Scroll );
+	glVertex2f( 1.0f, -0.5f + Scroll );
 	glEnd();
 
 	glPopMatrix();

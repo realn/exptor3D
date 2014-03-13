@@ -101,6 +101,10 @@
     <ClCompile Include="src\GUIMenu.cpp" />
     <ClCompile Include="src\GUIMenuItem.cpp" />
     <ClCompile Include="src\GUIMenuMain.cpp" />
+    <ClCompile Include="src\GUIScreen.cpp" />
+    <ClCompile Include="src\GUIScreenElement.cpp" />
+    <ClCompile Include="src\GUIScreenTextElement.cpp" />
+    <ClCompile Include="src\GUIScreenValueSync.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\inifile.cpp" />

@@ -9,8 +9,7 @@ Opis:	Zawiera definicje klas i funkcji u³atwiaj¹ce
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _3DMATH_H_
-#define _3DMATH_H_
+#pragma once
 
 #include <math.h>
 #include "StrEx.h"
@@ -249,5 +248,5 @@ extern const float	TriangleSide( const float A, const float B);
 extern Vector3f		ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point );
 extern float		GetAngle( const Vector3f &V1, const Vector3f &V2 );
 extern const float	SwapAngle( const float &Angle );
-
-#endif
+extern const float	MaxValue( const float A, const float B );
+extern const float	MinValue( const float A, const float B );

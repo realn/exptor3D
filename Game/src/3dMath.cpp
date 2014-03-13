@@ -390,3 +390,13 @@ const float SwapAngle( const float &Angle )
 
 	return angle;
 }
+
+const float	MaxValue( const float A, const float B )
+{
+	return A > B ? A : B;
+}
+
+const float	MinValue( const float A, const float B )
+{
+	return A < B ? A : B;
+}

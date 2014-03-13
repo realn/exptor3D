@@ -11,6 +11,7 @@ Opis:	Patrz -> gio.h
 #include "gui.h"
 #include "StrEx.h"
 #include "EventInput.h"
+#include "EventScript.h"
 
 const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",
 								"RefLevel", "WireFrame", "Note", "SaveRndInfo",
@@ -34,6 +35,7 @@ CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const 
 	ScriptParser( scriptParser ),
 	Menu( TextRender, aspectRatio ),
 	Console( scriptParser, TextRender, height, aspectRatio ),
+	Screen( TextRender ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),
 	FrameTime( 0.0f ),
@@ -45,6 +47,12 @@ CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const 
 	CH = texManager.Get( "cel.tga" );
 
 	Menu.Load( "Data/menu.mnu" );
+
+	CGUIElement* pElement = nullptr;
+	Screen.AddTextElement( "ARMOUR: 100", ELEMENT_HALIGN::LEFT, ELEMENT_VALIGN::BOTTOM, Vector2f( 5.0f, 5.0f ) );
+	pElement = Screen.AddTextElement( "HEALTH: 100", ELEMENT_HALIGN::LEFT, ELEMENT_VALIGN::BOTTOM, Vector2f( 5.0f, 28.0f ) );
+
+	Screen.AddValueSync( pElement, "PlayerHealth", "HEALTH: " );
 
 	Frame = 0;
 	Second = 0;
@@ -85,6 +93,7 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 	CEventKey	keyEvent;
 	CEventMouse	mouseEvent;
 	CEventChar	charEvent;
+	CEventVar	varEvent;
 
 	switch (event.Type)
 	{
@@ -107,6 +116,16 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 		memcpy( &charEvent, &event, sizeof(CEventChar) );
 		if( Console.IsVisible() && !Console.IsAnimating() )
 			Console.ParseChar( charEvent.Character );
+		break;
+
+	case EVENT_SCRIPT_TYPE::VAR_SET:
+		memcpy( &varEvent, &event, sizeof(CEventVar) );
+		if( Screen.IsVarMonitored( varEvent.Name ) )
+		{
+			std::string value;
+			if( ScriptParser.GetVarValue( varEvent.Name, value ) )
+				Screen.OnVarChanged( varEvent.Name, value );
+		}
 		break;
 
 	default:
@@ -188,6 +207,7 @@ void CGUIMain::Update(const float fTD)
 		break;
 
 	case GUI_MODE::SCREEN:
+		Screen.Update( fTD );
 		if( FScrColor[3] > 0.0f )
 			FScrColor[3] -= 0.1f * fTD;
 		else FScrColor[3] = 0.0f;
@@ -247,35 +267,40 @@ void CGUIMain::Render()
 
 	case GUI_MODE::SCREEN:
 		{
-			// zaczynamy pisaæ
-			TextRender.StartPrint(800.0f, 600.0f);
+			//// zaczynamy pisaæ
+			//TextRender.StartPrint(800.0f, 600.0f);
 
-			// Informacje po górnej lewej stronie ekranu
-			TextRender.SetColor( 1.0f, 1.0f, 1.0f );
-			TextRender.Print( 5.0f, 5.0f, "FPS: " + IntToStr( GetFrameRate() ) + ", TD: " + IntToStr( GetMiliSecPas() ) );
-			TextRender.Print( 5.0f, 25.0f, "CZAS: " + IntToStr( Hour ) + ":" + IntToStr( Minute ) + ":" + IntToStr( Second ) );
-			TextRender.Print( 400.0f - (float)(LevName.length()*14 / 2), 5.0f, LevName );
+			//// Informacje po górnej lewej stronie ekranu
+			//TextRender.SetColor( 1.0f, 1.0f, 1.0f );
+			//TextRender.Print( 5.0f, 5.0f, "FPS: " + IntToStr( GetFrameRate() ) + ", TD: " + IntToStr( GetMiliSecPas() ) );
+			//TextRender.Print( 5.0f, 25.0f, "CZAS: " + IntToStr( Hour ) + ":" + IntToStr( Minute ) + ":" + IntToStr( Second ) );
+			//TextRender.Print( 400.0f - (float)(LevName.length()*14 / 2), 5.0f, LevName );
 
-			TextRender.SetColor( 0.8f, 1.0f, 0.2f );
-			TextRender.Print( 600.0f, 5.0f, "PUNKTY: " + IntToStr( PInfo.FRAGS ), 1.3f, 1.3f );
+			//TextRender.SetColor( 0.8f, 1.0f, 0.2f );
+			//TextRender.Print( 600.0f, 5.0f, "PUNKTY: " + IntToStr( PInfo.FRAGS ), 1.3f, 1.3f );
 
-			TextRender.SetColor( 1.0f, 0.3f, 0.3f );
-			TextRender.Print( 5.0f, 570.0f, "Z: " + IntToStr( (int)PInfo.HEALTH ), 1.5f, 1.5f );
+			//TextRender.SetColor( 1.0f, 0.3f, 0.3f );
+			//TextRender.Print( 5.0f, 570.0f, "Z: " + IntToStr( (int)PInfo.HEALTH ), 1.5f, 1.5f );
 
-			TextRender.SetColor( 0.0f, 1.0f, 1.0f );
-			TextRender.Print( 150.0f, 570.0f, "P: " + IntToStr( (int)PInfo.ARMOR ), 1.5f, 1.5f );
+			//TextRender.SetColor( 0.0f, 1.0f, 1.0f );
+			//TextRender.Print( 150.0f, 570.0f, "P: " + IntToStr( (int)PInfo.ARMOR ), 1.5f, 1.5f );
 
-			TextRender.SetColor( 0.2f, 1.0f, 0.2f );
-			TextRender.Print( 530.0f, 540.0f, "BRON: " + PInfo.WeapName, 1.3f, 1.3f );
-			if( PInfo.AMMO != -1 )
-				TextRender.Print( 500.0f, 570.0f, "AMUNICJA: " + IntToStr( PInfo.AMMO ), 1.3f, 1.3f );
-			else
-				TextRender.Print( 500.0f, 570.0f, "AMUNICJA: INF", 1.3f, 1.3f );
+			//TextRender.SetColor( 0.2f, 1.0f, 0.2f );
+			//TextRender.Print( 530.0f, 540.0f, "BRON: " + PInfo.WeapName, 1.3f, 1.3f );
+			//if( PInfo.AMMO != -1 )
+			//	TextRender.Print( 500.0f, 570.0f, "AMUNICJA: " + IntToStr( PInfo.AMMO ), 1.3f, 1.3f );
+			//else
+			//	TextRender.Print( 500.0f, 570.0f, "AMUNICJA: INF", 1.3f, 1.3f );
 
-			if( PInfo.CLIPS != -1 )
-				TextRender.Print( 710.0f, 570.0f, "/" + IntToStr( PInfo.CLIPS ), 1.3f, 1.3f );
+			//if( PInfo.CLIPS != -1 )
+			//	TextRender.Print( 710.0f, 570.0f, "/" + IntToStr( PInfo.CLIPS ), 1.3f, 1.3f );
 
-			TextRender.EndPrint();
+			//TextRender.EndPrint();
+
+			float height = (float)ScreenHeight;
+			float width = height * AspectRatio;
+
+			Screen.Render( Vector2f( width, height ) );
 
 			float h = 32.0f;
 			float w = h * AspectRatio;
