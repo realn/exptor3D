@@ -50,7 +50,7 @@ void CWeaponRocketLuncher::Render()
 	glTranslatef( pos.X, pos.Y, -(pos.Z - Zcorr) );
 
 	glRotatef( 180.0f, 0.0f, 1.0f, 0.0f );
-	Model->CallObject( 0 );
+	Model->RenderObject( 0 );
 
 	// Przywracamy Macierz
 	glPopMatrix();

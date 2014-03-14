@@ -1,16 +1,15 @@
 /*///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 Plik:	Model.h
-Autor:	Real_Noname (real_noname@wp.pl)
+Autor:	Real_Noname (real_noname@coderulers.info)
 (C):	CODE RULERS (Real_Noname)
-WWW:	www.coderulers.prv.pl
+WWW:	www.coderulers.info
 Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 		modelami z plików GLM.
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
-#ifndef _GLM_H_
-#define _GLM_H_
+#pragma once
 
 #include "Texture.h"	// Naglówek z klasa CTexture
 #include <fstream>
@@ -50,17 +49,16 @@ private:
 	// Obiekt do rysowania kwadryk ( tymczasowy, ale jest tu, by by³ dostêpny w ca³ej klasie )
 	GLUquadric* obj;
 
-
 public:
 	CModel();
 	~CModel();
 
-	bool LoadModel( CTexManager& texManager, std::string filename );
+	bool LoadModel( CTexManager& texManager, const std::string& filename );
 	void Free();
-	std::string GetFile();
+	const std::string GetFile() const;
 	unsigned int GetObjCount();
 
-	void CallObject( unsigned int index );
+	void RenderObject( unsigned int index );
 	void RenderAnim( unsigned int index );
 	void UpdateAnim();
 	void PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip = false );
@@ -71,9 +69,17 @@ private:
 	bool GetParams( const std::string &str, int from, std::vector<std::string>& param, const std::string &Com );
 	int GetConst( const std::string &str, const std::string &Com );
 
-	bool ReadHeader( std::fstream& fileStream, unsigned& texCount );
-	bool ReadAnimHeader( std::fstream& fileStream );
+	const bool	ReadHeader( std::fstream& fileStream );
+	const bool	ReadAnimHeader( std::fstream& fileStream );
+	const bool	ReadTextures( std::fstream& fileStream, CTexManager& texManager );
+	const bool	ReadModel( std::fstream& fileStream, const unsigned modelIndex );
+
+	CModel( const CModel& ){
+		throw std::exception( "COPY ERROR" );
+	}
+	void operator=(const CModel&)
+	{
+		throw std::exception( "ASSIGN ERROR" );
+	}
+
 };
-
-
-#endif

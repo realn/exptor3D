@@ -17,6 +17,7 @@ public:
 	virtual const bool	RemoveEntity( ISceneEntity* pEntity );
 
 protected:
-	void	FlushDeleted();
+	void			FlushDeleted();
 	virtual void	OnDeleteEntity( ISceneEntity* pEntity );
+	void			ClearScene();
 };

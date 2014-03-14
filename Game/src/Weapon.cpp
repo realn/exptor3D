@@ -366,7 +366,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( 0.0f, -3.0f, 0.0f );
 //		glRotatef( Rot, 0.0f, 1.0f, 0.0f );
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //	else
 //	{
@@ -390,12 +390,12 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( Shake[0], Shake[1], ReloadTime * GUI.GetSpeed() );
 //
-//		Model->CallObject( 1 );		
+//		Model->RenderObject( 1 );		
 //
 //		glTranslatef( 0.0f, 0.0f, -2.0f );
 //		glRotatef( ShotTime, 0.0f, 1.0f, 0.0f );
 //
-//		Model->CallObject( 2 );	
+//		Model->RenderObject( 2 );	
 //	}
 //
 //	// Przywracamy Macierz
@@ -496,7 +496,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( 0.0f, -3.0f, 0.0f );
 //		glRotatef( Rot, 0.0f, 1.0f, 0.0f );
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //	else
 //	{
@@ -529,7 +529,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( Shake[0], Shake[1], 0.0f );
 //
-//		Model->CallObject( 0 );		
+//		Model->RenderObject( 0 );		
 //	}
 //
 //	// Przywracamy Macierz
@@ -645,7 +645,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( 0.0f, -3.0f, 0.0f );
 //		glRotatef( Rot, 0.0f, 1.0f, 0.0f );
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //	else
 //	{
@@ -672,7 +672,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( Shake[0], Shake[1], 0.0f );
 //
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //
 //	// Przywracamy Macierz
@@ -785,7 +785,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( 0.0f, -3.0f, 0.0f );
 //		glRotatef( Rot, 0.0f, 1.0f, 0.0f );
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //	else
 //	{
@@ -812,7 +812,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( Shake[0], Shake[1], 0.0f );
 //
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //
 //	// Przywracamy Macierz
@@ -936,7 +936,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( 0.0f, -3.0f, 0.0f );
 //		glRotatef( Rot, 0.0f, 1.0f, 0.0f );
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //	else
 //	{
@@ -960,9 +960,9 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( Shake[0], Shake[1], BackA );
 //
-//		Model->CallObject( 1 );
+//		Model->RenderObject( 1 );
 //		glRotatef( Rot * Rot2, 0.0f, 0.0f, 1.0f );
-//		Model->CallObject( 2 );
+//		Model->RenderObject( 2 );
 //	}
 //
 //	glPopMatrix();
@@ -1053,7 +1053,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( 0.0f, -3.0f, 0.0f );
 //		glRotatef( Rot, 0.0f, 1.0f, 0.0f );
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //	else if( !puted && Ammo != 0 )
 //	{
@@ -1077,7 +1077,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //
 //		glTranslatef( Shake[0], Shake[1], 0.0f );
 //
-//		Model->CallObject( 0 );
+//		Model->RenderObject( 0 );
 //	}
 //
 //	// Przywracamy Macierz

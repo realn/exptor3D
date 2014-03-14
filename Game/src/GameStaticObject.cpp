@@ -29,7 +29,7 @@
 //	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 //
 //	for( unsigned int i = 0; i < Model->GetObjCount(); i++ )
-//		Model->CallObject( i );
+//		Model->RenderObject( i );
 //
 //	glPopMatrix();
 //}

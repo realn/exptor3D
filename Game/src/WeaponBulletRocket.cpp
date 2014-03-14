@@ -37,7 +37,7 @@ void CBullRocket::Render()
 	float t[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightfv( GL_LIGHT0, GL_POSITION, t );
 #endif
-	Model->CallObject( 0 );
+	Model->RenderObject( 0 );
 
 	glPopMatrix();
 }

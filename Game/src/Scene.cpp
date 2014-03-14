@@ -45,10 +45,19 @@ void	CScene::FlushDeleted()
 	{
 		ISceneEntity* pEnt = toDelete[i];
 		pEnt->OnDelete();
-		delete pEnt;
 	}
 }
 
 void	CScene::OnDeleteEntity( ISceneEntity* pEntity )
 {
+}
+
+void	CScene::ClearScene()
+{
+	for( unsigned i = 0; i < SceneList.size(); i++ )
+	{
+		ISceneEntity* pEnt = SceneList[i];
+		this->OnDeleteEntity( pEnt );
+	}
+	SceneList.clear();
 }

@@ -185,6 +185,7 @@ private:
 	CTexture*		Tex[3];
 
 	CPlayer	Player;
+	std::vector<CItem*>	Items;
 	
 	float blockWidth;
 	float blockHeight;

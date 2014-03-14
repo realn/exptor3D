@@ -490,8 +490,11 @@ void CLevel::Free()
 	Tex[1] = nullptr;
 	Tex[2] = nullptr;
 
-	CollisionMng.Clear();
-	
+	ClearScene();
+
+	for( unsigned i = 0; i < Items.size(); i++ )
+		delete (Items[i]);
+	Items.clear();
 
 	loaded = false;
 }
@@ -724,6 +727,7 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 			{
 				item->Pos = GetBlockPos( x, y );
 				AddEntity( item );
+				Items.push_back( item );
 			}
 		}
 		else

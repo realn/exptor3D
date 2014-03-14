@@ -129,7 +129,7 @@
 //			glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 //		}
 //
-//		Model->CallObject( i );
+//		Model->RenderObject( i );
 //
 //		if( i == RotObj )
 //			glPopMatrix();
@@ -151,7 +151,7 @@
 //				glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 //			}
 //
-//			Model->CallObject( i );
+//			Model->RenderObject( i );
 //
 //			if( i == RotObj )
 //				glPopMatrix();

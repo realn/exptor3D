@@ -9,7 +9,7 @@ CModelManager::CModelManager( const std::string& strDataDir, CTexManager& texMan
 
 CModelManager::~CModelManager()
 {
-	//Clear();
+	Clear();
 }
 
 CTexManager& CModelManager::GetTexMng()
@@ -17,7 +17,7 @@ CTexManager& CModelManager::GetTexMng()
 	return TexManager;
 }
 
-CModel* CModelManager::Get( std::string filename )
+CModel* CModelManager::Get( const std::string& filename )
 {
 	if( filename.empty() )
 	{
@@ -35,7 +35,7 @@ CModel* CModelManager::Get( std::string filename )
 			return Model;
 	}
 
-	Model = new CModel;
+	Model = new CModel();
 	if( !Model->LoadModel( TexManager, path ) )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
@@ -74,7 +74,8 @@ void CModelManager::Clear()
 {
 	for(unsigned i = 0; i < List.size(); i++)
 	{
-		delete GetModel( i );
+		CModel* pModel = List[i];
+		delete pModel;
 	}
 	List.clear();
 }

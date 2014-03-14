@@ -114,6 +114,7 @@ const bool	CPlayer::ProcessItem( CItem* pItem )
 	default:
 		return true;
 	}
+	return true;
 }
 
 void CPlayer::SwichWeap( unsigned int index )
