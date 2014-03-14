@@ -18,13 +18,15 @@ KLASA CPlayer
 CPlayer::CPlayer( CModelManager& modelManager ) :
 	CActor( ACTOR_TYPE::ACTOR_PLAYER ),
 	ModelManager( modelManager ),
-	Hand( WEAPON_HAND::RIGHT )
+	Hand( WEAPON_HAND::RIGHT ),
+	Run( false )
 {
-
-	run = true;
 	Angle = 0.0f;
 	WalkStep = 5.0f;
 	RunStep = 10.0f;
+
+	Speed = WalkStep;
+
 	Radius = 4.0f;
 	Pos.Set( 5.0f, 0.0f, -5.0f );
 
@@ -64,11 +66,6 @@ void	CPlayer::OnDead()
 {
 }
 
-void CPlayer::ApplyNextPos()
-{
-	Pos = NextPos;
-}
-
 void CPlayer::Render()
 {
 	if( Weapon[CurrWeap] != nullptr && Weapon[CurrWeap]->GetHave() )
@@ -77,46 +74,15 @@ void CPlayer::Render()
 
 void CPlayer::Update( const float fTD )
 {
+	if( Run )
+		Speed = RunStep;
+	else
+		Speed = WalkStep;
+
 	CActor::Update( fTD );
 
 	if( Weapon[CurrWeap] != nullptr && Weapon[CurrWeap]->GetHave() )
 		Weapon[CurrWeap]->Update( fTD );
-}
-
-void CPlayer::ParseKeys( const bool* Keys )
-{
-	//if( Keys['W'] || Keys[VK_UP] )
-	//	DoAction( GAME_ACTION::MOVE_FORWARD );
-	//if( Keys['S'] || Keys[VK_DOWN] )
-	//	DoAction( GAME_ACTION::MOVE_BACK );
-	//if( Keys[VK_LEFT] )
-	//	ModAngle( -1.5f );
-	//if( Keys[VK_RIGHT] )
-	//	ModAngle( 1.5f );
-	//if( Keys['A'] )
-	//	DoAction( GAME_ACTION::MOVE_STRAFE_LEFT );
-	//if( Keys['D'] )
-	//	DoAction( GAME_ACTION::MOVE_STRAFE_RIGHT );
-	//if( Keys[VK_LBUTTON] || Keys[VK_CONTROL] )
-	//	DoAction( GAME_ACTION::DO_ATTACK );
-	if( Keys['0'] )
-		SwichWeap( 0 );
-	if( Keys['1'] )
-		SwichWeap( 1 );
-	if( Keys['3'] )
-		SwichWeap( 3 );
-	if( Keys['4'] )
-		SwichWeap( 4 );
-	if( Keys['5'] )
-		SwichWeap( 5 );
-	if( Keys['7'] )
-		SwichWeap( 7 );
-	if( Keys['9'] )
-		SwichWeap( 9 );
-
-	if( run )
-		Speed = RunStep;
-	else Speed = WalkStep;
 }
 
 const WEAPON_HAND CPlayer::GetHand() const
@@ -124,49 +90,32 @@ const WEAPON_HAND CPlayer::GetHand() const
 	return Hand;
 }
 
-void CPlayer::TestWeapon( CWeapon* Weap )
+void	CPlayer::SetMoveSpeed( const bool run )
 {
-	//if( DistanceSq( Pos, Weap->Pos ) <= POW(Radius + Weap->Radius) )
-	//{
-	//	if( !Weapon[(unsigned)Weap->GetType()]->GetInited() )
-	//		this->SwichWeap( (unsigned)Weap->GetType() );
-
-	//	Weapon[(unsigned)Weap->GetType()]->PickUp( Weap, this, *ModelManager );
-	//}
+	Run = run;
 }
 
-void CPlayer::TestBonus( CItem* Bonus )
+const bool	CPlayer::ProcessItem( CItem* pItem )
 {
-	if( DistanceSq( Bonus->Pos, this->NextPos ) < POW( Radius ) )
+	switch (pItem->GetType())
 	{
-		switch( Bonus->GetType() )
+	case ITEM_TYPE::WEAPON:
 		{
-		case ITEM_TYPE::AMMO :
-			if( Weapon[(unsigned)((CItemAmmo*)Bonus)->GetWeaponType()]->ModAmmo( ((CItemAmmo*)Bonus)->GetAmmoCount() ) )
+			CItemWeapon* pWeap = dynamic_cast<CItemWeapon*>(pItem);
+			if(pWeap != nullptr && Weapon[(unsigned)pWeap->GetWeaponType()] != nullptr)
 			{
-				//GUI.SendMsg( "Podniosles: " + IntToStr( ((CItemAmmo*)Bonus)->GetAmmoCount() ) + " Amunicji", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 0.5f, 0.5f, 0.5f );
-				Bonus->CanDelete = true;
+				Weapon[(unsigned)pWeap->GetWeaponType()]->PickUp( *this, pWeap->GetAmmoCount() );
+				pWeap->SetActive( false );
+				return false;
 			}
-			break;
-		case ITEM_TYPE::HEALTH :
-			if( Health != MaxHealth )
-			{
-				//GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemHealth*)Bonus)->GetHealth() ) + " Zdrowia", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
-				ModHealth( ((CItemHealth*)Bonus)->GetHealth() );
-				Bonus->CanDelete = true;
-			}
-			break;
-		case ITEM_TYPE::ARMOR :
-			if( Armor != MaxArmor )
-			{
-				//GUI.SendMsg( "Podniosles: " + FloatToStr( ((CItemArmor*)Bonus)->GetArmor() ) + " Pancerza", 4000, 10.0f, -1.0f, 1.5f, 1.5f, 1.0f, 0.3f, 0.3f );
-				ModArmor( ((CItemArmor*)Bonus)->GetArmor() );
-				Bonus->CanDelete = true;
-			}
-			break;
 		}
+		break;
+
+	default:
+		return true;
 	}
 }
+
 void CPlayer::SwichWeap( unsigned int index )
 {
 	CurrWeap = index;
@@ -204,32 +153,13 @@ void CPlayer::Reset()
 	Weapon[(unsigned)WEAPON_TYPE::ROCKET_LUNCHER] = new CWeaponRocketLuncher( ModelManager );
 	//Weapon[(unsigned)WEAPON_TYPE::PHAZER] = new wePhazer();
 	//Weapon[(unsigned)WEAPON_TYPE::ATOM_BOMB] = new weATOM_BOMBb();
-	//GUI.PInfo.FRAGS = 0;
 }
 
 const bool	CPlayer::OnCollision( CObject* pObject )
 {
 	CItem* pItem = dynamic_cast<CItem*>(pObject);
 	if( pItem != nullptr )
-	{
-		switch (pItem->GetType())
-		{
-		case ITEM_TYPE::WEAPON:
-			{
-				CItemWeapon* pWeap = dynamic_cast<CItemWeapon*>(pItem);
-				if(pWeap != nullptr && Weapon[(unsigned)pWeap->GetWeaponType()] != nullptr)
-				{
-					Weapon[(unsigned)pWeap->GetWeaponType()]->PickUp( *this, pWeap->GetAmmoCount() );
-					pWeap->SetActive( false );
-					return false;
-				}
-			}
-			break;
-
-		default:
-			return true;
-		}
-	}
+		return ProcessItem( pItem );
 
 	return true;
 }

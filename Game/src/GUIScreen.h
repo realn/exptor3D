@@ -30,25 +30,29 @@ protected:
 	ELEMENT_HALIGN	AlignH;
 	ELEMENT_VALIGN	AlignV;
 	Vector2f	Margin;
+	Vector2f	Scale;
+	Vector4f	Color;
 
 protected:
-	CGUIElement( const SCREEN_ELEMENT_TYPE type, const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV, const Vector2f& margin );
+	CGUIElement( const SCREEN_ELEMENT_TYPE type );
 
 public:
 	virtual ~CGUIElement();
 
-	const SCREEN_ELEMENT_TYPE	GetType() const;
-	const ELEMENT_HALIGN	GetAlignH() const;
-	const ELEMENT_VALIGN	GetAlignV() const;
-
 	virtual void	Render( const Vector2f& screenSize ) = 0;
 	virtual void	Update( const float fTD ) = 0;
 
-	const Vector2f	GetMargin() const;
-	virtual const Vector2f	GetSize() const = 0;
+	void	SetAlign( const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV );
+	void	SetMargin( const Vector2f& margin );
+	void	SetScale( const Vector2f& scale );
+	void	SetColor( const Vector4f& color );
 
-	virtual void	SetScale( const Vector2f& scale ) = 0;
-	virtual void	SetColor( const float R, const float G, const float B, const float Alpha = 1.0f ) = 0;
+	const SCREEN_ELEMENT_TYPE	GetType() const;
+	const ELEMENT_HALIGN	GetAlignH() const;
+	const ELEMENT_VALIGN	GetAlignV() const;
+	const Vector2f	GetMargin() const;
+	const Vector2f	GetScale() const;
+	virtual const Vector2f	GetSize() const = 0;
 
 protected:
 	const Vector2f	CreatePos( const Vector2f& size, const Vector2f& screenSize ) const;
@@ -60,22 +64,17 @@ class CGUITextElement :
 protected:
 	CTextRenderer&	TextRender;
 	std::string		Text;
-	Vector2f		Scale;
-	float			Color[4];
 
 public:
-	CGUITextElement( const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV, const Vector2f& margin, CTextRenderer& textRender );
+	CGUITextElement( CTextRenderer& textRender );
 	virtual ~CGUITextElement();
 
 	virtual void	Render( const Vector2f& screenSize ) override;
 	virtual void	Update( const float fTD ) override;
 
-	const Vector2f	GetSize() const override;
-
 	void	SetText( const std::string& text );
-	void	SetScale( const Vector2f& scale ) override;
-	void	SetColor( const float R, const float G, const float B, const float Alpha = 1.0f ) override;
 
+	const Vector2f		GetSize() const override;
 	const std::string	GetText() const;
 };
 
@@ -112,7 +111,7 @@ public:
 
 	void	SetMargin( const Vector2f& margin );
 
-	CGUITextElement*	AddTextElement( const std::string& text, const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV, const Vector2f& margin );
+	CGUITextElement*	AddTextElement( const std::string& text = "" );
 
 	void	AddValueSync( CGUIElement* pElement, const std::string& valueName, const std::string& prefix = "", const std::string& sufix = "" ); 
 

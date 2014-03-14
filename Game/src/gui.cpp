@@ -47,17 +47,12 @@ CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const 
 	CH = texManager.Get( "cel.tga" );
 
 	Menu.Load( "Data/menu.mnu" );
-	Screen.Load( "Data/guiscreen.scr" );
+	Screen.Load( "Data/screen.gui" );
 
 	Frame = 0;
 	Second = 0;
 	Minute = 0;
 	Hour = 0;
-	PInfo.HEALTH = 100.0f;
-	PInfo.ARMOR = 100.0f;
-	PInfo.FRAGS = 0;
-	PInfo.AMMO = 0;
-	PInfo.CLIPS = 0;
 	ConsoleOn = false;
 	ConsoleScroll = 0.0f;
 	Quit = false;

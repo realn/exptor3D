@@ -17,8 +17,6 @@ CApplication::CApplication() :
 	ScriptParser(EventManager),
 	GUI( nullptr )
 {
-	memset( Keys, 0, sizeof(bool) * 256 );
-
 	RegScript();
 }
 
@@ -105,42 +103,29 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 	switch (uMsg)									// SprawdŸ komunikaty
 	{
 	case WM_ACTIVATE:							// komunikar Aktywnoœci
-		{
-			if (!HIWORD(wParam))					// SprawdŸ altywnoœæ
-			{
-				active=true;						// Program jest aktywny
-			}
-			else
-			{
-				active=false;						// Program ju¿ nie jest aktywny
-			}
-
-			return true;								// Spowrotem do pêtli
-		}
+		if (!HIWORD(wParam))					// SprawdŸ altywnoœæ
+			active=true;						// Program jest aktywny
+		else
+			active=false;						// Program ju¿ nie jest aktywny
+		return true;								// Spowrotem do pêtli
 
 	case WM_SYSCOMMAND:							// SprawdŸ komunikaty systemowe
+		switch (wParam)	
 		{
-			switch (wParam)	
-			{
-			case SC_SCREENSAVE:					// Wygaszaczpróbuje siê w³¹czyæ?
-			case SC_MONITORPOWER:				// Monitor próbuje w³¹czyæ oszczêdzanie pr¹du?
-				return true;							// Zapobiegaj
-			}
-			return false;									// wyjdŸ
+		case SC_SCREENSAVE:					// Wygaszaczpróbuje siê w³¹czyæ?
+		case SC_MONITORPOWER:				// Monitor próbuje w³¹czyæ oszczêdzanie pr¹du?
+			return true;							// Zapobiegaj
 		}
+		return false;									// wyjdŸ
 
 	case WM_CLOSE:								// Komunikat zamkniêcia
-		{
-			PostQuitMessage(0);						// Wysy³amy zamkniêcie
-			return true;								
-		}
+		PostQuitMessage(0);						// Wysy³amy zamkniêcie
+		return true;								
 
 	case WM_LBUTTONDOWN:
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, VK_LBUTTON );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-			
-			Keys[VK_LBUTTON] = true;
 			return true;
 		}
 
@@ -148,8 +133,6 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, VK_LBUTTON );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-
-			Keys[VK_LBUTTON] = false;
 			return true;
 		}
 
@@ -157,8 +140,6 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, VK_RBUTTON );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-
-			Keys[VK_RBUTTON] = true;
 			return true;
 		}
 
@@ -166,8 +147,6 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, VK_RBUTTON );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-
-			Keys[VK_RBUTTON] = false;
 			return true;
 		}
 
@@ -175,7 +154,6 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, (unsigned)wParam );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
-			Keys[wParam] = true;					// Zaznacz ¿e jest wciœniêty
 			return true;								
 		}
 
@@ -183,15 +161,12 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		{
 			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, (unsigned)wParam );
 			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
-			Keys[wParam] = false;					// Zaznacz ¿e jest wolny
 			return true;								
 		}
 
 	case WM_SIZE:								// Zmiana rozmiarów
-		{
-			GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
-			return true;								
-		}
+		GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
+		return true;								
 
 	case WM_MOUSEMOVE:
 		{
@@ -201,7 +176,7 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 				int y = GET_Y_LPARAM(lParam);
 
 				CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEABS, x, y );
-			
+
 				EventManager.AddEvent( *((CEvent*)&MouseEvent) );
 			}
 
@@ -313,9 +288,10 @@ void	CApplication::InitGraphics( CTexManager& texManager )
 
 void	CApplication::MainLoop()
 {
-	MSG		msg;									// Struktura komunikatów windowsa
-	bool done = false;
 	const float	TIME_STEP = 0.005f;
+
+	MSG		msg;									// Struktura komunikatów windowsa
+	bool	done = false;
 	float	frameTime = 0.0f;
 	CTimer	timer;
 
@@ -337,30 +313,24 @@ void	CApplication::MainLoop()
 			}
 		}
 
-		GUI->UpdateCounter( timer.GetDT() );
-		UpdateMouse();
 
 		// Rysujemy scene
 		if (active)								// Program jest aktywny?
 		{
-			if ( GUI->GetQuit() )				// Czy by³ wciœniêty ESC?
-			{
-				done = true;						// Je¿eli tak to wychodzimy z pêtli
-			}
-			else								// Je¿eli nie to rysujemy
-			{
-				Render();						// Rysujemy scene
+			GUI->UpdateCounter( timer.GetDT() );
+			UpdateMouse();
 
-				EventManager.ProcessEvents();
-				for( unsigned i = 0; i < 100 && frameTime > TIME_STEP; i++ )
-				{
-					Update(TIME_STEP);
-					frameTime -= TIME_STEP;
-				}
+			Render();						// Rysujemy scene
 
-				GLRender.SwapBuffers();				// Prze³anczamy bufory
+			EventManager.ProcessEvents();
+
+			for( unsigned i = 0; i < 100 && frameTime > TIME_STEP; i++ )
+			{
+				Update(TIME_STEP);
+				frameTime -= TIME_STEP;
 			}
 
+			GLRender.SwapBuffers();				// Prze³anczamy bufory
 		}
 		else
 			WaitMessage();
@@ -388,21 +358,16 @@ void	CApplication::Update( const float fTD )
 	ControllerList.Update();
 
 	pGLevel->Update( fTD );
-	pGLevel->GetPlayer().ParseKeys( Keys );
-
-	GUI->PInfo.HEALTH = pGLevel->GetPlayer().GetHealth();
-	GUI->PInfo.ARMOR = pGLevel->GetPlayer().GetArmor();
-	GUI->PInfo.angle = pGLevel->GetPlayer().GetAngle();
 }
 
 void	CApplication::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	//Czyszczenie buforów
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if( State == GAME_STATE::LEVEL && !GUI->IsMenuAnimating() )
 	{
 		GLRender.SetPerspective( 60.0f, 4, 3, 1.0f, 100.0f );
-		glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
+		glLoadIdentity();
 
 		glRotatef( pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f );
 		glTranslatef( -pGLevel->GetPlayer().Pos.X, 0, pGLevel->GetPlayer().Pos.Z );
@@ -410,26 +375,11 @@ void	CApplication::Render()
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 		pGLevel->Render();
 
-		glDepthMask( 0 );
-		//SEManager.Render();
-		//pGLevel->DrawReflect();
-		glDepthMask( 1 );
-
 		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
-		glClear( GL_DEPTH_BUFFER_BIT );	//Czyszczenie buforów
+		glClear( GL_DEPTH_BUFFER_BIT );
 		glLoadIdentity();
 		pGLevel->GetPlayer().Render();
 	}
-
-	//if( GUI->Menu.IsEnabled() && !pGLevel->GetLoaded() )
-	//{
-	//	GLRender.SetPerspective( GUI->GetEyeAngle(), 4, 3, 1.0f, 100.0f );
-	//	glLoadIdentity();	//Reset uk³adu wspó³rzêdnych
-
-	//	glTranslatef( 0.0f, 0.0f, -10.0f );
-	//	glRotatef( menuModelRot, 0.5f, 0.5f, 1.0f );
-	//	MenuModel->CallObject( 0 );
-	//}
 
 	GUI->Render();
 }
@@ -438,15 +388,8 @@ void	CApplication::LoadLevel( const std::string& filename )
 {
 	if( pGLevel->LoadLevel( filename ) )
 	{
-		pGLevel->InitLevel();
-
-		GUI->LevName = pGLevel->GetLevelName();
 		GUI->HideMenu();
 		State = GAME_STATE::LEVEL;
-	}
-	else
-	{
-		//GUI->SendConMsg( "Nie mozna znalesc pliku", false );
 	}
 }
 

@@ -1,15 +1,38 @@
 #include "GUIScreen.h"
 
-CGUIElement::CGUIElement( const SCREEN_ELEMENT_TYPE type, const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV, const Vector2f& margin ) :
+CGUIElement::CGUIElement( const SCREEN_ELEMENT_TYPE type ) :
 	Type( type ),
-	AlignH( alignH ),
-	AlignV( alignV ),
-	Margin( margin )
+	AlignH( ELEMENT_HALIGN::CENTER ),
+	AlignV( ELEMENT_VALIGN::CENTER ),
+	Scale( 1.0f, 1.0f ),
+	Color( 1.0f, 1.0f, 1.0f, 1.0f )
 {
+	
 }
 
 CGUIElement::~CGUIElement()
 {
+}
+
+void	CGUIElement::SetAlign( const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV )
+{
+	AlignH = alignH;
+	AlignV = alignV;
+}
+
+void	CGUIElement::SetMargin( const Vector2f& margin )
+{
+	Margin = margin;
+}
+
+void	CGUIElement::SetScale( const Vector2f& scale )
+{
+	Scale = scale;
+}
+
+void	CGUIElement::SetColor( const Vector4f& color )
+{
+	Color = color;
 }
 
 const SCREEN_ELEMENT_TYPE	CGUIElement::GetType() const
@@ -30,6 +53,11 @@ const ELEMENT_VALIGN	CGUIElement::GetAlignV() const
 const Vector2f	CGUIElement::GetMargin() const
 {
 	return Margin;
+}
+
+const Vector2f	CGUIElement::GetScale() const
+{
+	return Scale;
 }
 
 const Vector2f	CGUIElement::CreatePos( const Vector2f& size, const Vector2f& screenSize ) const

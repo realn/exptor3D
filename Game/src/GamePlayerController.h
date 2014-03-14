@@ -11,8 +11,10 @@ class CLocalPlayerController :
 private:
 	CPlayer&	Player;
 	bool		Move[4];
+	bool		Run;
 	bool		FireWeapon;
 	float		Angle;
+	unsigned	Weapon;
 
 public:
 	CLocalPlayerController( CPlayer& player );

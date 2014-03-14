@@ -129,6 +129,8 @@ public:
 	Vector2f( const float x, const float y ) : X( x ), Y( y ){}
 	Vector2f( const Vector2f& vert ) : X(vert.X), Y(vert.Y){}
 
+	void	Set( const float x, const float y ){ X = x; Y = y; }
+
 	const Vector2f	operator+( const Vector2f& vert ) const
 	{
 		return Vector2f( X + vert.X, Y + vert.Y );
@@ -156,6 +158,31 @@ public:
 	const bool	operator!=( const Vector2f& vert ) const
 	{
 		return !(*this == vert);
+	}
+};
+
+class Vector4f
+{
+public:
+	float	X;
+	float	Y;
+	float	Z;
+	float	W;
+
+	Vector4f() : X( 0.0f ), Y( 0.0f ), Z( 0.0f ), W( 0.0f ){}
+	Vector4f( const float x, const float y, const float z, const float w ) :
+		X( x ), Y( y ), Z( z ), W( w )
+	{}
+	Vector4f( const Vector4f& vert ) : X( vert.X ), Y( vert.Y ), Z( vert.Z ), W( vert.W ){}
+
+	void	Set( const float x, const float y, const float z, const float w )
+	{
+		X = x; Y = y; Z = z; W = w;
+	}
+
+	void	operator=( const Vector4f& vert )
+	{
+		Set( vert.X, vert.Y, vert.Z, vert.W );
 	}
 };
 

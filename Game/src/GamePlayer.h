@@ -25,7 +25,7 @@ private:
 	WEAPON_HAND	Hand;
 
 	// Postaæ biega?
-	bool run;
+	bool Run;
 
 	// "Krok" o jaki porusza siê postaæ chodz¹c
 	float WalkStep;
@@ -34,34 +34,33 @@ private:
 	float RunStep;
 	
 	// Aktualna Broñ
-	unsigned int CurrWeap;
-public:
+	unsigned CurrWeap;
 	CWeapon* Weapon[WEAPON_COUNT];
 
+public:
 	CPlayer( CModelManager& modelManager );
 	~CPlayer();
 
 	void	OnDie() override;
 	void	OnDead() override;
 
-	void Render();
-	void Update( const float fTD ) override;
-	void ParseKeys( const bool* Keys );
+	void	Render();
+	void	Update( const float fTD ) override;
 
-	void SwichWeap( unsigned int index );
+	void	SwichWeap( const unsigned index );
+	void	SetMoveSpeed( const bool run );
 
-	const WEAPON_HAND GetHand() const;
+	const WEAPON_HAND	GetHand() const;
 
-	void TestWeapon( CWeapon* Weap );
-	void TestBonus( CItem* Bonus );
-	void ApplyNextPos();
 
-	void ModHealth( const float mod ) override;
-	void Reset() override;
+	void	ModHealth( const float mod ) override;
+	void	Reset() override;
 
 	const bool	OnCollision( CObject* pObject ) override;
 	const bool	OnCollision( const Vector3f& point, const Planef& plane ) override;
 
 private:
+	const bool	ProcessItem( CItem* pItem );
+
 	virtual void	SolveActions( const float fTD ) override;
 };

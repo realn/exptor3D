@@ -11,11 +11,11 @@ CActor::CActor( const ACTOR_TYPE type ) :
 	CDynamic(2.0f),
 	CActorStats(100.0f, 100.0f),
 	Type( type ),
-	Actions( 0 )
+	Actions( 0 ),
+	Speed( 2.0f )
 {
 	Armor = 0.0f;
-	
-	Speed = 0.1f;
+
 	Angle = 180.0f;
 	StartAngle = 180.0f;
 	Pos.Set( 5.0f, 0.0f, -25.0f );
@@ -51,11 +51,6 @@ void CActor::Update( const float fTD )
 	Pos = NextPos;
 
 	SolveActions( fTD );
-
-	if( Pos != NextPos )
-	{
-		Log.Log( " DIFF2 " );
-	}
 }
 
 /*

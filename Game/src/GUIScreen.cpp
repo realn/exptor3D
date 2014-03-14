@@ -36,11 +36,13 @@ void	CGUIScreen::SetMargin( const Vector2f& margin )
 	Margin = margin;
 }
 
-CGUITextElement*	CGUIScreen::AddTextElement( const std::string& text, const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV, const Vector2f& margin )
+CGUITextElement*	CGUIScreen::AddTextElement( const std::string& text )
 {
-	auto pElement = new CGUITextElement( alignH, alignV, margin, TextRender );
+	auto pElement = new CGUITextElement( TextRender );
 
-	pElement->SetText( text );
+	if( !text.empty() )
+		pElement->SetText( text );
+	
 	ElementList.push_back( pElement );
 
 	return pElement;
@@ -97,31 +99,58 @@ const bool	CGUIScreen::Load( const std::string& filename )
 		std::vector<std::string> params;
 		SplitString( paramline, ",", params );
 
-		if( cmd == "TEXT" && params.size() == 5 )
+		if( cmd == "TEXT" && params.size() >= 0 && params.size() <= 1 )
 		{
-			pElement = AddTextElement( params[0], GetElementAlignH( params[1] ), GetElementAlignV( params[2] ), Vector2f( StrToFloat( params[3] ), StrToFloat( params[4] ) ) );
+			switch (params.size())
+			{
+			case 0:	pElement = AddTextElement(); break;
+			case 1:	pElement = AddTextElement( params[0] ); break;
+			}
 		}
-		if( cmd == "SCALE" && params.size() == 2 )
+		else if( cmd == "ALIGN" && params.size() == 2 )
+		{
+			if( pElement != nullptr )
+				pElement->SetAlign( GetElementAlignH( params[0] ), GetElementAlignV( params[1] ) );
+		}
+		else if( cmd == "MARGIN" && params.size() == 2 )
+		{
+			if( pElement != nullptr )
+				pElement->SetMargin( Vector2f( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
+		}
+		else if( cmd == "SCALE" && params.size() == 2 )
 		{
 			if( pElement != nullptr )
 				pElement->SetScale( Vector2f( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
 		}
-		if( cmd == "COLOR" && params.size() == 4 )
+		else if( cmd == "COLOR" && params.size() >= 3 && params.size() <= 4 )
 		{
 			if( pElement != nullptr )
-				pElement->SetColor( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), StrToFloat( params[3] ) );
+			{
+				switch (params.size())
+				{
+				case 3:	pElement->SetColor( Vector4f( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), 1.0f ) );	break;
+				case 4:	pElement->SetColor( Vector4f( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), StrToFloat( params[3] ) ));	break;
+				}
+			}
 		}
-		if( cmd == "SYNCVALUE" && params.size() >= 1 )
+		else if( cmd == "SYNCVALUE" && params.size() >= 1 && params.size() <= 3 )
 		{
 			if( pElement != nullptr )
-				AddValueSync( pElement, ClearWhiteSpace( params[0] ), params[1], params[2] );
+			{
+				switch (params.size())
+				{
+				case 1:	AddValueSync( pElement, ClearWhiteSpace( params[0] ) );	break;
+				case 2:	AddValueSync( pElement, ClearWhiteSpace( params[0] ), params[1] );	break;
+				case 3:	AddValueSync( pElement, ClearWhiteSpace( params[0] ), params[1], params[2] );	break;
+				}
+			}
 		}
 	}
 
 	return true;
 }
 
-const ELEMENT_HALIGN			GetElementAlignH( const std::string& align )
+const ELEMENT_HALIGN	GetElementAlignH( const std::string& align )
 {
 	auto al = ClearWhiteSpace( align );
 	if( al == "LEFT" )
@@ -134,7 +163,7 @@ const ELEMENT_HALIGN			GetElementAlignH( const std::string& align )
 	return ELEMENT_HALIGN::CENTER;
 }
 
-const ELEMENT_VALIGN			GetElementAlignV( const std::string& align )
+const ELEMENT_VALIGN	GetElementAlignV( const std::string& align )
 {
 	auto al = ClearWhiteSpace( align );
 	if( al == "TOP" )

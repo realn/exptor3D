@@ -11,7 +11,6 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 ///////////////////////////////////////////////////////*/
 #pragma once
 
-#include "defines.h"
 #include "Log.h"
 #include "Texture.h"
 #include "Render.h"
@@ -103,9 +102,6 @@ private:
 	std::vector< std::string >	PFL;
 
 public:
-	guiPlayerInfo PInfo;
-	std::string LevName;
-
 	CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const float aspectRation, const unsigned height );
 
 	void	Update(const float fTD);

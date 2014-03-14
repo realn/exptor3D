@@ -18,6 +18,7 @@ Opis:	Patrz -> Level.h
 #include "ItemWeapon.h"
 
 CLevel* pGLevel = nullptr;
+const unsigned GAME_VERSION = 100;
 
 /*	KLASA CLevel
 Patrz -> definicja klasy
@@ -39,28 +40,12 @@ CLevel::CLevel( CTexManager& texManager, CModelManager& modelManager ) :
 {
 	Version = 0;
 
-	// I zerujemy listê wyœwietlania
-	Reflect = 0;
-
 	PlayerStartBlock = 0;
 	PlayerStartAngle = 0;
 
-	AllWin = 0;
-	AllLose = 0;
-
-	// Zerujemy inne wartoœci
-	WeapCount = 0;
-	StatObjCount = 0;
-	BonusCount = 0;
-	EnemyCount = 0;
-	EnemyTypeCount = 0;
-
-	// Zerujemy liste typów wroga
-	EnemyType = NULL;
-
-	Tex[0] = NULL;
-	Tex[1] = NULL;
-	Tex[2] = NULL;
+	Tex[0] = nullptr;
+	Tex[1] = nullptr;
+	Tex[2] = nullptr;
 }
 
 /*	DESTRUKTOR	*/
@@ -86,7 +71,8 @@ void	CLevel::Update( const float fTD )
 
 void	CLevel::Render()
 {
-	DrawLevel();
+	RenderLevel();
+
 	RenderList.Render( true );
 	
 	glDepthMask( 0 );
@@ -153,21 +139,9 @@ CPlayer&	CLevel::GetPlayer()
 }
 
 // Zwraca, czy poziom jest za³adowany i gotowy
-bool CLevel::GetLoaded()
+const bool CLevel::IsLoaded() const
 {
 	return loaded;
-}
-
-// Zwraca iloœæ przeciwników odczytanych z pliku
-unsigned int CLevel::GetEnemyCount()
-{
-	return EnemyCount;
-}
-
-// Zwraca iloœæ obiektów statycznych odczytanych z pliku
-unsigned int CLevel::GetSObjCount()
-{
-	return StatObjCount;
 }
 
 /*	METODA WCZYTUJ¥CA DANE
@@ -176,7 +150,7 @@ Na pocz¹tku podstawowe dane,
 a dalej jedziemy ze œcianami
 i ca³¹ reszt¹ danych.
 */
-bool CLevel::LoadLevel( const std::string &filename )
+const bool CLevel::LoadLevel( const std::string &filename )
 {
 	if( filename == "" )
 	{
@@ -277,178 +251,8 @@ bool CLevel::LoadLevel( const std::string &filename )
 	for( unsigned row = 0; row < Rows; row++ )
 	{
 		for( unsigned col = 0; col < Cols; col++ )
-		{
 			GetBlock( col, row )->Set( row, col, blockWidth, blockHeight, blockDepth );
-		}
 	}
-
-	/*
-	if( WeapCount > 0 )
-	{
-		str = GetLine( stream );
-
-		if( str != "WEAPLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak listy broni!" );
-			Free();
-			return false;
-		}
-
-		for( i = 0; i < WeapCount; i++ )
-		{
-			str = GetLine( stream );
-
-			sscanf_s( str.c_str(), "%d=%d", &j, &k );
-
-			CWeapon* Weap;
-			switch( k )
-			{
-			case WEAPON_TYPE::SAW :
-				Weap = new weSaw;
-				break;
-
-			case WEAPON_TYPE::PISTOL :
-				Weap = new wePistol;
-				break;
-
-			case WEAPON_TYPE::MINIPHAZER :
-				Weap = new weMiniPhazer;
-				break;
-
-			case WEAPON_TYPE::MINIGUN :
-				Weap = new weMiniGun;
-				break;
-
-			case WEAPON_TYPE::ROCKET_LUNCHER :
-				Weap = new CWeaponRocketLuncher;
-				break;
-
-				//case GAME_WEAP_PICK_A_BOO	:
-			case WEAPON_TYPE::PHAZER :
-				Weap = new wePhazer;
-				break;
-
-				//case GAME_WEAP_MINE :
-			case WEAPON_TYPE::ATOM_BOMB :
-				Weap = new weATOM_BOMBb;
-				break;
-			default:
-				continue;
-			}
-			Weap->Init( ModelManager );
-			Weap->Pos = GetBlockPos( j );
-			Weap->NextPos = Weap->Pos;
-			WManager.AddWeapon( ModelManager, Weap );
-		}
-
-		str = GetLine( stream );
-		if( str != "END WEAPLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak koñca listy broni!" );
-			Free();
-			return false;
-		}
-	}
-
-	if( EnemyTypeCount > 0 )
-	{
-		str = GetLine( stream );
-		EnemyType = new std::string[EnemyTypeCount];
-
-		if( str != "ENEMYTYPELIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak listy typów wroga!" );
-			Free();
-			return false;
-		}
-
-		for( i = 0; i < EnemyTypeCount; i++ )
-		{
-			str = GetLine( stream );
-			EnemyType[i] = str;
-		}
-
-		str = GetLine( stream );
-		if( str != "END ENEMYTYPELIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak koñca listy typów wroga!" );
-			Free();
-			return false;
-		}
-	}
-
-	if( EnemyCount > 0 && EnemyTypeCount > 0)
-	{
-		str = GetLine( stream );
-
-		if( str != "ENEMYLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak listy wrogów!" );
-			Free();
-			return false;
-		}
-
-		for( i = 0; i < EnemyCount; i++ )
-		{
-			str = GetLine( stream );
-
-			sscanf_s( str.c_str(), "%d=%d,%d", &j, &k, &l );
-
-			CEnemy* Enemy = new CEnemy( ModelManager );
-			Enemy->SetStartPos( this->GetBlockPos( j ) );
-			Enemy->SetStartAngle( (float)l );
-			Enemy->LoadEnemy( EnemyType[k] );
-			Enemy->Reset();
-			ThingManager.AddThing( Enemy );
-		}
-
-		str = GetLine( stream );
-		if( str != "END ENEMYLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak koñca listy wrogów!" );
-			Free();
-			return false;
-		}
-	}
-
-	if( StatObjCount > 0 )
-	{
-		str = GetLine( stream );
-
-		if( str != "STATOBJLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak listy statycznych objektów!" );
-			Free();
-			return false;
-		}
-
-		for( i = 0; i < StatObjCount; i++ )
-		{
-			str = GetLine( stream );
-
-			sscanf_s( str.c_str(), "%d,%d=", &k, &l );
-
-			//gameStatObj *obj = new gameStatObj;
-			//obj->LoadObj( GetParamStr( str ) );
-			//obj->Pos = this->GetBlockPos( k );
-			//obj->SetAngle( l );
-			//ThingManager.AddThing( obj );
-		}
-
-		str = GetLine( stream );
-		if( str != "END STATOBJLIST" )
-		{
-			Log.Error( "GLEVEL( " + file + " ): Brak koñca listy statycznych objektów!" );
-			Free();
-			return false;
-		}
-	}
-	str = GetLine( stream );
-	if( str != "END E3DTLEV" )
-	{
-		Log.Error( "GLEVEL( " + file + " ): Brak koñca pliku!" );
-	}
-	*/
 
 	Player.SetStartPos( this->GetBlockPos( PlayerStartBlock ) );
 	Player.SetStartAngle( (float)PlayerStartAngle );
@@ -458,23 +262,10 @@ bool CLevel::LoadLevel( const std::string &filename )
 
 	loaded = true;
 
-	return true;
-}
-
-/*	Ta metoda jednorazowo wywo³uje dwie
-inne metody
-*/
-void CLevel::InitLevel()
-{
-	// Gdy poziom ju¿ jest za³adowany, to trzeba przerwaæ inicjalizacje
-	if( !loaded )
-		return;
-
-	WinFlags.VerifyFlags();
-	LoseFlags.VerifyFlags();
-
 	BuildVisual();
 	BuildPhysic();
+
+	return true;
 }
 
 /*	W tej metodzie budujemy czêœæ wizualn¹
@@ -585,38 +376,17 @@ void CLevel::BuildPhysic()
 /*	Tu odbywa siê rysowanie levelu. 
 ( takie proste, ¿e a¿ g³upie :) )
 */
-void CLevel::DrawLevel()
+void	CLevel::RenderLevel()
 {
 	if( !loaded )
 		return;
 
-	//if( GUI.GetReflection() )
-	//{
-	//	this->DrawAllTop();
-	//	this->DrawAllWall();
-
-	//	glPushMatrix();
-	//	glTranslatef( 0.0f, -10.0f, 0.0f );
-	//	glScalef( 1.0f, -1.0f, 1.0f );
-	//	//glDisable( GL_CLIP_PLANE0 );
-	//	//glEnable( GL_CLIP_PLANE1 );
-	//	glFrontFace( GL_CW );
-	//	this->DrawAllTop();
-	//	this->DrawAllWall();
-	//	glFrontFace( GL_CCW );
-	//	//glDisable( GL_CLIP_PLANE1 );
-	//	//glEnable( GL_CLIP_PLANE0 );
-	//	glPopMatrix();
-	//}
-	//else
-	//{
-		this->DrawAllTop();
-		this->DrawAllWall();
-		this->DrawAllFloor();
-	//}
+	this->RenderCeilings();
+	this->RenderWalls();
+	this->RenderFloors();
 }
 
-void CLevel::DrawAllTop()
+void	CLevel::RenderCeilings()
 {
 	if( !loaded )
 		return;
@@ -625,7 +395,7 @@ void CLevel::DrawAllTop()
 	Ceiling.Render();
 }
 
-void CLevel::DrawAllWall()
+void	CLevel::RenderWalls()
 {
 	if( !loaded )
 		return;
@@ -634,7 +404,7 @@ void CLevel::DrawAllWall()
 	Wall.Render();
 }
 
-void CLevel::DrawAllFloor()
+void	CLevel::RenderFloors()
 {
 	if( !loaded )
 		return;
@@ -643,25 +413,10 @@ void CLevel::DrawAllFloor()
 	Floor.Render();
 }
 
-void CLevel::DrawReflect()
-{
-	//if( !GUI.GetReflection() )
-	//	return;
-
-	//glPushMatrix();
-	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	//glColor4f( 1.0f, 1.0f, 1.0f, GUI.GetRefLevel() );
-	//glEnable( GL_BLEND );
-	//this->DrawAllFloor();
-	//glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	//glDisable( GL_BLEND );
-	//glPopMatrix();
-}
-
 /*	Ta metoda zwraca nazwê poziomu wyczytan¹ z pliku
 (lub domyœln¹).
 */
-std::string CLevel::GetLevelName()
+const std::string CLevel::GetName() const
 {
 	return LevName;
 }
@@ -686,7 +441,7 @@ CLvlBlock* CLevel::GetBlock( unsigned int i ) const
 	return (CLvlBlock*)&block[i];
 }
 
-unsigned int CLevel::GetBlockCount()
+const unsigned	CLevel::GetBlockCount() const
 {
 	return Rows * Cols;
 }
@@ -712,37 +467,6 @@ const unsigned	CLevel::GetBlockIndex( const unsigned col, const unsigned row ) c
 	return row * Cols + col;
 }
 
-void CLevel::CheckWLFlags()
-{
-	//if( !this->loaded )
-	//	return;
-	//if( GUI.IsShowingWLScr() )
-	//	return;
-
-	//if( AllWin )
-	//{
-	//	if( this->WinFlags.CheckAllFlags() )
-	//	{
-	//		GUI.ShowWinScr();
-	//	}
-	//}
-	//else if( this->WinFlags.CheckOneFlag() )
-	//{
-	//	GUI.ShowWinScr();
-	//}
-
-	//if( AllLose )
-	//{
-	//	if( this->LoseFlags.CheckAllFlags() )
-	//		GUI.ShowLoseScr();
-	//}
-	//else if( this->LoseFlags.CheckOneFlag() )
-	//{
-	//	GUI.ShowLoseScr();
-	//}	
-}
-
-
 /*	Metoda czyœci pamiêc zarezerwowan¹ dla
 tej klasy.
 */
@@ -753,27 +477,21 @@ void CLevel::Free()
 
 	block.clear();
 
-	if( EnemyType != NULL )
-	{
-		delete[] EnemyType;
-		EnemyType = NULL;
-	}
-
 	Rows = 0;
 	Cols = 0;
 
 	LevName = "UNKNOWN LEVEL";
-	WinFlags.flags = 0;
-	LoseFlags.flags = 0;
 
-	//glDeleteLists( Top, 1 );
 	Floor.Clear();
 	Ceiling.Clear();
 	Wall.Clear();
 
-	Tex[0] = NULL;
-	Tex[1] = NULL;
-	Tex[2] = NULL;
+	Tex[0] = nullptr;
+	Tex[1] = nullptr;
+	Tex[2] = nullptr;
+
+	CollisionMng.Clear();
+	
 
 	loaded = false;
 }
@@ -855,132 +573,10 @@ const bool	CLevel::LoadHeader( std::fstream& stream )
 
 		if( name == "NAME" )
 			LevName = value;
-
 		else if( name == "ROWS" )
 			Rows = StrToUInt( value );
-
 		else if( name == "COLS" )
 			Cols = StrToUInt( value );
-
-		/*
-		if( ContainsString( str, "WEAPCOUNT" ) )
-		{
-		if( !sscanf_s( str.c_str(), "WEAPCOUNT=%u", &WeapCount ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby broni!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "BONUSCOUNT" ) )
-		{
-		if( !sscanf_s( str.c_str(), "BONUSCOUNT=%u", &BonusCount ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby broni!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "ENEMYTYPECOUNT" ) )
-		{
-		if( !sscanf_s( str.c_str(), "ENEMYTYPECOUNT=%u", &EnemyTypeCount ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby typów wroga!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "ENEMYCOUNT" ) )
-		{
-		if( !sscanf_s( str.c_str(), "ENEMYCOUNT=%u", &EnemyCount ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby wrogów!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "PLAYERSTARTPOS" ) )
-		{
-		if( !sscanf_s( str.c_str(), "PLAYERSTARTPOS=%u", &PlayerStartBlock ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ pozycji startowej gracza!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "PLAYERSTARTANGLE" ) )
-		{
-		if( !sscanf_s( str.c_str(), "PLAYERSTARTANGLE=%u", &PlayerStartAngle ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ obrotu startowego gracza!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "STATOBJ" ) )
-		{
-		if( !sscanf_s( str.c_str(), "STATOBJ=%u", &StatObjCount ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ liczby objektów statycznych!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "WINALL" ) )
-		{
-		if( !sscanf_s( str.c_str(), "WINALL=%d", &AllWin ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ flagi!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "LOSEALL" ) )
-		{
-		if( !sscanf_s( str.c_str(), "LOSEALL=%d", &AllLose ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ flagi!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "WINFLAGS" ) )
-		{
-		if( !sscanf_s( str.c_str(), "WINFLAGS=%u", &WinFlags.flags ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ flagi!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "WINBLOCK" ) )
-		{
-		if( !sscanf_s( str.c_str(), "WINBLOCK=%u", &WinFlags.BlockID ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ flagi!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "LOSEFLAGS" ) )
-		{
-		if( !sscanf_s( str.c_str(), "LOSEFLAGS=%u", &LoseFlags.flags ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ flagi!" );
-		Free();
-		return false;
-		}
-		}
-		if( ContainsString( str, "LOSEBLOCK" ) )
-		{
-		if( !sscanf_s( str.c_str(), "LOSEBLOCK=%u", &LoseFlags.BlockID ) )
-		{
-		Log.Error( "GLEVEL( " + file + " ): Nie mo¿na odczytaæ flagi!" );
-		Free();
-		return false;
-		}
-		}*/
-
 		else 
 			Log.Error( "GLEVEL( " + file + " ): Nierozpoznana wartoœæ " + name + " w ci¹gu: " + str + "." );
 	}
@@ -1040,12 +636,6 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 {
 	Log.Log( "GLEVEL( " + file + " ): £adowanie œcian.");
 
-	/*	Teraz tworzymy tablicê odpowiednich
-	rozmiarów zdoln¹ pomieœciæ nastêpne
-	dane. S¹ to liczby ca³kowite jednoznacznie
-	okreœlaj¹ce zawarte w nich œciany ( patrz
-	definicje makrowe )
-	*/
 	std::string str;
 	block.resize( Rows * Cols );
 	for( unsigned i = 0; i < block.size(); i++ )
@@ -1059,8 +649,6 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 
 			for(unsigned j = 0; j < list.size() && i + j < block.size(); j++ )
 			{
-				// Wpisujemy t¹ liczbê do sk³adowej walls
-				//sscanf_s( list[j].c_str(), "%d", &block[i + j].walls );
 				block[i + j].LoadWalls( list[j] );
 				block[i + j].CornerCount = 0;
 			}
@@ -1069,8 +657,6 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 		}
 		else
 		{
-			// Wpisujemy t¹ liczbê do sk³adowej walls
-			//sscanf_s( str.c_str(), "%d", &block[i].walls );
 			block[i].LoadWalls( str );
 			block[i].CornerCount = 0;
 		}

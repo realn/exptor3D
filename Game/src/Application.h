@@ -32,7 +32,6 @@ private:
 	MOUSE_MODE	MouseMode;
 
 	bool	active;
-	bool	Keys[256];
 
 public:
 	CApplication();

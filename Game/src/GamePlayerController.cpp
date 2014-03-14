@@ -12,7 +12,9 @@ enum MOVE_INDEX
 CLocalPlayerController::CLocalPlayerController( CPlayer& player ) :
 	Player( player ),
 	FireWeapon( false ),
-	Angle( 0.0f )
+	Angle( 0.0f ),
+	Run( false ),
+	Weapon( 0 )
 {
 	memset( Move, 0, sizeof(bool) * 4 );
 }
@@ -63,6 +65,8 @@ void	CLocalPlayerController::Update()
 		Player.DoAction( GAME_ACTION::DO_ATTACK );
 
 	Player.SetAngle( Angle );
+	Player.SwichWeap( Weapon );
+	Player.SetMoveSpeed( Run );
 }
 
 void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
@@ -92,6 +96,20 @@ void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
 	case VK_LCONTROL:
 	case VK_LBUTTON:
 		FireWeapon = down;
+		break;
+
+	case '1':	Weapon = 0;	break;
+	case '2':	Weapon = 1;	break;
+	case '3':	Weapon = 2;	break;
+	case '4':	Weapon = 3;	break;
+	case '5':	Weapon = 4;	break;
+	case '6':	Weapon = 5;	break;
+	case '7':	Weapon = 6;	break;
+	case '8':	Weapon = 7;	break;
+	case '9':	Weapon = 8;	break;
+
+	case VK_SHIFT:
+		Run = down;
 		break;
 
 	default:

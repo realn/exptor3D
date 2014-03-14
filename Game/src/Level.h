@@ -18,7 +18,6 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "StrEx.h"
 #include "ModelManager.h"
 
-#include "defines.h"
 #include "Log.h"
 #include "Render.h"	// patrz-> nag³ówek Render.h i plik Render.cpp
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
@@ -37,10 +36,6 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 	Dziêki nim poprawia siê czytelnoœæ
 	kodu.
 */
-#define	LEV_WALL_TOP	1
-#define	LEV_WALL_BOTTOM	2
-#define	LEV_WALL_LEFT	4
-#define	LEV_WALL_RIGHT	8
 
 enum class LEV_SURFACE : unsigned
 {
@@ -202,42 +197,23 @@ private:
 	unsigned int PlayerStartBlock;
 	unsigned int PlayerStartAngle;
 
-	unsigned int WeapCount;
-	unsigned int BonusCount;
-	unsigned int StatObjCount;
-	unsigned int EnemyCount;
-	unsigned int EnemyTypeCount;
-	std::string* EnemyType;
-
 	unsigned int Version;
 
 	// Tablica trzymaj¹ca dane wyci¹gniête z pliku
 	std::vector<CLvlBlock> block;
 
-	int AllWin;
-	int AllLose;
-
 	CLvlMesh	Floor;
 	CLvlMesh	Ceiling;
 	CLvlMesh	Wall;
 
-	// Listy wyœwietlania
-	unsigned int Reflect;
-
 	// Czy poziom ju¿ jest za³adowany
 	bool loaded;
 
-	gameWLFlags WinFlags;
-	gameWLFlags LoseFlags;
-
 	// Nazwa poziomu
 	std::string LevName;
+
 	// Plik ostatnio za³adowanego poziomu
 	std::string file;
-
-	// Metody inicjuj¹ce
-	void BuildVisual();
-	void BuildPhysic();
 
 public:
 	// Konstruktor i destruktor
@@ -253,9 +229,9 @@ public:
 	const CCollisionManager&	GetCollisionManager() const;
 	CPlayer&	GetPlayer();
 
-	std::string GetLevelName();
+	const std::string GetName() const;
 
-	unsigned int GetBlockCount();
+	const unsigned int GetBlockCount() const;
 	CLvlBlock* GetBlock( const unsigned col, const unsigned row ) const;
 	CLvlBlock* GetBlock( Vector3f Pos ) const;
 	CLvlBlock* GetBlock( unsigned int i ) const;
@@ -265,30 +241,24 @@ public:
 
 	const unsigned	GetBlockIndex( const unsigned col, const unsigned row ) const;
 
-	bool GetLoaded();
-	unsigned int GetEnemyCount();
-	unsigned int GetSObjCount();
-
-	void CheckWLFlags();
+	const bool IsLoaded() const;
 
 	// Metoda ³adujaca poziom z pliku txt
-	bool LoadLevel( const std::string &filename );
-
-	// Koñcowa metoda inicjuj¹ca
-	void InitLevel();
+	const bool LoadLevel( const std::string &filename );
 
 	// Metoda rysuj¹ca
-	void DrawLevel();
-	void DrawAllWall();
-	void DrawAllFloor();
-	void DrawAllTop();
-
-	void DrawReflect();
+	void RenderLevel();
+	void RenderWalls();
+	void RenderFloors();
+	void RenderCeilings();
 
 	// Metoda czyszcz¹ca pamiêæ
 	void Free();
 
 private:
+	void BuildVisual();
+	void BuildPhysic();
+
 	void	OnDeleteEntity( ISceneEntity* pEntity ) override;
 
 	const bool	ParseCoords(const std::string& str, int& x, int& y);

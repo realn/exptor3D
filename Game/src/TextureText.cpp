@@ -6,14 +6,10 @@
 	Jest odpowiedzialna za rysowanie tekstów na ekranie.
 =========================*/
 CTextRenderer::CTextRenderer( CTexManager& texManager ) :
-	base( 0 )
+	base( 0 ),
+	Color( 1.0f, 1.0f, 1.0f, 1.0f )
 {
 	Tex = texManager.Get( "Font.tga" );
-
-	C[0] = 1.0f;
-	C[1] = 1.0f;
-	C[2] = 1.0f;
-
 	base = glGenLists(256);	// Creating 256 display lists
 
 	for (int loop1=0; loop1 < 256; loop1++)			// Loop through all 256 lists
@@ -46,7 +42,7 @@ CTextRenderer::~CTextRenderer()
 	}
 }
 
-void CTextRenderer::StartPrint( const float width, const float height )
+void	CTextRenderer::StartPrint( const float width, const float height )
 {
 	glPushAttrib( GL_ENABLE_BIT | GL_TRANSFORM_BIT | GL_VIEWPORT_BIT );
 	glPushMatrix();
@@ -65,7 +61,7 @@ void CTextRenderer::StartPrint( const float width, const float height )
 	glListBase( base - 32 );
 }
 
-void CTextRenderer::Print( const float x, const float y, const std::string& text, const float ScaleX, const float ScaleY )
+void	CTextRenderer::Print( const float x, const float y, const std::string& text, const float ScaleX, const float ScaleY )
 {
 	char stext[255];
 	strcpy_s( stext, 255 * sizeof(char), text.c_str() );
@@ -73,7 +69,7 @@ void CTextRenderer::Print( const float x, const float y, const std::string& text
 	
 	glTranslatef( x, y, 0 );
 	glScalef( ScaleX, ScaleY, 1.0f );
-	glColor4f( C[0], C[1], C[2], C[3] );
+	glColor4f( Color.X, Color.Y, Color.Z, Color.W );
 
 	glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
 	glPopMatrix();
@@ -84,7 +80,7 @@ void	CTextRenderer::Print( const Vector2f& pos, const std::string& text, const V
 	Print( pos.X, pos.Y, text, scale.X, scale.Y );
 }
 
-void CTextRenderer::EndPrint()
+void	CTextRenderer::EndPrint()
 {
 	glPopMatrix();
 	glPopAttrib();
@@ -92,12 +88,19 @@ void CTextRenderer::EndPrint()
 	glColor3f( 1.0f, 1.0f ,1.0f );
 }
 
-void CTextRenderer::SetColor( float R, float G, float B, float Alpha )
+void	CTextRenderer::SetColor( float R, float G, float B, float Alpha )
 {
-	C[0] = R;
-	C[1] = G;
-	C[2] = B;
-	C[3] = Alpha;
+	Color.Set( R, G, B, Alpha );
+}
+
+void	CTextRenderer::SetColor( const Vector3f& color )
+{
+	Color.Set( color.X, color.Y, color.Z, 1.0f );
+}
+
+void	CTextRenderer::SetColor( const Vector4f& color )
+{
+	Color.Set( color.X, color.Y, color.Z, color.W );
 }
 
 const Vector2f	CTextRenderer::GetTextSize( const std::string& text ) const

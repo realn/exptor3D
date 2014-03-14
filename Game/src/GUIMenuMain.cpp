@@ -275,6 +275,8 @@ bool CMenuMain::Load( const std::string& filename )
 	while( fileStream  )
 	{
 		str = GetLine( fileStream );
+		if( str.empty() )
+			continue;
 
 		switch( GetMenuType( str ) )
 		{
