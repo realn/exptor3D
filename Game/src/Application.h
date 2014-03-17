@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Render.h"
+#include "RenderWindow.h"
 #include "Texture.h"
 #include "EventManager.h"
 #include "GameController.h"
@@ -21,7 +22,8 @@ enum class MOUSE_MODE
 class CApplication
 {
 private:
-	CRender	GLRender;
+	CRenderWindow	GLWindow;
+	CRender			GLRender;
 	CEventManager	EventManager;
 	CControllerList	ControllerList;
 	CScriptParser	ScriptParser;
@@ -34,7 +36,7 @@ private:
 	bool	active;
 
 public:
-	CApplication();
+	CApplication( HINSTANCE hInstance );
 	~CApplication();
 
 	int		Run();

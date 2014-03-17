@@ -1,6 +1,7 @@
 #include "GUIMenu.h"
 
 #include "Render.h"
+#include "Log.h"
 
 #include <fstream>
 

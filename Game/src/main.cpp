@@ -20,6 +20,6 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
 {
 	Log.Init( "main.log", " - Expert 3D Tournament Log" );
 
-	CApplication app;
+	CApplication app( hInstance );
 	return app.Run();	
 }

@@ -216,6 +216,9 @@
     <ClCompile Include="src\GUIScreenValueSync.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\RenderWindow.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -370,6 +373,9 @@
     </ClInclude>
     <ClInclude Include="src\GUIConsole.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderWindow.h">
+      <Filter>Source\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

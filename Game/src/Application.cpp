@@ -10,8 +10,9 @@
 #include "inifile.h"
 
 
-CApplication::CApplication() :
+CApplication::CApplication( HINSTANCE hInstance ) :
 	active( true ),
+	GLWindow( hInstance, "OPENGLWINDOWCLASS3232" ),
 	State(GAME_STATE::MAINMENU),
 	MouseMode(MOUSE_MODE::MENU),
 	ScriptParser(EventManager),
@@ -28,7 +29,6 @@ CApplication::~CApplication()
 		GUI = nullptr;
 	}
 	Log.Log( "Koniec pracy Aplikacji" );
-	GLRender.GLDestroyWindow();// Zniszcz okno
 }
 
 /*	FUNKCJA KOMUNIKATÓW
@@ -71,9 +71,20 @@ int	CApplication::Run()
 
 	float aspectRatio = (float)WindowWidth / (float)WindowHeight;
 
+	if( !GLWindow.Create( "Expert 3D Tournament", 0, 0, WindowWidth, WindowHeight, fullscreen, (WNDPROC)WndProc, this ) )
+	{
+		Log.FatalError( "Nie uda³o siê stworzyæ okna!" );
+		return 0;
+	}
+
 	// Stwórz okno
-	if ( !GLRender.GLCreateWindow( "Expert 3D Tournament", WindowWidth, WindowHeight, fullscreen, (WNDPROC)WndProc, this ) )
+	if ( !GLRender.CreateGLContext( GLWindow.GetHandle(), 32, 24, 8 ) )
+	{
+		Log.FatalError( "Nie uda³o siê stworzyæ kontekstu OpenGL!" );
 		return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
+	}
+
+	GLWindow.SetVisible( true );
 
 	CTexManager texManager( "Data/Textures/" );
 	CModelManager modelManager( "Data/Models/", texManager );
@@ -165,7 +176,7 @@ const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPA
 		}
 
 	case WM_SIZE:								// Zmiana rozmiarów
-		GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
+		//GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
 		return true;								
 
 	case WM_MOUSEMOVE:
@@ -200,8 +211,8 @@ void	CApplication::UpdateMouse()
 	if( MouseMode != MOUSE_MODE::GAME )
 		return;
 
-	unsigned halfScreenX = GLRender.GetWidth() / 2;
-	unsigned halfScreenY = GLRender.GetHeight() / 2;
+	unsigned halfScreenX = GLWindow.GetWidth() / 2;
+	unsigned halfScreenY = GLWindow.GetHeight() / 2;
 
 	POINT mousePos;
 	if( !GetCursorPos( &mousePos ) )

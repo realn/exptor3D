@@ -13,7 +13,8 @@
 #include <gl/gl.h>		// Nag³ówek funkcji OpenGL
 #include <gl/glu.h>		// Nag³ówek funkcji pomocniczych do OpenGL
 #include <string>		// Nag³owek do mainpulacji ³añcuchem znaków
-#include "Log.h"
+
+#include "RenderWindow.h"
 
 enum RENDER_INFO{
 	RENDER_VERSION	= 0,
@@ -28,11 +29,7 @@ private:
 	HGLRC		hRC;	// Kontekst Renderuj¹cy
 	HDC			hDC;	// Kontekst Urz¹dzenia
 	HWND		hWnd;	// Wskaznik na uchwyt okna	
-	HINSTANCE	hInstance;	// Instancja
 
-	bool	fullScreen;		// Do sprawdzania, czy jest w³¹czony pe³ny Ekran
-	bool	isWindowCreated;	// Do sprawdzenia, czy okno ju¿ jest postawione
-	int		screenSize[2];		// Trzyma rozmiar okna. ( 0 - szerokoœæ, 1 - wysokoœæ )
 	int		colorBits;			// Bity kolorów
 	int		depthBits;
 	int		stencilBits;
@@ -48,16 +45,8 @@ public:
 	CRender();		// Konstruktor Klasy
 	~CRender();	// Destruktor Klasy
 
-	// Skalowanie ViewPortu ( tego kwadratu, wktórym wyœwietlana jest grafika ).
-	void Resize( unsigned int width, unsigned int height );
-
-	// Tworzenie Okna ( zwraca true, jezeli udane lub false, jezeli sie nie powiod³o )
-	bool GLCreateWindow( std::string title, unsigned int width, unsigned int height, bool fullscreen, WNDPROC wndProc, void* pUserData, bool initGL = true );
-	bool EnableGL(unsigned colorBits = 0, unsigned depthBits = 0, unsigned stencilBits = 0);
-
-	// Niszczenie Okna ( nic nie zwraca, bo i tak jak siê coœ zwali, to nic nie zaszkodzi )
-	void GLDestroyWindow(bool deinitGL = true);
-	void DisableGL();
+	bool CreateGLContext( HWND hWindow, const unsigned colorBits = 0, const unsigned depthBits = 0, const unsigned stencilBits = 0);
+	void DestroyGLContext();
 
 	// Ustawianie perspektywy
 	static void SetPerspective( float fov, float width, float height, float znear, float zfar );
@@ -70,14 +59,6 @@ public:
 
 	// Zamiana buforów
 	void SwapBuffers();
-
-	// Funkcje by pobraæ szerokoœæ i wysokoœæ okna
-	const unsigned GetWidth();
-	const unsigned GetHeight();
-
-	bool IsFullScreen();
-	void EnableFullScreen();
-	void DisableFullScreen();
 
 	void VSync( unsigned int set );
 

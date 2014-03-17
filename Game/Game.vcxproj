@@ -122,6 +122,7 @@
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderList.cpp" />
+    <ClCompile Include="src\RenderWindow.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ScriptParser.cpp" />
     <ClCompile Include="src\Special.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="src\GUIConsole.h" />
     <ClInclude Include="src\GUIMenu.h" />
     <ClInclude Include="src\GUIScreen.h" />
+    <ClInclude Include="src\RenderWindow.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneEntity.h" />
     <ClInclude Include="src\GameActor.h" />
