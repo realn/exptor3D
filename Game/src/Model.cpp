@@ -578,11 +578,14 @@ const bool	CModel::ReadHeader( std::fstream& fileStream )
 		else if( cmd == "ANIMATION" )
 		{
 			// Pobieramy, czy plik ma zapisan¹ animacjê
-			if( !sscanf_s( str.c_str(), "ANIMATION %u", &animation ) )
+			unsigned set = 0;
+			if( !sscanf_s( str.c_str(), "ANIMATION %u", &set ) )
 			{
 				Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ animacji!" );
 				return false;
 			}
+			else
+				animation = set != 0 ? true : false;
 		}
 		else
 			Log.Error( "CModel( " + file + " ): Nierozpoznany ci¹g nag³ówka: " + str );
@@ -680,6 +683,7 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 		Log.Error( "CModel( " + file + " ): Nieprawid³owa pierwsza linia pliku " + filename + "!" );
 		return false;
 	}
+
 
 	// Sprawdzamy wersjê
 	if( Version > GLM_VERSION )
