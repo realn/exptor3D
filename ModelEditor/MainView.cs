@@ -19,7 +19,8 @@ namespace ModelEditor
 
         private void menuRefresh_Click(object sender, EventArgs e)
         {
-            this.modelControl.Render();
+					this.modelControl.ParseSource(richSource.Text);
+					this.modelControl.Render();
         }
     }
 }
