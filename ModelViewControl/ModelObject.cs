@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace ModelEditor
 {
-	internal class ModelObject
+	public class ModelObject
 	{
 		public string ID { get; set; }
 		public List<Mesh> MeshList { get; set; }

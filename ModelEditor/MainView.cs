@@ -10,17 +10,11 @@ using System.Windows.Forms;
 
 namespace ModelEditor
 {
-    public partial class MainView : Form
-    {
-        public MainView()
-        {
-            InitializeComponent();
-        }
-
-        private void menuRefresh_Click(object sender, EventArgs e)
-        {
-					this.modelControl.ParseSource(richSource.Text);
-					this.modelControl.Render();
-        }
-    }
+	public partial class MainView : Form
+	{
+		public MainView()
+		{
+			InitializeComponent();
+		}
+	}
 }

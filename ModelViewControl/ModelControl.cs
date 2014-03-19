@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace ModelEditor
 {
-	public partial class ModelControl : GLControl
+	public partial class ModelControl : UserControl
 	{
 
 		private struct LineVertex
@@ -27,8 +27,7 @@ namespace ModelEditor
 		int GridBuffer;
 		ModelObject modelObject;
 
-		public ModelControl() :
-			base(new OpenTK.Graphics.GraphicsMode(new ColorFormat(32), 24, 8), 1, 4, GraphicsContextFlags.Default)
+		public ModelControl()
 		{
 			InitializeComponent();
 		}
@@ -37,8 +36,8 @@ namespace ModelEditor
 		{
 			base.OnHandleCreated(e);
 
-			if (!this.Context.IsCurrent)
-				this.Context.MakeCurrent(this.WindowInfo);
+			if (!this.glControl.Context.IsCurrent)
+				this.glControl.Context.MakeCurrent(this.glControl.WindowInfo);
 
 			GL.ClearColor(Color.DarkBlue);
 			GL.ClearDepth(1.0f);
@@ -131,8 +130,8 @@ namespace ModelEditor
 
 		public void Render()
 		{
-			if (!this.Context.IsCurrent)
-				this.Context.MakeCurrent(this.WindowInfo);
+			if (!this.glControl.Context.IsCurrent)
+				this.glControl.Context.MakeCurrent(this.glControl.WindowInfo);
 
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -140,7 +139,7 @@ namespace ModelEditor
 
 			modelObject.Render();
 
-			this.SwapBuffers();
+			this.glControl.SwapBuffers();
 		}
 
 		public void ParseSource(string source)

@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelEditor", "ModelEditor\ModelEditor.csproj", "{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelViewControl", "ModelViewControl\ModelViewControl.csproj", "{343266BC-9B17-476C-A128-8E8F9BF8B642}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,16 @@ Global
 		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Win32.ActiveCfg = Release|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

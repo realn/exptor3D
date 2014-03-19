@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ModelEditor
 {
-	internal class RenderCommand
+	public class RenderCommand
 	{
 		public string Name { get; set; }
 		public List<string> Params { get; set; }

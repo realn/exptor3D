@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace ModelEditor
 {
-	internal static class Extensions
+	public static class Extensions
 	{
 		public static PrimitiveType ToPrimitiveType(this string text)
 		{
@@ -22,6 +22,22 @@ namespace ModelEditor
 				return PrimitiveType.Points;
 
 			return PrimitiveType.Triangles;
+		}
+
+		public static float ToClearFloat(this string text)
+		{
+			float result = 0.0f;
+			if (float.TryParse(text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+				return result;
+			return 0.0f;
+		}
+
+		public static int ToClearInt(this string text)
+		{
+			int result = 0;
+			if (int.TryParse(text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+				return result;
+			return 0;
 		}
 
 		public static Vector2 ToVector2(this IList<string> list, int offset)
@@ -38,8 +54,8 @@ namespace ModelEditor
 				list[i] = list[i].Remove(index);
 			}
 
-			var x = float.Parse(list[offset + 0].Trim(), CultureInfo.InvariantCulture);
-			var y = float.Parse(list[offset + 1].Trim(), CultureInfo.InvariantCulture);
+			var x = list[offset + 0].ToClearFloat();
+			var y = list[offset + 1].ToClearFloat();
 
 			return new Vector2(x, y);
 		}
@@ -63,9 +79,9 @@ namespace ModelEditor
 				list[i] = list[i].Remove(index);
 			}
 
-			var x = float.Parse(list[offset + 0].Trim(), CultureInfo.InvariantCulture);
-			var y = float.Parse(list[offset + 1].Trim(), CultureInfo.InvariantCulture);
-			var z = float.Parse(list[offset + 2].Trim(), CultureInfo.InvariantCulture);
+			var x = list[offset + 0].ToClearFloat();
+			var y = list[offset + 1].ToClearFloat();
+			var z = list[offset + 2].ToClearFloat();
 
 			return new Vector3(x, y, z);
 		}
@@ -89,10 +105,10 @@ namespace ModelEditor
 				list[i] = list[i].Remove(index);
 			}
 
-			var r = float.Parse(list[offset + 0].Trim(), CultureInfo.InvariantCulture);
-			var g = float.Parse(list[offset + 1].Trim(), CultureInfo.InvariantCulture);
-			var b = float.Parse(list[offset + 2].Trim(), CultureInfo.InvariantCulture);
-			var a = float.Parse(list[offset + 3].Trim(), CultureInfo.InvariantCulture);
+			var r = list[offset + 0].ToClearFloat();
+			var g = list[offset + 1].ToClearFloat();
+			var b = list[offset + 2].ToClearFloat();
+			var a = list[offset + 3].ToClearFloat();
 
 			return new Color4(r, g, b, a);
 		}
