@@ -35,57 +35,6 @@ namespace MaterialViewControl
 			Unload();
 		}
 
-		private Bitmap LoadTarga(string filename)
-		{
-			byte[] TGAheader = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-			using (var file = System.IO.File.OpenRead(filename))
-			using (var reader = new System.IO.BinaryReader(file))
-			{
-				byte[] headerMain = reader.ReadBytes(TGAheader.Length);
-				if (!headerMain.SequenceEqual(TGAheader))
-					return null;
-
-				byte[] header = reader.ReadBytes(6);
-
-				var width = (int)(header[1]) * 256 + (int)(header[0]);		// Opracuj szerokość obrazka
-				var height = (int)(header[3]) * 256 + (int)(header[2]);		// i jego wysokosc
-
-				if (width <= 0 ||			// Jeżeli szerokość
-					height <= 0 ||			// lub wysokośc jest mniejsza lub równa zeru
-					(header[4] != 24 && header[4] != 32))		// Lub to nie jest ani obraz 24 Bity, ani 32 Bity
-				{
-					return null;
-				}
-				var bpp = header[4];
-				var bytesPerPixel = bpp / 8;
-				var imageSize = width * height * bytesPerPixel;
-
-				var data = reader.ReadBytes(imageSize);
-
-				System.Drawing.Imaging.PixelFormat graphicFormat;
-				switch (bpp)
-				{
-					case 24:
-						graphicFormat = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-						break;
-
-					default:
-					case 32:
-						graphicFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-						break;
-				}
-
-				var graphic = new Bitmap(width, height, graphicFormat);
-
-				var dataLock = graphic.LockBits(new Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.WriteOnly, graphicFormat);
-				Marshal.Copy(data, 0, dataLock.Scan0, data.Length);
-				graphic.UnlockBits(dataLock);
-
-				return graphic;
-			}
-		}
-
 		public bool Load(string directory, string filename)
 		{
 			if (string.IsNullOrWhiteSpace(filename))
@@ -94,7 +43,7 @@ namespace MaterialViewControl
 			this.Unload();
 
 			var path = System.IO.Path.Combine(directory, filename);
-			using (var bitmap = LoadTarga(path))
+			using (var bitmap = Extensions.LoadTarga(path))
 			{
 				if (bitmap == null)
 					return false;
