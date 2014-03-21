@@ -13,12 +13,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace MaterialViewControl
 {
+	[Serializable]
 	public partial class MaterialView : UserControl
 	{
 		private Point mousePos = new Point();
 		private bool dragging = false;
 		private Vector2 viewRotation = new Vector2();
-		
+
 		public Material Material { get; set; }
 
 		public MaterialView()
@@ -35,9 +36,11 @@ namespace MaterialViewControl
 			GL.ClearDepth(1.0f);
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-			float asp = (float)this.GLControl.Width/(float)this.GLControl.Height;
+			float asp = (float)this.GLControl.Width / (float)this.GLControl.Height;
 			var proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60.0f), asp, 0.5f, 100.0f);
-			var view = Matrix4.CreateTranslation(0.0f, 0.0f, -2.0f) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(viewRotation.Y)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(viewRotation.X));
+			var view = Matrix4.CreateTranslation(0.0f, 0.0f, -2.0f) *
+				Matrix4.CreateRotationY(MathHelper.DegreesToRadians(viewRotation.Y)) *
+				Matrix4.CreateRotationX(MathHelper.DegreesToRadians(viewRotation.X));
 
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.LoadMatrix(ref proj);
@@ -47,7 +50,7 @@ namespace MaterialViewControl
 			if (this.Material != null)
 			{
 				GL.Color4(this.Material.Diffuse.Color);
-				if (this.Material.Diffuse.TextureLevel)
+				if (this.Material.Diffuse.HasTexture)
 				{
 					GL.Enable(EnableCap.Texture2D);
 					GL.BindTexture(TextureTarget.Texture2D, this.Material.Diffuse.Texture.GLID);
@@ -55,6 +58,7 @@ namespace MaterialViewControl
 				else
 				{
 					GL.Disable(EnableCap.Texture2D);
+					GL.BindTexture(TextureTarget.Texture2D, 0);
 				}
 
 				GL.Begin(PrimitiveType.Quads);

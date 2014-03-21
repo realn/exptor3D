@@ -47,6 +47,7 @@
     <Compile Include="Converters\Color4Converter.cs" />
     <Compile Include="Converters\TextureConverter.cs" />
     <Compile Include="Editors\Color4Editor.cs" />
+    <Compile Include="Editors\TextureUIEditor.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="Converters\MaterialLevelConverter.cs" />
@@ -64,6 +65,12 @@
     <Compile Include="TextureEditDialog.Designer.cs">
       <DependentUpon>TextureEditDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextureManagerDialogView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextureManagerDialogView.Designer.cs">
+      <DependentUpon>TextureManagerDialogView.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextureManagerView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -78,6 +85,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TextureEditDialog.resx">
       <DependentUpon>TextureEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextureManagerDialogView.resx">
+      <DependentUpon>TextureManagerDialogView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextureManagerView.resx">
       <DependentUpon>TextureManagerView.cs</DependentUpon>

@@ -13,6 +13,7 @@ using System.Drawing.Design;
 
 namespace MaterialViewControl
 {
+	[Serializable]
 	public enum LightingLevel
 	{
 		Emmission,
@@ -25,18 +26,21 @@ namespace MaterialViewControl
 	public class MaterialLevel
 	{
 		public LightingLevel Level { get; set; }
+
 		[TypeConverter(typeof(Converters.Color4Converter))]
 		[Editor(typeof(Editors.Color4Editor), typeof(UITypeEditor))]
 		public Color4 Color { get; set; }
-		public bool TextureLevel { get; set; }
+
+		public bool HasTexture { get { return this.Texture != null; } }
+
 		[TypeConverter(typeof(Converters.TextureConverter))]
+		[Editor(typeof(Editors.TextureUIEditor), typeof(UITypeEditor))]
 		public Texture Texture { get; set; }
 
 		public MaterialLevel(LightingLevel level)
 		{
 			this.Level = level;
 			this.Color = new Color4(0.5f, 0.5f, 0.5f, 1.0f);
-			this.TextureLevel = false;
 			this.Texture = null;
 		}
 	}

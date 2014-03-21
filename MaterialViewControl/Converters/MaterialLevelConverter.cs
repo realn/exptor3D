@@ -24,7 +24,7 @@ namespace MaterialViewControl
 				{
 					var mat = value as MaterialLevel;
 
-					return "Level: " + mat.Level.ToString() + ", Texture: " + mat.TextureLevel.ToString();
+					return "Level: " + mat.Level.ToString() + ", Texture: " + mat.HasTexture.ToString();
 				}
 				return base.ConvertTo(context, culture, value, destinationType);
 			}

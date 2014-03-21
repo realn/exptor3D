@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace MaterialViewControl
 {
+	[Serializable]
 	public partial class TextureEditDialog : Form
 	{
 		public string RootDirectory { get; private set; }
@@ -49,12 +50,7 @@ namespace MaterialViewControl
 		{
 			string file = Path.Combine(this.RootDirectory, this.textFile.Text);
 			if (File.Exists(file))
-			{
-				if (Path.GetExtension(file).ToLowerInvariant() == ".tga")
-					this.picturePreview.Image = (Image)Extensions.LoadTarga(file);
-				else
-					this.picturePreview.Image = Image.FromFile(file);
-			}
+				this.picturePreview.Image = Extensions.LoadImageFile(file);
 			else
 				this.picturePreview.Image = null;
 		}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -21,8 +22,11 @@ namespace MaterialViewControl
 
 		public static _T GetSelectedEnum<_T>(this ComboBox combo) where _T : struct
 		{
+			if(combo.SelectedItem == null)
+				return new _T();
+
 			_T result = new _T();
-			if (Enum.TryParse<_T>(combo.SelectedText, true, out result))
+			if (Enum.TryParse<_T>(combo.SelectedItem.ToString(), true, out result))
 				return result;
 			return new _T();
 		}
@@ -76,6 +80,20 @@ namespace MaterialViewControl
 
 				return graphic;
 			}
+		}
+
+		public static Bitmap LoadBitmapFile(string filename)
+		{
+			if (Path.GetExtension(filename).ToLowerInvariant() == ".tga")
+				return LoadTarga(filename);
+			return (Bitmap)Bitmap.FromFile(filename);
+		}
+
+		public static Image LoadImageFile(string filename)
+		{
+			if (Path.GetExtension(filename).ToLowerInvariant() == ".tga")
+				return (Image)LoadTarga(filename);
+			return Image.FromFile(filename);
 		}
 	}
 }

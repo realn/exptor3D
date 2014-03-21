@@ -105,8 +105,7 @@
 			// 
 			// textTexRootDir
 			// 
-			this.textTexRootDir.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			this.textTexRootDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textTexRootDir.Location = new System.Drawing.Point(3, 17);
 			this.textTexRootDir.Name = "textTexRootDir";
@@ -116,6 +115,7 @@
 			// 
 			// butAction
 			// 
+			this.butAction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAction.Location = new System.Drawing.Point(149, 143);
 			this.butAction.Name = "butAction";
 			this.butAction.Size = new System.Drawing.Size(75, 23);
@@ -126,6 +126,9 @@
 			// 
 			// listTexList
 			// 
+			this.listTexList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.listTexList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colTexID,
             this.colTexFile});
@@ -139,6 +142,7 @@
 			this.listTexList.TabIndex = 3;
 			this.listTexList.UseCompatibleStateImageBehavior = false;
 			this.listTexList.View = System.Windows.Forms.View.Details;
+			this.listTexList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listTexList_ItemSelectionChanged);
 			// 
 			// colTexID
 			// 
@@ -152,6 +156,8 @@
 			// 
 			// comboAction
 			// 
+			this.comboAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboAction.FormattingEnabled = true;
 			this.comboAction.Location = new System.Drawing.Point(3, 145);

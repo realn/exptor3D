@@ -14,19 +14,21 @@ namespace MaterialViewControl
 	[Serializable]
 	public class Texture : IDisposable
 	{
+		public string ID { get; set; }
 		public string FileName { get; set; }
-		public int GLID { get; set; }
+		public int GLID { get; private set; }
 		public bool Loaded { get { return GLID != 0; } }
 
-		public Texture()
+		public Texture(string id)
 		{
-			GLID = 0;
-			FileName = string.Empty;
+			this.ID = id;
+			this.GLID = 0;
+			this.FileName = string.Empty;
 		}
 
-		public Texture(string directory, string filename)
+		public Texture(string id, string directory, string filename) :
+			this(id)
 		{
-			GLID = 0;
 			Load(directory, filename);
 		}
 
@@ -43,7 +45,7 @@ namespace MaterialViewControl
 			this.Unload();
 
 			var path = System.IO.Path.Combine(directory, filename);
-			using (var bitmap = Extensions.LoadTarga(path))
+			using (var bitmap = Extensions.LoadBitmapFile(path))
 			{
 				if (bitmap == null)
 					return false;
@@ -83,7 +85,7 @@ namespace MaterialViewControl
 		{
 			if (Loaded)
 			{
-				if (OpenTK.Graphics.GraphicsContext.CurrentContext != null)
+				if (GraphicsContext.CurrentContext != null)
 					GL.DeleteTexture(this.GLID);
 				this.GLID = 0;
 			}
@@ -98,21 +100,28 @@ namespace MaterialViewControl
 	[Serializable]
 	public class TextureList
 	{
-		public string Directory { get; private set; }
+		public string Directory { get; set; }
+		public Dictionary<string, string> TextureDB { get; set; }
+
 		List<Texture> List;
 
 		public TextureList(string directory)
 		{
 			this.Directory = directory;
+			this.TextureDB = new Dictionary<string, string>();
 			this.List = new List<Texture>();
 		}
 
-		public Texture Get(string filename)
+		public Texture Get(string id)
 		{
-			var tex = this.List.Find((item) => { return item.FileName == filename; });
+			var tex = this.List.Find((item) => { return item.ID == id; });
 			if (tex == null)
 			{
-				tex = new Texture();
+				if (!this.TextureDB.ContainsKey(id))
+					return null;
+
+				var filename = this.TextureDB[id];
+				tex = new Texture(id);
 				if (!tex.Load(this.Directory, filename))
 					return null;
 				this.List.Add(tex);
