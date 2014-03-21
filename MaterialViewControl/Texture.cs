@@ -8,15 +8,23 @@ using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics;
 using OpenTK;
+using System.ComponentModel;
 
 namespace MaterialViewControl
 {
 	[Serializable]
 	public class Texture : IDisposable
 	{
+		[ReadOnly(true)]
 		public string ID { get; set; }
+
+		[ReadOnly(true)]
 		public string FileName { get; set; }
+
+		[Browsable(false)]
 		public int GLID { get; private set; }
+
+		[ReadOnly(true)]
 		public bool Loaded { get { return GLID != 0; } }
 
 		public Texture(string id)
@@ -98,7 +106,7 @@ namespace MaterialViewControl
 	}
 
 	[Serializable]
-	public class TextureList
+	public class TextureList : ICollection<Texture>
 	{
 		public string Directory { get; set; }
 		public Dictionary<string, string> TextureDB { get; set; }
@@ -135,6 +143,51 @@ namespace MaterialViewControl
 			{
 				return this.Get(index);
 			}
+		}
+
+		public void Add(Texture item)
+		{
+			this.List.Add(item);
+		}
+
+		public void Clear()
+		{
+			this.List.Clear();
+		}
+
+		public bool Contains(Texture item)
+		{
+			return this.List.Contains(item);
+		}
+
+		public void CopyTo(Texture[] array, int arrayIndex)
+		{
+			List.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return List.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(Texture item)
+		{
+			return this.List.Remove(item);
+		}
+
+		public IEnumerator<Texture> GetEnumerator()
+		{
+			return this.List.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return this.List.GetEnumerator();
 		}
 	}
 

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Converters\Color4Converter.cs" />
     <Compile Include="Converters\TextureConverter.cs" />
     <Compile Include="Editors\Color4Editor.cs" />

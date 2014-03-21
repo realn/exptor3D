@@ -12,18 +12,19 @@ namespace MaterialViewControl
 {
 	public partial class MaterialListControl : UserControl
 	{
-		public List<Material> MaterialList { get; set; }
+		public MaterialList MaterialList { get; set; }
 
 		public MaterialListControl()
 		{
 			InitializeComponent();
 
-			this.MaterialList = new List<Material>();
+			this.MaterialList = new MaterialList();
+			this.comboMaterialList.Sorted = true;
 		}
 
 		private void butMatAdd_Click(object sender, EventArgs e)
 		{
-			var mat = this.AddMaterial("Test mat");
+			var mat = this.AddMaterial();
 
 			propMaterial.SelectedObject = mat;
 
@@ -34,12 +35,27 @@ namespace MaterialViewControl
 			}));
 		}
 
-		public Material AddMaterial(string name)
+		private string GenMatName()
 		{
-			var mat = new Material("Test Material");
+			int i = 1;
+			string name;
+
+			do
+			{
+				name = string.Format("Material{0}", i);
+			}
+			while (this.MaterialList.ContainsID(name));
+
+			return name;
+		}
+
+		public Material AddMaterial()
+		{
+			var mat = new Material(this.GenMatName(), this.MaterialList);
 
 			this.MaterialList.Add(mat);
-			comboMaterialList.Items.Add(mat.Name);
+			this.comboMaterialList.Items.Add(mat.ID);
+			this.comboMaterialList.SelectedIndex = this.comboMaterialList.Items.IndexOf(mat.ID);
 
 			return mat;
 		}

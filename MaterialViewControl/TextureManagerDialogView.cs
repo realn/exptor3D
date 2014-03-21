@@ -13,12 +13,6 @@ namespace MaterialViewControl
 {
 	public partial class TextureManagerDialogView : UserControl
 	{
-		public enum SelectionResult
-		{
-			Selected,
-			None,
-			Canceled,
-		}
 		public string TextureDirectory
 		{
 			get { return this.textureView.TextureDirectory; }
@@ -64,6 +58,11 @@ namespace MaterialViewControl
 				this.EditorService.CloseDropDown();
 		}
 
-
+		public enum SelectionResult
+		{
+			Selected,
+			None,
+			Canceled,
+		}
 	}
 }

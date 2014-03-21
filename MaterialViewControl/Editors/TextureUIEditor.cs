@@ -27,17 +27,42 @@ namespace MaterialViewControl.Editors
 
 		public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
-			var mat = context.Instance as MaterialLevel;
+			var matLevel = context.Instance as MaterialLevel;
 			var texture = value as Texture;
 			var service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
 
-			if (mat != null && service != null)
+			if (matLevel != null && service != null)
 			{
+				var material = matLevel.ParentMaterial;
+				var matList = material.ParentList;
+
 				using (var control = new TextureManagerDialogView())
 				{
 					control.EditorService = service;
 
+					control.TextureDirectory = matList.TextureList.Directory;
+					control.TextureDB = matList.TextureList.TextureDB;
+
+					if (texture != null)
+						control.TextureSelected = texture.ID;
+
 					service.DropDownControl(control);
+
+					matList.TextureList.Directory = control.TextureDirectory;
+					matList.TextureList.TextureDB = control.TextureDB;
+
+					switch (control.DialogSelectionResult)
+					{
+						case TextureManagerDialogView.SelectionResult.Selected:
+							return matList.TextureList.Get(control.TextureSelected);
+
+						case TextureManagerDialogView.SelectionResult.None:
+							return null;
+
+						default:
+						case TextureManagerDialogView.SelectionResult.Canceled:
+							return value;
+					}
 				}
 			}
 
