@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModelEditor
+namespace ModelViewControl
 {
 	public class RenderCommand
 	{

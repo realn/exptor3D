@@ -8,7 +8,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Globalization;
 
-namespace ModelEditor
+namespace ModelViewControl
 {
 	public static class Extensions
 	{

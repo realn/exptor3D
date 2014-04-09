@@ -36,6 +36,10 @@ namespace ModelEditor
 		{
 			base.OnHandleCreated(e);
 
+		}
+
+		private void Init()
+		{
 			if (!this.glControl.Context.IsCurrent)
 				this.glControl.Context.MakeCurrent(this.glControl.WindowInfo);
 

@@ -34,8 +34,8 @@
 			this.butMatAdd = new System.Windows.Forms.Button();
 			this.propMaterial = new System.Windows.Forms.PropertyGrid();
 			this.comboMaterialList = new System.Windows.Forms.ComboBox();
-			this.viewMaterial = new MaterialViewControl.MaterialView();
 			this.a = new System.Windows.Forms.SplitContainer();
+			this.viewMaterial = new MaterialViewControl.MaterialView();
 			this.groupMaterialList.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.a)).BeginInit();
 			this.a.Panel1.SuspendLayout();
@@ -99,6 +99,7 @@
 			this.propMaterial.Name = "propMaterial";
 			this.propMaterial.Size = new System.Drawing.Size(245, 235);
 			this.propMaterial.TabIndex = 1;
+			this.propMaterial.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propMaterial_PropertyValueChanged);
 			// 
 			// comboMaterialList
 			// 
@@ -109,15 +110,6 @@
 			this.comboMaterialList.Name = "comboMaterialList";
 			this.comboMaterialList.Size = new System.Drawing.Size(245, 21);
 			this.comboMaterialList.TabIndex = 0;
-			// 
-			// viewMaterial
-			// 
-			this.viewMaterial.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewMaterial.Location = new System.Drawing.Point(0, 0);
-			this.viewMaterial.Material = null;
-			this.viewMaterial.Name = "viewMaterial";
-			this.viewMaterial.Size = new System.Drawing.Size(243, 316);
-			this.viewMaterial.TabIndex = 1;
 			// 
 			// a
 			// 
@@ -135,6 +127,15 @@
 			this.a.Size = new System.Drawing.Size(504, 316);
 			this.a.SplitterDistance = 243;
 			this.a.TabIndex = 2;
+			// 
+			// viewMaterial
+			// 
+			this.viewMaterial.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.viewMaterial.Location = new System.Drawing.Point(0, 0);
+			this.viewMaterial.Material = null;
+			this.viewMaterial.Name = "viewMaterial";
+			this.viewMaterial.Size = new System.Drawing.Size(243, 316);
+			this.viewMaterial.TabIndex = 1;
 			// 
 			// MaterialListControl
 			// 

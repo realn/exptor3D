@@ -17,8 +17,10 @@ namespace MaterialViewControl
 	public partial class MaterialView : UserControl
 	{
 		private Point mousePos = new Point();
-		private bool dragging = false;
+		private int dragging = 0;
 		private Vector2 viewRotation = new Vector2();
+		private float zoom = 3.0f;
+		private bool loaded = false;
 
 		public Material Material { get; set; }
 
@@ -38,9 +40,10 @@ namespace MaterialViewControl
 
 			float asp = (float)this.GLControl.Width / (float)this.GLControl.Height;
 			var proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60.0f), asp, 0.5f, 100.0f);
-			var view = Matrix4.CreateTranslation(0.0f, 0.0f, -2.0f) *
+			var view =
 				Matrix4.CreateRotationY(MathHelper.DegreesToRadians(viewRotation.Y)) *
-				Matrix4.CreateRotationX(MathHelper.DegreesToRadians(viewRotation.X));
+				Matrix4.CreateRotationX(MathHelper.DegreesToRadians(viewRotation.X)) *
+				Matrix4.CreateTranslation(0.0f, 0.0f, -this.zoom);
 
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.LoadMatrix(ref proj);
@@ -83,28 +86,52 @@ namespace MaterialViewControl
 
 		private void GLControl_MouseDown(object sender, MouseEventArgs e)
 		{
-			if (e.Button == System.Windows.Forms.MouseButtons.Left)
+			if (
+				(e.Button & MouseButtons.Left) == System.Windows.Forms.MouseButtons.Left ||
+				(e.Button & MouseButtons.Right) == System.Windows.Forms.MouseButtons.Right)
 			{
-				this.dragging = true;
+				this.dragging++;
 				this.mousePos = new Point(e.X, e.Y);
 			}
 		}
 
 		private void GLControl_MouseMove(object sender, MouseEventArgs e)
 		{
-			if (this.dragging)
+			if (this.dragging > 0)
 			{
 				var point = new Point(e.X, e.Y);
-				viewRotation.X += (float)(this.mousePos.Y - point.Y);
-				viewRotation.Y += (float)(this.mousePos.X - point.X);
+				if ((e.Button & System.Windows.Forms.MouseButtons.Left) == System.Windows.Forms.MouseButtons.Left)
+				{
+					viewRotation.X += (float)(this.mousePos.Y - point.Y);
+					viewRotation.Y += (float)(this.mousePos.X - point.X);
+				}
+				if ((e.Button & System.Windows.Forms.MouseButtons.Right) == System.Windows.Forms.MouseButtons.Right)
+				{
+					zoom = Math.Max(3.0f, zoom + (float)(this.mousePos.Y - point.Y) / 10.0f);
+				}
 				this.mousePos = point;
+
+				this.GLControl.Invalidate();
 			}
 		}
 
 		private void GLControl_MouseUp(object sender, MouseEventArgs e)
 		{
-			if (e.Button == System.Windows.Forms.MouseButtons.Left)
-				this.dragging = false;
+			if (
+				(e.Button & MouseButtons.Left) == System.Windows.Forms.MouseButtons.Left ||
+				(e.Button & MouseButtons.Right) == System.Windows.Forms.MouseButtons.Right)
+				this.dragging--;
+		}
+
+		private void GLControl_Paint(object sender, PaintEventArgs e)
+		{
+			if (this.loaded)
+				this.Render();
+		}
+
+		private void MaterialView_Load(object sender, EventArgs e)
+		{
+			this.loaded = true;
 		}
 	}
 }

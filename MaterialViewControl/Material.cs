@@ -27,6 +27,9 @@ namespace MaterialViewControl
 	[Category(Constants.CATEGORY_LIGHTING)]
 	public class MaterialLevel
 	{
+		private Texture texture;
+		private Color4 color;
+
 		[Browsable(false)]
 		public Material ParentMaterial { get; private set; }
 
@@ -35,16 +38,32 @@ namespace MaterialViewControl
 
 		[TypeConverter(typeof(Converters.Color4Converter))]
 		[Editor(typeof(Editors.Color4Editor), typeof(UITypeEditor))]
-		public Color4 Color { get; set; }
+		public Color4 Color { 
+			get { return this.color; } 
+			set{
+				this.color = value;
+				if (this.MaterialChanged != null)
+					this.MaterialChanged(this, new EventArgs());
+			}
+		}
 
 		[ReadOnly(true)]
 		public bool HasTexture { get { return this.Texture != null; } }
 
 		[TypeConverter(typeof(Converters.TextureConverter))]
 		[Editor(typeof(Editors.TextureUIEditor), typeof(UITypeEditor))]
-		public Texture Texture { get; set; }
+		public Texture Texture
+		{
+			get { return this.texture; }
+			set
+			{
+				this.texture = value;
+				if (this.MaterialChanged != null)
+					this.MaterialChanged(this, new EventArgs());
+			}
+		}
 
-		//public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler MaterialChanged;
 
 		public MaterialLevel(Material parent, LightingLevel level)
 		{
@@ -59,19 +78,28 @@ namespace MaterialViewControl
 	public class Material
 	{
 		[Browsable(false)]
-		public MaterialList ParentList { get; set; }
+		public MaterialList ParentList { get; private set; }
 
 		[ReadOnly(true)]
 		public string ID { get; set; }
 
 		[TypeConverter(typeof(Converters.MaterialLevelConverter))]
-		public MaterialLevel Diffuse { get; set; }
+		public MaterialLevel Diffuse { get; private set; }
+
+		public event EventHandler MaterialChanged;
 
 		public Material(string id, MaterialList materialList)
 		{
 			this.ID = id;
 			this.ParentList = materialList;
 			this.Diffuse = new MaterialLevel(this, LightingLevel.Diffuse);
+			this.Diffuse.MaterialChanged += Diffuse_MaterialChanged;
+		}
+
+		private void Diffuse_MaterialChanged(object sender, EventArgs e)
+		{
+			if (this.MaterialChanged != null)
+				this.MaterialChanged(this, new EventArgs());
 		}
 	}
 
@@ -80,6 +108,8 @@ namespace MaterialViewControl
 	{
 		public TextureList TextureList { get; private set; }
 		List<Material> List;
+
+		public event EventHandler MaterialChanged;
 
 		public MaterialList()
 		{
@@ -95,10 +125,13 @@ namespace MaterialViewControl
 		public void Add(Material item)
 		{
 			List.Add(item);
+			item.MaterialChanged += item_MaterialChanged;
 		}
 
 		public void Clear()
 		{
+			foreach (var mat in this.List)
+				mat.MaterialChanged -= item_MaterialChanged;
 			List.Clear();
 		}
 
@@ -129,7 +162,12 @@ namespace MaterialViewControl
 
 		public bool Remove(Material item)
 		{
-			return List.Remove(item);
+			if (List.Remove(item))
+			{
+				item.MaterialChanged -= item_MaterialChanged;
+				return true;
+			}
+			return false;
 		}
 
 		public IEnumerator<Material> GetEnumerator()
@@ -140,6 +178,12 @@ namespace MaterialViewControl
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return List.GetEnumerator();
+		}
+
+		private void item_MaterialChanged(object sender, EventArgs e)
+		{
+			if (this.MaterialChanged != null)
+				this.MaterialChanged(this, new EventArgs());
 		}
 	}
 }

@@ -8,7 +8,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Runtime.InteropServices;
 
-namespace ModelEditor
+namespace ModelViewControl
 {
 	public struct MeshVertex
 	{
@@ -58,6 +58,11 @@ namespace ModelEditor
 
 			this.vertexBuffer = GL.GenBuffer();
 			this.indexBuffer = GL.GenBuffer();
+		}
+
+		~Mesh()
+		{
+			this.Unload();
 		}
 
 		public void AddVertex(MeshVertex vertex)
@@ -180,7 +185,7 @@ namespace ModelEditor
 			this.MaterialID = string.Empty;
 		}
 
-		public void Dispose()
+		void Unload()
 		{
 			if (this.vertexBuffer != 0)
 			{
@@ -194,37 +199,10 @@ namespace ModelEditor
 			}
 		}
 
-		public void ParseCommands(IEnumerable<RenderCommand> commandList)
+		public void Dispose()
 		{
-			Clear();
-
-			Vector3 normal = new Vector3(1.0f, 0.0f, 0.0f);
-			Vector2 texCoord = new Vector2(0.0f, 0.0f);
-			Color4 color = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-
-			foreach (var cmd in commandList)
-			{
-				if (cmd.Name == "VERTEX3")
-				{
-					AddVertex(new MeshVertex() { Position = cmd.Params.ToVector3(), Normal = normal, Color = color, TexCoord = texCoord });
-				}
-				if (cmd.Name == "NORMAL3")
-				{
-					normal = cmd.Params.ToVector3();
-				}
-				if (cmd.Name == "COLOR4")
-				{
-					color = cmd.Params.ToColor4();
-				}
-				if (cmd.Name == "TEXCOORD2")
-				{
-					texCoord = cmd.Params.ToVector2();
-				}
-				if (cmd.Name == "PLANE")
-				{
-					this.AddPlane(cmd.Params[0].ToClearFloat(), cmd.Params[1].ToClearFloat(), cmd.Params[2].ToClearInt(), cmd.Params[3].ToClearInt(), color);
-				}
-			}
+			this.Unload();
 		}
+
 	}
 }

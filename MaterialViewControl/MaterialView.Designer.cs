@@ -42,6 +42,7 @@
 			this.GLControl.Size = new System.Drawing.Size(229, 236);
 			this.GLControl.TabIndex = 0;
 			this.GLControl.VSync = false;
+			this.GLControl.Paint += new System.Windows.Forms.PaintEventHandler(this.GLControl_Paint);
 			this.GLControl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GLControl_MouseDown);
 			this.GLControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GLControl_MouseMove);
 			this.GLControl.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GLControl_MouseUp);
@@ -53,6 +54,7 @@
 			this.Controls.Add(this.GLControl);
 			this.Name = "MaterialView";
 			this.Size = new System.Drawing.Size(235, 242);
+			this.Load += new System.EventHandler(this.MaterialView_Load);
 			this.ResumeLayout(false);
 
 		}

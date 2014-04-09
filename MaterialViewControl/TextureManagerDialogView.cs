@@ -39,7 +39,7 @@ namespace MaterialViewControl
 
 		private void butSelect_Click(object sender, EventArgs e)
 		{
-			this.DialogSelectionResult = string.IsNullOrEmpty(this.TextureSelected) ? SelectionResult.None : SelectionResult.None;
+			this.DialogSelectionResult = string.IsNullOrEmpty(this.TextureSelected) ? SelectionResult.None : SelectionResult.Selected;
 			if (this.EditorService != null)
 				this.EditorService.CloseDropDown();
 		}

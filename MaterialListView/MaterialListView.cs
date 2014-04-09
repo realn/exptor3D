@@ -12,14 +12,20 @@ namespace MaterialViewControl
 {
 	public partial class MaterialListControl : UserControl
 	{
-		public MaterialList MaterialList { get; set; }
+		public MaterialList MaterialList { get; private set; }
 
 		public MaterialListControl()
 		{
 			InitializeComponent();
 
 			this.MaterialList = new MaterialList();
+			this.MaterialList.MaterialChanged += MaterialList_MaterialChanged;
 			this.comboMaterialList.Sorted = true;
+		}
+
+		void MaterialList_MaterialChanged(object sender, EventArgs e)
+		{
+			this.viewMaterial.Render();
 		}
 
 		private void butMatAdd_Click(object sender, EventArgs e)
@@ -58,6 +64,10 @@ namespace MaterialViewControl
 			this.comboMaterialList.SelectedIndex = this.comboMaterialList.Items.IndexOf(mat.ID);
 
 			return mat;
+		}
+
+		private void propMaterial_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		{
 		}
 	}
 }
