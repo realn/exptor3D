@@ -3,18 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelEditor", "ModelEditor\ModelEditor.csproj", "{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelViewControl", "ModelViewControl\ModelViewControl.csproj", "{343266BC-9B17-476C-A128-8E8F9BF8B642}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialViewControl", "MaterialViewControl\MaterialViewControl.csproj", "{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialListView", "MaterialListView\MaterialListView.csproj", "{19BE04BB-306B-4510-8F3B-83E5ADD0904E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editors", "Editors", "{9AADFA92-0E7A-427A-BDDC-7D39C71C15C9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{8B031525-7C31-4285-9351-A19A944A2D2B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Game (Debug)|Any CPU = Game (Debug)|Any CPU
@@ -42,75 +30,8 @@ Global
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Win32.ActiveCfg = Release|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Win32.Build.0 = Release|Win32
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Game (Debug)|Any CPU.ActiveCfg = Debug|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Game (Debug)|Any CPU.Build.0 = Debug|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Game (Debug)|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Game (Debug)|Mixed Platforms.Build.0 = Debug|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Game (Debug)|Win32.ActiveCfg = Debug|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Model Editor (Debug)|Any CPU.ActiveCfg = Model Editor (Debug)|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Model Editor (Debug)|Mixed Platforms.ActiveCfg = Model Editor (Debug)|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Model Editor (Debug)|Mixed Platforms.Build.0 = Model Editor (Debug)|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Model Editor (Debug)|Win32.ActiveCfg = Model Editor (Debug)|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Model Editor (Debug)|Win32.Build.0 = Model Editor (Debug)|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C}.Release|Win32.ActiveCfg = Release|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Game (Debug)|Any CPU.ActiveCfg = Debug|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Game (Debug)|Any CPU.Build.0 = Debug|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Game (Debug)|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Game (Debug)|Mixed Platforms.Build.0 = Debug|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Game (Debug)|Win32.ActiveCfg = Debug|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Model Editor (Debug)|Any CPU.ActiveCfg = Model Editor (Debug)|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Model Editor (Debug)|Mixed Platforms.ActiveCfg = Model Editor (Debug)|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Model Editor (Debug)|Mixed Platforms.Build.0 = Model Editor (Debug)|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Model Editor (Debug)|Win32.ActiveCfg = Model Editor (Debug)|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Model Editor (Debug)|Win32.Build.0 = Model Editor (Debug)|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Any CPU.Build.0 = Release|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{343266BC-9B17-476C-A128-8E8F9BF8B642}.Release|Win32.ActiveCfg = Release|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Game (Debug)|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Game (Debug)|Any CPU.Build.0 = Debug|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Game (Debug)|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Game (Debug)|Mixed Platforms.Build.0 = Debug|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Game (Debug)|Win32.ActiveCfg = Debug|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Model Editor (Debug)|Any CPU.ActiveCfg = Model Editor (Debug)|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Model Editor (Debug)|Mixed Platforms.ActiveCfg = Model Editor (Debug)|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Model Editor (Debug)|Mixed Platforms.Build.0 = Model Editor (Debug)|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Model Editor (Debug)|Win32.ActiveCfg = Model Editor (Debug)|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Model Editor (Debug)|Win32.Build.0 = Model Editor (Debug)|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C}.Release|Win32.ActiveCfg = Release|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Game (Debug)|Any CPU.ActiveCfg = Debug|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Game (Debug)|Any CPU.Build.0 = Debug|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Game (Debug)|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Game (Debug)|Mixed Platforms.Build.0 = Debug|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Game (Debug)|Win32.ActiveCfg = Debug|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Model Editor (Debug)|Any CPU.ActiveCfg = Model Editor (Debug)|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Model Editor (Debug)|Mixed Platforms.ActiveCfg = Model Editor (Debug)|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Model Editor (Debug)|Mixed Platforms.Build.0 = Model Editor (Debug)|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Model Editor (Debug)|Win32.ActiveCfg = Model Editor (Debug)|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Model Editor (Debug)|Win32.Build.0 = Model Editor (Debug)|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{8B031525-7C31-4285-9351-A19A944A2D2B} = {9AADFA92-0E7A-427A-BDDC-7D39C71C15C9}
-		{8412B87C-6428-4623-9E63-9EC8DA0C2D6C} = {9AADFA92-0E7A-427A-BDDC-7D39C71C15C9}
-		{19BE04BB-306B-4510-8F3B-83E5ADD0904E} = {8B031525-7C31-4285-9351-A19A944A2D2B}
-		{AAA5EB2F-AF92-4574-B7A8-43BB6389A41C} = {8B031525-7C31-4285-9351-A19A944A2D2B}
-		{343266BC-9B17-476C-A128-8E8F9BF8B642} = {8B031525-7C31-4285-9351-A19A944A2D2B}
 	EndGlobalSection
 EndGlobal
