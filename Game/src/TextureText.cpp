@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TextureText.h"
 #include "Render.h"
 

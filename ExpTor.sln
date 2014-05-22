@@ -3,8 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{EF240A04-21A8-4944-82B3-98F972B09F0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|Win32 = Debug|Win32
 		Game (Debug)|Any CPU = Game (Debug)|Any CPU
 		Game (Debug)|Mixed Platforms = Game (Debug)|Mixed Platforms
 		Game (Debug)|Win32 = Game (Debug)|Win32
@@ -16,6 +21,11 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Debug|Win32.Build.0 = Debug|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Game (Debug)|Any CPU.ActiveCfg = Debug|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Game (Debug)|Mixed Platforms.ActiveCfg = Debug|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Game (Debug)|Mixed Platforms.Build.0 = Debug|Win32
@@ -30,6 +40,26 @@ Global
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Win32.ActiveCfg = Release|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Win32.Build.0 = Release|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Debug|Win32.Build.0 = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Game (Debug)|Any CPU.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Game (Debug)|Mixed Platforms.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Game (Debug)|Mixed Platforms.Build.0 = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Game (Debug)|Win32.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Game (Debug)|Win32.Build.0 = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Model Editor (Debug)|Any CPU.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Model Editor (Debug)|Mixed Platforms.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Model Editor (Debug)|Mixed Platforms.Build.0 = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Model Editor (Debug)|Win32.ActiveCfg = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Model Editor (Debug)|Win32.Build.0 = Debug|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Release|Any CPU.ActiveCfg = Release|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Release|Win32.ActiveCfg = Release|Win32
+		{EF240A04-21A8-4944-82B3-98F972B09F0A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

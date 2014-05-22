@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CollisionManager.h"
 #include "Log.h"
 

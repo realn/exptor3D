@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GameEnemy.h"
 
 #include "Weapon.h"

@@ -9,10 +9,13 @@
 
 #pragma once
 
-#include <windows.h>	// Nag³ówek funkcji Windows
-#include <gl/gl.h>		// Nag³ówek funkcji OpenGL
-#include <gl/glu.h>		// Nag³ówek funkcji pomocniczych do OpenGL
+//#include <windows.h>	// Nag³ówek funkcji Windows
+//#include <gl/gl.h>		// Nag³ówek funkcji OpenGL
+//#include <gl/glu.h>		// Nag³ówek funkcji pomocniczych do OpenGL
 #include <string>		// Nag³owek do mainpulacji ³añcuchem znaków
+
+#define GLEW_STATIC
+#include <gl/glew.h>
 
 #include "RenderWindow.h"
 
@@ -26,10 +29,6 @@ enum RENDER_INFO{
 class CRender
 {
 private:
-	HGLRC		hRC;	// Kontekst Renderuj¹cy
-	HDC			hDC;	// Kontekst Urz¹dzenia
-	HWND		hWnd;	// Wskaznik na uchwyt okna	
-
 	int		colorBits;			// Bity kolorów
 	int		depthBits;
 	int		stencilBits;
@@ -44,9 +43,6 @@ private:
 public:
 	CRender();		// Konstruktor Klasy
 	~CRender();	// Destruktor Klasy
-
-	bool CreateGLContext( HWND hWindow, const unsigned colorBits = 0, const unsigned depthBits = 0, const unsigned stencilBits = 0);
-	void DestroyGLContext();
 
 	// Ustawianie perspektywy
 	static void SetPerspective( float fov, float width, float height, float znear, float zfar );

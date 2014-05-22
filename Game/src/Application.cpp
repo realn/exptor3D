@@ -1,23 +1,35 @@
+#include "stdafx.h"
 #include "Application.h"
+
+#include <wx/wx.h>
+#include <wx/frame.h>
+#include <wx/evtloop.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "EventInput.h"
 #include "GamePlayerController.h"
 
-#include <windowsx.h>
+//#include <windowsx.h>
 
 #include "GUI.h"
 #include "GamePlayer.h"
 #include "Level.h"
 #include "inifile.h"
 
+wxIMPLEMENT_APP(CApplication);
 
-CApplication::CApplication( HINSTANCE hInstance ) :
+CApplication::CApplication() :
 	active( true ),
-	GLWindow( hInstance, "OPENGLWINDOWCLASS3232" ),
+	//GLWindow( hInstance, "OPENGLWINDOWCLASS3232" ),
 	State(GAME_STATE::MAINMENU),
 	MouseMode(MOUSE_MODE::MENU),
 	ScriptParser(EventManager),
 	GUI( nullptr )
 {
+	Log.Init( "main.log", " - Expert 3D Tournament Log" );
 	RegScript();
 }
 
@@ -31,34 +43,7 @@ CApplication::~CApplication()
 	Log.Log( "Koniec pracy Aplikacji" );
 }
 
-/*	FUNKCJA KOMUNIKATÓW
-By okno sprawnie pracowa³o, potrzebna
-jest funkcja komunikatów, tzw. Window Processing.
-Interpretujemy tutaj komunikaty by okno, np. Zmieni³o
-szerokoœæ. Tu w³aœnie siê pojawia znany problem "Program
-Nie Odpowiada", bo pewnie jest tak zajêty, ¿e nie ma czasu
-uruchomiæ funkcji komunikatów.
-*/
-LRESULT CALLBACK WndProc(	HWND	hWnd,			// Uchwyt do okna
-						 UINT	uMsg,			// Komunikaty
-						 WPARAM	wParam,			// Dodatkowe informacje
-						 LPARAM	lParam)			// Dodatkowe informacje
-{
-	auto ptr = GetWindowLongPtr( hWnd, GWLP_USERDATA );
-	if( ptr != 0 )
-	{
-		auto pApp = (CApplication*)ptr;
-		if(pApp->ProcessMsg( hWnd, uMsg, wParam, lParam ))
-			return 0;
-	}
-
-	// przeka¿ reszte komunikatów do DefWindowProc
-	return DefWindowProc(hWnd,uMsg,wParam,lParam);
-}
-
-
-int	CApplication::Run()
-{
+bool	CApplication::OnInit() {
 	srand( GetTickCount() );
 
 	// Czytamy plik ini, by odpowiednio wszystko ustawiæ
@@ -71,139 +56,31 @@ int	CApplication::Run()
 
 	float aspectRatio = (float)WindowWidth / (float)WindowHeight;
 
-	if( !GLWindow.Create( "Expert 3D Tournament", 0, 0, WindowWidth, WindowHeight, fullscreen, (WNDPROC)WndProc, this ) )
-	{
-		Log.FatalError( "Nie uda³o siê stworzyæ okna!" );
-		return 0;
-	}
+	this->m_pRenderWindow = new CRenderWindow(this->EventManager);
+	this->m_pRenderWindow->SetClientSize(WindowWidth, WindowHeight);
 
-	// Stwórz okno
-	if ( !GLRender.CreateGLContext( GLWindow.GetHandle(), 32, 24, 8 ) )
-	{
-		Log.FatalError( "Nie uda³o siê stworzyæ kontekstu OpenGL!" );
-		return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
-	}
+	CRenderViewConfig config;
+	config.ColorBits = 32;
+	config.DepthBits = 24;
+	config.StencilBits = 8;
 
-	GLWindow.SetVisible( true );
+	this->m_pRenderView = new CRenderView(this->m_pRenderWindow, config);
+	this->m_pRenderView->SetClientSize(WindowWidth, WindowHeight);
 
-	CTexManager texManager( "Data/Textures/" );
-	CModelManager modelManager( "Data/Models/", texManager );
-	CLevel level( texManager, modelManager );
-	GUI = new CGUIMain( texManager, ScriptParser, aspectRatio, WindowHeight );
+	this->m_pRenderWindow->Show();
+	this->m_pRenderContext = new CRenderContext(this->m_pRenderView, 1, 1);
+	this->m_pRenderContext->SetCurrent(*this->m_pRenderView);
+	this->m_pRenderView->Initialize(wxShowEvent());
 
-	pGLevel = &level;
-	CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
-	ControllerList.AddController( pController );
+	this->m_pRenderView->Bind(wxEVT_MOTION, &CRenderWindow::OnMouseMove, this->m_pRenderWindow);
+	this->m_pRenderView->Bind(wxEVT_KEY_DOWN, &CRenderWindow::OnKeyDown, this->m_pRenderWindow);
+	this->m_pRenderView->Bind(wxEVT_KEY_UP, &CRenderWindow::OnKeyUp, this->m_pRenderWindow);
+	this->m_pRenderView->Bind(wxEVT_MOTION, &CRenderWindow::OnMouseMove, this->m_pRenderWindow);
+	this->m_pRenderView->Bind(wxEVT_LEFT_UP, &CRenderWindow::OnMouseKeyUp, this->m_pRenderWindow);
+	this->m_pRenderView->Bind(wxEVT_RIGHT_UP, &CRenderWindow::OnMouseKeyUp, this->m_pRenderWindow);
+	this->m_pRenderView->Bind(wxEVT_LEFT_DOWN, &CRenderWindow::OnMouseKeyDown, this->m_pRenderWindow);
 
-	EventManager.AddObserver( pController );
-	EventManager.AddObserver( GUI );
-
-	Log.Log( "Inicjalizacja OpenGL" );
-
-	InitGraphics( texManager );
-
-	GUI->ShowMenu( "MainMenu" );
-	GUI->SetMode( GUI_MODE::MENU );
-
-	MainLoop();
-	return 0;
-}
-
-const bool	CApplication::ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lParam )
-{
-	switch (uMsg)									// SprawdŸ komunikaty
-	{
-	case WM_ACTIVATE:							// komunikar Aktywnoœci
-		if (!HIWORD(wParam))					// SprawdŸ altywnoœæ
-			active=true;						// Program jest aktywny
-		else
-			active=false;						// Program ju¿ nie jest aktywny
-		return true;								// Spowrotem do pêtli
-
-	case WM_SYSCOMMAND:							// SprawdŸ komunikaty systemowe
-		switch (wParam)	
-		{
-		case SC_SCREENSAVE:					// Wygaszaczpróbuje siê w³¹czyæ?
-		case SC_MONITORPOWER:				// Monitor próbuje w³¹czyæ oszczêdzanie pr¹du?
-			return true;							// Zapobiegaj
-		}
-		return false;									// wyjdŸ
-
-	case WM_CLOSE:								// Komunikat zamkniêcia
-		PostQuitMessage(0);						// Wysy³amy zamkniêcie
-		return true;								
-
-	case WM_LBUTTONDOWN:
-		{
-			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, VK_LBUTTON );
-			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-			return true;
-		}
-
-	case WM_LBUTTONUP:
-		{
-			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, VK_LBUTTON );
-			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-			return true;
-		}
-
-	case WM_RBUTTONDOWN:
-		{
-			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, VK_RBUTTON );
-			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-			return true;
-		}
-
-	case WM_RBUTTONUP:
-		{
-			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, VK_RBUTTON );
-			EventManager.AddEvent( *((CEvent*)&KeyEvent) );
-			return true;
-		}
-
-	case WM_KEYDOWN:							// Klawisz jest naciœnieniêty?
-		{
-			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYDOWN, (unsigned)wParam );
-			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
-			return true;								
-		}
-
-	case WM_KEYUP:								// Klawisz jest puszczony?
-		{
-			CEventKey KeyEvent( EVENT_INPUT_TYPE::KEYUP, (unsigned)wParam );
-			EventManager.AddEvent( *((CEvent*)&KeyEvent) );			
-			return true;								
-		}
-
-	case WM_SIZE:								// Zmiana rozmiarów
-		//GLRender.Resize(LOWORD(lParam),HIWORD(lParam));  // LoWord=szerokoœæ, HiWord=wysokoœæ
-		return true;								
-
-	case WM_MOUSEMOVE:
-		{
-			if( MouseMode == MOUSE_MODE::MENU )
-			{
-				int x = GET_X_LPARAM(lParam);
-				int y = GET_Y_LPARAM(lParam);
-
-				CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEABS, x, y );
-
-				EventManager.AddEvent( *((CEvent*)&MouseEvent) );
-			}
-
-			return true;
-		}
-
-	case WM_CHAR:
-		{
-			CEventChar CharEvent( EVENT_INPUT_TYPE::CHARPRESS, (char)wParam, (wchar_t)wParam );
-			EventManager.AddEvent( *((CEvent*)&CharEvent) );
-			return true;
-		}
-	}
-
-
-	return false;
+	return true;
 }
 
 void	CApplication::UpdateMouse()
@@ -211,8 +88,9 @@ void	CApplication::UpdateMouse()
 	if( MouseMode != MOUSE_MODE::GAME )
 		return;
 
-	unsigned halfScreenX = GLWindow.GetWidth() / 2;
-	unsigned halfScreenY = GLWindow.GetHeight() / 2;
+	auto clientSize = this->m_pRenderWindow->GetClientSize();
+	unsigned halfScreenX = clientSize.GetWidth() / 2;
+	unsigned halfScreenY = clientSize.GetHeight() / 2;
 
 	POINT mousePos;
 	if( !GetCursorPos( &mousePos ) )
@@ -297,33 +175,42 @@ void	CApplication::InitGraphics( CTexManager& texManager )
 
 }
 
-void	CApplication::MainLoop()
-{
+int	CApplication::MainLoop() {
+	auto Size = this->m_pRenderWindow->GetClientSize();
+	float aspectRatio = (float)Size.GetWidth() / (float)Size.GetHeight();
+
+	CTexManager texManager( "Data/Textures/" );
+	CModelManager modelManager( "Data/Models/", texManager );
+	CLevel level( texManager, modelManager );
+	GUI = new CGUIMain( texManager, ScriptParser, aspectRatio, Size.GetHeight() );
+
+	pGLevel = &level;
+	CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
+	ControllerList.AddController( pController );
+
+	EventManager.AddObserver( pController );
+	EventManager.AddObserver( GUI );
+
+	Log.Log( "Inicjalizacja OpenGL" );
+
+	InitGraphics( texManager );
+
+	GUI->ShowMenu( "MainMenu" );
+	GUI->SetMode( GUI_MODE::MENU );
+
 	const float	TIME_STEP = 0.005f;
 
-	MSG		msg;									// Struktura komunikatów windowsa
-	bool	done = false;
 	float	frameTime = 0.0f;
 	CTimer	timer;
 
-	while(!done)									// Pêtla g³ówna (dopuki done nie jest true)
-	{
+	wxEventLoop	winEventLoop;
+	wxEventLoopActivator loopActivate(&winEventLoop);
+
+	while(winEventLoop.IsRunning()) {
 		frameTime += timer.GetDT();
 
-		for( unsigned i = 0; i < 20 && PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ); i++ )	// Czy otrzymano komunikat?
-		{
-			if ( msg.message == WM_QUIT )				// Czy to komunikat wyjœcia?
-			{
-				done = true;							// Je¿eli tak to wychodzimy z pêtli
-				break;
-			}
-			else									// Je¿eli nie to zajmij siê komunikatami
-			{
-				TranslateMessage( &msg );				// T³umacz komunikat
-				DispatchMessage( &msg );				// Wykonaj komunikat
-			}
-		}
-
+		while(winEventLoop.Pending())
+			winEventLoop.Dispatch();
 
 		// Rysujemy scene
 		if (active)								// Program jest aktywny?
@@ -341,15 +228,16 @@ void	CApplication::MainLoop()
 				frameTime -= TIME_STEP;
 			}
 
-			GLRender.SwapBuffers();				// Prze³anczamy bufory
+			this->m_pRenderView->SwapBuffers();
 		}
 		else
-			WaitMessage();
+			winEventLoop.Yield();
 
 		timer.Update();
 	}
-}
 
+	return 0;
+}
 
 void	CApplication::Update( const float fTD )
 {
@@ -377,7 +265,10 @@ void	CApplication::Render()
 
 	if( State == GAME_STATE::LEVEL && !GUI->IsMenuAnimating() )
 	{
-		GLRender.SetPerspective( 60.0f, 4, 3, 1.0f, 100.0f );
+		glm::mat4 mat = glm::perspectiveFov( 60.0f, 4.0f, 3.0f, 1.0f, 100.0f );
+		glMatrixMode( GL_PROJECTION );
+		glLoadMatrixf( glm::value_ptr(mat) );
+		glMatrixMode( GL_MODELVIEW );
 		glLoadIdentity();
 
 		glRotatef( pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f );
@@ -386,7 +277,10 @@ void	CApplication::Render()
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 		pGLevel->Render();
 
-		GLRender.SetPerspective( 45.0f, 4, 3, 1.0f, 10.0f );
+		mat = glm::perspectiveFov( 45.0f, 4.0f, 3.0f, 1.0f, 10.0f );
+		glMatrixMode( GL_PROJECTION );
+		glLoadMatrixf( glm::value_ptr(mat) );
+		glMatrixMode( GL_MODELVIEW );
 		glClear( GL_DEPTH_BUFFER_BIT );
 		glLoadIdentity();
 		pGLevel->GetPlayer().Render();

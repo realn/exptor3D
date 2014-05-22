@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUIScreen.h"
 
 CGUIElement::CGUIElement( const SCREEN_ELEMENT_TYPE type ) :

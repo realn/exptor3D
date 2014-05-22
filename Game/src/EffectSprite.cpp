@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Effect.h"
 
 CEffectSprite::CEffectSprite( const Vector3f& pos, const float R, const float G, const float B ) :

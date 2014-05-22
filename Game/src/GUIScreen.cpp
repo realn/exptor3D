@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUIScreen.h"
 #include "StrEx.h"
 #include <fstream>

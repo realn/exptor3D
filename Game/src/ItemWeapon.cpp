@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ItemWeapon.h"
 
 CItemWeapon::CItemWeapon( const WEAPON_TYPE type, const unsigned ammo ) :

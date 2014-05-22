@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ItemHealth.h"
 
 /*	BONUS - ZDROWIE	*/

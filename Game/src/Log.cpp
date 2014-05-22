@@ -8,8 +8,10 @@ Opis:	Patrz -> Log.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include "stdafx.h"
 #include "Log.h"
-#include <windows.h>
+#include <wx/wx.h>
+#include <wx/msgdlg.h>
 
 Logger::Logger() :
 	inited(false),
@@ -75,7 +77,7 @@ void Logger::FatalError( std::string str )
 
 	unsigned int time = GetTickCount() - firstTick;
 	SaveToFile( "[!!!]" + str, time );
-	MessageBox( NULL, str.c_str(), "FATAL ERROR", MB_OK | MB_ICONEXCLAMATION );
+	wxMessageBox(str, _("FATAL ERROR"));
 }
 
 void Logger::Note( std::string str )

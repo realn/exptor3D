@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CollisionBlock.h"
 
 CCollisionBlock::CCollisionBlock() :

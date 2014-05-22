@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GameStaticObject.h"
 #include "Log.h"
 

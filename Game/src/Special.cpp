@@ -8,6 +8,7 @@ Opis:	Patrz -> Special.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include "stdafx.h"
 #include "Special.h"
 
 //CSpecialEffectManager SEManager;
@@ -120,8 +121,8 @@ specMotionBlur::~specMotionBlur()
 void specMotionBlur::Init()
 {
 	unsigned int* data; // Stored Data
-	data = (unsigned int*)new GLuint[((512 * 512)* 4 * sizeof(unsigned int))];
-	ZeroMemory(data,((512 * 512)* 4 * sizeof(unsigned int)));
+	data = new unsigned[((512 * 512)* 4)];
+	memset(data, 0, ((512 * 512)* 4 * sizeof(unsigned)));
 	glGenTextures(5, &texture[0]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);

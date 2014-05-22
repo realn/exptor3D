@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "EventManager.h"
 
 void	CEventManager::AddEvent(const CEvent& event)

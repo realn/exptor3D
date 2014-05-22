@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GameActor.h"
 #include "Level.h"
 #include "GamePlayer.h"

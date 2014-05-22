@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GamePlayerController.h"
 #include "EventInput.h"
 
@@ -74,27 +75,27 @@ void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
 	switch (key)
 	{
 	case 'W':
-	case VK_UP:
+	case WXK_UP:
 		Move[MOVE_FORWARD] = down;
 		break;
 
 	case 'S':
-	case VK_DOWN:
+	case WXK_DOWN:
 		Move[MOVE_BACKWARD] = down;
 		break;
 
 	case 'A':
-	case VK_LEFT:
+	case WXK_LEFT:
 		Move[MOVE_STRAFE_LEFT] = down;
 		break;
 
 	case 'D':
-	case VK_RIGHT:
+	case WXK_RIGHT:
 		Move[MOVE_STRAFE_RIGHT] = down;
 		break;
 
-	case VK_LCONTROL:
-	case VK_LBUTTON:
+	case WXK_RAW_CONTROL:
+	case WXK_LBUTTON:
 		FireWeapon = down;
 		break;
 
@@ -108,7 +109,7 @@ void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
 	case '8':	Weapon = 7;	break;
 	case '9':	Weapon = 8;	break;
 
-	case VK_SHIFT:
+	case WXK_SHIFT:
 		Run = down;
 		break;
 

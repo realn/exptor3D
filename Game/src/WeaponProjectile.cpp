@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "WeaponProjectile.h"
 
 #include "Level.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "RenderList.h"
 
 CRenderList::CRenderList( CTexManager& texManager, CModelManager& modelManager ) :

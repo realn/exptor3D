@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ItemArmor.h"
 
 /*	BONUS - PANCERZ	*/

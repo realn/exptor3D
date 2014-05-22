@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUIConsole.h"
 #include "Render.h"
 
@@ -110,12 +111,12 @@ void	CGUIConsole::ParseKey( const unsigned key, const bool down )
 	{
 		switch (key)
 		{
-		case VK_BACK:
+		case WXK_BACK:
 			if( !CurrentText.empty() )
 				CurrentText = CurrentText.substr( 0, CurrentText.length() - 1 );
 			break;
 
-		case VK_RETURN:
+		case WXK_RETURN:
 			if( !CurrentText.empty() )
 			{
 				ScriptParser.Execute( CurrentText, true );

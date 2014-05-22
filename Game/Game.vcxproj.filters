@@ -377,5 +377,8 @@
     <ClInclude Include="src\RenderWindow.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

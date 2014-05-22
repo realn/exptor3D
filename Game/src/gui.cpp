@@ -8,6 +8,7 @@ Opis:	Patrz -> gio.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include "stdafx.h"
 #include "gui.h"
 #include "StrEx.h"
 #include "EventInput.h"
@@ -146,10 +147,10 @@ void	CGUIMain::ParseKeys( const unsigned key, const bool down )
 		{
 			switch (key)
 			{
-			case VK_UP:		Menu.EventMoveUp();		break;
-			case VK_DOWN:	Menu.EventMoveDown();	break;
-			case VK_RETURN:
-			case VK_LBUTTON:	
+			case WXK_UP:		Menu.EventMoveUp();		break;
+			case WXK_DOWN:	Menu.EventMoveDown();	break;
+			case WXK_RETURN:
+			case WXK_LBUTTON:	
 				{
 					std::string script;
 					if( Menu.EventEnter( script ) )

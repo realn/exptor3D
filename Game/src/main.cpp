@@ -11,15 +11,15 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include "stdafx.h"
 #include "Application.h"
 
-int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
-				   HINSTANCE	hPrevInstance,		// Poprzednia instancja
-				   LPSTR		lpCmdLine,			// Parametry
-				   int			nCmdShow)			// Tryb widocznoœci okna
-{
-	Log.Init( "main.log", " - Expert 3D Tournament Log" );
-
-	CApplication app( hInstance );
-	return app.Run();	
-}
+//int WINAPI WinMain(	HINSTANCE	hInstance,			// Instancja
+//				   HINSTANCE	hPrevInstance,		// Poprzednia instancja
+//				   LPSTR		lpCmdLine,			// Parametry
+//				   int			nCmdShow)			// Tryb widocznoœci okna
+//{
+//
+//	CApplication app( hInstance );
+//	return app.Run();	
+//}

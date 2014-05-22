@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUIScreen.h"
 
 CGUITextElement::CGUITextElement( CTextRenderer& textRender ) :

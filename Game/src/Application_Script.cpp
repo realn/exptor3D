@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Application.h"
 
 void LoadLevel( void* pData, const std::vector<std::string>& params )

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUIScreen.h"
 
 CValueSync::CValueSync( CGUIElement* element, const std::string& name, const std::string& prefix, const std::string& sufix ) :

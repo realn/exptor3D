@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "WeaponBulletRocket.h"
 #include "WeaponBulletExplosion.h"
 

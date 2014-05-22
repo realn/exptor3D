@@ -1,41 +1,22 @@
 #pragma once
 
-#include <string>
-#include <Windows.h>
+#include <wx/frame.h>
 
-class CRenderWindow
+#include "EventManager.h"
+
+class CRenderWindow : 
+	public wxFrame
 {
 private:
-	const std::string	WindowClassName;
-	HINSTANCE	hInstance;
-	HWND		hWindow;
-	std::string	Title;
-	DWORD		dwStyle;
-	DWORD		dwExStyle;
-	bool		FullScreen;
-	unsigned	ColorBits;
+	CEventManager&	m_EventManager;
 
 public:
-	CRenderWindow( HINSTANCE instance, const std::string& classname );
-	~CRenderWindow();
+	CRenderWindow(CEventManager& eventManager);
+	virtual ~CRenderWindow();
 
-	const bool	Create( const std::string& title, const int x, const int y, const unsigned width, const unsigned height, const bool fullscreen, WNDPROC windowProc, void* pUserData = nullptr, const bool client = true );
-	void	Destroy();
-
-	void	EnableFullScreen( const unsigned colorBits = 32 );
-	void	DisableFullScreen();
-
-	void	SetTitle( const std::string& title );
-	void	SetPos( const int x, const int y );
-	void	SetSize( const unsigned width, const unsigned height, const bool client = false );
-	void	SetVisible( const bool visible );
-
-	const unsigned	GetWidth( const bool client = false ) const;
-	const unsigned	GetHeight( const bool client = false ) const;
-	const int	GetX() const;
-	const int	GetY() const;
-	const bool	IsVisible() const;
-	const bool	DoesExist() const;
-	const bool IsFullScreen() const;
-	HWND	GetHandle() const;
+	void	OnKeyDown(const wxKeyEvent& event);
+	void	OnKeyUp(const wxKeyEvent& event);
+	void	OnMouseMove(const wxMouseEvent& event);
+	void	OnMouseKeyDown(const wxMouseEvent& event);
+	void	OnMouseKeyUp(const wxMouseEvent& event);
 };

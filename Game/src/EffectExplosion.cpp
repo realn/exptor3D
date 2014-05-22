@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Effect.h"
 
 CEffectExplosion::CEffectExplosion( const Vector3f& pos, const float radius, const float speed ) :

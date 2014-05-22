@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ScriptParser.h"
 #include "StrEx.h"
 #include "EventScript.h"

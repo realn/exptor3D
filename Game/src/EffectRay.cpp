@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Effect.h"
 //
 //CEffectRay::CEffectRay( const Vector3f& pos, const Vector3f& dest ) :
