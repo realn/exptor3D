@@ -1,6 +1,8 @@
 #include "stdafx.h"
+
+#include "../../Engine/src/Logger.h"
+
 #include "RenderWindow.h"
-#include "Log.h"
 #include "EventInput.h"
 
 CRenderWindow::CRenderWindow(CEventManager& eventManager ) :

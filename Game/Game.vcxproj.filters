@@ -48,9 +48,6 @@
     <ClCompile Include="src\Log.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\Timer.cpp">
       <Filter>Source</Filter>
     </ClCompile>

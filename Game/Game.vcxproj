@@ -149,7 +149,6 @@
     <ClCompile Include="src\LevelBlock.cpp" />
     <ClCompile Include="src\LevelFlags.cpp" />
     <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ModelManager.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Renderable.cpp" />

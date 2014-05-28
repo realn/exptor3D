@@ -77,12 +77,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\RenderContext.h" />
     <ClInclude Include="src\RenderView.h" />
     <ClInclude Include="src\RenderViewConfig.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\TextureData.h" />
+    <ClInclude Include="src\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\RenderContext.cpp" />
     <ClCompile Include="src\RenderView.cpp" />
     <ClCompile Include="src\RenderViewConfig.cpp" />
@@ -90,6 +95,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TextureData.cpp" />
+    <ClCompile Include="src\TextureManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
