@@ -45,9 +45,6 @@
     <ClCompile Include="src\inifile.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\Timer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -88,9 +85,6 @@
       <Filter>Source\Game\Item</Filter>
     </ClCompile>
     <ClCompile Include="src\Render.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="src\ModelManager.cpp">
@@ -224,9 +218,6 @@
     <ClInclude Include="src\inifile.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="src\Log.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="src\Timer.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -264,9 +255,6 @@
       <Filter>Source\Game\Item</Filter>
     </ClInclude>
     <ClInclude Include="src\Render.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Texture.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="src\ModelManager.h">

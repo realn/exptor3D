@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EF240A04-21A8-4944-82B3-98F972B09F0A}</ProjectGuid>
+    <ProjectGuid>{2EEB1AC9-9BCC-46AE-AD59-C93A168FDD0E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Engine</RootNamespace>
+    <RootNamespace>Editor</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -40,34 +40,35 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(WXWIN)\Include;$(WXWIN)\Include\msvc;$(GLEW_PATH)Include;$(GLM_PATH);$(IncludePath)</IncludePath>
-    <LibraryPath>$(WXWIN)\lib\vc_lib;$(GLEW_PATH)lib;$(WXWIN)/lib/vc_lib/mswud;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(WXWIN)\Include;$(WXWIN)\Include\msvc;$(GLEW_PATH)Include;$(GLM_PATH);$(SolutionDir)Engine\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(WXWIN)\lib\vc_lib;$(GLEW_PATH)lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <Lib>
-      <AdditionalDependencies>glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -77,35 +78,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\LevelBlock.h" />
-    <ClInclude Include="src\LevelSector.h" />
-    <ClInclude Include="src\LevelSurface.h" />
-    <ClInclude Include="src\Logger.h" />
-    <ClInclude Include="src\Material.h" />
-    <ClInclude Include="src\Plane.h" />
-    <ClInclude Include="src\RenderContext.h" />
-    <ClInclude Include="src\RenderView.h" />
-    <ClInclude Include="src\RenderViewConfig.h" />
+    <ClInclude Include="src\AOCross.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\EditionBlock.h" />
+    <ClInclude Include="src\SelectionContext.h" />
+    <ClInclude Include="src\EditorTool.h" />
+    <ClInclude Include="src\GraphicPlane.h" />
+    <ClInclude Include="src\MainWindow.h" />
+    <ClInclude Include="src\RenderWindow.h" />
+    <ClInclude Include="src\SelectionTool.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\Surface.h" />
-    <ClInclude Include="src\Texture.h" />
-    <ClInclude Include="src\TextureManager.h" />
+    <ClInclude Include="src\SurfaceContext.h" />
+    <ClInclude Include="src\WireCube.h" />
+    <ClInclude Include="src\WireGrid.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\LevelBlock.cpp" />
-    <ClCompile Include="src\Logger.cpp" />
-    <ClCompile Include="src\Material.cpp" />
-    <ClCompile Include="src\Plane.cpp" />
-    <ClCompile Include="src\RenderContext.cpp" />
-    <ClCompile Include="src\RenderView.cpp" />
-    <ClCompile Include="src\RenderViewConfig.cpp" />
+    <ClCompile Include="src\AOCross.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\EditionBlock.cpp" />
+    <ClCompile Include="src\GraphicPlane.cpp" />
+    <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="src\RenderWindow.cpp" />
+    <ClCompile Include="src\SelectionContext.cpp" />
+    <ClCompile Include="src\SelectionTool.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Surface.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
-    <ClCompile Include="src\TextureManager.cpp" />
+    <ClCompile Include="src\SurfaceContext.cpp" />
+    <ClCompile Include="src\WireCube.cpp" />
+    <ClCompile Include="src\WireGrid.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{ef240a04-21a8-4944-82b3-98f972b09f0a}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

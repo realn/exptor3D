@@ -12,6 +12,12 @@
     <Filter Include="Source\Graphic">
       <UniqueIdentifier>{3b3dd3d3-747b-4038-bd89-b3c8d2c2225d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Scene">
+      <UniqueIdentifier>{3c9d7028-6443-4e54-9759-dc1f2b14f961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Logic">
+      <UniqueIdentifier>{c15adad0-4fdb-48cc-8f4d-80f0516129c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h">
@@ -26,17 +32,32 @@
     <ClInclude Include="src\RenderViewConfig.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="src\Texture.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="src\TextureManager.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TextureData.h">
       <Filter>Source\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="src\Logger.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Source\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LevelSurface.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LevelBlock.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LevelSector.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Plane.h">
+      <Filter>Source\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Surface.h">
+      <Filter>Source\Logic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -52,17 +73,26 @@
     <ClCompile Include="src\RenderViewConfig.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TextureData.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="src\TextureManager.cpp">
       <Filter>Source\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="src\Logger.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Plane.cpp">
+      <Filter>Source\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LevelBlock.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Surface.cpp">
+      <Filter>Source\Logic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

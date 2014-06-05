@@ -148,7 +148,6 @@
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\LevelBlock.cpp" />
     <ClCompile Include="src\LevelFlags.cpp" />
-    <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\ModelManager.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
@@ -158,7 +157,6 @@
     <ClCompile Include="src\ScriptParser.cpp" />
     <ClCompile Include="src\Special.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TextureText.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\UpdateList.cpp" />
@@ -203,7 +201,6 @@
     <ClInclude Include="src\ItemHealth.h" />
     <ClInclude Include="src\ItemWeapon.h" />
     <ClInclude Include="src\Level.h" />
-    <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\ModelManager.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Renderable.h" />
@@ -212,7 +209,6 @@
     <ClInclude Include="src\Special.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\StrEx.h" />
-    <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\TextureText.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Updateable.h" />
