@@ -28,6 +28,14 @@ void	CMainWindow::RegisterTool( IEditorTool* const pTool ) {
 	this->m_Toolbar->Realize();
 }
 
+IEditorTool* const	CMainWindow::FindTool( const int id ) const {
+	auto it = this->m_ToolMap.find( id );
+	if( it == this->m_ToolMap.cend() )
+		return nullptr;
+
+	return it->second;
+}
+
 void	CMainWindow::InitMenu() {
 	auto menu = new wxMenuBar();
 

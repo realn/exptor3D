@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "EditionBlock.h"
 
+#include <Dictionary.h>
+
 CEditionBlock::CEditionBlock() {
 }
 
@@ -26,7 +28,7 @@ CEditionBlock::CEditionBlock( const glm::vec3& position, const glm::vec3& size )
 	this->GetSurfaceMod( BLOCK_SURFACE::TOP			).Set( m_Verts[4], m_Verts[5], m_Verts[6], m_Verts[7] );
 	this->GetSurfaceMod( BLOCK_SURFACE::BOTTOM		).Set( m_Verts[0], m_Verts[1], m_Verts[2], m_Verts[3] );
 
-	for( unsigned i = 0; i < 4; i++ ) {
+	for( unsigned i = 0; i < 6; i++ ) {
 		this->m_SideBlock[i] = nullptr;
 	}
 }
@@ -50,11 +52,16 @@ const CSurface&	CEditionBlock::GetOppositeSurface( const BLOCK_SURFACE surface )
 }
 
 CEditionBlock* const	CEditionBlock::GetSideBlock( const BLOCK_SURFACE surface ) const {
-	unsigned side = (unsigned)surface % 4;
+	unsigned side = (unsigned)surface % 6;
 	return this->m_SideBlock[side];
 }
 
 CEditionBlock* const	CEditionBlock::GetOppositeBlock( const BLOCK_SURFACE surface ) const {
+	if( surface == BLOCK_SURFACE::TOP )
+		return this->GetSideBlock( BLOCK_SURFACE::BOTTOM );
+	if( surface == BLOCK_SURFACE::BOTTOM )
+		return this->GetSideBlock( BLOCK_SURFACE::TOP);
+
 	unsigned side = ((unsigned)surface + 2) % 4;
 	return this->m_SideBlock[side];
 }
@@ -82,4 +89,45 @@ void	CEditionBlock::ClearSideBlocks() {
 
 CSurface&	CEditionBlock::GetSurfaceMod( const BLOCK_SURFACE surface ){
 	return this->m_Surface[(unsigned)surface];
+}
+
+const bool	CEditionBlock::Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector ) const {
+	BLOCK_SURFACE surface;
+	glm::vec3 pos;
+	return this->Intersects(rayOrigin, rayVector, pos, surface );
+}
+
+const bool	CEditionBlock::Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector, glm::vec3& outPosition ) const {
+	BLOCK_SURFACE surface;
+	return this->Intersects(rayOrigin, rayVector, outPosition, surface );
+}
+
+const bool	CEditionBlock::Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector, glm::vec3& outPosition, BLOCK_SURFACE& outSurface ) const {
+	CDictionary<glm::vec3, BLOCK_SURFACE> hits;
+
+	glm::vec3 pos;
+	for( unsigned i = 0; i < 6; i++ ) {
+		const CSurface& surface = this->m_Surface[i];
+
+		if( surface.Intersects( rayOrigin, rayVector, pos ) ) {
+			hits.push_back( pos, (BLOCK_SURFACE)i );
+		}
+	}
+
+	if( hits.empty() )
+		return false;
+
+	float max = glm::distance(rayOrigin, hits.cbegin()->first);
+	outSurface = hits.cbegin()->second;
+
+	for( auto it = hits.begin(); it != hits.end(); it++ ) {
+		float dist = glm::distance( rayOrigin, it->first );
+		if( dist < max ) {
+			max = dist;
+			outPosition = it->first;
+			outSurface = it->second;
+		}
+	}
+
+	return true;
 }

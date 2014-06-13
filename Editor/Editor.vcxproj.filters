@@ -62,6 +62,15 @@
     <ClInclude Include="src\EditionBlock.h">
       <Filter>Source\Edition</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfaceTool.h">
+      <Filter>Source\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SolidCube.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GenericMesh.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -97,7 +106,16 @@
     <ClCompile Include="src\SurfaceContext.cpp">
       <Filter>Source\Edition</Filter>
     </ClCompile>
+    <ClCompile Include="src\SurfaceTool.cpp">
+      <Filter>Source\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SolidCube.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="src\EditionBlock.cpp">
+      <Filter>Source\Edition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GenericMesh.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

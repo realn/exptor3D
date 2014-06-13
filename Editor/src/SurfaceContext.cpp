@@ -26,6 +26,32 @@ void	CSurfaceContext::Clear() {
 	m_Blocks.clear();
 }
 
+const std::vector<glm::vec3>	CSurfaceContext::GetLocations() const {
+	std::vector<glm::vec3>	result;
+	for( auto it = m_Blocks.cbegin(); it != m_Blocks.cend(); it++ ) {
+		result.push_back( (*it)->GetPosition() );
+	}
+	return result;
+}
+
+const CDictionary<CSurface, CEditionBlock*>	CSurfaceContext::GetOuterSurfaces() const {
+	CDictionary<CSurface, CEditionBlock*> hits;
+
+	for( auto it = this->m_Blocks.cbegin(); it != this->m_Blocks.cend(); it++ ) {
+		CEditionBlock* const pBlock  = (*it);
+
+		for( unsigned surfaceId = 0; surfaceId < 6; surfaceId++ ) {
+			BLOCK_SURFACE surface = (BLOCK_SURFACE)surfaceId;
+
+			if( pBlock->GetSideBlock( surface ) == nullptr ) {
+				hits.push_back( pBlock->GetSurface( surface ), pBlock );
+			}
+		}
+	}
+
+	return hits;
+}
+
 void	CSurfaceContext::AddBlock( const glm::vec3& position ) {
 	CEditionBlock* pBlock = new CEditionBlock( position, glm::vec3( 1.0f ) );
 

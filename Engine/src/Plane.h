@@ -20,6 +20,11 @@ public:
 	void	Set( const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2 );
 
 	const bool	IsEqual( const CPlane& plane, const bool sameSide = true ) const;
+
+	const bool	operator==( const CPlane& plane ) const;
+	const bool	operator!=( const CPlane& plane ) const;
+	const bool	operator<( const CPlane& plane ) const;
 };
 
 extern const glm::vec3	MakeNormal( const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2 );
+extern const bool	VectorLess( const glm::vec3& v0, const glm::vec3& v1 );

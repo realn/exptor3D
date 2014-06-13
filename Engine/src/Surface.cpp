@@ -20,6 +20,24 @@ const glm::vec3&	CSurface::GetVert( const unsigned vert ) const {
 	return this->m_Verts[ vert ];
 }
 
+const bool	CSurface::Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector ) const {
+	glm::vec3 pos;
+	return this->Intersects( rayOrigin, rayVector, pos ); 
+}
+
+const bool	CSurface::Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector, glm::vec3& outPosition ) const {
+	if( !this->m_SurfacePlane.Intersects( rayOrigin, rayVector, outPosition ) )
+		return false;
+
+	bool ok = true;
+	for( unsigned i = 0; i < 4; i++ ){
+		if( this->m_EdgePlane[i].Distance( outPosition ) < 0.0f )
+			ok = false;
+	}
+
+	return ok;
+}
+
 void	CSurface::Set( const glm::vec3* const verts ) {
 	for( unsigned i = 0; i < 4; i++ ) {
 		this->m_Verts[i] = verts[i];
@@ -59,4 +77,20 @@ const bool	CSurface::IsEqual( const CSurface& surface, const bool sameSide ) con
 	}
 
 	return same == 4;
+}
+
+const bool	CSurface::operator==( const CSurface& surface ) const {
+	return IsEqual( surface, true );
+}
+
+const bool	CSurface::operator!=( const CSurface& surface ) const {
+	return !IsEqual( surface, true );
+}
+
+const bool	CSurface::operator<( const CSurface& surface ) const { 
+	return this->m_SurfacePlane < surface.m_SurfacePlane &&
+		VectorLess( this->m_Verts[0], surface.m_Verts[0] ) &&
+		VectorLess( this->m_Verts[1], surface.m_Verts[1] ) &&
+		VectorLess( this->m_Verts[2], surface.m_Verts[2] ) &&
+		VectorLess( this->m_Verts[3], surface.m_Verts[3] );
 }

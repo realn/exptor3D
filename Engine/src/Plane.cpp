@@ -55,9 +55,25 @@ const bool	CPlane::IsEqual( const CPlane& plane, const bool sameSide ) const {
 	return this->N == plane.N && this->D == plane.D;
 }
 
+const bool	CPlane::operator==( const CPlane& plane ) const {
+	return IsEqual( plane, true );
+}
+
+const bool	CPlane::operator!=( const CPlane& plane ) const {
+	return !IsEqual( plane, true );
+}
+
+const bool	CPlane::operator<( const CPlane& plane ) const {
+	return VectorLess( this->N, plane.N ) && this->D < plane.D;
+}
+
 const glm::vec3	MakeNormal( const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2 ) {
 	const glm::vec3 vec1 = v1 - v0;
 	const glm::vec3 vec2 = v2 - v0;
 
 	return glm::normalize( glm::cross( vec1, vec2 ) );
+}
+
+const bool	VectorLess( const glm::vec3& v0, const glm::vec3& v1 ) {
+	return v0.x < v1.x && v0.y < v1.y && v0.z < v1.z;
 }

@@ -81,14 +81,17 @@
     <ClInclude Include="src\AOCross.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\EditionBlock.h" />
+    <ClInclude Include="src\GenericMesh.h" />
     <ClInclude Include="src\SelectionContext.h" />
     <ClInclude Include="src\EditorTool.h" />
     <ClInclude Include="src\GraphicPlane.h" />
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\RenderWindow.h" />
     <ClInclude Include="src\SelectionTool.h" />
+    <ClInclude Include="src\SolidCube.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\SurfaceContext.h" />
+    <ClInclude Include="src\SurfaceTool.h" />
     <ClInclude Include="src\WireCube.h" />
     <ClInclude Include="src\WireGrid.h" />
   </ItemGroup>
@@ -96,15 +99,18 @@
     <ClCompile Include="src\AOCross.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\EditionBlock.cpp" />
+    <ClCompile Include="src\GenericMesh.cpp" />
     <ClCompile Include="src\GraphicPlane.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\RenderWindow.cpp" />
     <ClCompile Include="src\SelectionContext.cpp" />
     <ClCompile Include="src\SelectionTool.cpp" />
+    <ClCompile Include="src\SolidCube.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\SurfaceContext.cpp" />
+    <ClCompile Include="src\SurfaceTool.cpp" />
     <ClCompile Include="src\WireCube.cpp" />
     <ClCompile Include="src\WireGrid.cpp" />
   </ItemGroup>

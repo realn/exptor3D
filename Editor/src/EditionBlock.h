@@ -17,7 +17,7 @@ private:
 	glm::vec3		m_Position;
 	glm::vec3		m_Verts[8];
 	CSurface		m_Surface[6];
-	CEditionBlock*	m_SideBlock[4];
+	CEditionBlock*	m_SideBlock[6];
 
 public:
 	CEditionBlock();
@@ -33,6 +33,10 @@ public:
 	 
 	void	SetSideBlock( const BLOCK_SURFACE surface, CEditionBlock* const block );
 	void	ClearSideBlocks();
+
+	const bool	Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector ) const;
+	const bool	Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector, glm::vec3& outPosition ) const;
+	const bool	Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector, glm::vec3& outPosition, BLOCK_SURFACE& outSurface ) const;
 
 private:
 	CSurface&	GetSurfaceMod( const BLOCK_SURFACE surface );

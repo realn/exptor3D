@@ -4,6 +4,8 @@
 
 #include "SelectionContext.h"
 #include "SelectionTool.h"
+#include "SurfaceContext.h"
+#include "SurfaceTool.h"
 
 class CMainWindow;
 class CRenderWindow;
@@ -20,9 +22,16 @@ private:
 	CSelectionContext	m_Selection;
 	CSelectionTool		m_SelectTool;
 
+	CSurfaceContext	m_ctxSurface;
+	CSurfaceTool	m_SurfaceTool;
+
+	IEditorTool*	m_CurrentTool;
+
 public:
 	CApplication();
 	virtual ~CApplication();
 
 	virtual bool	OnInit() override;
+
+	void	OnButtonEvent( wxCommandEvent& event );
 };

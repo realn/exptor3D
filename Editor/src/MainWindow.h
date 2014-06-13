@@ -20,6 +20,7 @@ public:
 	virtual ~CMainWindow();
 
 	void	RegisterTool( IEditorTool* const pTool );
+	IEditorTool* const	FindTool( const int id ) const;
 
 private:
 	void	InitMenu();

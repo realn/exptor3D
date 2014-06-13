@@ -18,8 +18,15 @@ public:
 	const CPlane&		GetEdgePlane( const unsigned edge ) const;
 	const glm::vec3&	GetVert( const unsigned vert ) const;
 	
+	const bool	Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector ) const;
+	const bool	Intersects( const glm::vec3& rayOrigin, const glm::vec3& rayVector, glm::vec3& outPosition ) const;
+
 	void	Set( const glm::vec3* const verts );
 	void	Set( const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3 );
 
 	const bool	IsEqual( const CSurface& surface, const bool sameSide = true ) const;
+
+	const bool	operator==( const CSurface& surface ) const;
+	const bool	operator!=( const CSurface& surface ) const;
+	const bool	operator<( const CSurface& surface ) const;
 };

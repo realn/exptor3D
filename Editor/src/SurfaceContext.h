@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include <Surface.h>
+#include <Dictionary.h>
 
 class CEditionBlock;
 
@@ -14,6 +15,8 @@ public:
 
 	void	SetEdition( const std::vector<glm::vec3>& blocks );
 	void	Clear();
+	const std::vector<glm::vec3>	GetLocations() const;
+	const CDictionary<CSurface, CEditionBlock*>	GetOuterSurfaces() const;
 
 private:
 	void	AddBlock( const glm::vec3& position );

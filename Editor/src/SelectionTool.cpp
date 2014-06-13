@@ -92,5 +92,5 @@ const wxString	CSelectionTool::GetName() const{
 }
 
 const wxString	CSelectionTool::GetIconPath() const {
-	return wxT( "D:/Projekty/exptor3D/Workarea/Data/Editor/Tool_Selection.png" );
+	return wxT( "Data/Editor/Tool_Selection.png" );
 }
