@@ -100,7 +100,7 @@ void	CMenu::EventMoveUp()
 		auto it = std::find( List.cbegin(), List.cend(), pSelectedItem );
 		if( it != List.cend() )
 		{
-			unsigned index = std::distance( List.cbegin(), it );
+			auto index = std::distance( List.cbegin(), it );
 			index = (index + 1) % List.size();
 
 			pSelectedItem = List[index];
@@ -125,7 +125,7 @@ void	CMenu::EventMoveDown()
 		auto it = std::find( List.cbegin(), List.cend(), pSelectedItem );
 		if( it != List.cend() )
 		{
-			unsigned index = std::distance( List.cbegin(), it );
+			auto index = std::distance( List.cbegin(), it );
 			if( index == 0 )
 				pSelectedItem = List.back();
 			else

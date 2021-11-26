@@ -64,13 +64,13 @@ Pobiera dowoln¹ iloœæ parametrów pomiêdzy
 nawiasami ( ) odzielonymi przecinkiem i je
 wpisuje do podanej tablicy.
 */
-bool CModel::GetParams( const std::string &str, const int from, std::vector<std::string>& param, const std::string &Com )
+bool CModel::GetParams( const std::string &str, size_t from, std::vector<std::string>& param, const std::string &Com )
 {
 	if( param.size() == 0 )
 		return true;
 
 	unsigned curparam = 0;
-	for( unsigned i = from; i < str.length(); i++ )
+	for( auto i = from; i < str.length(); i++ )
 	{
 		if( str[i] == ')' )
 			break;
@@ -259,7 +259,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 	std::string param[6], str;
 	bool presult = false;
 	std::string Com = "";
-	int i = 0;
+	size_t i = 0;
 
 	str = ClearWhiteSpace( fullstr );
 

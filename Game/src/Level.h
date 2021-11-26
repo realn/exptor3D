@@ -99,7 +99,7 @@ public:
 			}
 		}
 
-		Indices.push_back( Verts.size() );
+		Indices.push_back( static_cast<unsigned short>(Verts.size()) );
 		Verts.push_back( vert );
 		TexCoords.push_back( texCoord );
 	}
@@ -121,7 +121,7 @@ public:
 		glVertexPointer( 3, GL_FLOAT, 0, &Verts[0] );
 		glTexCoordPointer( 2, GL_FLOAT, 0, &TexCoords[0] );
 
-		glDrawElements( GL_QUADS, Indices.size(), GL_UNSIGNED_SHORT, &Indices[0] );
+		glDrawElements( GL_QUADS, static_cast<GLsizei>(Indices.size()), GL_UNSIGNED_SHORT, &Indices[0] );
 
 		glDisableClientState( GL_VERTEX_ARRAY );
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY );

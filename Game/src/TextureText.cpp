@@ -71,7 +71,7 @@ void	CTextRenderer::Print( const float x, const float y, const std::string& text
 	glScalef( ScaleX, ScaleY, 1.0f );
 	glColor4f( Color.X, Color.Y, Color.Z, Color.W );
 
-	glCallLists( strlen(stext), GL_UNSIGNED_BYTE, stext );
+	glCallLists( static_cast<GLsizei>(strlen(stext)), GL_UNSIGNED_BYTE, stext );
 	glPopMatrix();
 }
 

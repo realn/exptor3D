@@ -30,7 +30,7 @@ const bool	CScene::RemoveEntity( ISceneEntity* pEntity )
 void	CScene::FlushDeleted()
 {
 	std::vector<ISceneEntity*> toDelete;
-	for( unsigned i = SceneList.size(); i > 0; i-- )
+	for( size_t i = SceneList.size(); i > 0; i-- )
 	{
 		ISceneEntity* pEnt = SceneList[i-1];
 		if( !pEnt->CanDelete() )
@@ -41,7 +41,7 @@ void	CScene::FlushDeleted()
 		SceneList.erase(  SceneList.begin() + i - 1 );
 	}
 
-	for( unsigned i = 0; i < toDelete.size(); i++ )
+	for( size_t i = 0; i < toDelete.size(); i++ )
 	{
 		ISceneEntity* pEnt = toDelete[i];
 		pEnt->OnDelete();

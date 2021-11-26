@@ -16,7 +16,7 @@
 
 #include "RenderWindow.h"
 
-enum RENDER_INFO{
+enum class RENDER_INFO{
 	RENDER_VERSION	= 0,
 	RENDER_RENDERER	= 1,
 	RENDER_VENDOR	= 2,
@@ -26,13 +26,13 @@ enum RENDER_INFO{
 class CRender
 {
 private:
-	HGLRC		hRC;	// Kontekst Renderuj¹cy
-	HDC			hDC;	// Kontekst Urz¹dzenia
-	HWND		hWnd;	// Wskaznik na uchwyt okna	
+	HGLRC		hRC = nullptr;	// Kontekst Renderuj¹cy
+	HDC			hDC = nullptr;	// Kontekst Urz¹dzenia
+	HWND		hWnd = nullptr;	// Wskaznik na uchwyt okna	
 
-	int		colorBits;			// Bity kolorów
-	int		depthBits;
-	int		stencilBits;
+	int		colorBits = 0;			// Bity kolorów
+	int		depthBits = 0;
+	int		stencilBits = 0;
 
 	std::string rndInfo[4];	// Trzyma informacje o danej Maszynie
 	/*	RndInfo[0] - Wersja OpenGL
@@ -51,11 +51,9 @@ public:
 	// Ustawianie perspektywy
 	static void SetPerspective( float fov, float width, float height, float znear, float zfar );
 	static void SetPerspective( float fov, float aspect, float znear, float zfar );
-	void	SetPerspective();
 
 	// Ustawianie rzut. prostok¹tnego
 	static void SetOrtho( float left, float right, float bottom, float top, float blisko = -1.0f, float daleko = 1.0f );
-	void	SetOrtho();
 
 	// Zamiana buforów
 	void SwapBuffers();

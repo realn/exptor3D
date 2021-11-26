@@ -224,16 +224,16 @@ public:
 class CObject
 {
 protected:
-	float		Angle;
+	float		Angle = 0.0f;
 
 public:
 	Vector3f	Pos;
-	float		Radius;
+	float		Radius = 0.0f;
 
 public:
-	CObject() : Radius(1.0f), Angle(0.0f){}
+	CObject() = default;
 	CObject(const float radius) : Radius(radius){}
-	virtual ~CObject(){}
+	virtual ~CObject() = default;
 
 	virtual void		SetAngle(const float angle){ Angle = angle; }
 	virtual const float	GetAngle() const { return Angle; }

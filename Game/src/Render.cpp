@@ -112,14 +112,14 @@ bool CRender::CreateGLContext( HWND hWindow, const unsigned colorBits, const uns
 		PFD_SUPPORT_OPENGL |			// Musi wspieraæ OpenGL
 		PFD_DOUBLEBUFFER,				// Musi wspieraæ podwójne buforowanie
 		PFD_TYPE_RGBA,					// Tryb kolorów RGBA
-		this->colorBits,				// G³êgia kolorów
+		static_cast<BYTE>(this->colorBits),				// G³êgia kolorów
 		0, 0, 0, 0, 0, 0,				// Ignorowane bity kolorów (¿adne)
 		0,								// Bez bufora kana³u Alfa
 		0,								// Shift Bit Ignored
 		0,								// No Accumulation Buffer
 		0, 0, 0, 0,						// Accumulation Bits Ignored
-		this->depthBits,				// Wielkoœæ bufora g³êbokoœci 
-		this->stencilBits,				// Bufor Stencil
+		static_cast<BYTE>(this->depthBits),				// Wielkoœæ bufora g³êbokoœci 
+		static_cast<BYTE>(this->stencilBits),				// Bufor Stencil
 		0,								// Bufor Aux'a
 		PFD_MAIN_PLANE,					// Gdzie rysowaæ
 		0,								// Zarezerwowane

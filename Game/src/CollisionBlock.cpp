@@ -28,7 +28,7 @@ const CCollisionFace&	CCollisionBlock::GetFace( const unsigned index ) const
 
 const unsigned	CCollisionBlock::GetFaceNumber() const
 {
-	return FaceList.size();
+	return static_cast<unsigned>(FaceList.size());
 }
 
 void	CCollisionBlock::AddSideBlock( CCollisionBlock* pBlock )
@@ -46,5 +46,5 @@ const CCollisionBlock&	CCollisionBlock::GetSideBlock( const unsigned index ) con
 
 const unsigned	CCollisionBlock::GetSideBlockNumber() const
 {
-	return SideBlocks.size();
+	return static_cast<unsigned>(SideBlocks.size());
 }

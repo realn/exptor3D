@@ -66,7 +66,7 @@ public:
 private:
 	std::string NoSpace( const std::string &str );
 	void ParseGLCommand( const std::string &fullstr );
-	bool GetParams( const std::string &str, int from, std::vector<std::string>& param, const std::string &Com );
+	bool GetParams( const std::string &str, size_t from, std::vector<std::string>& param, const std::string &Com );
 	int GetConst( const std::string &str, const std::string &Com );
 
 	const bool	ReadHeader( std::fstream& fileStream );

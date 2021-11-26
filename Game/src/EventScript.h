@@ -1,5 +1,8 @@
 #pragma once
 
+#undef min
+#include <algorithm>
+
 enum class EVENT_SCRIPT_TYPE : unsigned
 {
 	FUNC_ADD = 0x20,
@@ -23,8 +26,7 @@ public:
 		Type( type )
 	{
 		memset( Name, 0, sizeof(char) * 64 );
-		unsigned nameLen = name.length() > 63 ? name.length() : 63;
-		memcpy( Name, name.c_str(), nameLen * sizeof(char) );
+		memcpy( Name, name.c_str(), std::min<size_t>(63, name.length()) * sizeof(char) );
 	}
 };
 
@@ -43,7 +45,6 @@ public:
 		Type( type )
 	{
 		memset( Name, 0, sizeof(char) * 64 );
-		unsigned nameLen = name.length() > 63 ? name.length() : 63;
-		memcpy( Name, name.c_str(), nameLen * sizeof(char) );
+		memcpy( Name, name.c_str(), std::min<size_t>(63, name.length()) * sizeof(char) );
 	}
 };

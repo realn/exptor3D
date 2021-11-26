@@ -357,7 +357,7 @@ void CLevel::BuildPhysic()
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_NEAR) ), verts );
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_RIGHT) ), verts );
 
-			for( unsigned faceIndex = 0; faceIndex < verts.size() / 4; faceIndex++ )
+			for( size_t faceIndex = 0; faceIndex < verts.size() / 4; faceIndex++ )
 			{
 				auto v1 = verts[ faceIndex * 4 + 0 ] + pBlock->Origin;
 				auto v2 = verts[ faceIndex * 4 + 1 ] + pBlock->Origin;
@@ -428,7 +428,7 @@ CLvlBlock* CLevel::GetBlock( const unsigned col, const unsigned row ) const
 	if( col >= Cols || row >= Rows )
 		return nullptr;
 
-	return const_cast<CLvlBlock*>(&block[ row * Cols + col ]);
+	return const_cast<CLvlBlock*>(&block[ static_cast<size_t>(row) * Cols + col ]);
 }
 
 CLvlBlock* CLevel::GetBlock( Vector3f Pos ) const
@@ -640,8 +640,8 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 	Log.Log( "GLEVEL( " + file + " ): £adowanie œcian.");
 
 	std::string str;
-	block.resize( Rows * Cols );
-	for( unsigned i = 0; i < block.size(); i++ )
+	block.resize( static_cast<size_t>(Rows) * Cols );
+	for( size_t i = 0; i < block.size(); i++ )
 	{
 		str = GetClearLine( stream );
 
@@ -650,7 +650,7 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 			std::vector<std::string> list;
 			SplitString( str, ",", list );
 
-			for(unsigned j = 0; j < list.size() && i + j < block.size(); j++ )
+			for(size_t j = 0; j < list.size() && i + j < block.size(); j++ )
 			{
 				block[i + j].LoadWalls( list[j] );
 				block[i + j].CornerCount = 0;

@@ -199,15 +199,15 @@ const std::string	JoinString( const std::vector<std::string>& list, const std::s
 	if( list.empty() )
 		return "";
 
-	unsigned len = 0;
-	for( unsigned i = 0; i < list.size(); i++ )
+	size_t len = 0;
+	for( size_t i = 0; i < list.size(); i++ )
 		len += list[i].length();
 	len += glue.length() * (list.size() - 1);
 
 	char* result = new char[len + 1];
 	memset( result, 0, sizeof(char) * ( len + 1 ) );
 
-	unsigned pos = 0;
+	size_t pos = 0;
 	for( unsigned i = 0; i < list.size() - 1; i++ )
 	{
 		auto& text = list[i];
@@ -224,7 +224,7 @@ const std::string	JoinString( const std::vector<std::string>& list, const std::s
 	}
 	if( !list.back().empty() )
 	{
-		unsigned len = sizeof(char) * list.back().length();
+		size_t len = sizeof(char) * list.back().length();
 		memcpy( &result[pos], list.back().c_str(), len );
 	}
 
