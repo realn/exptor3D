@@ -11,11 +11,13 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 ///////////////////////////////////////////////////////*/
 #pragma once
 
+#include <CBGL/COpenGL.h>
+
 #include "Texture.h"	// Naglówek z klasa CTexture
 #include <fstream>
 
 // Numer wersji loader'a
-#define		GLM_VERSION		100
+#define		GLM_FILE_VERSION		100
 
 /*	G³ówna klasa modeli OpenGL
 */

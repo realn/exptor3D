@@ -1,5 +1,9 @@
+#include <CBGL/COpenGL.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "TextureText.h"
-#include "Render.h"
 
 /*========================
 	KLASA CTextRenderer
@@ -55,7 +59,13 @@ void	CTextRenderer::StartPrint( const float width, const float height )
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Tex->Activate();
 
-	CRender::SetOrtho( 0.0f, width, height, 0.0f );
+	{
+		glMatrixMode(GL_PROJECTION);
+		auto mat = glm::ortho(0.0f, width, height, 0.0f);
+		glLoadMatrixf(glm::value_ptr(mat));
+		glMatrixMode(GL_MODELVIEW);
+	}
+
 	glLoadIdentity();
 
 	glListBase( base - 32 );

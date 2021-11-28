@@ -1,7 +1,10 @@
 #pragma once
 
-#include "Render.h"
-#include "RenderWindow.h"
+#include <CBSDL/System.h>
+#include <CBSDL/Window.h>
+#include <CBSDL/GLContext.h>
+#include <CBSDL/Events.h>
+
 #include "Texture.h"
 #include "EventManager.h"
 #include "GameController.h"
@@ -22,8 +25,9 @@ enum class MOUSE_MODE
 class CApplication
 {
 private:
-	CRenderWindow	GLWindow;
-	CRender			GLRender;
+	std::unique_ptr<cb::sdl::System> system;
+	std::shared_ptr<cb::sdl::Window> window;
+	std::shared_ptr<cb::sdl::GLContext> glContext;
 	CEventManager	EventManager;
 	CControllerList	ControllerList;
 	CScriptParser	ScriptParser;
@@ -33,14 +37,20 @@ private:
 	GAME_STATE	State;
 	MOUSE_MODE	MouseMode;
 
-	bool	active;
+	bool active = true;
+	bool runLoop = true;
 
 public:
-	CApplication( HINSTANCE hInstance );
+	CApplication();
 	~CApplication();
 
 	int		Run();
-	const bool	ProcessMsg( HWND hWindow, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	const bool	ProcessEvent( cb::sdl::Event& event );
+	bool ProcessWindowEvent(cb::sdl::WindowEvent& event);
+	bool ProcessMouseButtonEvent(cb::sdl::MouseButtonEvent& event);
+	bool ProcessKeyEvent(cb::sdl::KeyboardEvent& event);
+	bool ProcessMouseMoveEvent(cb::sdl::MouseMotionEvent& event);
+	bool ProcessTextInput(cb::sdl::TextInputEvent& event);
 
 private:
 	void	RegScript();

@@ -1,9 +1,11 @@
+#include <fstream>
+
+#include <CBGL/COpenGL.h>
+
 #include "GUIMenu.h"
 
-#include "Render.h"
 #include "Log.h"
 
-#include <fstream>
 
 /*===========================
 	KLASA CMenuMain

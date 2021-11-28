@@ -51,9 +51,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Timer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\StrEx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -89,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="src\ItemArmor.cpp">
       <Filter>Source\Game\Item</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Render.cpp">
-      <Filter>Source\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source\Graphic</Filter>
@@ -216,9 +210,6 @@
     <ClCompile Include="src\GUIScreenValueSync.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderWindow.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -228,9 +219,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\Log.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Timer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\StrEx.h">
@@ -265,9 +253,6 @@
     </ClInclude>
     <ClInclude Include="src\ItemArmor.h">
       <Filter>Source\Game\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Render.h">
-      <Filter>Source\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="src\Texture.h">
       <Filter>Source\Graphic</Filter>
@@ -373,9 +358,6 @@
     </ClInclude>
     <ClInclude Include="src\GUIConsole.h">
       <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\RenderWindow.h">
-      <Filter>Source\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

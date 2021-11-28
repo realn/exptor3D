@@ -8,6 +8,8 @@ Opis:	Patrz -> Model.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include <CBGL/COpenGL.h>
+
 #include "Model.h"
 #include "Log.h"
 #include "StrEx.h"
@@ -26,8 +28,8 @@ CModel::CModel() :
 	FromFrame(0),
 	ToFrame(0),
 	animation(false),
-	playing(false),
-	obj(0)
+	playing(false)
+	//obj(0)
 {
 	obj = gluNewQuadric();
 	gluQuadricTexture( obj, GL_TRUE );
@@ -686,7 +688,7 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 
 
 	// Sprawdzamy wersjê
-	if( Version > GLM_VERSION )
+	if( Version > GLM_FILE_VERSION )
 	{
 		Log.Error( "CModel( " + file + " ): Zbyt wysoka wersja pliku!" );
 		return false;

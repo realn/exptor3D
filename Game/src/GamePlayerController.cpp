@@ -1,3 +1,5 @@
+#include <CBSDL/Consts.h>
+
 #include "GamePlayerController.h"
 #include "EventInput.h"
 
@@ -29,7 +31,7 @@ void	CLocalPlayerController::ProcessEvent( const CEvent& event )
 	CEventKey	keyEvent;
 	CEventMouse	mouseEvent;
 
-	switch (event.Type)
+	switch (static_cast<EVENT_INPUT_TYPE>(event.Type))
 	{
 	case EVENT_INPUT_TYPE::KEYDOWN:
 		memcpy( &keyEvent, &event, sizeof(CEventKey) );
@@ -74,29 +76,25 @@ void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
 	switch (key)
 	{
 	case 'W':
-	case VK_UP:
 		Move[MOVE_FORWARD] = down;
 		break;
 
 	case 'S':
-	case VK_DOWN:
 		Move[MOVE_BACKWARD] = down;
 		break;
 
 	case 'A':
-	case VK_LEFT:
 		Move[MOVE_STRAFE_LEFT] = down;
 		break;
 
 	case 'D':
-	case VK_RIGHT:
 		Move[MOVE_STRAFE_RIGHT] = down;
 		break;
 
-	case VK_LCONTROL:
-	case VK_LBUTTON:
-		FireWeapon = down;
-		break;
+	//case VK_LCONTROL:
+	//case VK_LBUTTON:
+	//	FireWeapon = down;
+	//	break;
 
 	case '1':	Weapon = 0;	break;
 	case '2':	Weapon = 1;	break;
@@ -108,9 +106,9 @@ void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
 	case '8':	Weapon = 7;	break;
 	case '9':	Weapon = 8;	break;
 
-	case VK_SHIFT:
-		Run = down;
-		break;
+	//case VK_SHIFT:
+	//	Run = down;
+	//	break;
 
 	default:
 		break;

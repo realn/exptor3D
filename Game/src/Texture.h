@@ -14,9 +14,6 @@ Opis:	Zawiera definicje klas odpowiedzalnych za tekstury.
 */
 #pragma once
 
-#include <windows.h>
-#include <gl/gl.h>
-#include <gl/glu.h>
 #include <string>	// Nag³ówek od klasy ³añcucha znaków
 #include <vector>
 

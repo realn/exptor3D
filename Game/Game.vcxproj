@@ -72,6 +72,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)..\CodeBox\include;$(SolutionDir)..\glew\include;$(SolutionDir)..\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\CodeBox\lib\Debug\x64;$(SolutionDir)..\glew\lib\Debug\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -107,7 +109,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32sd.lib;CBCore.lib;CBGL.lib;CBSDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -187,17 +189,14 @@
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ModelManager.cpp" />
-    <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderList.cpp" />
-    <ClCompile Include="src\RenderWindow.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ScriptParser.cpp" />
     <ClCompile Include="src\Special.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TextureText.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\UpdateList.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
     <ClCompile Include="src\WeaponProjectile.cpp" />
@@ -223,7 +222,6 @@
     <ClInclude Include="src\GUIConsole.h" />
     <ClInclude Include="src\GUIMenu.h" />
     <ClInclude Include="src\GUIScreen.h" />
-    <ClInclude Include="src\RenderWindow.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneEntity.h" />
     <ClInclude Include="src\GameActor.h" />
@@ -242,7 +240,6 @@
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\ModelManager.h" />
-    <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Renderable.h" />
     <ClInclude Include="src\RenderList.h" />
     <ClInclude Include="src\ScriptParser.h" />
@@ -250,7 +247,6 @@
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\TextureText.h" />
-    <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Updateable.h" />
     <ClInclude Include="src\UpdateList.h" />
     <ClInclude Include="src\Weapon.h" />

@@ -8,6 +8,12 @@ Opis:	Patrz -> gio.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <CBGL/COpenGL.h>
+
 #include "gui.h"
 #include "StrEx.h"
 #include "EventInput.h"
@@ -85,7 +91,7 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 	CEventChar	charEvent;
 	CEventVar	varEvent;
 
-	switch (event.Type)
+	switch (static_cast<EVENT_INPUT_TYPE>(event.Type))
 	{
 	case EVENT_INPUT_TYPE::KEYDOWN:
 		memcpy( &keyEvent, &event, sizeof(CEventKey) );
@@ -108,15 +114,15 @@ void	CGUIMain::ProcessEvent( const CEvent& event )
 			Console.ParseChar( charEvent.Character );
 		break;
 
-	case EVENT_SCRIPT_TYPE::VAR_SET:
-		memcpy( &varEvent, &event, sizeof(CEventVar) );
-		if( Screen.IsVarMonitored( varEvent.Name ) )
-		{
-			std::string value;
-			if( ScriptParser.GetVarValue( varEvent.Name, value ) )
-				Screen.OnVarChanged( varEvent.Name, value );
-		}
-		break;
+	//case EVENT_SCRIPT_TYPE::VAR_SET:
+	//	memcpy( &varEvent, &event, sizeof(CEventVar) );
+	//	if( Screen.IsVarMonitored( varEvent.Name ) )
+	//	{
+	//		std::string value;
+	//		if( ScriptParser.GetVarValue( varEvent.Name, value ) )
+	//			Screen.OnVarChanged( varEvent.Name, value );
+	//	}
+	//	break;
 
 	default:
 		break;
@@ -146,16 +152,16 @@ void	CGUIMain::ParseKeys( const unsigned key, const bool down )
 		{
 			switch (key)
 			{
-			case VK_UP:		Menu.EventMoveUp();		break;
-			case VK_DOWN:	Menu.EventMoveDown();	break;
-			case VK_RETURN:
-			case VK_LBUTTON:	
-				{
-					std::string script;
-					if( Menu.EventEnter( script ) )
-						ScriptParser.Execute( script );
-				}
-				break;
+			//case VK_UP:		Menu.EventMoveUp();		break;
+			//case VK_DOWN:	Menu.EventMoveDown();	break;
+			//case VK_RETURN:
+			//case VK_LBUTTON:	
+			//	{
+			//		std::string script;
+			//		if( Menu.EventEnter( script ) )
+			//			ScriptParser.Execute( script );
+			//	}
+			//	break;
 			default:
 				break;
 			}
@@ -223,8 +229,13 @@ void CGUIMain::Render()
 
 			glPushAttrib( GL_ENABLE_BIT );
 			glPushMatrix();
-			
-			CRender::SetOrtho( 0.0f, width, height, 0.0f );
+
+			{
+				glMatrixMode(GL_PROJECTION);
+				auto mat = glm::ortho(0.0f, width, height, 0.0f);
+				glLoadMatrixf(glm::value_ptr(mat));
+				glMatrixMode(GL_MODELVIEW);
+			}
 
 			glEnable( GL_TEXTURE_2D );
 			glEnable( GL_BLEND );
@@ -301,7 +312,14 @@ void CGUIMain::Render()
 			glPushAttrib( GL_ENABLE_BIT );
 			glPushMatrix();
 
-			CRender::SetOrtho( 0.0f, w, 0.0f, h );
+
+			{
+				glMatrixMode(GL_PROJECTION);
+				auto mat = glm::ortho(0.0f, w, 0.0f, h);
+				glLoadMatrixf(glm::value_ptr(mat));
+				glMatrixMode(GL_MODELVIEW);
+			}
+
 			glLoadIdentity();
 
 			CH->Activate();

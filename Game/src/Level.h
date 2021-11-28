@@ -19,7 +19,6 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include "ModelManager.h"
 
 #include "Log.h"
-#include "Render.h"	// patrz-> nag³ówek Render.h i plik Render.cpp
 #include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 

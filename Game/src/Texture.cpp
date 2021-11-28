@@ -8,9 +8,12 @@ Opis:	Patrz -> Texture.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+
+#include <CBGL/COpenGL.h>
+#include <fstream>
+
 #include "Texture.h"
 #include "Log.h"
-#include <fstream>
 
 CTexture::CTexture() :
 	loaded(false),

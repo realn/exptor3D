@@ -1,5 +1,9 @@
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <CBGL/COpenGL.h>
+
 #include "GUIConsole.h"
-#include "Render.h"
 
 CGUIConsole::CGUIConsole( CScriptParser& scriptParser, CTextRenderer& textRender, const unsigned height, const float aspectRatio ) :
 	ScriptParser( scriptParser ),
@@ -20,7 +24,12 @@ void	CGUIConsole::Render()
 	glPushAttrib( GL_ENABLE_BIT );
 	glPushMatrix();
 
-	CRender::SetOrtho( 0.0f, 1.0f, 1.0f, 0.0f );
+	{
+		glMatrixMode(GL_PROJECTION);
+		auto mat = glm::ortho(0.0f, 1.0f, 1.0f, 0.0f);
+		glLoadMatrixf(glm::value_ptr(mat));
+		glMatrixMode(GL_MODELVIEW);
+	}
 	glLoadIdentity();
 
 	glEnable( GL_BLEND );
@@ -106,27 +115,27 @@ const bool	CGUIConsole::IsAnimating() const
 
 void	CGUIConsole::ParseKey( const unsigned key, const bool down )
 {
-	if( down )
-	{
-		switch (key)
-		{
-		case VK_BACK:
-			if( !CurrentText.empty() )
-				CurrentText = CurrentText.substr( 0, CurrentText.length() - 1 );
-			break;
+	//if( down )
+	//{
+	//	switch (key)
+	//	{
+	//	case VK_BACK:
+	//		if( !CurrentText.empty() )
+	//			CurrentText = CurrentText.substr( 0, CurrentText.length() - 1 );
+	//		break;
 
-		case VK_RETURN:
-			if( !CurrentText.empty() )
-			{
-				ScriptParser.Execute( CurrentText, true );
-				CurrentText.clear();
-			}
-			break;
+	//	case VK_RETURN:
+	//		if( !CurrentText.empty() )
+	//		{
+	//			ScriptParser.Execute( CurrentText, true );
+	//			CurrentText.clear();
+	//		}
+	//		break;
 
-		default:
-			break;
-		}
-	}
+	//	default:
+	//		break;
+	//	}
+	//}
 }
 
 void	CGUIConsole::ParseChar( const char Characted )

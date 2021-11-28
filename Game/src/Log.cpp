@@ -9,7 +9,13 @@ Opis:	Patrz -> Log.h
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
 #include "Log.h"
-#include <windows.h>
+#include <chrono>
+
+namespace detail {
+	constexpr auto getTimeNow() {
+		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch());
+	}
+}
 
 Logger::Logger() :
 	inited(false),
@@ -23,7 +29,7 @@ Logger::~Logger(){
 void Logger::Init( std::string filename, std::string str )
 {
 	fileName = filename;
-	firstTick = GetTickCount();
+	firstTick = detail::getTimeNow();
 	outStream.open(filename, std::ios::out | std::ios::trunc);
 
 	SaveToFile( "======LOG START" + str + "======", firstTick );
@@ -31,11 +37,11 @@ void Logger::Init( std::string filename, std::string str )
 	inited = true;
 }
 
-void Logger::SaveToFile( std::string str, unsigned int time )
+void Logger::SaveToFile( std::string str, std::chrono::milliseconds time )
 {
 	char temp[36];
 	memset(temp, 0, sizeof(char) * 36);
-	_itoa_s( time, temp, 36 * sizeof(char), 10 );
+	_itoa_s( static_cast<int>(time.count()), temp, 36 * sizeof(char), 10 );
 
 	outStream << "[" << temp << "]" << str << std::endl;
 	outStream.flush();
@@ -46,7 +52,7 @@ void Logger::Log( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - firstTick;
+	auto time = detail::getTimeNow() - firstTick;
 	SaveToFile( str, time );
 }
 
@@ -55,7 +61,7 @@ void Logger::Report( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - firstTick;
+	auto time = detail::getTimeNow() - firstTick;
 	SaveToFile( "[R]" + str, time );	
 }
 
@@ -64,7 +70,7 @@ void Logger::Error( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - firstTick;
+	auto time = detail::getTimeNow() - firstTick;
 	SaveToFile( "[!]" + str, time );
 }
 
@@ -73,9 +79,9 @@ void Logger::FatalError( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - firstTick;
+	auto time = detail::getTimeNow() - firstTick;
 	SaveToFile( "[!!!]" + str, time );
-	MessageBox( NULL, str.c_str(), "FATAL ERROR", MB_OK | MB_ICONEXCLAMATION );
+	//MessageBox( NULL, str.c_str(), "FATAL ERROR", MB_OK | MB_ICONEXCLAMATION );
 }
 
 void Logger::Note( std::string str )
@@ -83,7 +89,7 @@ void Logger::Note( std::string str )
 	if( !inited )
 		return;
 
-	unsigned int time = GetTickCount() - firstTick;
+	auto time = detail::getTimeNow() - firstTick;
 	SaveToFile( "[N]" + str, time );
 }
 

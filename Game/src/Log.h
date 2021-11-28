@@ -11,6 +11,7 @@ Opis:	Klasa odpowiedzialna za mechanizm "logowania" czyli
 ///////////////////////////////////////////////////////*/
 #pragma once
 
+#include <chrono>
 #include <string>
 #include <fstream>
 
@@ -21,7 +22,7 @@ class Logger
 {
 private:
 	bool			inited;
-	unsigned int	firstTick;
+	std::chrono::milliseconds	firstTick;
 	std::string		fileName;
 	std::ofstream	outStream;
 
@@ -37,7 +38,7 @@ public:
 	void	FatalError( std::string str );
 
 private:
-	void SaveToFile( std::string str, unsigned int time );
+	void SaveToFile( std::string str, std::chrono::milliseconds time );
 };
 
 extern Logger Log;

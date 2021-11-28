@@ -1,5 +1,7 @@
 #pragma once
 
+#include <CBGL/COpenGL.h>
+
 #include "3dMath.h"
 #include "GameActor.h"
 #include "Renderable.h"

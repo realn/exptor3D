@@ -13,8 +13,6 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 
 #include "Log.h"
 #include "Texture.h"
-#include "Render.h"
-#include "Timer.h"
 
 #include "TextureText.h"
 #include "ScriptParser.h"

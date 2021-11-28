@@ -1,3 +1,5 @@
+#include <CBGL/COpenGL.h>
+
 #include "GUIMenu.h"
 
 /*======================

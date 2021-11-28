@@ -1,3 +1,5 @@
+#include <CBGL/COpenGL.h>
+
 #include "Item.h"
 
 /*	KLASA BONUSÓW	*/
