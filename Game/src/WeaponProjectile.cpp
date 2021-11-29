@@ -9,7 +9,7 @@
 	podstawa do 
 	reszty pocisków.
 ====================*/
-CProjectile::CProjectile(const PROJECTILE_TYPE type, CActor* owner, const float damage, const Vector3f& origin, const Vector3f& vector, const float speed ) :
+CProjectile::CProjectile(const PROJECTILE_TYPE type, CActor* owner, const float damage, const glm::vec3& origin, const glm::vec3& vector, const float speed ) :
 	Type( type ),
 	CDynamic(0.1f),
 	Owner(owner),
@@ -60,7 +60,7 @@ float CProjectile::DoTest( CDynamic* Dum, float Armor )
 void CProjectile::Render()
 {
 	glPushMatrix();
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
+	glTranslatef( Pos.x, Pos.y, Pos.z );
 
 	glDisable( GL_TEXTURE_2D );
 

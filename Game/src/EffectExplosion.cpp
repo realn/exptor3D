@@ -1,6 +1,6 @@
 #include "Effect.h"
 
-CEffectExplosion::CEffectExplosion( const Vector3f& pos, const float radius, const float speed ) :
+CEffectExplosion::CEffectExplosion( const glm::vec3& pos, const float radius, const float speed ) :
 	Pos( pos ),
 	MaxRadius( radius ),
 	Radius( 0.0f ),
@@ -45,7 +45,7 @@ void CEffectExplosion::Render()
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	glEnable( GL_BLEND );
 
-	glTranslatef( Pos.X, Pos.Y, -Pos.Z );
+	glTranslatef( Pos.x, Pos.y, -Pos.z );
 
 	glColor4f( 1.0f, 0.0f, 0.0f, Alpha );
 	gluSphere( Obj, Radius / 2.0f, 16, 16 );

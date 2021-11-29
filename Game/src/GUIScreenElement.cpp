@@ -20,17 +20,17 @@ void	CGUIElement::SetAlign( const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN al
 	AlignV = alignV;
 }
 
-void	CGUIElement::SetMargin( const Vector2f& margin )
+void	CGUIElement::SetMargin( const glm::vec2& margin )
 {
 	Margin = margin;
 }
 
-void	CGUIElement::SetScale( const Vector2f& scale )
+void	CGUIElement::SetScale( const glm::vec2& scale )
 {
 	Scale = scale;
 }
 
-void	CGUIElement::SetColor( const Vector4f& color )
+void	CGUIElement::SetColor( const glm::vec4& color )
 {
 	Color = color;
 }
@@ -50,32 +50,32 @@ const ELEMENT_VALIGN	CGUIElement::GetAlignV() const
 	return AlignV;
 }
 
-const Vector2f	CGUIElement::GetMargin() const
+const glm::vec2	CGUIElement::GetMargin() const
 {
 	return Margin;
 }
 
-const Vector2f	CGUIElement::GetScale() const
+const glm::vec2	CGUIElement::GetScale() const
 {
 	return Scale;
 }
 
-const Vector2f	CGUIElement::CreatePos( const Vector2f& size, const Vector2f& screenSize ) const
+const glm::vec2	CGUIElement::CreatePos( const glm::vec2& size, const glm::vec2& screenSize ) const
 {
-	Vector2f pos;
+	glm::vec2 pos;
 
 	switch (AlignH)
 	{
 	case ELEMENT_HALIGN::LEFT:
-		pos.X = Margin.X;
+		pos.x = Margin.x;
 		break;
 
 	case ELEMENT_HALIGN::CENTER:
-		pos.X = ( screenSize.X - size.X ) / 2.0f;
+		pos.x = ( screenSize.x - size.x ) / 2.0f;
 		break;
 
 	case ELEMENT_HALIGN::RIGHT:
-		pos.X = screenSize.X - size.X - Margin.X;
+		pos.x = screenSize.x - size.x - Margin.x;
 		break;
 
 	default:
@@ -85,15 +85,15 @@ const Vector2f	CGUIElement::CreatePos( const Vector2f& size, const Vector2f& scr
 	switch (AlignV)
 	{
 	case ELEMENT_VALIGN::TOP:
-		pos.Y = Margin.Y;
+		pos.y = Margin.y;
 		break;
 
 	case ELEMENT_VALIGN::CENTER:
-		pos.Y = ( screenSize.Y - size.Y ) / 2.0f;
+		pos.y = ( screenSize.y - size.y ) / 2.0f;
 		break;
 
 	case ELEMENT_VALIGN::BOTTOM:
-		pos.Y = screenSize.Y - size.Y - Margin.Y;
+		pos.y = screenSize.y - size.y - Margin.y;
 		break;
 
 	default:

@@ -28,7 +28,7 @@ CPlayer::CPlayer( CModelManager& modelManager ) :
 	Speed = WalkStep;
 
 	Radius = 4.0f;
-	Pos.Set( 5.0f, 0.0f, -5.0f );
+	Pos = glm::vec3( 5.0f, 0.0f, -5.0f );
 
 	Armor = 0.0f;
 	MaxArmor = 150.0f;
@@ -165,7 +165,7 @@ const bool	CPlayer::OnCollision( CObject* pObject )
 	return true;
 }
 
-const bool	CPlayer::OnCollision( const Vector3f& point, const Planef& plane )
+const bool	CPlayer::OnCollision( const glm::vec3& point, const Planef& plane )
 {
 	return true;
 }

@@ -6,8 +6,8 @@
 	KLASA CBullExplosion
 	eksplozja
 ====================*/
-CBullExplosion::CBullExplosion( CActor* owner, const float damage, const Vector3f& pos, const float radius, const float speed ) :
-	CProjectile( PROJECTILE_TYPE::EXPLOSION, owner, damage, pos, Vector3f(), 0.0f ),
+CBullExplosion::CBullExplosion( CActor* owner, const float damage, const glm::vec3& pos, const float radius, const float speed ) :
+	CProjectile( PROJECTILE_TYPE::EXPLOSION, owner, damage, pos, glm::vec3(), 0.0f ),
 	Speed( speed ),
 	Power( radius ),
 	thisPower( 0.0f )

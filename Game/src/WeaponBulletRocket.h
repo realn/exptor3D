@@ -13,7 +13,7 @@ private:
 	float Sec;
 
 public:
-	CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed );
+	CBullRocket( CActor* owner, const float damage, const glm::vec3& pos, const glm::vec3& vector, const float speed );
 
 	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
 
@@ -22,6 +22,6 @@ public:
 
 	void OnDelete() override;
 
-	const bool OnCollision( const Vector3f& point, const Planef& plane ) override;
+	const bool OnCollision( const glm::vec3& point, const Planef& plane ) override;
 };
 

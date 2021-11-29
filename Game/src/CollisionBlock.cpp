@@ -16,7 +16,7 @@ void	CCollisionBlock::AddFace( const CCollisionFace& face )
 	FaceList.push_back( face );
 }
 
-void	CCollisionBlock::AddFace( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3, const Vector3f& v4 )
+void	CCollisionBlock::AddFace( const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& v4 )
 {
 	FaceList.push_back( CCollisionFace( v1, v2, v3, v4 ) );
 }

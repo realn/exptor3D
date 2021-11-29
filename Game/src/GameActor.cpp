@@ -1,3 +1,5 @@
+#include <glm/glm.hpp>
+
 #include "GameActor.h"
 #include "Level.h"
 #include "GamePlayer.h"
@@ -18,7 +20,7 @@ CActor::CActor( const ACTOR_TYPE type ) :
 
 	Angle = 180.0f;
 	StartAngle = 180.0f;
-	Pos.Set( 5.0f, 0.0f, -25.0f );
+	Pos = glm::vec3( 5.0f, 0.0f, -25.0f );
 }
 
 CActor::~CActor()
@@ -143,11 +145,11 @@ bool CActor::AIFindTarget()
 	return false;
 }
 
-Vector3f CActor::AIFindWalkTarget()
+glm::vec3 CActor::AIFindWalkTarget()
 {
 	CLvlBlock* Block = pGLevel->GetBlock( this->GetBlockPos() );
 	if( Block == NULL )
-		return Vector3f( 0.0f ,0.0f, 0.0f );
+		return glm::vec3( 0.0f ,0.0f, 0.0f );
 	
 	bool waysok[4] = { false, false, false, false };
 	int waycount = 0;
@@ -173,9 +175,9 @@ Vector3f CActor::AIFindWalkTarget()
 	}
 
 	if( waycount == 0 )
-		return Vector3f( 0.0f ,0.0f, 0.0f );
+		return glm::vec3( 0.0f ,0.0f, 0.0f );
 
-	Vector3f BPos = this->GetBlockPos();
+	glm::vec3 BPos = this->GetBlockPos();
 	do
 	{
 		int way = rand() % 4;
@@ -185,13 +187,13 @@ Vector3f CActor::AIFindWalkTarget()
 		switch( way )
 		{
 		case 0 :
-			return Vector3f( ( BPos.X - 1.0f ) * 10.0f + 5.0f, 0.0f, ( BPos.Z ) * -10.0f - 5.0f );
+			return glm::vec3( ( BPos.X - 1.0f ) * 10.0f + 5.0f, 0.0f, ( BPos.Z ) * -10.0f - 5.0f );
 		case 1 :
-			return Vector3f( ( BPos.X + 1.0f ) * 10.0f + 5.0f, 0.0f, ( BPos.Z ) * -10.0f - 5.0f );
+			return glm::vec3( ( BPos.X + 1.0f ) * 10.0f + 5.0f, 0.0f, ( BPos.Z ) * -10.0f - 5.0f );
 		case 2 :
-			return Vector3f( ( BPos.X ) * 10.0f + 5.0f, 0.0f, ( BPos.Z + 1.0f ) * -10.0f - 5.0f );
+			return glm::vec3( ( BPos.X ) * 10.0f + 5.0f, 0.0f, ( BPos.Z + 1.0f ) * -10.0f - 5.0f );
 		case 3 :
-			return Vector3f( ( BPos.X ) * 10.0f + 5.0f, 0.0f, ( BPos.Z - 1.0f ) * -10.0f - 5.0f );		
+			return glm::vec3( ( BPos.X ) * 10.0f + 5.0f, 0.0f, ( BPos.Z - 1.0f ) * -10.0f - 5.0f );		
 		}
 	}
 	while( true );
@@ -277,12 +279,12 @@ const float CActor::GetStartAngle() const
 	return StartAngle;
 }
 
-void CActor::SetStartPos( const Vector3f& set )
+void CActor::SetStartPos( const glm::vec3& set )
 {
 	StartPos = set;
 }
 
-const Vector3f CActor::GetStartPos() const
+const glm::vec3 CActor::GetStartPos() const
 {
 	return StartPos;
 }
@@ -299,7 +301,7 @@ void CActor::Reset()
 
 void	CActor::SolveActions( const float fTD )
 {
-	Vector3f temp;
+	glm::vec3 temp;
 
 	if( Actions & (unsigned)GAME_ACTION::MOVE_FORWARD )
 		temp += MakeVectorXZ( Angle );
@@ -313,10 +315,10 @@ void	CActor::SolveActions( const float fTD )
 	if( Actions & (unsigned)GAME_ACTION::MOVE_STRAFE_RIGHT )
 		temp += MakeVectorXZ( Angle + 90 );
 
-	if( temp.LengthSq() == 0.0f )
+	if( glm::length(temp) == 0.0f )
 		NextPos = Pos;
 	else
-		NextPos = Pos + temp.Normalize() * Speed * fTD;
+		NextPos = Pos + glm::normalize(temp) * Speed * fTD;
 
 	Vector = MakeVectorXZ( Angle );
 

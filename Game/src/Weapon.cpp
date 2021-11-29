@@ -172,50 +172,50 @@ const float	CWeapon::GenDamage() const
 	return DamageMin + ((float)rand() / (float)RAND_MAX) * (DamageMax - DamageMin);
 }
 
-const Vector3f	CWeapon::GenPos() const
+const glm::vec3	CWeapon::GenPos() const
 {
 	return CorrectByHandPos( Pos );
 }
 
-const Vector3f	CWeapon::GenWorldPos( const Vector3f pos ) const
+const glm::vec3	CWeapon::GenWorldPos( const glm::vec3 pos ) const
 {
-	Vector3f result;
+	glm::vec3 result;
 
 	float angDeg = Owner->GetAngle() * PIOVER180;
 
 	float rcos = cosf( angDeg );
 	float rsin = sinf( angDeg );
 
-	result.X = pos.Z * rsin + pos.X * rcos;
-	result.Z = pos.Z * rcos - pos.X * rsin;
+	result.x = pos.z * rsin + pos.x * rcos;
+	result.z = pos.z * rcos - pos.x * rsin;
 
-	result.Y = pos.Y;
+	result.y = pos.y;
 
 	return Owner->Pos + result;
 }
 
-const Vector3f	CWeapon::GenShakePos() const
+const glm::vec3	CWeapon::GenShakePos() const
 {
-	Vector3f pos;
+	glm::vec3 pos;
 
-	pos.X = sinf( Shake * PIOVER180 * ShakeSpeed.X ) * ShakeRadius.X;
-	pos.Y = cosf( Shake * PIOVER180 * ShakeSpeed.Y ) * ShakeRadius.Y;
-	pos.Z = sinf( Shake * PIOVER180 * ShakeSpeed.Z ) * cosf( Shake * PIOVER180 * ShakeSpeed.Z ) * ShakeRadius.Z;
+	pos.x = sinf( Shake * PIOVER180 * ShakeSpeed.x ) * ShakeRadius.x;
+	pos.y = cosf( Shake * PIOVER180 * ShakeSpeed.y ) * ShakeRadius.y;
+	pos.z = sinf( Shake * PIOVER180 * ShakeSpeed.z ) * cosf( Shake * PIOVER180 * ShakeSpeed.z ) * ShakeRadius.z;
 
 	return pos;
 }
 
-const Vector3f	CWeapon::CorrectByHandPos( const Vector3f& pos ) const
+const glm::vec3	CWeapon::CorrectByHandPos( const glm::vec3& pos ) const
 {
 	switch (Hand)
 	{
 	case WEAPON_HAND::CENTER:
-		return Vector3f( 0.0f, pos.Y, pos.Z );
+		return glm::vec3( 0.0f, pos.y, pos.z );
 	case WEAPON_HAND::LEFT:
-		return Vector3f( -pos.X, pos.Y, pos.Z );
+		return glm::vec3( -pos.x, pos.y, pos.z );
 	default:
 	case WEAPON_HAND::RIGHT:
-		return Vector3f( pos.X, pos.Y, pos.Z );
+		return glm::vec3( pos.x, pos.y, pos.z );
 	}
 }
 
@@ -473,7 +473,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //			Ammo--;
 //			CurrClip--;
 //
-//			Vector3f temp;
+//			glm::vec3 temp;
 //			temp = RayCast( Owner->NextPos, Owner->Vector, 2.0f, *pGLevel );
 //			temp = (temp - Pos).Normalize();
 //			CProjectile* Bull = new CProjectile( Owner, Damage[0], Pos, temp, 10.0f );
@@ -598,7 +598,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //				Shake[0] = 0.0f;
 //				Shake[1] = 0.0f;
 //				
-//				Vector3f temp;
+//				glm::vec3 temp;
 //				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
 //				temp = (temp - Pos).Normalize();
 //
@@ -738,7 +738,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //			{
 //				Shake[0] = 0.0f;
 //				Shake[1] = 0.0f;
-//				Vector3f temp;
+//				glm::vec3 temp;
 //				temp = RayCast( Owner->Pos, Owner->Vector, 0.5f, *pGLevel );
 //				temp = (temp - Pos).Normalize();
 //
@@ -887,7 +887,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //				Time = 0.0f;
 //				Shake[0] = 0.0f;
 //				Shake[1] = 0.0f;
-//				Vector3f temp;
+//				glm::vec3 temp;
 //				temp = RayCast( Owner->Pos, Owner->Vector, 6.0f, *pGLevel );
 //				temp = (temp - Pos).Normalize();
 //

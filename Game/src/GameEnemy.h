@@ -36,7 +36,7 @@
 //	const bool LoadEnemy( const std::string& filename );
 //
 //	void Render();
-//	void Fire( Vector3f FireTarget );
+//	void Fire( glm::vec3 FireTarget );
 //
 //	void OnDie() override;
 //	void OnDead() override;

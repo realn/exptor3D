@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+
 #include "TextureText.h"
 #include "EventManager.h"
 
@@ -34,10 +36,10 @@ private:
 
 	bool Highlight;
 
-	Vector2f	Pos;
-	Vector2f	Size;
-	Vector2f	Scroll;
-	Vector2f	ScrollStep;
+	glm::vec2	Pos;
+	glm::vec2	Size;
+	glm::vec2	Scroll;
+	glm::vec2	ScrollStep;
 	float	Color;
 
 public:
@@ -48,13 +50,13 @@ public:
 
 	void	SetTitle( const std::string& title );
 	void	SetType( const MENU_ITEM_TYPE type );
-	void	SetPos( const Vector2f& pos );
-	void	SetSize( const Vector2f& size );
+	void	SetPos( const glm::vec2& pos );
+	void	SetSize( const glm::vec2& size );
 	void	SetHighlight( const bool set );
 	void	SetScript( const std::string& script );
 
 	const std::string	GetScript() const;	
-	const bool	Contains( const Vector2f& point ) const;
+	const bool	Contains( const glm::vec2& point ) const;
 };
 
 class CMenu
@@ -64,8 +66,8 @@ private:
 	std::string	Title;
 
 	std::vector<CMenuItem*> List;
-	Vector2f	TitlePos;
-	Vector2f	Size;
+	glm::vec2	TitlePos;
+	glm::vec2	Size;
 
 	CMenuItem*	pSelectedItem;
 
@@ -79,7 +81,7 @@ public:
 	void	Update( const float fTD );
 	void	Render( CTextRenderer& TText );
 
-	void	EventMouseMove( const Vector2f& pos );
+	void	EventMouseMove( const glm::vec2& pos );
 	void	EventMoveUp();
 	void	EventMoveDown();
 	const bool	EventEnter( std::string& outScript );
@@ -87,8 +89,8 @@ public:
 	void	AddMenuItem( CMenuItem* item );
 
 	void	SetTitle( const std::string& title );
-	void	SetTitlePos( const Vector2f& pos );
-	void	SetSize( const Vector2f& size );
+	void	SetTitlePos( const glm::vec2& pos );
+	void	SetSize( const glm::vec2& size );
 	void	SetVisible( const bool visible, const bool animate );
 
 	const std::string&	GetID() const;
@@ -110,14 +112,14 @@ private:
 
 	const std::string GetParamStr( const std::string& str ) const;
 	const float		GetParamFloat( const std::string& str ) const;
-	const Vector2f	GetParamVector2( const std::string& str ) const;
+	const glm::vec2	GetParamVector2( const std::string& str ) const;
 	const MENU_TAG GetMenuType( std::string str );
 
 public:
 	CMenuMain( CTextRenderer& textRender, const float aspectRatio );
 	~CMenuMain();
 
-	void	EventMouseMove( const Vector2f& pos );
+	void	EventMouseMove( const glm::vec2& pos );
 	void	EventMoveUp();
 	void	EventMoveDown();
 	const bool	EventEnter( std::string& outScript );

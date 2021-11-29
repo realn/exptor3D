@@ -1,6 +1,6 @@
 #include "Effect.h"
 //
-//CEffectRay::CEffectRay( const Vector3f& pos, const Vector3f& dest ) :
+//CEffectRay::CEffectRay( const glm::vec3& pos, const glm::vec3& dest ) :
 //	Alpha( 1.0f ),
 //	FromPos( pos ),
 //	ToPos( dest )
@@ -39,12 +39,12 @@
 //	glEnable( GL_TEXTURE_2D );
 //}
 //
-//const Vector3f	CEffectRay::GetFromPos() const
+//const glm::vec3	CEffectRay::GetFromPos() const
 //{
 //	return FromPos;
 //}
 //
-//const Vector3f	CEffectRay::GetToPos() const
+//const glm::vec3	CEffectRay::GetToPos() const
 //{
 //	return ToPos;
 //}

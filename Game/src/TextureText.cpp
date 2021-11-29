@@ -79,15 +79,15 @@ void	CTextRenderer::Print( const float x, const float y, const std::string& text
 	
 	glTranslatef( x, y, 0 );
 	glScalef( ScaleX, ScaleY, 1.0f );
-	glColor4f( Color.X, Color.Y, Color.Z, Color.W );
+	glColor4f( Color.x, Color.y, Color.z, Color.w );
 
 	glCallLists( static_cast<GLsizei>(strlen(stext)), GL_UNSIGNED_BYTE, stext );
 	glPopMatrix();
 }
 
-void	CTextRenderer::Print( const Vector2f& pos, const std::string& text, const Vector2f& scale )
+void	CTextRenderer::Print( const glm::vec2& pos, const std::string& text, const glm::vec2& scale )
 {
-	Print( pos.X, pos.Y, text, scale.X, scale.Y );
+	Print( pos.x, pos.y, text, scale.x, scale.y );
 }
 
 void	CTextRenderer::EndPrint()
@@ -100,20 +100,20 @@ void	CTextRenderer::EndPrint()
 
 void	CTextRenderer::SetColor( float R, float G, float B, float Alpha )
 {
-	Color.Set( R, G, B, Alpha );
+	Color = glm::vec4( R, G, B, Alpha );
 }
 
-void	CTextRenderer::SetColor( const Vector3f& color )
+void	CTextRenderer::SetColor( const glm::vec3& color )
 {
-	Color.Set( color.X, color.Y, color.Z, 1.0f );
+	Color = glm::vec4( color.x, color.y, color.z, 1.0f );
 }
 
-void	CTextRenderer::SetColor( const Vector4f& color )
+void	CTextRenderer::SetColor( const glm::vec4& color )
 {
-	Color.Set( color.X, color.Y, color.Z, color.W );
+	Color = glm::vec4( color.x, color.y, color.z, color.w );
 }
 
-const Vector2f	CTextRenderer::GetTextSize( const std::string& text ) const
+const glm::vec2	CTextRenderer::GetTextSize( const std::string& text ) const
 {
-	return Vector2f( (float)text.size() * 14.0f, 16.0f );
+	return glm::vec2( (float)text.size() * 14.0f, 16.0f );
 }

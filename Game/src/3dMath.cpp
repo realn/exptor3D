@@ -8,294 +8,41 @@ Opis:	Patrz -> 3dMath.h
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include <glm/glm.hpp>
+
 #include "3dMath.h"
 #include "Log.h"
 
-/*	KONTRUKTORY */
-Vector3f::Vector3f()
-{
-	/*	Tu ¿adna rewelacja.
-		Po prostu zerujemy
-		sk³adowe.
-	*/
-	X = 0.0f;
-	Y = 0.0f;
-	Z = 0.0f;
-}
+Planef::Planef() = default;
 
-Vector3f::Vector3f( const Vector3f& V1 )
-{
-	/*	Tu przypisujemy
-		sk³adowym wartoœci
-		sk³adowych wektora V1
-	*/
-	X = V1.X;
-	Y = V1.Y;
-	Z = V1.Z;
-}
-
-Vector3f::Vector3f( const float &x, const float &y, const float &z )
-{
-	/*	Niewielka ró¿nica w stosunku
-		do poprzedniej metody. Po prostu
-		przypisujemy podane wartoœci.
-	*/
-	Set( x, y, z );
-}
-
-/*	DESTRUKTOR	*/
-Vector3f::~Vector3f()
-{
-	// Raczej nie ma czego usuwaæ :P
-}
-
-/*	METODA USTAWIAJ¥CA
-	Du¿o ona nie robi, po prostu
-	przypisuje wartoœci do sk³adowych.
-*/
-Vector3f Vector3f::Set( const float &x, const float &y, const float &z )
-{
-	X = x;
-	Y = y;
-	Z = z;
-
-	// Przy okazji zwracamy ten wektor, by nie mieæ konflików, przy ró¿nych operacjach
-	return *this;
-}
-
-/*	OPERATORY
-	Dzia³enie tych opertorów
-	jest na tyle proste, ¿e
-	nie bêde ich opisywa³.
-	( czyt. nie chce mi siê :P )
-*/
-Vector3f Vector3f::operator=( const Vector3f &V1 )
-{
-	Set( V1.X, V1.Y, V1.Z );
-	return *this;
-}
-
-Vector3f Vector3f::operator=( const float &V1 )
-{
-	Set( V1, V1, V1 );
-	return *this;
-}
-
-Vector3f Vector3f::operator+( const Vector3f &V1 ) const
-{
-	return Vector3f( X + V1.X, Y + V1.Y, Z + V1.Z );
-}
-
-Vector3f Vector3f::operator+( const float &V1 ) const
-{
-	return Vector3f( X + V1, Y + V1, Z + V1 );
-}
-
-Vector3f Vector3f::operator-( const Vector3f &V1 ) const
-{
-	return Vector3f( X - V1.X, Y - V1.Y, Z - V1.Z );
-}
-
-Vector3f Vector3f::operator-( const float &V1 ) const
-{
-	return Vector3f( X - V1, Y - V1, Z - V1 );	
-}
-
-Vector3f Vector3f::operator-() const
-{
-	return Vector3f( -X, -Y, -Z );
-}
-
-Vector3f Vector3f::operator*( const Vector3f &V1 ) const
-{
-	return Vector3f( X * V1.X, Y * V1.Y, Z * V1.Z );
-}
-
-Vector3f Vector3f::operator*( const float &V1 ) const
-{
-	return Vector3f( X * V1, Y * V1, Z * V1 );
-}
-
-Vector3f Vector3f::operator/( const Vector3f &V1 ) const
-{
-	return Vector3f( X / V1.X, Y / V1.Y, Z / V1.Z );
-}
-
-Vector3f Vector3f::operator/( const float &V1 ) const
-{
-	return Vector3f( X / V1, Y / V1, Z / V1 );	
-}
-
-Vector3f Vector3f::operator+=( const Vector3f &V1 )
-{
-	return *this = *this + V1;
-}
-
-Vector3f Vector3f::operator+=( const float &V1 )
-{
-	return *this = *this + V1;
-}
-
-Vector3f Vector3f::operator-=( const Vector3f &V1 )
-{
-	return *this = *this - V1;
-}
-
-Vector3f Vector3f::operator-=( const float &V1 )
-{
-	return *this = *this - V1;
-}
-
-Vector3f Vector3f::operator*=( const Vector3f &V1 )
-{
-	return *this = *this * V1;
-}
-
-Vector3f Vector3f::operator*=( const float &V1 )
-{
-	return *this = *this * V1;
-}
-
-Vector3f Vector3f::operator/=( const Vector3f &V1 )
-{
-	return *this = *this / V1;
-}
-
-Vector3f Vector3f::operator/=( const float &V1 )
-{
-	return *this = *this / V1;
-}
-
-/*	METODY SPECJALNE	*/
-
-/*	CROSS PRODUCT
-	Dziêki tej funkcji otrzymamy wektor
-	prostopad³y do dwóch pozosta³ych
-	wektorów.
-
-			|  x  y  z |
-	A x B = | Ax Ay Az |
-			| Bx By Bz |
-
-	A x B = | Ay Az | * x - | Ax Az | * y + | Ax Ay | * z
-			| By Bz |		| Bx Bz |		| Bx By |
-
-	A x B = ( Ay * Bz - Az * By ) * x - ( Ax * Bz - Az * Bx ) * y + ( Ax * By - Ay * Bx ) * z
-
-	x =  ( Ay * Bz - Az * By )
-	y = -( Ax * Bz - Az * Bx )
-	z =  ( Ax * By - Ay * Bx )
-*/
-const Vector3f Vector3f::Cross( const Vector3f &V1 ) const
-{
-	return Vector3f(
-		 ( Y * V1.Z - Z * V1.Y ),
-		-( X * V1.Z - Z * V1.X ),
-		 ( X * V1.Y - Y * V1.X ) 
-		);
-}
-
-/*	DOT PRODUCT
-	Hmm trudno mi wyjaœniæ do czego
-	s³u¿y ta metoda. Zwraca ona liczbê
-	zmiennoprzecinkow¹ i... Sami siê
-	zreszt¹ przekonacie :P
-*/
-const float Vector3f::Dot( const Vector3f &V1 ) const
-{
-	return X * V1.X + Y * V1.Y + Z * V1.Z;
-}
-
-/*	D£UGOŒÆ
-	W przypadku wektorów mo¿na ³atwo
-	policzyæ ich d³ugoœæ. Poni¿ej podana
-	metoda jest po prostu rozwiniêciem
-	wzoru Pitagorasa ( dodano 3 wymiar :) )
-*/
-const float Vector3f::Length() const
-{
-	return sqrtf( LengthSq() );
-}
-
-const float Vector3f::LengthSq() const
-{
-	return Dot( *this );
-}
-
-/*	NORMALIZACJA
-	Normalizacja jest skróceniem wektora
-	do d³ugoœci równej 1. Najproœciej to
-	wykonaæ poprzez dzielenie jego sk³adowych
-	przez jego dotychczasow¹ d³ugoœæ.
-*/
-Vector3f Vector3f::Normalize() const
-{
-	float len = Length();
-	if( len == 0.0f )
-		return Vector3f();
-
-	return Vector3f( X / len, Y / len, Z / len );
-}
-
-/*	ODWRÓCENIE
-	No chyba nie powiecie, ¿e siê nie
-	domyœlacie :)
-*/
-Vector3f Vector3f::Reverse() const
-{
-	return Vector3f( -X, -Y, -Z );
-}
-
-Vector3f CDynamic::GetBlockPos()
-{
-	Vector3f zwrot;
-	zwrot.X = float( (int)Pos.X / 10 );
-	zwrot.Z = -float( (int)Pos.Z / 10 );
-	return zwrot;
-}
-
-
-
-Planef::Planef() :
-	D( 0.0f )
-{}
-
-Planef::Planef( const Vector3f& normal, const float distance ) :
+Planef::Planef( const glm::vec3& normal, const float distance ) :
 	Normal( normal ),
 	D( distance )
 {}
 
-Planef::Planef( const Vector3f& normal, const Vector3f& pos ) :
-	D( 0.0f )
-{
+Planef::Planef( const glm::vec3& normal, const glm::vec3& pos ) {
 	Set( normal, pos );
 }
 
-Planef::Planef( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 ) :
-	D( 0.0f )
-{
+Planef::Planef( const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3 ) {
 	Set( v1, v2, v3 );
 }
 
-void	Planef::Set( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 )
-{
+void	Planef::Set( const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3 ) {
 	Normal = MakeNormal( v1, v2, v3 );
-	D = -Normal.Dot( v1 );
+	D = -glm::dot(Normal, v1);
 }
 
-void	Planef::Set( const Vector3f& normal, const Vector3f& pos )
-{
+void	Planef::Set( const glm::vec3& normal, const glm::vec3& pos ) {
 	Normal = normal;
-	D = -Normal.Dot( pos );
+	D = -glm::dot(Normal, pos);
 }
 
-const float	Planef::Distance( const Vector3f& pos ) const
-{
-	return Normal.Dot( pos ) + D;
+const float	Planef::Distance(const glm::vec3& pos) const {
+	return glm::dot(Normal, pos) + D;
 }
 
-const bool	Planef::Intersects( const Vector3f& origin, const Vector3f& dest, Vector3f& outIntersect ) const
-{
+const bool	Planef::Intersects( const glm::vec3& origin, const glm::vec3& dest, glm::vec3& outIntersect ) const {
 	float w = Distance( origin ) * Distance( dest );
 	if( w >= 0.0f )
 		return false;
@@ -303,60 +50,46 @@ const bool	Planef::Intersects( const Vector3f& origin, const Vector3f& dest, Vec
 	auto vec = dest - origin;
 
 	auto counter = Distance( origin );
-	auto denom = -Normal.Dot( vec );
+	auto denom = -glm::dot(Normal, vec);
 
 	outIntersect = origin + vec * ( counter / denom );
 	return true;
 }
 
 
-const Vector3f	MakeNormal( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3 )
-{
-	Vector3f vec1 = v2 - v1;
-	Vector3f vec2 = v3 - v1;
-
-	return vec1.Cross(vec2).Normalize();
+glm::vec3	MakeNormal( const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3 ) {
+	auto vec1 = v2 - v1;
+	auto vec2 = v3 - v1;
+	return glm::normalize(glm::cross(vec1, vec2));
 }
 
-const Vector3f	MakeVectorXZ( const float angle )
-{
-	return Vector3f(
-		sinf( angle * PIOVER180 ),
-		0.0f,
-		cosf( angle * PIOVER180 )
-		);
+glm::vec3	MakeVectorXZ( const float degAngle ) {
+	auto angle = glm::radians(degAngle);
+	return glm::vec3(glm::sin(angle), 0.0f, glm::cos(angle));
 }
 
 /*	DYSTANS
 	Ta funkcja oblicza odleg³oœæ
 	miêdzy dwoma punktami.
 */
-const float Distance( const Vector3f& V1, const Vector3f& V2 )
+float Distance( const glm::vec3& V1, const glm::vec3& V2 )
 {
-	Vector3f vect = V2 - Vector3f(V1);
-	return vect.Length();
+	auto vect = V2 - V1;
+	return glm::length(vect);
 }
 
-const float DistanceSq( const Vector3f& V1, const Vector3f& V2 )
+float	pythagoreanTheorem( const float a, const float b )
 {
-	Vector3f vect = V2 - V1;
-	return vect.LengthSq();
+	return glm::sqrt(glm::pow(a, 2.0f) + glm::pow(b, 2.0f));
 }
 
-const float	TriangleSide( const float a, const float b )
+glm::vec3 ClosestPoint( const glm::vec3 &V1, const glm::vec3 &V2, const glm::vec3 &Point )
 {
-	return sqrtf( POW(a) + POW(b) );
-}
-
-Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &Point )
-{
-	Vector3f Vect1, Vect2;
-	Vect1 = Point - V1;
-	Vect2 = V2 - V1;
-	Vect2 = Vect2.Normalize();
+	auto Vect1 = Point - V1;
+	auto Vect2 = glm::normalize(V2 - V1);
 
 	float d = Distance( V1, V2 );
-	float t = Vect2.Dot( Vect1 );
+	float t = glm::dot(Vect2, Vect1);
 
 	if( t <= 0 )
 		return V1;
@@ -364,39 +97,26 @@ Vector3f ClosestPoint( const Vector3f &V1, const Vector3f &V2, const Vector3f &P
 	if( t >= d )
 		return V2;
 
-	Vector3f Wynik = V1 + Vect2 * t;
+	auto result = V1 + Vect2 * t;
 
-	return Wynik;
+	return result;
 }
 
-float GetAngle( const Vector3f &V1, const Vector3f &V2 )
+float GetAngle( const glm::vec3& V1, const glm::vec3 &V2 )
 {
 	auto vec1 = V2 - V1;
-	Vector3f origin( 0.0f, 0.0f, 1.0f );
+	auto origin = glm::vec3( 0.0f, 0.0f, 1.0f );
 
-	float angRad = atan2f( vec1.Z, vec1.X ) - atan2f( origin.Z, origin.X );
+	float angRad = std::atan2f( vec1.z, vec1.x ) - std::atan2f( origin.z, origin.x );
 
-	return angRad / PIOVER180;
+	return glm::degrees(angRad);
 }
 
-const float SwapAngle( const float &Angle )
-{
-	float angle = Angle;
+float SwapAngle( float degAngle ) {
+	while(degAngle > 180.0f )
+		degAngle -= 360.0f;
+	while(degAngle < -180.0f )
+		degAngle += 360.0f;
 
-	while( angle > 180.0f )
-		angle -= 360.0f;
-	while( angle < -180.0f )
-		angle += 360.0f;
-
-	return angle;
-}
-
-const float	MaxValue( const float A, const float B )
-{
-	return A > B ? A : B;
-}
-
-const float	MinValue( const float A, const float B )
-{
-	return A < B ? A : B;
+	return degAngle;
 }

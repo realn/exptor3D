@@ -1,5 +1,8 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+
 #include "TextureText.h"
 
 enum class SCREEN_ELEMENT_TYPE
@@ -29,9 +32,9 @@ protected:
 	SCREEN_ELEMENT_TYPE	Type;
 	ELEMENT_HALIGN	AlignH;
 	ELEMENT_VALIGN	AlignV;
-	Vector2f	Margin;
-	Vector2f	Scale;
-	Vector4f	Color;
+	glm::vec2	Margin;
+	glm::vec2	Scale;
+	glm::vec4	Color;
 
 protected:
 	CGUIElement( const SCREEN_ELEMENT_TYPE type );
@@ -39,23 +42,23 @@ protected:
 public:
 	virtual ~CGUIElement();
 
-	virtual void	Render( const Vector2f& screenSize ) = 0;
+	virtual void	Render( const glm::vec2& screenSize ) = 0;
 	virtual void	Update( const float fTD ) = 0;
 
 	void	SetAlign( const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV );
-	void	SetMargin( const Vector2f& margin );
-	void	SetScale( const Vector2f& scale );
-	void	SetColor( const Vector4f& color );
+	void	SetMargin( const glm::vec2& margin );
+	void	SetScale( const glm::vec2& scale );
+	void	SetColor( const glm::vec4& color );
 
 	const SCREEN_ELEMENT_TYPE	GetType() const;
 	const ELEMENT_HALIGN	GetAlignH() const;
 	const ELEMENT_VALIGN	GetAlignV() const;
-	const Vector2f	GetMargin() const;
-	const Vector2f	GetScale() const;
-	virtual const Vector2f	GetSize() const = 0;
+	const glm::vec2	GetMargin() const;
+	const glm::vec2	GetScale() const;
+	virtual const glm::vec2	GetSize() const = 0;
 
 protected:
-	const Vector2f	CreatePos( const Vector2f& size, const Vector2f& screenSize ) const;
+	const glm::vec2	CreatePos( const glm::vec2& size, const glm::vec2& screenSize ) const;
 };
 
 class CGUITextElement :
@@ -69,12 +72,12 @@ public:
 	CGUITextElement( CTextRenderer& textRender );
 	virtual ~CGUITextElement();
 
-	virtual void	Render( const Vector2f& screenSize ) override;
+	virtual void	Render( const glm::vec2& screenSize ) override;
 	virtual void	Update( const float fTD ) override;
 
 	void	SetText( const std::string& text );
 
-	const Vector2f		GetSize() const override;
+	const glm::vec2		GetSize() const override;
 	const std::string	GetText() const;
 };
 
@@ -100,16 +103,16 @@ private:
 	CTextRenderer&	TextRender;
 	std::vector<CGUIElement*>	ElementList;
 	std::vector<CValueSync>		SyncList;
-	Vector2f	Margin;
+	glm::vec2	Margin;
 
 public:
 	CGUIScreen( CTextRenderer& textRender );
 	~CGUIScreen();
 
-	void	Render( const Vector2f& screenSize );
+	void	Render( const glm::vec2& screenSize );
 	void	Update( const float fTD );
 
-	void	SetMargin( const Vector2f& margin );
+	void	SetMargin( const glm::vec2& margin );
 
 	CGUITextElement*	AddTextElement( const std::string& text = "" );
 

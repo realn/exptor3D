@@ -57,14 +57,14 @@ void	CGUIConsole::Render()
 	TextRender.StartPrint( width, height );
 	TextRender.SetColor( 1.0f, 1.0f, 1.0f );
 
-	Vector2f pos( 0.0f, -halfY + Scroll * height - TextRender.GetTextSize( CurrentText ).Y );
+	glm::vec2 pos( 0.0f, -halfY + Scroll * height - TextRender.GetTextSize( CurrentText ).y );
 	TextRender.Print( pos, CurrentText );
-	pos.Y -= TextRender.GetTextSize( CurrentText ).Y;
+	pos.y -= TextRender.GetTextSize( CurrentText ).y;
 
-	for( auto it = TextLog.rbegin(); it != TextLog.rend() && pos.Y > -halfY; it++ )
+	for( auto it = TextLog.rbegin(); it != TextLog.rend() && pos.y > -halfY; it++ )
 	{
 		TextRender.Print( pos, *it );
-		pos.Y -= TextRender.GetTextSize( *it ).Y;
+		pos.y -= TextRender.GetTextSize( *it ).y;
 	}
 
 	TextRender.EndPrint();

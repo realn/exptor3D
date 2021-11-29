@@ -15,6 +15,9 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include <string>	// Nag³ówek od klasy ³añcucha znaków
 #include <fstream>	// Nag³ówek od operacji we/wy.
 
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
+
 #include "StrEx.h"
 #include "ModelManager.h"
 
@@ -83,11 +86,11 @@ public:
 class CLvlMesh
 {
 public:
-	std::vector<Vector3f>		Verts;
-	std::vector<Vector2f>		TexCoords;
+	std::vector<glm::vec3>		Verts;
+	std::vector<glm::vec2>		TexCoords;
 	std::vector<unsigned short>	Indices;
 
-	void	AddVertex( const Vector3f& vert, const Vector2f& texCoord )
+	void	AddVertex( const glm::vec3& vert, const glm::vec2& texCoord )
 	{
 		for( unsigned i = 0; i < Verts.size(); i++ )
 		{
@@ -139,12 +142,12 @@ public:
 	unsigned Row;
 	unsigned Col;
 
-	Vector3f	Origin;
+	glm::vec3	Origin;
 
 	// Wektor trzymaj¹cy rogi sektora
-	Vector3f Corner[4];
+	glm::vec3 Corner[4];
 	// Wektor trzyma rogi, o które gracz ma siê zatrzymywaæ (rogi œcian)
-	Vector3f TCorner[4];
+	glm::vec3 TCorner[4];
 	// P³aszczyzna ka¿dej œciany (do wykrywania kolizji)
 	Planef WPlane[4];
 	// Flagi œcian jakie posiada dany blok
@@ -162,7 +165,7 @@ public:
 
 	void	LoadWalls( const std::string& str );
 
-	void	GetVerts( std::vector<Vector3f>& verts );
+	void	GetVerts( std::vector<glm::vec3>& verts );
 };
 
 /*	KLASA CLevel
@@ -233,11 +236,11 @@ public:
 
 	const unsigned int GetBlockCount() const;
 	CLvlBlock* GetBlock( const unsigned col, const unsigned row ) const;
-	CLvlBlock* GetBlock( Vector3f Pos ) const;
+	CLvlBlock* GetBlock( glm::vec3 Pos ) const;
 	CLvlBlock* GetBlock( unsigned int i ) const;
 
-	const Vector3f GetBlockPos( const unsigned i ) const;
-	const Vector3f GetBlockPos( const int x, const int y ) const;
+	const glm::vec3 GetBlockPos( const unsigned i ) const;
+	const glm::vec3 GetBlockPos( const int x, const int y ) const;
 
 	const unsigned	GetBlockIndex( const unsigned col, const unsigned row ) const;
 
@@ -268,7 +271,7 @@ private:
 	const bool	LoadWalls( std::fstream& stream );
 	const bool	LoadItemList( std::fstream& stream );
 
-	void	GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& verts );
+	void	GenSurfaceVerts( const LEV_SURFACE surf, std::vector<glm::vec3>& verts );
 };
 
 extern CLevel* pGLevel;

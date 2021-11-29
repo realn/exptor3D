@@ -189,7 +189,7 @@ void	CGUIMain::ParseMouseMove( const int x, const int y )
 
 	unsigned width = (unsigned)( (float)ScreenHeight * AspectRatio );
 
-	Vector2f pos( (float)x / (float)width, (float)y / (float)ScreenHeight );
+	glm::vec2 pos( (float)x / (float)width, (float)y / (float)ScreenHeight );
 
 	Menu.EventMouseMove( pos );
 }
@@ -304,7 +304,7 @@ void CGUIMain::Render()
 			float height = (float)ScreenHeight;
 			float width = height * AspectRatio;
 
-			Screen.Render( Vector2f( width, height ) );
+			Screen.Render( glm::vec2( width, height ) );
 
 			float h = 32.0f;
 			float w = h * AspectRatio;

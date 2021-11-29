@@ -23,10 +23,10 @@ void CMenuItem::Update( const float fTD )
 		else 
 			Color = 0.5f;
 		
-		if( Scroll.X > 0.0f )
-			Scroll.X -= 1.0f * fTD;
+		if( Scroll.x > 0.0f )
+			Scroll.x -= 1.0f * fTD;
 		else 
-			Scroll.X = 0.0f;
+			Scroll.x = 0.0f;
 	}
 	else
 	{
@@ -35,35 +35,35 @@ void CMenuItem::Update( const float fTD )
 		else
 			Color = 1.0f;
 
-		if( Scroll.X < 1.0f )
-			Scroll.X += 2.0f * fTD;
+		if( Scroll.x < 1.0f )
+			Scroll.x += 2.0f * fTD;
 		else
-			Scroll.X = 1.0f;
+			Scroll.x = 1.0f;
 	}
 }
 
 void CMenuItem::Render( CTextRenderer &TText )
 {
-	if( Size.X == 0.0f || Size.Y == 0.0f )
+	if( Size.x == 0.0f || Size.y == 0.0f )
 		Size = TText.GetTextSize( Title );
 
 	TText.SetColor( Color, Color, Color );
-	TText.Print( Pos.X + Scroll.X * ScrollStep.X, Pos.Y + Scroll.Y * ScrollStep.Y, this->Title, 1.0f, 1.0f );
+	TText.Print( Pos.x + Scroll.x * ScrollStep.x, Pos.y + Scroll.y * ScrollStep.y, this->Title, 1.0f, 1.0f );
 }
 
 void	CMenuItem::SetTitle( const std::string& title )
 {
 	Title = title;
-	Size.X = 0.0f;
-	Size.Y = 0.0f;
+	Size.x = 0.0f;
+	Size.y = 0.0f;
 }
 
-void	CMenuItem::SetPos( const Vector2f& pos )
+void	CMenuItem::SetPos( const glm::vec2& pos )
 {
 	Pos = pos;
 }
 
-void	CMenuItem::SetSize( const Vector2f& size )
+void	CMenuItem::SetSize( const glm::vec2& size )
 {
 	Size = size;
 }
@@ -88,7 +88,7 @@ const std::string	CMenuItem::GetScript() const
 	return Script;
 }
 
-const bool	CMenuItem::Contains( const Vector2f& point ) const
+const bool	CMenuItem::Contains( const glm::vec2& point ) const
 {
-	return point.X > Pos.X && point.X < Pos.X + Size.X && point.Y > Pos.Y && point.Y < Pos.Y + Size.Y;
+	return point.x > Pos.x && point.x < Pos.x + Size.x && point.y > Pos.y && point.y < Pos.y + Size.y;
 }

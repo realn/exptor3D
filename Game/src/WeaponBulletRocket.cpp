@@ -1,3 +1,5 @@
+#include <glm/glm.hpp>
+
 #include "WeaponBulletRocket.h"
 #include "WeaponBulletExplosion.h"
 
@@ -8,7 +10,7 @@
 KLASA weBullRocked
 Rakieta z wyrzutni
 ====================*/
-CBullRocket::CBullRocket( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& vector, const float speed ) :
+CBullRocket::CBullRocket( CActor* owner, const float damage, const glm::vec3& pos, const glm::vec3& vector, const float speed ) :
 	CProjectile(PROJECTILE_TYPE::ROCKET, owner, damage, pos, vector, speed )
 {
 	GfxLoaded = false;
@@ -29,7 +31,7 @@ const bool	CBullRocket::LoadGraphic( CTexManager& texManager, CModelManager& mod
 void CBullRocket::Render()
 {
 	glPushMatrix();
-	glTranslatef( Pos.X, Pos.Y, -Pos.Z );
+	glTranslatef( Pos.x, Pos.y, -Pos.z );
 	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
 
 	glRotatef( 180.f, 1.0f, 0.0f ,0.0f );
@@ -50,8 +52,7 @@ void CBullRocket::Update( const float fTD )
 	Sec += fTD;
 	if( Sec > 0.1f )
 	{
-		Vector3f Tail = Veloc.Normalize();
-		Tail = Tail.Reverse();
+		auto Tail = -glm::normalize(Veloc);
 		Sec = 0.0f;
 
 		pGLevel->AddEntity( new CEffectSprite( Pos + Tail, 1.0f, 0.7f, 0.0f ) );
@@ -63,7 +64,7 @@ void CBullRocket::OnDelete()
 	pGLevel->AddEntity( new CBullExplosion( nullptr, this->Damage / 10.0f, Pos, 15.0f, 20.0f ) );
 }
 
-const bool	CBullRocket::OnCollision( const Vector3f& point, const Planef& plane )
+const bool	CBullRocket::OnCollision( const glm::vec3& point, const Planef& plane )
 {
 	DeleteThis = true;
 	return true;

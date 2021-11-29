@@ -12,7 +12,7 @@ private:
 	float thisPower;
 
 public:
-	CBullExplosion( CActor* owner, const float damage, const Vector3f& pos, const float radius, const float speed );
+	CBullExplosion( CActor* owner, const float damage, const glm::vec3& pos, const float radius, const float speed );
 
 	void Update( const float fTD ) override;
 	void Render() override;

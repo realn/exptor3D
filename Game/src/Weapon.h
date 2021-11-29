@@ -48,12 +48,12 @@ protected:
 	WEAPON_STATE	State;
 	WEAPON_HAND		Hand;
 
-	Vector3f	Pos;
+	glm::vec3	Pos;
 
 	// To jest stopieñ dr¿enia w rêkach broni
 	float		Shake;
-	Vector3f	ShakeRadius;
-	Vector3f	ShakeSpeed;
+	glm::vec3	ShakeRadius;
+	glm::vec3	ShakeSpeed;
 
 	/*	Okreœla ile zadaje broñ obra¿eñ.
 	*/
@@ -107,10 +107,10 @@ public:
 
 protected:
 	const float		GenDamage() const;
-	const Vector3f	GenPos() const;
-	const Vector3f	GenWorldPos( const Vector3f pos ) const;
-	const Vector3f	GenShakePos() const;
-	const Vector3f	CorrectByHandPos( const Vector3f& pos ) const;
+	const glm::vec3	GenPos() const;
+	const glm::vec3	GenWorldPos( const glm::vec3 pos ) const;
+	const glm::vec3	GenShakePos() const;
+	const glm::vec3	CorrectByHandPos( const glm::vec3& pos ) const;
 
 	virtual void	OnShot();
 	virtual void	OnFired();
@@ -216,7 +216,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //	float Time;
 //	bool armed;
 //	bool puted;
-//	Vector3f PutPos;
+//	glm::vec3 PutPos;
 //
 //public:
 //	weATOM_BOMBb();

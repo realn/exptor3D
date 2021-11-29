@@ -15,9 +15,9 @@ CGUIScreen::~CGUIScreen()
 	ElementList.clear();
 }
 
-void	CGUIScreen::Render( const Vector2f& screenSize )
+void	CGUIScreen::Render( const glm::vec2& screenSize )
 {
-	TextRender.StartPrint( screenSize.X, screenSize.Y );
+	TextRender.StartPrint( screenSize.x, screenSize.y );
 
 	for( unsigned i = 0; i < ElementList.size(); i++ )
 		ElementList[i]->Render( screenSize );
@@ -31,7 +31,7 @@ void	CGUIScreen::Update( const float fTD )
 		ElementList[i]->Update( fTD );
 }
 
-void	CGUIScreen::SetMargin( const Vector2f& margin )
+void	CGUIScreen::SetMargin( const glm::vec2& margin )
 {
 	Margin = margin;
 }
@@ -115,12 +115,12 @@ const bool	CGUIScreen::Load( const std::string& filename )
 		else if( cmd == "MARGIN" && params.size() == 2 )
 		{
 			if( pElement != nullptr )
-				pElement->SetMargin( Vector2f( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
+				pElement->SetMargin( glm::vec2( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
 		}
 		else if( cmd == "SCALE" && params.size() == 2 )
 		{
 			if( pElement != nullptr )
-				pElement->SetScale( Vector2f( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
+				pElement->SetScale( glm::vec2( StrToFloat( params[0] ), StrToFloat( params[1] ) ) );
 		}
 		else if( cmd == "COLOR" && params.size() >= 3 && params.size() <= 4 )
 		{
@@ -128,8 +128,8 @@ const bool	CGUIScreen::Load( const std::string& filename )
 			{
 				switch (params.size())
 				{
-				case 3:	pElement->SetColor( Vector4f( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), 1.0f ) );	break;
-				case 4:	pElement->SetColor( Vector4f( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), StrToFloat( params[3] ) ));	break;
+				case 3:	pElement->SetColor( glm::vec4( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), 1.0f ) );	break;
+				case 4:	pElement->SetColor( glm::vec4( StrToFloat( params[0] ), StrToFloat( params[1] ), StrToFloat( params[2] ), StrToFloat( params[3] ) ));	break;
 				}
 			}
 		}

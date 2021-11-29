@@ -293,11 +293,11 @@ void CLevel::BuildVisual()
 	powieszchni poziomu.
 	*/
 
-	std::vector<Vector2f> texCoord;
-	texCoord.push_back( Vector2f( 0.0f, 0.0f ) );
-	texCoord.push_back( Vector2f( 1.0f, 0.0f ) );
-	texCoord.push_back( Vector2f( 1.0f, 1.0f ) );
-	texCoord.push_back( Vector2f( 0.0f, 1.0f ) );
+	std::vector<glm::vec2> texCoord;
+	texCoord.push_back( glm::vec2( 0.0f, 0.0f ) );
+	texCoord.push_back( glm::vec2( 1.0f, 0.0f ) );
+	texCoord.push_back( glm::vec2( 1.0f, 1.0f ) );
+	texCoord.push_back( glm::vec2( 0.0f, 1.0f ) );
 
 	for( unsigned row = 0; row < Rows; row++ )
 	{
@@ -307,9 +307,9 @@ void CLevel::BuildVisual()
 			if( pBlock == nullptr )
 				continue;
 
-			std::vector<Vector3f> vertFloor;
-			std::vector<Vector3f> vertCeiling;
-			std::vector<Vector3f> vertWall;
+			std::vector<glm::vec3> vertFloor;
+			std::vector<glm::vec3> vertCeiling;
+			std::vector<glm::vec3> vertWall;
 
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::FLOOR) ), vertFloor );
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::CEILING) ), vertCeiling );
@@ -319,13 +319,13 @@ void CLevel::BuildVisual()
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::WALL_RIGHT) ), vertWall );
 
 			for( unsigned i = 0; i < vertFloor.size(); i++ )
-				Floor.AddVertex( (pBlock->Origin + vertFloor[i]) * Vector3f( 1.0f, 1.0f, -1.0f ), texCoord[i] );
+				Floor.AddVertex( (pBlock->Origin + vertFloor[i]) * glm::vec3( 1.0f, 1.0f, -1.0f ), texCoord[i] );
 
 			for( unsigned i = 0; i < vertCeiling.size(); i++ )
-				Ceiling.AddVertex( (pBlock->Origin + vertCeiling[i]) * Vector3f( 1.0f, 1.0f, -1.0f ), texCoord[i] );
+				Ceiling.AddVertex( (pBlock->Origin + vertCeiling[i]) * glm::vec3( 1.0f, 1.0f, -1.0f ), texCoord[i] );
 
 			for( unsigned i = 0; i < vertWall.size(); i++ )
-				Wall.AddVertex( (pBlock->Origin + vertWall[i]) * Vector3f( 1.0f, 1.0f, -1.0f ), texCoord[ i % 4 ] );
+				Wall.AddVertex( (pBlock->Origin + vertWall[i]) * glm::vec3( 1.0f, 1.0f, -1.0f ), texCoord[ i % 4 ] );
 		}
 	}
 }
@@ -351,7 +351,7 @@ void CLevel::BuildPhysic()
 
 			CCollisionBlock block( GetBlockIndex( col, row ) );
 
-			std::vector<Vector3f> verts;
+			std::vector<glm::vec3> verts;
 
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::FLOOR) ), verts );
 			GenSurfaceVerts( (LEV_SURFACE)(unsigned)( pBlock->walls & ( (unsigned)LEV_SURFACE::CEILING) ), verts );
@@ -434,9 +434,9 @@ CLvlBlock* CLevel::GetBlock( const unsigned col, const unsigned row ) const
 	return const_cast<CLvlBlock*>(&block[ static_cast<size_t>(row) * Cols + col ]);
 }
 
-CLvlBlock* CLevel::GetBlock( Vector3f Pos ) const
+CLvlBlock* CLevel::GetBlock( glm::vec3 Pos ) const
 {
-	return GetBlock( (unsigned int)Pos.X, (unsigned int)Pos.Z );
+	return GetBlock( (unsigned int)Pos.x, (unsigned int)Pos.z );
 }
 
 CLvlBlock* CLevel::GetBlock( unsigned int i ) const
@@ -449,17 +449,17 @@ const unsigned	CLevel::GetBlockCount() const
 	return Rows * Cols;
 }
 
-const Vector3f CLevel::GetBlockPos( const unsigned i ) const
+const glm::vec3 CLevel::GetBlockPos( const unsigned i ) const
 {
 	return GetBlockPos( i % Cols, i / Cols );
 }
 
-const Vector3f	CLevel::GetBlockPos( const int x, const int y ) const
+const glm::vec3	CLevel::GetBlockPos( const int x, const int y ) const
 {
 	float halfW = blockWidth / 2.0f;
 	float halfD = blockDepth / 2.0f;
 
-	return Vector3f( (float)(x) * blockWidth + halfW, 0.0f, (float)(y) * blockDepth + halfD );
+	return glm::vec3( (float)(x) * blockWidth + halfW, 0.0f, (float)(y) * blockDepth + halfD );
 }
 
 const unsigned	CLevel::GetBlockIndex( const unsigned col, const unsigned row ) const
@@ -743,7 +743,7 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 	return false;
 }
 
-void	CLevel::GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& verts )
+void	CLevel::GenSurfaceVerts( const LEV_SURFACE surf, std::vector<glm::vec3>& verts )
 {
 	float halfX = blockWidth / 2.0f;
 	float halfY = blockHeight / 2.0f;
@@ -752,45 +752,45 @@ void	CLevel::GenSurfaceVerts( const LEV_SURFACE surf, std::vector<Vector3f>& ver
 	switch (surf)
 	{
 	case LEV_SURFACE::CEILING:
-		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( glm::vec3( -halfX, halfY, halfZ ) );
+		verts.push_back( glm::vec3( halfX, halfY, halfZ ) );
+		verts.push_back( glm::vec3( halfX, halfY, -halfZ ) );
+		verts.push_back( glm::vec3( -halfX, halfY, -halfZ ) );
 		break;
 
 	case LEV_SURFACE::FLOOR:
-		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
+		verts.push_back( glm::vec3( -halfX, -halfY, -halfZ ) );
+		verts.push_back( glm::vec3( halfX, -halfY, -halfZ ) );
+		verts.push_back( glm::vec3( halfX, -halfY, halfZ ) );
+		verts.push_back( glm::vec3( -halfX, -halfY, halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_FAR:
-		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
+		verts.push_back( glm::vec3( -halfX, -halfY, halfZ ) );
+		verts.push_back( glm::vec3( halfX, -halfY, halfZ ) );
+		verts.push_back( glm::vec3( halfX, halfY, halfZ ) );
+		verts.push_back( glm::vec3( -halfX, halfY, halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_NEAR:
-		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
+		verts.push_back( glm::vec3( halfX, -halfY, -halfZ ) );
+		verts.push_back( glm::vec3( -halfX, -halfY, -halfZ ) );
+		verts.push_back( glm::vec3( -halfX, halfY, -halfZ ) );
+		verts.push_back( glm::vec3( halfX, halfY, -halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_LEFT:
-		verts.push_back( Vector3f( -halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( -halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, halfZ ) );
-		verts.push_back( Vector3f( -halfX, halfY, -halfZ ) );
+		verts.push_back( glm::vec3( -halfX, -halfY, -halfZ ) );
+		verts.push_back( glm::vec3( -halfX, -halfY, halfZ ) );
+		verts.push_back( glm::vec3( -halfX, halfY, halfZ ) );
+		verts.push_back( glm::vec3( -halfX, halfY, -halfZ ) );
 		break;
 
 	case LEV_SURFACE::WALL_RIGHT:
-		verts.push_back( Vector3f( halfX, -halfY, halfZ ) );
-		verts.push_back( Vector3f( halfX, -halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, -halfZ ) );
-		verts.push_back( Vector3f( halfX, halfY, halfZ ) );
+		verts.push_back( glm::vec3( halfX, -halfY, halfZ ) );
+		verts.push_back( glm::vec3( halfX, -halfY, -halfZ ) );
+		verts.push_back( glm::vec3( halfX, halfY, -halfZ ) );
+		verts.push_back( glm::vec3( halfX, halfY, halfZ ) );
 		break;
 
 	default:

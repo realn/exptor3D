@@ -1,3 +1,5 @@
+#include <glm/glm.hpp>
+
 #include "WeaponBulletRay.h"
 
 #include "Special.h"
@@ -6,8 +8,8 @@
 	KLASA CBullRay
 	promieñ phazer'a
 ====================*/
-CBullRay::CBullRay( CActor* owner, const float damage, const Vector3f& pos, const Vector3f& target ) :
-	CProjectile( PROJECTILE_TYPE::RAY, owner, damage, pos, (target - pos).Normalize(), 1.0f )
+CBullRay::CBullRay( CActor* owner, const float damage, const glm::vec3& pos, const glm::vec3& target ) :
+	CProjectile( PROJECTILE_TYPE::RAY, owner, damage, pos, glm::normalize(target - pos), 1.0f )
 {
 	Radius = 0.1f;
 	DeleteThis = false;

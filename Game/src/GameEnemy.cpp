@@ -183,7 +183,7 @@
 //	gluDeleteQuadric( obj );
 //}
 //
-//void CEnemy::Fire( Vector3f FireTarget )
+//void CEnemy::Fire( glm::vec3 FireTarget )
 //{
 //	if( IsDying() )
 //		return;
@@ -194,9 +194,9 @@
 //		return;
 //	else FireTime = 0.0f;
 //
-//	Vector3f temp = Pos;
-//	Vector3f add;
-//	Vector3f FireVeloc;
+//	glm::vec3 temp = Pos;
+//	glm::vec3 add;
+//	glm::vec3 FireVeloc;
 //
 //	add.X = sinf( ( Angle + WeapAngle ) * PIOVER180 ) * WeapR;
 //	add.Z = -cosf( ( Angle + WeapAngle ) * PIOVER180 ) * WeapR;

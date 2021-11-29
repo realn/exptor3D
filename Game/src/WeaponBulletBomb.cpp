@@ -6,8 +6,8 @@
 	KLASA CBullBomb
 	Jest to bomba
 ====================*/
-CBullBomb::CBullBomb( CActor* owner, const float damage, const Vector3f& pos, const float time, CModelManager& modelManager ) :
-	CProjectile( PROJECTILE_TYPE::BOMB, owner, damage, pos, Vector3f(), 0.0f )
+CBullBomb::CBullBomb( CActor* owner, const float damage, const glm::vec3& pos, const float time, CModelManager& modelManager ) :
+	CProjectile( PROJECTILE_TYPE::BOMB, owner, damage, pos, glm::vec3(), 0.0f )
 {
 	BoomTime = time;
 	ThisTime = 0.0f;
@@ -35,7 +35,7 @@ void CBullBomb::Render()
 {
 	glPushMatrix();
 
-	glTranslatef( Pos.X, Pos.Y, Pos.Z );
+	glTranslatef( Pos.x, Pos.y, Pos.z );
 	Model->RenderObject( 0 );
 
 	glPopMatrix();

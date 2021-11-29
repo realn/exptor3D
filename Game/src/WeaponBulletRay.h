@@ -7,7 +7,7 @@ class CBullRay :
 	public CProjectile
 {
 public:
-	CBullRay(CActor* owner, const float damage, const Vector3f& pos, const Vector3f& target );
+	CBullRay(CActor* owner, const float damage, const glm::vec3& pos, const glm::vec3& target );
 	
 	void Update( const float fTD ) override;
 	void Render() override;

@@ -1,3 +1,7 @@
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "WeaponRocketLuncher.h"
 #include "WeaponBulletRocket.h"
 #include "Level.h"
@@ -14,7 +18,7 @@ CWeaponRocketLuncher::CWeaponRocketLuncher( CModelManager& modelManager ) :
 
 	MaxAmmo = 20;
 
-	Pos.Set( 1.5f, -1.5f, 3.5f );
+	Pos = glm::vec3( 1.5f, -1.5f, 3.5f );
 
 	Model = modelManager.Get( "rocketlun-model.glm" );
 }
@@ -34,8 +38,6 @@ void CWeaponRocketLuncher::Render()
 	// Zachowujemy aktualn¹ Macierz
 	glPushMatrix();
 
-	glLoadIdentity();
-
 	float Zcorr = 0.0f;
 	switch (State)
 	{
@@ -47,9 +49,13 @@ void CWeaponRocketLuncher::Render()
 		break;
 	}
 
-	glTranslatef( pos.X, pos.Y, -(pos.Z - Zcorr) );
+	auto mat = glm::mat4(1.0f);
+	
 
-	glRotatef( 180.0f, 0.0f, 1.0f, 0.0f );
+	mat = glm::translate(mat, glm::vec3(pos.x, pos.y, -(pos.z - Zcorr)));
+	mat = glm::rotate(mat, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glLoadMatrixf(glm::value_ptr(mat));
+
 	Model->RenderObject( 0 );
 
 	// Przywracamy Macierz
@@ -58,10 +64,10 @@ void CWeaponRocketLuncher::Render()
 
 void	CWeaponRocketLuncher::OnFired()
 {
-	Vector3f fireCorr = CorrectByHandPos( Vector3f( -0.6f, 0.6f, 0.0f ) );
+	auto fireCorr = CorrectByHandPos( glm::vec3( -0.6f, 0.6f, 0.0f ) );
 	auto pos = GenWorldPos( GenPos() + GenShakePos() + fireCorr );
 	auto vector = pGLevel->GetCollisionManager().RayCast( Owner->Pos, Owner->Vector, 0.5f );
-	vector = (vector - pos).Normalize();
+	vector = glm::normalize(vector - pos);
 	auto damage = GenDamage();
 
 	CProjectile* pRocket = new CBullRocket( Owner, damage, pos, vector, 30.0f );

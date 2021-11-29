@@ -108,10 +108,10 @@ protected:
 
 	unsigned int Actions;
 
-	Vector3f StartPos;
+	glm::vec3 StartPos;
 
 	//virtual bool AIFindTarget();
-	//virtual Vector3f AIFindWalkTarget();
+	//virtual glm::vec3 AIFindWalkTarget();
 	//virtual void AIStand();
 	//virtual void AIWalk();
 	//virtual void AIAttackTarget();
@@ -136,8 +136,8 @@ public:
 	void SetStartAngle( const float set );
 	const float GetStartAngle() const;
 
-	void SetStartPos( const Vector3f& set );
-	const Vector3f GetStartPos() const;
+	void SetStartPos( const glm::vec3& set );
+	const glm::vec3 GetStartPos() const;
 	
 protected:
 	virtual void	SolveActions( const float fTD );

@@ -1,3 +1,5 @@
+#include <glm/glm.hpp>
+
 #include "CollisionManager.h"
 #include "Log.h"
 
@@ -127,6 +129,7 @@ void	CCollisionManager::Solve()
 			case CCollision::COLLISION_TYPE::OBJECT:
 				if( pDynamic->OnCollision( collision.pObject ) )
 					pDynamic->NextPos = collision.Point + pDynamic->Vector * pDynamic->Radius;
+				break;
 
 			default:
 				break;
@@ -135,7 +138,7 @@ void	CCollisionManager::Solve()
 	}
 }
 
-const Vector3f	CCollisionManager::RayCast( const Vector3f& origin, const Vector3f& vector, const float step , const bool ignoreObjects ) const
+const glm::vec3	CCollisionManager::RayCast( const glm::vec3& origin, const glm::vec3& vector, const float step , const bool ignoreObjects ) const
 {
 	CDynamic dynamic( 0.1f );
 
@@ -160,13 +163,13 @@ const Vector3f	CCollisionManager::RayCast( const Vector3f& origin, const Vector3
 	return origin;
 }
 
-const bool	CCollisionManager::IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps, const bool ignoreObjects ) const
+const bool	CCollisionManager::IsClearLine( const glm::vec3& origin, const glm::vec3& dest, const unsigned steps, const bool ignoreObjects ) const
 {
 	CDynamic dynamic( 0.1f );
 
-	float singleStep = (dest - origin).LengthSq() / (float)steps;
+	float singleStep = glm::length(dest - origin) / (float)steps;
 	dynamic.Pos = origin;
-	dynamic.Vector = (dest - origin).Normalize();
+	dynamic.Vector = glm::normalize(dest - origin);
 	dynamic.NextPos = origin + dynamic.Vector * singleStep;
 
 	for( unsigned i = 0; i < steps - 1; i++ )
@@ -187,20 +190,20 @@ CCollisionBlock*	CCollisionManager::GetBlock( const unsigned row, const unsigned
 	if( row >= Rows || col >= Cols )
 		return nullptr;
 
-	return const_cast<CCollisionBlock*>(&Blocks[ Cols * row + col ]);
+	return const_cast<CCollisionBlock*>(&Blocks[ static_cast<size_t>(Cols) * row + col ]);
 }
 
-const unsigned	CCollisionManager::FindBlockIndex( const Vector3f& point ) const
+const unsigned	CCollisionManager::FindBlockIndex( const glm::vec3& point ) const
 {
-	auto scl = point / Vector3f( BlockWidth, 1.0f, BlockHeight );
+	auto scl = point / glm::vec3( BlockWidth, 1.0f, BlockHeight );
 
-	unsigned x = (unsigned)scl.X;
-	unsigned y = (unsigned)scl.Z;
+	unsigned x = (unsigned)scl.x;
+	unsigned y = (unsigned)scl.z;
 
 	return y * Cols + x;
 }
 
-CCollisionBlock*	CCollisionManager::FindBlock( const Vector3f& point ) const
+CCollisionBlock*	CCollisionManager::FindBlock( const glm::vec3& point ) const
 {
 	auto index = FindBlockIndex( point );
 	if( index >= Blocks.size() )
@@ -243,21 +246,20 @@ const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, 
 
 			auto toObjVec = pObject->Pos - dynamic.Pos;
 
-			if( toObjVec.Dot( dynamic.Vector ) <= 0.0f )
+			if( glm::dot(toObjVec, dynamic.Vector) <= 0.0f )
 				continue;
 
-			auto distFromDyn = dynamic.GetMoveVector().Dot( toObjVec );
-			auto distFromObjSq = POW( toObjVec.Length() ) - POW ( distFromDyn );
+			auto distFromDyn = glm::dot(dynamic.GetMoveVector(), toObjVec );
+			auto distFromObj = glm::length(toObjVec) - distFromDyn;
 
-			if( distFromObjSq >= POW( dynamic.Radius + pObject->Radius ) )
+			if(distFromObj >= dynamic.Radius + pObject->Radius)
 				continue;
 
-			auto reverseSq = POW( dynamic.Radius + pObject->Radius ) - distFromObjSq;
-			auto reverse = sqrtf( reverseSq );
+			auto reverse = dynamic.Radius + pObject->Radius - distFromObj;
 
 			auto collisionDist = distFromDyn - reverse;
 
-			float moveLen = dynamic.GetMoveVector().Length();
+			float moveLen = glm::length(dynamic.GetMoveVector());
 			if( collisionDist > moveLen )
 				continue;
 
@@ -269,11 +271,11 @@ const bool	CCollisionManager::FindCollisionForDynamic( const CDynamic& dynamic, 
 
 	if( !collisions.empty() )
 	{
-		float dist = DistanceSq( dynamic.Pos, collisions[0].Point );
+		float dist = Distance( dynamic.Pos, collisions[0].Point );
 		unsigned index = 0;
 		for( unsigned i = 1; i < collisions.size(); i++ )
 		{
-			float newDist = DistanceSq( dynamic.Pos, collisions[i].Point );
+			float newDist = Distance( dynamic.Pos, collisions[i].Point );
 			if( newDist < dist )
 			{
 				index = i;
@@ -295,7 +297,7 @@ void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const
 	{
 		auto& face = block.GetFace( i );
 
-		Vector3f point;
+		glm::vec3 point;
 
 		auto posCorrect = -face.Plane.Normal * dynamic.Radius;
 
@@ -307,10 +309,10 @@ void	CCollisionManager::FindBlockCollisions( const CCollisionBlock& block, const
 		for( unsigned i = 0; i < 4; i++ )
 		{
 			auto pos = face.GetEdgeClosestPoint( i, dynamic.Pos );
-			if( DistanceSq( pos, dynamic.Pos ) > POW( dynamic.Radius ) )
+			if( Distance( pos, dynamic.Pos ) > dynamic.Radius )
 				continue;
 
-			Planef colPlane( (dynamic.NextPos - pos).Normalize(), pos );
+			Planef colPlane( glm::normalize(dynamic.NextPos - pos), pos );
 			posCorrect = -colPlane.Normal * dynamic.Radius;
 			if( colPlane.Intersects( dynamic.Pos, dynamic.NextPos + posCorrect, point ) )
 				collisions.push_back( CCollision( point, colPlane ) );

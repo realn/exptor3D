@@ -16,17 +16,17 @@ public:
 	};
 
 	COLLISION_TYPE	Type;
-	Vector3f		Point;
+	glm::vec3		Point;
 	Planef			Plane;
 	CObject*		pObject;
 
 	CCollision() :
 		Type( COLLISION_TYPE::NONE ), pObject( nullptr )
 	{}
-	CCollision( const Vector3f& point, const Planef& plane ) :
+	CCollision( const glm::vec3& point, const Planef& plane ) :
 		Type( COLLISION_TYPE::SURFACE ), Point( point ), Plane( plane ), pObject( nullptr )
 	{}
-	CCollision( const Vector3f& point, CObject* pObject ) :
+	CCollision( const glm::vec3& point, CObject* pObject ) :
 		Type( COLLISION_TYPE::OBJECT ), Point( point ), pObject( pObject )
 	{}
 };
@@ -58,13 +58,13 @@ public:
 	void	Clear();
 
 	void	Solve();
-	const Vector3f	RayCast( const Vector3f& origin, const Vector3f& vector, const float step = 1.0f, const bool ignoreObjects = false ) const;
-	const bool		IsClearLine( const Vector3f& origin, const Vector3f& dest, const unsigned steps = 10, const bool ignoreObjects = false ) const;
+	const glm::vec3	RayCast( const glm::vec3& origin, const glm::vec3& vector, const float step = 1.0f, const bool ignoreObjects = false ) const;
+	const bool		IsClearLine( const glm::vec3& origin, const glm::vec3& dest, const unsigned steps = 10, const bool ignoreObjects = false ) const;
 
 private:
 	CCollisionBlock*	GetBlock( const unsigned row, const unsigned col ) const;
-	const unsigned		FindBlockIndex( const Vector3f& point ) const;
-	CCollisionBlock*	FindBlock( const Vector3f& point ) const;
+	const unsigned		FindBlockIndex( const glm::vec3& point ) const;
+	CCollisionBlock*	FindBlock( const glm::vec3& point ) const;
 
 	const bool	FindCollisionForDynamic( const CDynamic& dynamic, CCollision& outCollision, const bool ignoreObjects = false ) const;
 	void	FindBlockCollisions( const CCollisionBlock& block, const CDynamic& dynamic, std::vector<CCollision>& collisions ) const;

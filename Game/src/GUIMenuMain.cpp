@@ -106,7 +106,7 @@ CMenu*	CMenuMain::FindMenu( const std::string& id )
 	return nullptr;
 }
 
-void	CMenuMain::EventMouseMove( const Vector2f& pos )
+void	CMenuMain::EventMouseMove( const glm::vec2& pos )
 {
 	if( Stack.empty() )
 		return;
@@ -205,15 +205,15 @@ const float	CMenuMain::GetParamFloat( const std::string& str ) const
 	return StrToFloat( GetParamStr( str ) );
 }
 
-const Vector2f	CMenuMain::GetParamVector2( const std::string& str ) const
+const glm::vec2	CMenuMain::GetParamVector2( const std::string& str ) const
 {
 	auto temp = GetParamStr( str );
 	std::vector<std::string> list;
 	SplitString( temp, ",", list );
 	if( list.size() != 2 )
-		return Vector2f();
+		return glm::vec2();
 
-	return Vector2f( StrToFloat(list[0]), StrToFloat(list[1]) );
+	return glm::vec2( StrToFloat(list[0]), StrToFloat(list[1]) );
 }
 
 const MENU_TAG CMenuMain::GetMenuType( std::string str )
@@ -272,8 +272,8 @@ bool CMenuMain::Load( const std::string& filename )
 	std::string str = "";
 	CMenu*		Menu = nullptr;
 	CMenuItem*	Item = nullptr;
-	Vector2f	ItemPos;
-	Vector2f	ItemStep;
+	glm::vec2	ItemPos;
+	glm::vec2	ItemStep;
 
 	while( fileStream  )
 	{
@@ -299,7 +299,7 @@ bool CMenuMain::Load( const std::string& filename )
 			{
 				float height = GetParamFloat( str );
 				float width = AspectRatio * height;
-				Menu->SetSize( Vector2f( width, height ) );
+				Menu->SetSize( glm::vec2( width, height ) );
 			}
 			break;
 

@@ -48,11 +48,11 @@ void	CMenu::Update( const float fTD )
 
 void CMenu::Render( CTextRenderer& TText )
 {
-	TText.StartPrint( Size.X, Size.Y );
+	TText.StartPrint( Size.x, Size.y );
 	TText.SetColor( 1.0f, 1.0f, 1.0f );
 
-	glTranslatef( Scroll * Size.X, 0.0f, 0.0f );
-	TText.Print( TitlePos.X, TitlePos.Y, Title, 2.5f, 2.5f );
+	glTranslatef( Scroll * Size.x, 0.0f, 0.0f );
+	TText.Print( TitlePos.x, TitlePos.y, Title, 2.5f, 2.5f );
 
 	for( unsigned i = 0; i < List.size(); i++ )
 		List[i]->Render( TText );
@@ -60,7 +60,7 @@ void CMenu::Render( CTextRenderer& TText )
 	TText.EndPrint();
 }
 
-void CMenu::EventMouseMove( const Vector2f& pos )
+void CMenu::EventMouseMove( const glm::vec2& pos )
 {
 	auto screenPos = pos * Size;
 	CMenuItem* Item;
@@ -148,12 +148,12 @@ void	CMenu::SetTitle( const std::string& title )
 	Title = title;
 }
 
-void	CMenu::SetTitlePos( const Vector2f& pos )
+void	CMenu::SetTitlePos( const glm::vec2& pos )
 {
 	TitlePos = pos;
 }
 
-void	CMenu::SetSize( const Vector2f& size )
+void	CMenu::SetSize( const glm::vec2& size )
 {
 	Size = size;
 }

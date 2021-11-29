@@ -21,25 +21,25 @@ public:
 //	public CEffect
 //{
 //private:
-//	Vector3f FromPos;
-//	Vector3f ToPos;
+//	glm::vec3 FromPos;
+//	glm::vec3 ToPos;
 //	float Alpha;
 //
 //public:
-//	CEffectRay( const Vector3f& origin, const Vector3f& dest );
+//	CEffectRay( const glm::vec3& origin, const glm::vec3& dest );
 //
 //	void Render() override;
 //	void Update( const float fTD ) override;
 //
-//	const Vector3f	GetFromPos() const;
-//	const Vector3f	GetToPos() const;
+//	const glm::vec3	GetFromPos() const;
+//	const glm::vec3	GetToPos() const;
 //};
 
 class CEffectExplosion : 
 	public CEffect
 {
 private:
-	Vector3f Pos;
+	glm::vec3 Pos;
 	float Alpha;
 	float Speed;
 	float MaxRadius;
@@ -47,7 +47,7 @@ private:
 	GLUquadric* Obj;
 
 public:
-	CEffectExplosion( const Vector3f& pos, const float radius, float speed );
+	CEffectExplosion( const glm::vec3& pos, const float radius, float speed );
 	virtual ~CEffectExplosion();
 
 	const bool	IsTransparent() const override;
@@ -60,14 +60,14 @@ class CEffectSprite :
 	public CEffect
 {
 private:
-	Vector3f Pos;
+	glm::vec3 Pos;
 	CTexture* Texture;
 	float Alpha;
 	float Speed;
 	float C[3];
 
 public:
-	CEffectSprite( const Vector3f& pos, const float R = 1.0f, const float G = 1.0f, const float B = 1.0f );
+	CEffectSprite( const glm::vec3& pos, const float R = 1.0f, const float G = 1.0f, const float B = 1.0f );
 	virtual ~CEffectSprite();
 
 	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;

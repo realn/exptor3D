@@ -12,6 +12,7 @@
 #include <CBGL/Rendering.h>
 #include <CBGL/State.h>
 #include <CBGL/COpenGL.h>
+#include <CBGL/System.h>
 
 #include "Application.h"
 #include "EventInput.h"
@@ -77,6 +78,8 @@ int	CApplication::Run()
 	}
 
 	window->show();
+
+	cb::gl::initextensions();
 
 	CTexManager texManager( "Data/Textures/" );
 	CModelManager modelManager( "Data/Models/", texManager );
@@ -233,8 +236,8 @@ void	CApplication::InitGraphics( CTexManager& texManager )
 	cb::gl::setHint(cb::gl::HintTarget::POINT_SMOOTH, cb::gl::HintMode::NICEST);
 	cb::gl::setHint(cb::gl::HintTarget::POLYGON_SMOOTH, cb::gl::HintMode::NICEST);
 
-	//double p1[] = { 0.0, 1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, 1.0f, 0.0f ) ) };
-	//double p2[] = { 0.0, -1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, -1.0f, 0.0f ) ) };
+	//double p1[] = { 0.0, 1.0, 0.0, -glm::vec3( 0.0f, -5.01f, 0.0f ).Dot( glm::vec3( 0.0f, 1.0f, 0.0f ) ) };
+	//double p2[] = { 0.0, -1.0, 0.0, -glm::vec3( 0.0f, -5.01f, 0.0f ).Dot( glm::vec3( 0.0f, -1.0f, 0.0f ) ) };
 	//glClipPlane( GL_CLIP_PLANE0, p1 );
 	//glClipPlane( GL_CLIP_PLANE1, p2 );
 
@@ -349,7 +352,7 @@ void	CApplication::Render()
 		glLoadIdentity();
 
 		glRotatef( pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f );
-		glTranslatef( -pGLevel->GetPlayer().Pos.X, 0, pGLevel->GetPlayer().Pos.Z );
+		glTranslatef( -pGLevel->GetPlayer().Pos.x, 0, pGLevel->GetPlayer().Pos.z );
 
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 		pGLevel->Render();

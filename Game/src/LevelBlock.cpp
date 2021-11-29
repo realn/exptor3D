@@ -13,9 +13,9 @@ void	CLvlBlock::Set( const unsigned row, const unsigned col, const float width, 
 {
 	Row = row;
 	Col = col;
-	Origin.X = (float)col * width + ( width / 2.0f );
-	Origin.Y = 0.0f;//height / 2.0f;
-	Origin.Z = (float)row * depth + ( depth / 2.0f );
+	Origin.x = (float)col * width + ( width / 2.0f );
+	Origin.y = 0.0f;//height / 2.0f;
+	Origin.z = (float)row * depth + ( depth / 2.0f );
 }
 
 void CLvlBlock::LoadWalls( const std::string& str )

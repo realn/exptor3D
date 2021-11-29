@@ -1,6 +1,6 @@
 #include "Effect.h"
 
-CEffectSprite::CEffectSprite( const Vector3f& pos, const float R, const float G, const float B ) :
+CEffectSprite::CEffectSprite( const glm::vec3& pos, const float R, const float G, const float B ) :
 	Pos( pos ),
 	Alpha( 1.0f ),
 	Speed( 0.4f ),
@@ -42,7 +42,7 @@ void CEffectSprite::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glEnable( GL_BLEND );
 
-	glTranslatef( Pos.X, Pos.Y, -Pos.Z );
+	glTranslatef( Pos.x, Pos.y, -Pos.z );
 	glRotatef( -180.0f, 0.0f, 1.0f, 0.0f );
 
 	Texture->Activate();

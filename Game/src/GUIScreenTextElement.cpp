@@ -11,10 +11,10 @@ CGUITextElement::~CGUITextElement()
 
 }
 
-void	CGUITextElement::Render( const Vector2f& screenSize )
+void	CGUITextElement::Render( const glm::vec2& screenSize )
 {
-	Vector2f size = TextRender.GetTextSize( Text ) * Scale;
-	Vector2f pos = CreatePos( size, screenSize );
+	glm::vec2 size = TextRender.GetTextSize( Text ) * Scale;
+	glm::vec2 pos = CreatePos( size, screenSize );
 
 	TextRender.SetColor( Color );
 	TextRender.Print( pos, Text, Scale );
@@ -30,7 +30,7 @@ void	CGUITextElement::SetText( const std::string& text )
 	Text = text;
 }
 
-const Vector2f	CGUITextElement::GetSize() const
+const glm::vec2	CGUITextElement::GetSize() const
 {
 	return TextRender.GetTextSize( Text ) * Scale;
 }

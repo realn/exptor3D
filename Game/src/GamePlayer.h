@@ -57,7 +57,7 @@ public:
 	void	Reset() override;
 
 	const bool	OnCollision( CObject* pObject ) override;
-	const bool	OnCollision( const Vector3f& point, const Planef& plane ) override;
+	const bool	OnCollision( const glm::vec3& point, const Planef& plane ) override;
 
 private:
 	const bool	ProcessItem( CItem* pItem );

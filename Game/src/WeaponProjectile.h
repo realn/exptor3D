@@ -28,12 +28,12 @@ class CProjectile :
 protected:
 	const PROJECTILE_TYPE Type;
 	CActor* Owner;
-	Vector3f Veloc;
+	glm::vec3 Veloc;
 	float Damage;
 	GLUquadric* obj;
 
 public:
-	CProjectile(const PROJECTILE_TYPE type, CActor* owner, const float damage, const Vector3f& origin, const Vector3f& vector, const float speed );
+	CProjectile(const PROJECTILE_TYPE type, CActor* owner, const float damage, const glm::vec3& origin, const glm::vec3& vector, const float speed );
 	virtual ~CProjectile();
 
 	CActor*	GetOwner() const;

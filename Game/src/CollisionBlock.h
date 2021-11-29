@@ -16,7 +16,7 @@ public:
 	CCollisionBlock( const unsigned index );
 
 	void	AddFace( const CCollisionFace& face );
-	void	AddFace( const Vector3f& v1, const Vector3f& v2, const Vector3f& v3, const Vector3f& v4 );
+	void	AddFace( const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& v4 );
 
 	const CCollisionFace&	GetFace( unsigned index ) const;
 	const unsigned	GetFaceNumber() const;
