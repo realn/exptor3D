@@ -12,6 +12,8 @@ Opis:	Patrz -> gio.h
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <CBSDL/Consts.h>
+
 #include <CBGL/COpenGL.h>
 
 #include "gui.h"
@@ -150,18 +152,19 @@ void	CGUIMain::ParseKeys( const unsigned key, const bool down )
 	case GUI_MODE::MENU:
 		if( down )
 		{
-			switch (key)
+			switch (static_cast<cb::sdl::ScanCode>(key))
 			{
-			//case VK_UP:		Menu.EventMoveUp();		break;
-			//case VK_DOWN:	Menu.EventMoveDown();	break;
-			//case VK_RETURN:
-			//case VK_LBUTTON:	
-			//	{
-			//		std::string script;
-			//		if( Menu.EventEnter( script ) )
-			//			ScriptParser.Execute( script );
-			//	}
-			//	break;
+			case cb::sdl::ScanCode::UP:		Menu.EventMoveUp();		break;
+			case cb::sdl::ScanCode::DOWN:	Menu.EventMoveDown();	break;
+
+			case cb::sdl::ScanCode::RETURN:
+			//case cb::sdl::ScanCode::LBUTTON:
+				{
+					std::string script;
+					if( Menu.EventEnter( script ) )
+						ScriptParser.Execute( script );
+				}
+				break;
 			default:
 				break;
 			}

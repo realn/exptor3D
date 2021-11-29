@@ -127,6 +127,8 @@ public:
 
 	void	ProcessEvent( const CEvent& event ) override;
 
+	CGUIScreen& getScreen() { return Screen; }
+
 private:
 	void	ParseKeys( const unsigned key, const bool down );
 	void	ParseMouseMove( const int x, const int y );

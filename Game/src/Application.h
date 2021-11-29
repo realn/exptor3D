@@ -28,11 +28,12 @@ private:
 	std::unique_ptr<cb::sdl::System> system;
 	std::shared_ptr<cb::sdl::Window> window;
 	std::shared_ptr<cb::sdl::GLContext> glContext;
+
 	CEventManager	EventManager;
 	CControllerList	ControllerList;
 	CScriptParser	ScriptParser;
 
-	CGUIMain*	GUI;
+	std::unique_ptr<CGUIMain>	GUI;
 
 	GAME_STATE	State;
 	MOUSE_MODE	MouseMode;

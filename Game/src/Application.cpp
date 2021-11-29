@@ -3,10 +3,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <CBCore/StringConvert.h>
+
 #include <CBSDL/Cursor.h>
 #include <CBSDL/Funcs.h>
 #include <CBSDL/Timer.h>
 
+#include <CBGL/Rendering.h>
+#include <CBGL/State.h>
 #include <CBGL/COpenGL.h>
 
 #include "Application.h"
@@ -32,17 +36,12 @@ CApplication::CApplication() :
 
 CApplication::~CApplication()
 {
-	if( GUI != nullptr )
-	{
-		delete GUI;
-		GUI = nullptr;
-	}
 	Log.Log( "Koniec pracy Aplikacji" );
 }
 
 int	CApplication::Run()
 {
-	std::srand(std::chrono::steady_clock::now().time_since_epoch().count());
+	std::srand(static_cast<unsigned>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
 	// Czytamy plik ini, by odpowiednio wszystko ustawiæ
 	IniFile ini;
@@ -82,14 +81,14 @@ int	CApplication::Run()
 	CTexManager texManager( "Data/Textures/" );
 	CModelManager modelManager( "Data/Models/", texManager );
 	CLevel level( texManager, modelManager );
-	GUI = new CGUIMain( texManager, ScriptParser, aspectRatio, WindowHeight );
+	GUI = std::make_unique<CGUIMain>( texManager, ScriptParser, aspectRatio, WindowHeight );
 
 	pGLevel = &level;
 	CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
 	ControllerList.AddController( pController );
 
 	EventManager.AddObserver( pController );
-	EventManager.AddObserver( GUI );
+	EventManager.AddObserver( GUI.get() );
 
 	Log.Log( "Inicjalizacja OpenGL" );
 
@@ -199,13 +198,23 @@ void	CApplication::UpdateMouse()
 	CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEDIF, diffX, diffY );
 	EventManager.AddEvent( *((CEvent*)&MouseEvent) );
 
+	GUI->getScreen().OnVarChanged("debugValue", cb::toUtf8(cb::toStr(diffX)));
 	window->warpMouse({ (int)halfScreenX, (int)halfScreenY });
 	cb::sdl::getRelativeMouseState();
 }
 
 void	CApplication::InitGraphics( CTexManager& texManager )
 {
-	glDepthFunc( GL_LEQUAL );				//Metoda testowania G³êbokoœci (ta jest lepsza)
+	{
+		auto state = cb::gl::getDepthState();
+		state.Func = cb::gl::DepthFunc::LEQUAL;
+		cb::gl::setState(state);
+	}
+	{
+		auto state = cb::gl::getBlendState();
+		state.setFunc(cb::gl::BlendFactor::SRC_ALPHA, cb::gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
+		cb::gl::setState(state);
+	}
 	glEnable( GL_TEXTURE_2D );
 	//GUI->SetLoadLevelFunc( LoadLevel );
 	//GUI->SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
@@ -215,24 +224,14 @@ void	CApplication::InitGraphics( CTexManager& texManager )
 
 	//GUI->SendConMsg( "Ustawianie OpenGL...", false );
 	glShadeModel( GL_SMOOTH );			    //Ustawienie £adnego cieniowania
-	glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );	//Ustawienie koloru czyszczenia bufora kolorów
-	glClearDepth( 1.0f );					//Ustwienie glêbokoœci czyszczenia bufora g³êbokoœci
-	glEnable( GL_DEPTH_TEST );				//W³¹czenie test g³êbokoœci
 
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );//Standardowa funkcja przezroczystoœci 
-	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );//Najlepsze obliczenia perspektywy
-	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
-	glHint( GL_FOG_HINT, GL_NICEST );
-	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST );
-	glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+	cb::gl::clearColor({ 0.0f, 0.0f, 0.0f, 0.5f });
+	cb::gl::clearDepth(1.0f);
+	cb::gl::setStateEnabled(cb::gl::State::DEPTH_TEST, true);
 
-	glFogi( GL_FOG_MODE, GL_EXP2 );
-	glFogf( GL_FOG_DENSITY, 0.023f );
-	glFogf( GL_FOG_START, 70.0f );
-	glFogf( GL_FOG_END, 100.0f );
-	float fc[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	glFogfv( GL_FOG_COLOR, fc );
-	glEnable( GL_FOG );
+	cb::gl::setHint(cb::gl::HintTarget::LINE_SMOOTH, cb::gl::HintMode::NICEST);
+	cb::gl::setHint(cb::gl::HintTarget::POINT_SMOOTH, cb::gl::HintMode::NICEST);
+	cb::gl::setHint(cb::gl::HintTarget::POLYGON_SMOOTH, cb::gl::HintMode::NICEST);
 
 	//double p1[] = { 0.0, 1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, 1.0f, 0.0f ) ) };
 	//double p2[] = { 0.0, -1.0, 0.0, -Vector3f( 0.0f, -5.01f, 0.0f ).Dot( Vector3f( 0.0f, -1.0f, 0.0f ) ) };
