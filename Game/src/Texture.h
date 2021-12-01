@@ -17,48 +17,56 @@ Opis:	Zawiera definicje klas odpowiedzalnych za tekstury.
 #include <string>	// Nag³ówek od klasy ³añcucha znaków
 #include <vector>
 
+#include <CBGL/Texture.h>
+
+#include "core_object.h"
+
 // Klasa do zarz¹dzania jedn¹ tekstur¹
-class CTexture
+class CTexture : public core::Object
 {
-private:
-	// tablica trzymaj¹ca adresy pamiêci tekstury ( jest 5 poziomów jakoœci )
-	unsigned int texture;
-
-	std::string file;
-	// zmienna dla oriêtacji czy tektrura jest gotowa
-	bool loaded;
-
 public:
 	// Konstruktor i Destruktor
 	CTexture();
-	CTexture( std::string filename );
-	virtual ~CTexture();
+	CTexture( std::string filePath );
+	~CTexture() override;
 
-	// Funkcja ³aduj¹ca obraz z pliku TGA
-	virtual bool LoadTGA( std::string filename );
+	bool load( std::string filePath );
+
+	bool isLoaded() const { return loaded; }
 
 	// Funkcja aktywuj¹ca teksturê
 	virtual void Activate( unsigned int tex = 2 );
 
 	// Metoda zwraca nazwe aktualnie za³adowanego pliku
 	virtual std::string GetFile();
+
+protected:
+	virtual cb::string getLogName() const override;
+
+private:
+	std::unique_ptr<cb::gl::Texture> texture;
+
+	cb::string file = L"-";
+	// zmienna dla oriêtacji czy tektrura jest gotowa
+	bool loaded = false;
 };
 
 /*	Klasa zarz¹daj¹ca wieloma teksturami
 */
-class CTexManager
+class CTexManager : core::Object
 {
-private:
-	const std::string	DataDir;
-	std::vector<CTexture*> List;
-
 public:
 	CTexManager( const std::string& strDataDir );
-	~CTexManager();
+	~CTexManager() override;
 
 	CTexture* Get( std::string filename );
-	void AddTexture( CTexture* Tex );
-	void DeleteTexture( unsigned int index );
-	CTexture* GetTexture( unsigned int index );
-	void Clear();
+
+private:
+	using textureptr_t = std::unique_ptr<CTexture>;
+	using textures_t = std::vector<textureptr_t>;
+
+	void addTexture( std::unique_ptr<CTexture> texture );
+
+	const std::string	DataDir;
+	textures_t textures;
 };
