@@ -36,7 +36,7 @@ CModel* CModelManager::Get( const std::string& filename )
 	}
 
 	Model = new CModel();
-	if( !Model->LoadModel( TexManager, path ) )
+	if( !Model->Load( TexManager, path ) )
 	{
 		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
 		delete Model;

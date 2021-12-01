@@ -149,6 +149,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core_object.cpp" />
+    <ClCompile Include="src\FileParser.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshFuncs.cpp" />
     <ClCompile Include="src\3dMath.cpp" />
@@ -210,6 +212,8 @@
     <ClCompile Include="src\WeaponRocketLuncher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core_object.h" />
+    <ClInclude Include="src\FileParser.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshFace.h" />
     <ClInclude Include="src\MeshFuncs.h" />

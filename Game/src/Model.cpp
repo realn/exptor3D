@@ -22,22 +22,12 @@ const unsigned BUFFER_SIZE = 1024;
 
 /*=====KONSTRUKTOR=====*/
 CModel::CModel() :
-	List(0),
-	ListCount(0),
-	Frame(0),
-	FrameCount(0),
+	core::Object(L"Model"),
 	loaded(false),
-	file("-"),
-	CurrFrame(0),
-	FromFrame(0),
-	ToFrame(0),
+	file(L"-"),
 	animation(false),
 	playing(false)
-	//obj(0)
 {
-	//obj = gluNewQuadric();
-	//gluQuadricTexture( obj, GL_TRUE );
-
 	mesh = std::make_unique<gfx::Mesh>();
 }
 
@@ -97,12 +87,12 @@ bool CModel::GetParams( const std::string &str, size_t from, std::vector<std::st
 
 	if( curparam > param.size() )
 	{
-		Log.Error( "CModel( " + file + " ): Za du¿o parametrów polecenia: " + Com );
+		error( "Za du¿o parametrów polecenia: " + Com );
 		return false;
 	}
 	else if( curparam != param.size() - 1 )
 	{
-		Log.Error( "CModel( " + file + " ): Za ma³o parametrów polecenia: " + Com );	
+		error( "Za ma³o parametrów polecenia: " + Com );	
 		return false;
 	}
 
@@ -162,7 +152,7 @@ int CModel::GetConst( const std::string &str, const std::string &Com )
 			return GL_FALSE;
 	}
 
-	Log.Error( "CModel( " + file + " ): Nieznana sta³a ( " + str + " ) w poleceniu: " + Com );
+	error( "Nieznana sta³a ( " + str + " ) w poleceniu: " + Com );
 	return atoi( str.c_str() );
 }
 
@@ -204,7 +194,7 @@ void CModel::ParseGLCommand( const std::string &fullstr, gfx::MeshBuilderContext
 			if( texId < Textures.size() )
 				Textures[texId]->Activate();
 			else 
-				Log.Error( "CModel( " + file + " ): B³êdny parametr polecenia: " + Com );
+				error( "B³êdny parametr polecenia: " + Com );
 			return;
 		}
 	}
@@ -362,7 +352,7 @@ void CModel::ParseGLCommand( const std::string &fullstr, gfx::MeshBuilderContext
 		}
 	}
 
-	Log.Error( "CModel( " + file + " ): B³êdne, lub z niew³aœciwymi parametrami polecenie: " + Com + ", oryginalny ci¹g: " + str );
+	error( "B³êdne, lub z niew³aœciwymi parametrami polecenie: " + Com + ", oryginalny ci¹g: " + str );
 }
 
 /*=====METODA RenderObject=====
@@ -372,11 +362,6 @@ void CModel::RenderObject( unsigned int index )
 {
 	if( !loaded )
 		return;
-
-	//if( index >= ListCount )
-	//	return;
-
-	//glCallList( List + index );
 
 	mesh->render();
 }
@@ -401,7 +386,7 @@ const bool	CModel::ReadHeader( std::fstream& fileStream )
 		auto pos = str.find( " " );
 		if( pos == std::string::npos )
 		{
-			Log.Error( "CModel( " + file + " ): Ci¹g nie zawiera spacji: " + str );
+			error( "Ci¹g nie zawiera spacji: " + str );
 			continue;
 		}
 
@@ -412,20 +397,9 @@ const bool	CModel::ReadHeader( std::fstream& fileStream )
 			// Pobieramy liczbê tekstur
 			if( !sscanf_s( str.c_str(), "TEXCOUNT %u", &texCount ) )
 			{
-				Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ liczby tekstur!" );
+				error( "Nie mo¿na odczytaæ liczby tekstur!" );
 				continue;
 			}
-		}
-		else if( cmd == "LISTCOUNT" )
-		{
-			// Pobieramy liczbê obiektów
-			if( !sscanf_s( str.c_str(), "LISTCOUNT %u", &ListCount ) )
-			{
-				Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ liczby obiektów!" );
-				return false;
-			}
-			else
-				List = glGenLists( ListCount );
 		}
 		else if( cmd == "ANIMATION" )
 		{
@@ -433,17 +407,17 @@ const bool	CModel::ReadHeader( std::fstream& fileStream )
 			unsigned set = 0;
 			if( !sscanf_s( str.c_str(), "ANIMATION %u", &set ) )
 			{
-				Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ animacji!" );
+				error( "Nie mo¿na odczytaæ animacji!" );
 				return false;
 			}
 			else
 				animation = set != 0 ? true : false;
 		}
 		else
-			Log.Error( "CModel( " + file + " ): Nierozpoznany ci¹g nag³ówka: " + str );
+			error( "Nierozpoznany ci¹g nag³ówka: " + str );
 	}
 
-	Log.Error( "CModel( " + file + " ): Brak koñca nag³ówka!" );
+	error( "Brak koñca nag³ówka!" );
 	return false;
 }
 
@@ -463,27 +437,20 @@ const bool	CModel::ReadTextures( std::fstream& fileStream, CTexManager& texManag
 
 		pTex = texManager.Get( str );
 		if( pTex == nullptr )
-			Log.Error( "CModel( " + file + " ): B³¹d przy ³adowaniu tekstury!" );
+			error( "B³¹d przy ³adowaniu tekstury!" );
 		Textures.push_back( pTex );
 
 		pTex = nullptr;
 	}
 
-	Log.Error( "CModel( " + file + " ): Brak koñca listy tekstur!" );
+	error( "Brak koñca listy tekstur!" );
 	return false;
 }
 
 const bool	CModel::ReadModel( std::fstream& fileStream, const unsigned modelIndex )
 {
-	if( List == 0 || ListCount == 0 )
-	{
-		Log.Error( "CModel( " + file + " ): Call list not initialized, missing LISTCOUNT in header?");
-		return false;
-	}
-
 	std::string str;
 	gfx::MeshBuilderContext context;
-	//glNewList( List + modelIndex, GL_COMPILE );
 
 	while( fileStream )
 	{
@@ -497,19 +464,18 @@ const bool	CModel::ReadModel( std::fstream& fileStream, const unsigned modelInde
 		ParseGLCommand( str, context );
 	}
 
-	//glEndList();
 
 	mesh->prepare();
 
 	return true;
 }
 
-bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
+bool CModel::Load( CTexManager& texManager, const std::string& filename )
 {
 	// Sprawdzamy czy ³añcuch nie jest pusty
 	if( filename.empty() )
 	{
-		Log.Error( "CModel( " + file + " ): Pusty ci¹g nazwy pliku!" );
+		error( "Pusty ci¹g nazwy pliku!" );
 		return false;
 	}
 
@@ -525,7 +491,7 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 	// Sprawdzamy po³¹czenie
 	if( !fileStream )
 	{
-		Log.Error( "CModel( " + file + " ): plik " + filename + " nie istnieje lub œcie¿ka niew³aœciwa." );
+		error( "Plik " + filename + " nie istnieje lub œcie¿ka niew³aœciwa." );
 		return false;
 	}
 
@@ -535,7 +501,7 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 	// Skanujemy liniê w poszukiwaniu numeru wersji
 	if( !sscanf_s( str.c_str(), "GLM %d", &Version ) )
 	{
-		Log.Error( "CModel( " + file + " ): Nieprawid³owa pierwsza linia pliku " + filename + "!" );
+		error( "Nieprawid³owa pierwsza linia pliku " + filename + "!" );
 		return false;
 	}
 
@@ -543,19 +509,19 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 	// Sprawdzamy wersjê
 	if( Version > GLM_FILE_VERSION )
 	{
-		Log.Error( "CModel( " + file + " ): Zbyt wysoka wersja pliku!" );
+		error( "Zbyt wysoka wersja pliku!" );
 		return false;
 	}
 
 	// Teraz sprawdzamy, czy ju¿ jakiœ obiekt nie by³ za³adowany
 	if( loaded )
 	{
-		Log.Report( "CModel( " + file + " ): Prze³adowanie pliku na " + filename );
+		report( "Prze³adowanie pliku na " + filename );
 		Free();
 	}
 
-	Log.Log( "CModel( " + file + " ): £adowanie modelu z pliku " + filename );
-	file = filename;
+	log( "£adowanie modelu z pliku " + filename );
+	file = cb::fromUtf8(filename);
 
 	while( fileStream )
 	{
@@ -574,15 +540,7 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 			// Czytamy nag³ówek
 			if( !ReadHeader( fileStream ) )
 			{
-				Log.Error( "CModel( " + file + " ): B³¹d w nag³ówku!" );
-				continue;
-			}
-		}
-		else if( str == "ANIMHEADER" )
-		{
-			if( !ReadAnimHeader( fileStream ) )
-			{
-				Log.Error( "CModel( " + file + " ): B³¹d w nag³ówku animacji!" );
+				error( "B³¹d w nag³ówku!" );
 				continue;
 			}
 		}
@@ -590,7 +548,7 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 		{
 			if( !ReadTextures( fileStream, texManager ) )
 			{
-				Log.Error( "CModel( " + file + " ): B³¹d odczytu listy tekstur." );
+				error( "B³¹d odczytu listy tekstur." );
 				continue;
 			}
 		}
@@ -599,15 +557,15 @@ bool CModel::LoadModel( CTexManager& texManager, const std::string& filename )
 			unsigned modelIndex = 0;
 			if( !( sscanf_s( str.c_str(), "MODEL %u", &modelIndex ) && ReadModel( fileStream, modelIndex ) ) )
 			{
-				Log.Error( "CModel( " + file + " ): B³¹d odczytu modelu." );
+				error( "B³¹d odczytu modelu." );
 				continue;
 			}
 		}
 		else
-			Log.Error( "CModel( " + file + " ): Nierozpoznany ci¹g: " + str );
+			error( "Nierozpoznany ci¹g: " + str );
 	}
 
-	Log.Error( "CModel( " + file + " ): Brak koñca pliku!" );
+	error( "Brak koñca pliku!" );
 	return false;
 }
 
@@ -618,26 +576,6 @@ void CModel::Free()
 		Textures.clear();
 	}
 
-	if( List != 0 && ListCount > 0 )
-	{
-		//glDeleteLists( List, ListCount );
-		List = 0;
-		ListCount = 0;
-	}
-
-	if( Frame != 0 && FrameCount > 0 )
-	{
-		//glDeleteLists( Frame, FrameCount );
-		Frame = 0;
-		FrameCount = 0;
-	}
-
-	//if(obj != 0)
-	//{
-	//	gluDeleteQuadric( obj );
-	//	obj = 0;
-	//}
-
 	mesh.reset();
 
 	file.clear();
@@ -646,73 +584,14 @@ void CModel::Free()
 
 const std::string CModel::GetFile() const
 {
-	return file;
+	return cb::toUtf8(file);
 }
 
 unsigned int CModel::GetObjCount()
 {
-	return ListCount;
+	return 1;
 }
 
-//===========METODY NIETESTOWANE!!!============
-const bool CModel::ReadAnimHeader( std::fstream& fileStream )
-{
-	std::string str;
-
-	// Pobieramy liczbê tekstur
-	str = GetLine( fileStream );
-	if( !sscanf_s( str.c_str(), "FRAMECOUNT %u", &FrameCount ) )
-	{
-		Log.Error( "CModel( " + file + " ): Nie mo¿na odczytaæ liczby klatek animacji!" );
-		return false;
-	}
-
-	// Sprawdzamy czy to koniec nag³ówka
-	str = GetLine( fileStream );
-	if( str != "END ANIMHEADER" )
-	{
-		Log.Error( "CModel( " + file + " ): Brak koñca nag³ówka animacji!" );
-		return false;
-	}
-
-	return true;
-}
-
-void CModel::PlayAnim( unsigned int fromframe, unsigned int toframe, bool canskip )
-{
-	if( !animation )
-		return;
-
-	if( fromframe >= FrameCount || toframe < fromframe || toframe > FrameCount )
-		return;
-
-	if( playing && !canskip )
-		return;
-
-	FromFrame = fromframe;
-	CurrFrame = fromframe;
-	ToFrame = toframe;
-	playing = true;
-}
-
-void CModel::UpdateAnim()
-{
-	if( !playing )
-		return;
-
-	CurrFrame++;
-
-	if( CurrFrame > ToFrame )
-		playing = false;
-}
-
-void CModel::RenderAnim( unsigned int index )
-{
-	if( !animation || !playing )
-	{
-		RenderObject( index );
-		return;
-	}
-
-	glCallList( Frame + CurrFrame );
+cb::string CModel::getLogName() const {
+	return getClassName() + L"(" + file + L"):";
 }
