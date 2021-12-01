@@ -11,10 +11,14 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 ///////////////////////////////////////////////////////*/
 #pragma once
 
+#include <fstream>
+
 #include <CBGL/COpenGL.h>
 
 #include "Texture.h"	// Naglówek z klasa CTexture
-#include <fstream>
+
+#include "Mesh.h"
+#include "MeshFuncs.h"
 
 // Numer wersji loader'a
 #define		GLM_FILE_VERSION		100
@@ -48,8 +52,11 @@ private:
 	bool playing;
 	// Ostatni za³adowany plik
 	std::string file;
+
 	// Obiekt do rysowania kwadryk ( tymczasowy, ale jest tu, by by³ dostêpny w ca³ej klasie )
-	GLUquadric* obj;
+	//GLUquadric* obj;
+
+	std::unique_ptr<gfx::Mesh> mesh;
 
 public:
 	CModel();
@@ -67,7 +74,7 @@ public:
 
 private:
 	std::string NoSpace( const std::string &str );
-	void ParseGLCommand( const std::string &fullstr );
+	void ParseGLCommand( const std::string &fullstr, gfx::MeshBuilderContext& ctx );
 	bool GetParams( const std::string &str, size_t from, std::vector<std::string>& param, const std::string &Com );
 	int GetConst( const std::string &str, const std::string &Com );
 
@@ -76,12 +83,6 @@ private:
 	const bool	ReadTextures( std::fstream& fileStream, CTexManager& texManager );
 	const bool	ReadModel( std::fstream& fileStream, const unsigned modelIndex );
 
-	CModel( const CModel& ){
-		throw std::exception( "COPY ERROR" );
-	}
-	void operator=(const CModel&)
-	{
-		throw std::exception( "ASSIGN ERROR" );
-	}
-
+	CModel(const CModel&) = delete;
+	CModel& operator=(const CModel&) = delete;
 };

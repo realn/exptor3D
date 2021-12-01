@@ -149,6 +149,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\MeshFuncs.cpp" />
     <ClCompile Include="src\3dMath.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Application_Script.cpp" />
@@ -208,6 +210,10 @@
     <ClCompile Include="src\WeaponRocketLuncher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\MeshFace.h" />
+    <ClInclude Include="src\MeshFuncs.h" />
+    <ClInclude Include="src\MeshVertex.h" />
     <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\AppSettings.h" />

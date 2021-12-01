@@ -12,6 +12,8 @@ Opis:	Patrz -> Model.h
 
 #include <CBGL/COpenGL.h>
 
+#include "MeshFuncs.h"
+
 #include "Model.h"
 #include "Log.h"
 #include "StrEx.h"
@@ -33,8 +35,10 @@ CModel::CModel() :
 	playing(false)
 	//obj(0)
 {
-	obj = gluNewQuadric();
-	gluQuadricTexture( obj, GL_TRUE );
+	//obj = gluNewQuadric();
+	//gluQuadricTexture( obj, GL_TRUE );
+
+	mesh = std::make_unique<gfx::Mesh>();
 }
 
 /*=====DESTRUKTOR=====*/
@@ -105,113 +109,31 @@ bool CModel::GetParams( const std::string &str, size_t from, std::vector<std::st
 	return true;
 }
 
+gfx::MeshBuilderContext::VertListType getVertListFromStr(const std::string& str) {
+	if (str == "GL_TRIANGLES")
+		return gfx::MeshBuilderContext::VertListType::TRIANGLES;
+
+	if (str == "GL_TRIANGLE_STRIP")
+		return gfx::MeshBuilderContext::VertListType::TRIANGLE_STRIP;
+
+	if (str == "GL_TRIANGLE_FAN")
+		return gfx::MeshBuilderContext::VertListType::TRIANGLE_FAN;
+
+	if (str == "GL_QUADS")
+		return gfx::MeshBuilderContext::VertListType::QUADS;
+
+	if (str == "GL_QUAD_STRIP")
+		return gfx::MeshBuilderContext::VertListType::QUAD_STRIP;
+
+	return gfx::MeshBuilderContext::VertListType::TRIANGLES;
+}
+
 /*=====METODA GetConst=====
 Metoda zwraca sta³¹ z OpenGL, w zale¿noœci od nazwy
 i nazwy polecenia, do jakiej jest potrzebna.
 */
 int CModel::GetConst( const std::string &str, const std::string &Com )
 {
-	if( Com == "glEnable" || Com == "glDisable" )
-	{
-		if( str == "GL_DEPTH_TEST" )
-			return GL_DEPTH_TEST;
-
-		if( str == "GL_BLEND" )
-			return GL_BLEND;
-
-		if( str == "GL_TEXTURE_2D" )
-			return GL_TEXTURE_2D;
-
-		if( str == "GL_NORMALIZE" )
-			return GL_NORMALIZE;
-
-		if( str == "GL_CULL_FACE" )
-			return GL_CULL_FACE;
-
-	}
-	if( Com == "glBegin" )
-	{
-		if( str == "GL_POINTS" )
-			return GL_POINTS;
-
-		if( str == "GL_LINES" )
-			return GL_LINES;
-
-		if( str == "GL_LINE_STRIP" )
-			return GL_LINE_STRIP;
-
-		if( str == "GL_LINE_LOOP" )
-			return GL_LINE_LOOP;
-
-		if( str == "GL_TRIANGLES" )
-			return GL_TRIANGLES;
-
-		if( str == "GL_TRIANGLE_STRIP" )
-			return GL_TRIANGLE_STRIP;
-
-		if( str == "GL_TRIANGLE_FAN" )
-			return GL_TRIANGLE_FAN;
-
-		if( str == "GL_QUADS" )
-			return GL_QUADS;
-
-		if( str == "GL_QUAD_STRIP" )
-			return GL_QUAD_STRIP;
-
-		if( str == "GL_POLYGON" )
-			return GL_POLYGON;
-	}
-	if( Com == "glBlendFunc" )
-	{
-		if( str == "GL_ZERO" )
-			return GL_ZERO;
-
-		if( str == "GL_ONE" )
-			return GL_ONE;
-
-		if( str == "GL_DST_COLOR" )
-			return GL_DST_COLOR;
-
-		if( str == "GL_ONE_MINUS_DST_COLOR" )
-			return GL_ONE_MINUS_DST_COLOR;
-
-		if( str == "GL_SRC_ALPHA" )
-			return GL_SRC_ALPHA;
-
-		if( str == "GL_ONE_MINUS_SRC_ALPHA" )
-			return GL_ONE_MINUS_SRC_ALPHA;
-
-		if( str == "GL_DST_ALPHA" )
-			return GL_DST_ALPHA;
-
-		if( str == "GL_ONE_MINUS_DST_ALPHA" )
-			return GL_ONE_MINUS_DST_ALPHA;
-
-		if( str == "GL_SRC_ALPHA_SATURATE" )
-			return GL_SRC_ALPHA_SATURATE;
-	} 
-	if( Com == "glFrontFace" )
-	{
-		if( str == "GL_CW" )
-			return GL_CW;
-
-		if( str == "GL_CCW" )
-			return GL_CCW;
-	}
-	if( Com == "gluQuadricDrawStyle" )
-	{
-		if( str == "GLU_FILL" )
-			return GLU_FILL;
-
-		if( str == "GLU_LINE" )
-			return GLU_LINE;
-
-		if( str == "GLU_SILHOUETTE" )
-			return GLU_SILHOUETTE;
-
-		if( str == "GLU_POINT" )
-			return GLU_POINT;
-	}
 	if( Com == "gluQuadricNormals" )
 	{
 		if( str == "GLU_NONE" )
@@ -258,7 +180,7 @@ bool	CheckParams(std::vector<std::string>& param)
 Analizuje linie, szuka nazwy komendy OpenGL, pobiera
 dla niej argumenty i j¹ wykonuje.
 */
-void CModel::ParseGLCommand( const std::string &fullstr )
+void CModel::ParseGLCommand( const std::string &fullstr, gfx::MeshBuilderContext& ctx)
 {
 	std::string param[6], str;
 	bool presult = false;
@@ -286,25 +208,12 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 			return;
 		}
 	}
-	if( Com == "glCallList" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			unsigned listId = StrToUInt( param[0] );
-			if( listId < ListCount )
-				glCallList( List + listId );
-			else 
-				Log.Error( "CModel( " + file + " ): B³êdny parametr polecenia: " + Com );
-			return;
-		}
-	}
 	if( Com == "glRotate" )
 	{
 		std::vector<std::string> param(4);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glRotatef( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToFloat( param[3] ) );
+			ctx.rotate(StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToFloat( param[3] ) );
 			return;
 		}
 	}
@@ -313,7 +222,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(3);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glTranslatef( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
+			ctx.translate(StrToFloat(param[0]), StrToFloat(param[1]), StrToFloat(param[2]));
 			return;
 		}
 	}
@@ -322,7 +231,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(3);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glScalef( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
+			ctx.scale( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
 			return;
 		}
 	}
@@ -331,25 +240,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(1);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glBegin( GetConst( param[0], Com ) );
-			return;
-		}
-	}
-	if( Com == "glEnable" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			glEnable( GetConst( param[0], Com ) );
-			return;
-		}
-	}
-	if( Com == "glDisable" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			glDisable( GetConst( param[0], Com ) );
+			ctx.beginVertexList(getVertListFromStr(param[0]));
 			return;
 		}
 	}
@@ -358,7 +249,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param;
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glEnd();
+			ctx.commitVertexList(*mesh);
 			return;
 		}
 	}
@@ -367,7 +258,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param;
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glPushMatrix();
+			ctx.pushMatrix();
 			return;
 		}
 	}
@@ -376,25 +267,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param;
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glPopMatrix();
-			return;
-		}
-	}
-	if( Com == "glColor3" )
-	{
-		std::vector<std::string> param(3);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			glColor3f( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
-			return;
-		}
-	}
-	if( Com == "glColor4" )
-	{
-		std::vector<std::string> param(4);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			glColor4f( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToFloat( param[3] ) );
+			ctx.popMatrix();
 			return;
 		}
 	}
@@ -403,7 +276,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(3);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glNormal3f( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
+			ctx.setVertexNormal( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
 			return;
 		}
 	}
@@ -412,7 +285,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(2);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glTexCoord2f( StrToFloat( param[0] ), StrToFloat( param[1] ) );
+			ctx.setVertexTCoord( StrToFloat( param[0] ), StrToFloat( param[1] ) );
 			return;
 		}
 	}
@@ -421,34 +294,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(3);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			glVertex3f( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
-			return;
-		}
-	}
-	if( Com == "glBlendFunc" )
-	{
-		std::vector<std::string> param(2);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			glBlendFunc( GetConst( param[0], Com ), GetConst( param[1], Com ) );
-			return;
-		}
-	}
-	if( Com == "glFrontFace" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			glFrontFace( GetConst( param[0], Com ) );
-			return;
-		}
-	}
-	if( Com == "gluQuadricDrawStyle" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			gluQuadricDrawStyle( obj, GetConst( param[0], Com ) );
+			ctx.addVertex( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
 			return;
 		}
 	}
@@ -457,7 +303,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(1);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluQuadricNormals( obj, GetConst( param[0], Com ) );
+			//gluQuadricNormals( obj, GetConst( param[0], Com ) );
 			return;
 		}
 	}
@@ -466,7 +312,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(1);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluQuadricOrientation( obj, GetConst( param[0], Com ) );
+			ctx.setVerticesInverted(param[0] == "GLU_INSIDE");
 			return;
 		}
 	}
@@ -475,7 +321,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(1);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluQuadricTexture( obj, GetConst( param[0], Com ) );
+			//gluQuadricTexture( obj, GetConst( param[0], Com ) );
 			return;
 		}
 	}
@@ -484,7 +330,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(3);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluSphere( obj, StrToFloat( param[0] ), StrToInt( param[1] ), StrToInt( param[2] ) );
+			ctx.addSphere(*mesh, StrToFloat( param[0] ), StrToInt( param[1] ), StrToInt( param[2] ) );
 			return;
 		}
 	}
@@ -493,7 +339,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(5);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluCylinder( obj, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToInt( param[3] ), StrToInt( param[4] ) );
+			ctx.addCylinder( *mesh, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToInt( param[3] ), StrToInt( param[4] ) );
 			return;
 		}
 	}
@@ -502,7 +348,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(4);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluDisk( obj, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToInt( param[2] ), StrToInt( param[3] ) );
+			ctx.addDisk(*mesh, StrToFloat(param[0]), StrToFloat(param[1]), StrToUInt(param[2]), StrToUInt(param[3]));
 			return;
 		}
 	}
@@ -511,7 +357,7 @@ void CModel::ParseGLCommand( const std::string &fullstr )
 		std::vector<std::string> param(6);
 		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
 		{
-			gluPartialDisk( obj, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToInt( param[2] ), StrToInt( param[3] ), StrToFloat( param[4] ), StrToFloat( param[5] ) );
+			ctx.addPartialDisk( *mesh, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToInt( param[2] ), StrToInt( param[3] ), StrToFloat( param[4] ), StrToFloat( param[5] ) );
 			return;
 		}
 	}
@@ -527,10 +373,12 @@ void CModel::RenderObject( unsigned int index )
 	if( !loaded )
 		return;
 
-	if( index >= ListCount )
-		return;
+	//if( index >= ListCount )
+	//	return;
 
-	glCallList( List + index );
+	//glCallList( List + index );
+
+	mesh->render();
 }
 
 /*=====METODA ReadHeader=====
@@ -634,7 +482,8 @@ const bool	CModel::ReadModel( std::fstream& fileStream, const unsigned modelInde
 	}
 
 	std::string str;
-	glNewList( List + modelIndex, GL_COMPILE );
+	gfx::MeshBuilderContext context;
+	//glNewList( List + modelIndex, GL_COMPILE );
 
 	while( fileStream )
 	{
@@ -645,10 +494,12 @@ const bool	CModel::ReadModel( std::fstream& fileStream, const unsigned modelInde
 		if( str == "END MODEL" )
 			break;
 
-		ParseGLCommand( str );
+		ParseGLCommand( str, context );
 	}
 
-	glEndList();
+	//glEndList();
+
+	mesh->prepare();
 
 	return true;
 }
@@ -769,23 +620,25 @@ void CModel::Free()
 
 	if( List != 0 && ListCount > 0 )
 	{
-		glDeleteLists( List, ListCount );
+		//glDeleteLists( List, ListCount );
 		List = 0;
 		ListCount = 0;
 	}
 
 	if( Frame != 0 && FrameCount > 0 )
 	{
-		glDeleteLists( Frame, FrameCount );
+		//glDeleteLists( Frame, FrameCount );
 		Frame = 0;
 		FrameCount = 0;
 	}
 
-	if(obj != 0)
-	{
-		gluDeleteQuadric( obj );
-		obj = 0;
-	}
+	//if(obj != 0)
+	//{
+	//	gluDeleteQuadric( obj );
+	//	obj = 0;
+	//}
+
+	mesh.reset();
 
 	file.clear();
 	loaded = false;
