@@ -19,7 +19,7 @@ namespace core {
     cb::string getCmd() const;
     cb::strvector getArgs() const;
 
-    cb::string getArg(size_t index, cb::string default = cb::string()) const;
+    cb::string getArg(size_t index, cb::string def = cb::string()) const;
 
     float getFloat(size_t index) const;
     cb::s32 getInt(size_t index) const;

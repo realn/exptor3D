@@ -72,7 +72,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)..\CodeBox\include;$(SolutionDir)..\glew\include;$(SolutionDir)..\glm;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\CodeBox\include;$(SolutionDir)..\glew\include;$(SolutionDir)..\glm;$(SolutionDir)Engine\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\CodeBox\lib\Debug\x64;$(SolutionDir)..\glew\lib\Debug\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,11 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\core_object.cpp" />
-    <ClCompile Include="src\FileParser.cpp" />
-    <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\MeshFuncs.cpp" />
-    <ClCompile Include="src\3dMath.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Application_Script.cpp" />
     <ClCompile Include="src\CollisionBlock.cpp" />
@@ -179,7 +174,6 @@
     <ClCompile Include="src\GUIScreenElement.cpp" />
     <ClCompile Include="src\GUIScreenTextElement.cpp" />
     <ClCompile Include="src\GUIScreenValueSync.cpp" />
-    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\inifile.cpp" />
     <ClCompile Include="src\Item.cpp" />
@@ -190,7 +184,6 @@
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\LevelBlock.cpp" />
     <ClCompile Include="src\LevelFlags.cpp" />
-    <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ModelManager.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
@@ -198,8 +191,6 @@
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ScriptParser.cpp" />
     <ClCompile Include="src\Special.cpp" />
-    <ClCompile Include="src\StrEx.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TextureText.cpp" />
     <ClCompile Include="src\UpdateList.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
@@ -212,13 +203,6 @@
     <ClCompile Include="src\WeaponRocketLuncher.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core_object.h" />
-    <ClInclude Include="src\FileParser.h" />
-    <ClInclude Include="src\Mesh.h" />
-    <ClInclude Include="src\MeshFace.h" />
-    <ClInclude Include="src\MeshFuncs.h" />
-    <ClInclude Include="src\MeshVertex.h" />
-    <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\AppSettings.h" />
     <ClInclude Include="src\CollisionBlock.h" />
@@ -239,7 +223,6 @@
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\GamePlayer.h" />
     <ClInclude Include="src\GameStaticObject.h" />
-    <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\inifile.h" />
     <ClInclude Include="src\Item.h" />
@@ -248,14 +231,11 @@
     <ClInclude Include="src\ItemHealth.h" />
     <ClInclude Include="src\ItemWeapon.h" />
     <ClInclude Include="src\Level.h" />
-    <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\ModelManager.h" />
     <ClInclude Include="src\Renderable.h" />
     <ClInclude Include="src\RenderList.h" />
     <ClInclude Include="src\ScriptParser.h" />
     <ClInclude Include="src\Special.h" />
-    <ClInclude Include="src\StrEx.h" />
-    <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\TextureText.h" />
     <ClInclude Include="src\Updateable.h" />
     <ClInclude Include="src\UpdateList.h" />
@@ -267,6 +247,11 @@
     <ClInclude Include="src\WeaponBulletRocket.h" />
     <ClInclude Include="src\WeaponBulletSaw.h" />
     <ClInclude Include="src\WeaponRocketLuncher.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{c84ca5a5-c4a8-4df2-9ef8-934734fb5a74}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

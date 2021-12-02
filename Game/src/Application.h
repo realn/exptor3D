@@ -5,7 +5,7 @@
 #include <CBSDL/GLContext.h>
 #include <CBSDL/Events.h>
 
-#include "Texture.h"
+#include <Texture.h>
 #include "EventManager.h"
 #include "GameController.h"
 #include "gui.h"

@@ -39,19 +39,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\3dMath.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\inifile.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StrEx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Level.cpp">
@@ -86,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="src\ItemArmor.cpp">
       <Filter>Source\Game\Item</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
-      <Filter>Source\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="src\ModelManager.cpp">
       <Filter>Source\Graphic</Filter>
@@ -150,9 +138,6 @@
     <ClCompile Include="src\WeaponRocketLuncher.cpp">
       <Filter>Source\Game\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="src\Model.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="src\Scene.cpp">
       <Filter>Source\Level</Filter>
     </ClCompile>
@@ -210,30 +195,9 @@
     <ClCompile Include="src\GUIScreenValueSync.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MeshFuncs.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FileParser.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core_object.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\3dMath.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="src\inifile.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Log.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\StrEx.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\GameActor.h">
@@ -265,9 +229,6 @@
     </ClInclude>
     <ClInclude Include="src\ItemArmor.h">
       <Filter>Source\Game\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Texture.h">
-      <Filter>Source\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="src\ModelManager.h">
       <Filter>Source\Graphic</Filter>
@@ -316,9 +277,6 @@
     </ClInclude>
     <ClInclude Include="src\WeaponRocketLuncher.h">
       <Filter>Source\Game\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Model.h">
-      <Filter>Source\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneEntity.h">
       <Filter>Source\Level</Filter>
@@ -370,24 +328,6 @@
     </ClInclude>
     <ClInclude Include="src\GUIConsole.h">
       <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MeshVertex.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Mesh.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MeshFace.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MeshFuncs.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FileParser.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core_object.h">
-      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

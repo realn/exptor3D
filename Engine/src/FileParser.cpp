@@ -134,9 +134,9 @@ namespace core {
     return args;
   }
 
-  cb::string FileParser::getArg(size_t index, cb::string default) const {
+  cb::string FileParser::getArg(size_t index, cb::string def) const {
     if (index >= args.size())
-      return default;
+      return def;
     return args[index];
   }
 

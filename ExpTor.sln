@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74} = {C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,14 @@ Global
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|Win32.Build.0 = Release|Win32
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|x64.ActiveCfg = Release|x64
 		{F2F4BAF1-E8EF-4E34-9652-0252F2C2CE87}.Release|x64.Build.0 = Release|x64
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Debug|Win32.Build.0 = Debug|Win32
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Debug|x64.ActiveCfg = Debug|x64
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Debug|x64.Build.0 = Debug|x64
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|Win32.ActiveCfg = Release|Win32
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|Win32.Build.0 = Release|Win32
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|x64.ActiveCfg = Release|x64
+		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
