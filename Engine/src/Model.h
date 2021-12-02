@@ -22,9 +22,8 @@ namespace core {
 }
 namespace gfx {
 	class Mesh;
+	class TextureRepository;
 }
-
-class CTexManager;
 
 // Numer wersji loader'a
 #define		GLM_FILE_VERSION		100
@@ -42,7 +41,7 @@ public:
 	CModel& operator=(const CModel&) = delete;
 	CModel& operator=(CModel&&) = default;
 
-	bool load( CTexManager& texManager, const std::string& filePath );
+	bool load( gfx::TextureRepository& texManager, const std::string& filePath );
 
 	void Free();
 	const std::string GetFile() const;
@@ -61,7 +60,7 @@ private:
 	using materials_t = std::vector<Material>;
 	using objects_t = std::vector<Object>;
 
-	bool loadMaterial(core::FileParser& parser, CTexManager& texManager);
+	bool loadMaterial(core::FileParser& parser, gfx::TextureRepository& texManager);
 	bool loadObject(core::FileParser& parser);
 	bool loadMesh(core::FileParser& parser, Object& obj);
 

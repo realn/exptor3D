@@ -6,14 +6,14 @@ class CModelManager
 {
 private:
 	const std::string	DataDir;
-	CTexManager&		TexManager;
+	gfx::TextureRepository&		TexManager;
 	std::vector<CModel*> List;
 
 public:
-	CModelManager( const std::string& strDataDir, CTexManager& texManager );
+	CModelManager( const std::string& strDataDir, gfx::TextureRepository& texManager );
 	~CModelManager();
 
-	CTexManager& GetTexMng();
+	gfx::TextureRepository& GetTexMng();
 
 	CModel* Get( const std::string& filename );
 	void AddModel( CModel* Model );

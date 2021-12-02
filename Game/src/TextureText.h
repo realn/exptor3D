@@ -2,18 +2,20 @@
 
 #include <glm/vec4.hpp>
 
-#include "Texture.h"
+#include <gfx_Texture.h>
+#include <gfx_TextureRepository.h>
+
 #include "3dMath.h"
 
 class CTextRenderer
 {
 private:
-	CTexture *Tex;
+	gfx::Texture *Tex;
 	unsigned int base;
 	glm::vec4	Color;
 
 public:
-	CTextRenderer( CTexManager& texManager );
+	CTextRenderer( gfx::TextureRepository& texManager );
 	~CTextRenderer();
 
 	void	SetColor( const float R, const float G, const float B, const float Alpha = 1.0f );

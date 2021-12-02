@@ -15,7 +15,7 @@ private:
 public:
 	CBullRocket( CActor* owner, const float damage, const glm::vec3& pos, const glm::vec3& vector, const float speed );
 
-	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
+	const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager ) override;
 
 	void Update( const float fTD ) override;
 	void Render() override;

@@ -41,7 +41,10 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
+    <ClCompile Include="src\gfx_Texture.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx_TextureRepository.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,7 +79,10 @@
     <ClInclude Include="src\Model.h">
       <Filter>Source Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Texture.h">
+    <ClInclude Include="src\gfx_Texture.h">
+      <Filter>Source Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx_TextureRepository.h">
       <Filter>Source Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>

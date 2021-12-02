@@ -4,6 +4,7 @@
 
 #include <CBSDL/System.h>
 #include <CBSDL/Window.h>
+#include <CBSDL/GLContext.h>
 
 #include <core_object.h>
 
@@ -20,6 +21,7 @@ namespace core {
 
     std::unique_ptr<cb::sdl::System> system;
     std::unique_ptr<cb::sdl::Window> window;
+    std::unique_ptr<cb::sdl::GLContext> glContext;
 
     bool run = true;
   };

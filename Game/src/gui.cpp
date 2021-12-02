@@ -37,7 +37,7 @@ const int ConFuncCount = 27;
 	tutaj zarz¹dza siê wszystkim i tutaj zakodowana jest konsola.
 	Wiem, wiem, mo¿na to by³o inaczej zrobiæ :/
 */
-CGUIMain::CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const float aspectRatio, const unsigned height ) :
+CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRatio, const unsigned height ) :
 	Mode( GUI_MODE::MENU ),
 	TextRender( texManager ),
 	ScriptParser( scriptParser ),

@@ -11,8 +11,10 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 ///////////////////////////////////////////////////////*/
 #pragma once
 
+#include <gfx_Texture.h>
+#include <gfx_TextureRepository.h>
+
 #include "Log.h"
-#include "Texture.h"
 
 #include "TextureText.h"
 #include "ScriptParser.h"
@@ -64,9 +66,9 @@ class CGUIMain :
 	public IEventObserver
 {
 private:
-	CTexture *CH;
+	gfx::Texture *CH;
 	CTextRenderer TextRender;
-	CTexture *Cursor;
+	gfx::Texture *Cursor;
 
 	GUI_MODE	Mode;
 	CMenuMain	Menu;
@@ -100,7 +102,7 @@ private:
 	std::vector< std::string >	PFL;
 
 public:
-	CGUIMain( CTexManager& texManager, CScriptParser& scriptParser, const float aspectRation, const unsigned height );
+	CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRation, const unsigned height );
 
 	void	Update(const float fTD);
 	void	Render();

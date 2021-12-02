@@ -1,6 +1,6 @@
 #include "RenderList.h"
 
-CRenderList::CRenderList( CTexManager& texManager, CModelManager& modelManager ) :
+CRenderList::CRenderList( gfx::TextureRepository& texManager, CModelManager& modelManager ) :
 	TexManager( texManager ),
 	ModelManager( modelManager )
 {

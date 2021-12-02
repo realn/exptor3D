@@ -18,11 +18,13 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+#include <gfx_Texture.h>
+#include <gfx_TextureRepository.h>
+
 #include "StrEx.h"
 #include "ModelManager.h"
 
 #include "Log.h"
-#include "Texture.h" // patrz-> nag³ówek Texture.h i plik Texture.cpp
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 
 #include "Item.h"
@@ -178,13 +180,13 @@ class CLevel :
 {
 private:
 	CModelManager&	ModelManager;
-	CTexManager&	TexManager;
+	gfx::TextureRepository&	TexManager;
 
 	CRenderList			RenderList;
 	CUpdateList			UpdateList;
 	CCollisionManager	CollisionMng;
 
-	CTexture*		Tex[3];
+	gfx::Texture*		Tex[3];
 
 	CPlayer	Player;
 	std::vector<CItem*>	Items;
@@ -220,7 +222,7 @@ private:
 
 public:
 	// Konstruktor i destruktor
-	CLevel( CTexManager& texManager, CModelManager& modelManager );
+	CLevel( gfx::TextureRepository& texManager, CModelManager& modelManager );
 	~CLevel();
 
 	void	Update( const float fTD );

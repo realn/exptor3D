@@ -20,7 +20,7 @@ CBullRocket::CBullRocket( CActor* owner, const float damage, const glm::vec3& po
 	//glEnable( GL_LIGHT0 );
 }
 
-const bool	CBullRocket::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
+const bool	CBullRocket::LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager )
 {
 	Model = modelManager.Get( "Missle.glm" );
 	GfxLoaded = Model != nullptr;

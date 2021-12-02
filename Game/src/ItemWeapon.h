@@ -14,7 +14,7 @@ public:
 	CItemWeapon( const WEAPON_TYPE type, const unsigned ammo );
 	virtual	~CItemWeapon();
 
-	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
+	const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager ) override;
 
 	const WEAPON_TYPE	GetWeaponType() const;
 	const unsigned		GetAmmoCount() const;

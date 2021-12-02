@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Texture.h"
+#include <gfx_Texture.h>
+#include <gfx_TextureRepository.h>
+
 #include "ModelManager.h"
 
 class IRenderable
@@ -15,7 +17,7 @@ public:
 
 	virtual void	Render() = 0;
 
-	virtual const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager );
+	virtual const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager );
 
 	virtual void	SetVisible( const bool );
 	virtual void	SetGfxLoaded( const bool );

@@ -21,7 +21,7 @@ const bool	CEffectSprite::IsTransparent() const
 	return true;
 }
 
-const bool	CEffectSprite::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
+const bool	CEffectSprite::LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager )
 {
 	Texture = texManager.Get( "Part.tga" );
 	GfxLoaded = Texture != nullptr;

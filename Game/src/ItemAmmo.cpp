@@ -12,7 +12,7 @@ CItemAmmo::~CItemAmmo()
 {
 }
 
-const bool	CItemAmmo::LoadGraphic( CTexManager& texManager, CModelManager& modelManager )
+const bool	CItemAmmo::LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager )
 {
 	Model = modelManager.Get( "rocketlun-model.glm" );
 	GfxLoaded = Model != nullptr;

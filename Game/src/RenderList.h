@@ -5,7 +5,7 @@
 class CRenderList
 {
 private:
-	CTexManager&	TexManager;
+	gfx::TextureRepository&	TexManager;
 	CModelManager&	ModelManager;
 
 	std::vector<IRenderable*>	List;
@@ -15,7 +15,7 @@ private:
 	std::vector<IRenderable*>	TransparentList;
 
 public:
-	CRenderList( CTexManager& texManager, CModelManager& modelManager );
+	CRenderList( gfx::TextureRepository& texManager, CModelManager& modelManager );
 	
 	void	Add( IRenderable* pObj );
 	void	Remove( IRenderable* pObj );

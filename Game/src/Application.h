@@ -5,7 +5,9 @@
 #include <CBSDL/GLContext.h>
 #include <CBSDL/Events.h>
 
-#include <Texture.h>
+#include <gfx_Texture.h>
+#include <gfx_TextureRepository.h>
+
 #include "EventManager.h"
 #include "GameController.h"
 #include "gui.h"
@@ -55,7 +57,7 @@ public:
 
 private:
 	void	RegScript();
-	void	InitGraphics( CTexManager& texManager );
+	void	InitGraphics( gfx::TextureRepository& texManager );
 
 	void	MainLoop();
 

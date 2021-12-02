@@ -14,19 +14,19 @@ Opis:	Patrz -> Model.h
 
 #include "FileParser.h"
 
-#include "Texture.h"
+#include "gfx_Texture.h"
+#include "gfx_TextureRepository.h"
 
 #include "Mesh.h"
 #include "MeshFuncs.h"
 
 #include "Model.h"
-#include "Log.h"
 #include "StrEx.h"
 
 struct CModel::Material {
 	cb::string name;
 	glm::vec4 color = glm::vec4(1.0f);
-	CTexture* texture = nullptr;
+	gfx::Texture* texture = nullptr;
 };
 
 struct CModel::Mesh {
@@ -80,7 +80,7 @@ CModel::~CModel()
 	Free();
 }
 
-bool CModel::loadMaterial(core::FileParser& parser, CTexManager& texManager) {
+bool CModel::loadMaterial(core::FileParser& parser, gfx::TextureRepository& texManager) {
 	Material matCtx;
 
 	matCtx.name = parser.getArg(0);
@@ -223,7 +223,7 @@ void CModel::render( unsigned int index ){
 	}
 }
 
-bool CModel::load(CTexManager& texManager, const std::string& filename) {
+bool CModel::load(gfx::TextureRepository& texManager, const std::string& filename) {
 	// Sprawdzamy czy ³añcuch nie jest pusty
 	if (filename.empty()) {
 		error("Pusty ci¹g nazwy pliku!");

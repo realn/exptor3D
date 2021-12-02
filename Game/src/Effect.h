@@ -1,7 +1,9 @@
 #pragma once
 
+#include <gfx_Texture.h>
+#include <gfx_TextureRepository.h>
+
 #include "3dMath.h"
-#include "Texture.h"
 #include "Level.h"
 #include "Renderable.h"
 #include "Updateable.h"
@@ -61,7 +63,7 @@ class CEffectSprite :
 {
 private:
 	glm::vec3 Pos;
-	CTexture* Texture;
+	gfx::Texture* Texture;
 	float Alpha;
 	float Speed;
 	float C[3];
@@ -70,7 +72,7 @@ public:
 	CEffectSprite( const glm::vec3& pos, const float R = 1.0f, const float G = 1.0f, const float B = 1.0f );
 	virtual ~CEffectSprite();
 
-	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
+	const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager ) override;
 
 	const bool	IsTransparent() const override;
 

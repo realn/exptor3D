@@ -27,7 +27,8 @@
     <ClCompile Include="src\MeshFuncs.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\gfx_Texture.cpp" />
+    <ClCompile Include="src\gfx_TextureRepository.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h" />
@@ -40,7 +41,8 @@
     <ClInclude Include="src\MeshVertex.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\StrEx.h" />
-    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\gfx_Texture.h" />
+    <ClInclude Include="src\gfx_TextureRepository.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

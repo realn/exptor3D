@@ -12,7 +12,7 @@ public:
 	CItemArmor( const float armor );
 	virtual ~CItemArmor();
 	
-	const bool	LoadGraphic( CTexManager& texManager, CModelManager& modelManager ) override;
+	const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager ) override;
 
 	const float GetArmor() const;
 };

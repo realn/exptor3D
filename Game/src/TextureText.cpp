@@ -9,7 +9,7 @@
 	KLASA CTextRenderer
 	Jest odpowiedzialna za rysowanie tekstów na ekranie.
 =========================*/
-CTextRenderer::CTextRenderer( CTexManager& texManager ) :
+CTextRenderer::CTextRenderer( gfx::TextureRepository& texManager ) :
 	base( 0 ),
 	Color( 1.0f, 1.0f, 1.0f, 1.0f )
 {

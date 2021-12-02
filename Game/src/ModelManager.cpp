@@ -1,7 +1,7 @@
 #include "ModelManager.h"
 #include "Log.h"
 
-CModelManager::CModelManager( const std::string& strDataDir, CTexManager& texManager ) :
+CModelManager::CModelManager( const std::string& strDataDir, gfx::TextureRepository& texManager ) :
 	DataDir( strDataDir ),
 	TexManager( texManager )
 {
@@ -12,7 +12,7 @@ CModelManager::~CModelManager()
 	Clear();
 }
 
-CTexManager& CModelManager::GetTexMng()
+gfx::TextureRepository& CModelManager::GetTexMng()
 {
 	return TexManager;
 }
