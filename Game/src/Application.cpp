@@ -99,6 +99,9 @@ int	CApplication::Run()
 	inputMapper.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");
 	inputMapper.addKeyMapping(cb::sdl::ScanCode::RETURN, L"gui_enter");
 	inputMapper.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"gui_back");
+	inputMapper.addMouseMotionMapping(event::InputMapper::Axis::X, L"gui_pointer_x");
+	inputMapper.addMouseMotionMapping(event::InputMapper::Axis::Y, L"gui_pointer_y");
+	inputMapper.addMouseMapping(cb::sdl::button::LEFT, L"gui_enter");
 
 	Log.Log( "Inicjalizacja OpenGL" );
 
@@ -154,7 +157,7 @@ const bool	CApplication::ProcessEvent( cb::sdl::Event& event )
 		return true;
 	}
 
-	inputMapper.executeEvent(*eventManager, event);
+	inputMapper.executeEvent(*eventManager, event, window->getSize());
 	return false;
 }
 

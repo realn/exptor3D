@@ -67,6 +67,8 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptPar
 	eventMapper.addAction(L"gui_move_up", [&](const event::EventAction&) { eventMoveUp(); });
 	eventMapper.addAction(L"gui_move_down", [&](const event::EventAction&) { eventMoveDown(); });
 	eventMapper.addAction(L"gui_enter", [&](const event::EventAction&) {eventEnter(); });
+	eventMapper.addRange(L"gui_pointer_x", [&](const event::EventRange& r) { eventPointerX(r.getValue()); });
+	eventMapper.addRange(L"gui_pointer_y", [&](const event::EventRange& r) { eventPointerY(r.getValue()); });
 }
 
 void	CGUIMain::ShowMenu( const std::string& menuID )
@@ -136,9 +138,17 @@ void CGUIMain::eventBack() {
 }
 
 void CGUIMain::eventPointerX(float value) {
+	if (Mode != GUI_MODE::MENU)
+		return;
+	currentMousePos.x = value;
+	Menu.EventMouseMove(currentMousePos);
 }
 
 void CGUIMain::eventPointerY(float value) {
+	if (Mode != GUI_MODE::MENU)
+		return;
+	currentMousePos.y = value;
+	Menu.EventMouseMove(currentMousePos);
 }
 
 /*	Pierwsza metoda wykonuje w³aœciwy silnik GUI, a druga renderuje GUI.

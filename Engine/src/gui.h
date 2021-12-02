@@ -104,6 +104,8 @@ private:
 	std::vector< guiScrMsg >	ScrMsg;
 	std::vector< std::string >	PFL;
 
+	glm::vec2 currentMousePos = glm::vec2(0.0f);
+
 public:
 	CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRation, const unsigned height );
 	~CGUIMain() override = default;
