@@ -1,11 +1,25 @@
+#include <CBCore/Defines.h>
+#include <CBCore/StringConvert.h>
+
+#include "event_Event.h"
+
 #include "ScriptParser.h"
 #include "StrEx.h"
-#include "EventScript.h"
+#include "event_Manager.h"
 
-CScriptParser::CScriptParser( CEventManager& eventManager ) :
-	EventManager( eventManager )
+namespace {
+	const cb::string EVENT_ACTION_VAR_ADD = L"script_var_add";
+	const cb::string EVENT_ACTION_VAR_SET = L"script_var_set";
+	const cb::string EVENT_ACTION_FUNC_ADD = L"script_func_add";
+	const cb::string EVENT_ACTION_FUNC_CALL = L"script_func_call";
+}
+
+CScriptParser::CScriptParser(std::shared_ptr<event::Manager> eventManager) 
+	: eventManager(eventManager)
 {
 }
+
+CScriptParser::~CScriptParser() = default;
 
 void	CScriptParser::AddVar( const std::string& name, const std::string& value )
 {
@@ -15,8 +29,7 @@ void	CScriptParser::AddVar( const std::string& name, const std::string& value )
 		CScriptVar var( name, value );
 		VarList.push_back( var );
 
-		CEventVar varEvent( EVENT_SCRIPT_TYPE::VAR_ADD, name );
-		EventManager.AddEvent( varEvent );
+		eventManager->addActionEvent(EVENT_ACTION_VAR_ADD, { cb::fromUtf8(name) });
 	}
 }
 
@@ -28,8 +41,7 @@ void	CScriptParser::AddFunc( const std::string& name, SCRIPT_FUNC pFunc, const u
 		CScriptFunc func( name, pFunc, minParams, pUserData );
 		FuncList.push_back( func );
 
-		CEventFunc funcEvent( EVENT_SCRIPT_TYPE::FUNC_ADD, name );
-		EventManager.AddEvent( funcEvent );
+		eventManager->addActionEvent(EVENT_ACTION_FUNC_ADD, { cb::fromUtf8(name) });
 	}
 }
 
@@ -40,8 +52,7 @@ void	CScriptParser::SetVar( const std::string& name, const std::string& value )
 	{
 		pVar->Value = value;
 
-		CEventVar varEvent( EVENT_SCRIPT_TYPE::VAR_SET, name );
-		EventManager.AddEvent( varEvent );
+		eventManager->addActionEvent(EVENT_ACTION_VAR_SET, { cb::fromUtf8(name), cb::fromUtf8(value) });
 	}
 }
 
@@ -138,8 +149,7 @@ void	CScriptParser::ExecuteFunc( const std::string& text, const bool printResult
 
 	pFunc->pFunc( pFunc->pUserData, params );
 
-	CEventFunc funcEvent( EVENT_SCRIPT_TYPE::FUNC_INVOKE, pFunc->Name );
-	EventManager.AddEvent( funcEvent );
+	eventManager->addActionEvent(EVENT_ACTION_FUNC_CALL, { cb::fromUtf8(pFunc->Name) });
 }
 
 CScriptVar*		CScriptParser::FindVar( const std::string& name ) const

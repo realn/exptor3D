@@ -19,38 +19,19 @@ CLocalPlayerController::CLocalPlayerController( CPlayer& player ) :
 	Weapon( 0 )
 {
 	memset( Move, 0, sizeof(bool) * 4 );
+
+	mapper.addState(L"player_forward", [&](const event::EventState& s) { Move[MOVE_FORWARD] = s.getState(); });
+	mapper.addState(L"player_backward", [&](const event::EventState& s) { Move[MOVE_BACKWARD] = s.getState(); });
+	mapper.addState(L"player_left", [&](const event::EventState& s) { Move[MOVE_STRAFE_LEFT] = s.getState(); });
+	mapper.addState(L"player_right", [&](const event::EventState& s) { Move[MOVE_STRAFE_RIGHT] = s.getState(); });
+	mapper.addState(L"player_attack", [&](const event::EventState& s) { FireWeapon = s.getState(); });
 }
 
-CLocalPlayerController::~CLocalPlayerController()
+CLocalPlayerController::~CLocalPlayerController() = default;
+
+void	CLocalPlayerController::processEvent( const event::Event& event )
 {
-
-}
-
-void	CLocalPlayerController::ProcessEvent( const CEvent& event )
-{
-	CEventKey	keyEvent;
-	CEventMouse	mouseEvent;
-
-	switch (static_cast<EVENT_INPUT_TYPE>(event.Type))
-	{
-	case EVENT_INPUT_TYPE::KEYDOWN:
-		memcpy( &keyEvent, &event, sizeof(CEventKey) );
-		ProcessKey( keyEvent.Key, true );
-		break;
-
-	case EVENT_INPUT_TYPE::KEYUP:
-		memcpy( &keyEvent, &event, sizeof(CEventKey) );
-		ProcessKey( keyEvent.Key, false );
-		break;
-
-	case EVENT_INPUT_TYPE::MOUSEMOVEDIF:
-		memcpy( &mouseEvent, &event, sizeof(CEventMouse) );
-		Angle += (float)mouseEvent.X * 0.1f;
-		break;
-
-	default:
-		break;
-	}
+	mapper.executeEvent(event);
 }
 
 void	CLocalPlayerController::Update()
@@ -69,48 +50,4 @@ void	CLocalPlayerController::Update()
 	Player.SetAngle( Angle );
 	Player.SwichWeap( Weapon );
 	Player.SetMoveSpeed( Run );
-}
-
-void	CLocalPlayerController::ProcessKey( const unsigned key, const bool down )
-{
-	switch (key)
-	{
-	case 'W':
-		Move[MOVE_FORWARD] = down;
-		break;
-
-	case 'S':
-		Move[MOVE_BACKWARD] = down;
-		break;
-
-	case 'A':
-		Move[MOVE_STRAFE_LEFT] = down;
-		break;
-
-	case 'D':
-		Move[MOVE_STRAFE_RIGHT] = down;
-		break;
-
-	//case VK_LCONTROL:
-	//case VK_LBUTTON:
-	//	FireWeapon = down;
-	//	break;
-
-	case '1':	Weapon = 0;	break;
-	case '2':	Weapon = 1;	break;
-	case '3':	Weapon = 2;	break;
-	case '4':	Weapon = 3;	break;
-	case '5':	Weapon = 4;	break;
-	case '6':	Weapon = 5;	break;
-	case '7':	Weapon = 6;	break;
-	case '8':	Weapon = 7;	break;
-	case '9':	Weapon = 8;	break;
-
-	//case VK_SHIFT:
-	//	Run = down;
-	//	break;
-
-	default:
-		break;
-	}
 }

@@ -14,6 +14,9 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include "gfx_Texture.h"
 #include "gfx_TextureRepository.h"
 
+#include "event_Observer.h"
+#include "event_Mapper.h"
+
 #include "Log.h"
 
 #include "TextureText.h"
@@ -22,8 +25,6 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include "GUIMenu.h"
 #include "GUIConsole.h"
 #include "GUIScreen.h"
-
-#include "EventManager.h"
 
 enum class GUI_MODE
 {
@@ -63,9 +64,11 @@ struct guiScrMsg
 };
 
 class CGUIMain :
-	public IEventObserver
+	public event::IObserver
 {
 private:
+	event::Mapper eventMapper;
+
 	gfx::Texture *CH;
 	CTextRenderer TextRender;
 	gfx::Texture *Cursor;
@@ -103,6 +106,7 @@ private:
 
 public:
 	CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRation, const unsigned height );
+	~CGUIMain() override = default;
 
 	void	Update(const float fTD);
 	void	Render();
@@ -127,12 +131,18 @@ public:
 	void	Print( float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f );
 	void	PrintConsole( const std::string& text );
 
-	void	ProcessEvent( const CEvent& event ) override;
+	void	processEvent(const event::Event& event) override;
 
 	CGUIScreen& getScreen() { return Screen; }
 
 private:
-	void	ParseKeys( const unsigned key, const bool down );
 	void	ParseMouseMove( const int x, const int y );
+
+	void eventMoveUp();
+	void eventMoveDown();
+	void eventEnter();
+	void eventBack();
+	void eventPointerX(float value);
+	void eventPointerY(float value);
 
 };

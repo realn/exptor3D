@@ -18,6 +18,9 @@
     <Filter Include="Source Files\GUI">
       <UniqueIdentifier>{31264a73-6434-4f10-ae66-17ad8065bd2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{98edeff7-434e-4789-a5b4-11c31d58c39a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -83,8 +86,17 @@
     <ClCompile Include="src\ScriptParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\EventManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\event_Manager.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="src\event_Event.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="src\event_Mapper.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="src\event_InputMapper.cpp">
+      <Filter>Source Files\Events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,14 +154,26 @@
     <ClInclude Include="src\ScriptParser.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EventManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\EventScript.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\EventInput.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\event_Manager.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\event_Event.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\event_Observer.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\event_Mapper.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\event_InputMapper.h">
+      <Filter>Source Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

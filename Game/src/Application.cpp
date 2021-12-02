@@ -28,9 +28,11 @@ CApplication::CApplication() :
 	active( true ),
 	State(GAME_STATE::MAINMENU),
 	MouseMode(MOUSE_MODE::MENU),
-	ScriptParser(EventManager),
 	GUI( nullptr )
 {
+	eventManager = std::make_shared<event::Manager>();
+	scriptParser = std::make_shared<CScriptParser>(eventManager);
+
 	system = std::make_unique<cb::sdl::System>(cb::sdl::SystemFlag::VIDEO);
 	RegScript();
 }
@@ -84,14 +86,19 @@ int	CApplication::Run()
 	gfx::TextureRepository texManager( "Data/Textures/" );
 	gfx::ModelManager modelManager( "Data/Models/", texManager );
 	CLevel level( texManager, modelManager );
-	GUI = std::make_unique<CGUIMain>( texManager, ScriptParser, aspectRatio, WindowHeight );
+	GUI = std::make_shared<CGUIMain>( texManager, *scriptParser, aspectRatio, WindowHeight );
 
 	pGLevel = &level;
-	CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
-	ControllerList.AddController( pController );
+	//CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
+	//ControllerList.AddController( pController );
 
-	EventManager.AddObserver( pController );
-	EventManager.AddObserver( GUI.get() );
+	//eventManager->AddObserver( pController );
+	eventManager->addObserver( GUI );
+
+	inputMapper.addKeyMapping(cb::sdl::ScanCode::UP, L"gui_move_up");
+	inputMapper.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");
+	inputMapper.addKeyMapping(cb::sdl::ScanCode::RETURN, L"gui_enter");
+	inputMapper.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"gui_back");
 
 	Log.Log( "Inicjalizacja OpenGL" );
 
@@ -126,26 +133,6 @@ bool CApplication::ProcessWindowEvent(cb::sdl::WindowEvent& event) {
 	}
 }
 
-bool CApplication::ProcessMouseButtonEvent(cb::sdl::MouseButtonEvent& event) {
-	auto inputType = event.getType() == cb::sdl::KeyState::PRESSED ? EVENT_INPUT_TYPE::KEYDOWN : EVENT_INPUT_TYPE::KEYUP;
-	auto keyEvent = CEventKey(inputType, static_cast<unsigned>(event.getButton()));
-	EventManager.AddEvent(keyEvent);
-	return true;
-}
-
-bool CApplication::ProcessKeyEvent(cb::sdl::KeyboardEvent& event) {
-	auto inputType = event.getType() == cb::sdl::KeyState::PRESSED ? EVENT_INPUT_TYPE::KEYDOWN : EVENT_INPUT_TYPE::KEYUP;
-	auto keyEvent = CEventKey(inputType, static_cast<unsigned>(event.getScanCode()));
-	EventManager.AddEvent(keyEvent);
-	return true;
-}
-
-bool CApplication::ProcessMouseMoveEvent(cb::sdl::MouseMotionEvent& event) {
-	auto mouseEvent = CEventMouse(EVENT_INPUT_TYPE::MOUSEMOVEABS, event.getPosition().x, event.getPosition().y);
-	EventManager.AddEvent(mouseEvent);
-	return true;
-}
-
 bool CApplication::ProcessTextInput(cb::sdl::TextInputEvent& event) {
 	
 	//TODO CONSOLE EDITING
@@ -159,17 +146,6 @@ const bool	CApplication::ProcessEvent( cb::sdl::Event& event )
 	case cb::sdl::EventType::WINDOWEVENT:
 		return ProcessWindowEvent(event.window());
 
-	case cb::sdl::EventType::MOUSEBUTTONDOWN:
-	case cb::sdl::EventType::MOUSEBUTTONUP:
-		return ProcessMouseButtonEvent(event.button());
-		
-	case cb::sdl::EventType::KEYDOWN:
-	case cb::sdl::EventType::KEYUP:
-		return ProcessKeyEvent(event.key());
-
-	case cb::sdl::EventType::MOUSEMOTION:
-		return ProcessMouseMoveEvent(event.motion());
-
 	case cb::sdl::EventType::TEXTINPUT:
 		return ProcessTextInput(event.text());
 
@@ -178,6 +154,7 @@ const bool	CApplication::ProcessEvent( cb::sdl::Event& event )
 		return true;
 	}
 
+	inputMapper.executeEvent(*eventManager, event);
 	return false;
 }
 
@@ -198,8 +175,8 @@ void	CApplication::UpdateMouse()
 	if( diffX == 0 && diffY == 0 )
 		return;
 
-	CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEDIF, diffX, diffY );
-	EventManager.AddEvent( *((CEvent*)&MouseEvent) );
+	//CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEDIF, diffX, diffY );
+	//EventManager.AddEvent( *((CEvent*)&MouseEvent) );
 
 	GUI->getScreen().OnVarChanged("debugValue", cb::toUtf8(cb::toStr(diffX)));
 	window->warpMouse({ (int)halfScreenX, (int)halfScreenY });
@@ -299,7 +276,7 @@ void	CApplication::MainLoop()
 
 			Render();						// Rysujemy scene
 
-			EventManager.ProcessEvents();
+			eventManager->processEvents();
 
 			for( unsigned i = 0; i < 100 && frameTime > TIME_STEP; i++ )
 			{

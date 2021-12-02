@@ -8,7 +8,9 @@
 #include <gfx_Texture.h>
 #include <gfx_TextureRepository.h>
 
-#include "EventManager.h"
+#include <event_Manager.h>
+#include <event_InputMapper.h>
+
 #include "GameController.h"
 #include "gui.h"
 
@@ -31,11 +33,13 @@ private:
 	std::shared_ptr<cb::sdl::Window> window;
 	std::shared_ptr<cb::sdl::GLContext> glContext;
 
-	CEventManager	EventManager;
-	CControllerList	ControllerList;
-	CScriptParser	ScriptParser;
+	std::shared_ptr<event::Manager> eventManager;
+	std::shared_ptr<CScriptParser> scriptParser;
 
-	std::unique_ptr<CGUIMain>	GUI;
+	CControllerList	ControllerList;
+	event::InputMapper inputMapper;
+
+	std::shared_ptr<CGUIMain>	GUI;
 
 	GAME_STATE	State;
 	MOUSE_MODE	MouseMode;
@@ -50,9 +54,6 @@ public:
 	int		Run();
 	const bool	ProcessEvent( cb::sdl::Event& event );
 	bool ProcessWindowEvent(cb::sdl::WindowEvent& event);
-	bool ProcessMouseButtonEvent(cb::sdl::MouseButtonEvent& event);
-	bool ProcessKeyEvent(cb::sdl::KeyboardEvent& event);
-	bool ProcessMouseMoveEvent(cb::sdl::MouseMotionEvent& event);
 	bool ProcessTextInput(cb::sdl::TextInputEvent& event);
 
 private:

@@ -13,6 +13,6 @@ void	Print( void* pData, const std::vector<std::string>& params )
 
 void	CApplication::RegScript()
 {
-	ScriptParser.AddFunc( "Print", ::Print, 1, this );
-	ScriptParser.AddFunc( "LoadLevel", ::LoadLevel, 1, this );
+	scriptParser->AddFunc( "Print", ::Print, 1, this );
+	scriptParser->AddFunc( "LoadLevel", ::LoadLevel, 1, this );
 }

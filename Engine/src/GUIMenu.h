@@ -3,7 +3,6 @@
 #include <glm/vec2.hpp>
 
 #include "TextureText.h"
-#include "EventManager.h"
 
 enum class MENU_TAG
 {

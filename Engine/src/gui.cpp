@@ -13,13 +13,12 @@ Opis:	Patrz -> gio.h
 #include <glm/gtc/type_ptr.hpp>
 
 #include <CBSDL/Consts.h>
-
 #include <CBGL/COpenGL.h>
+
+#include "event_Event.h"
 
 #include "gui.h"
 #include "StrEx.h"
-#include "EventInput.h"
-#include "EventScript.h"
 
 const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",
 								"RefLevel", "WireFrame", "Note", "SaveRndInfo",
@@ -64,6 +63,10 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptPar
 	ConsoleOn = false;
 	ConsoleScroll = 0.0f;
 	Quit = false;
+
+	eventMapper.addAction(L"gui_move_up", [&](const event::EventAction&) { eventMoveUp(); });
+	eventMapper.addAction(L"gui_move_down", [&](const event::EventAction&) { eventMoveDown(); });
+	eventMapper.addAction(L"gui_enter", [&](const event::EventAction&) {eventEnter(); });
 }
 
 void	CGUIMain::ShowMenu( const std::string& menuID )
@@ -86,97 +89,9 @@ void	CGUIMain::SetMode( const GUI_MODE mode )
 	Mode = mode;
 }
 
-void	CGUIMain::ProcessEvent( const CEvent& event )
+void	CGUIMain::processEvent( const event::Event& event )
 {
-	CEventKey	keyEvent;
-	CEventMouse	mouseEvent;
-	CEventChar	charEvent;
-	CEventVar	varEvent;
-
-	switch (static_cast<EVENT_INPUT_TYPE>(event.Type))
-	{
-	case EVENT_INPUT_TYPE::KEYDOWN:
-		memcpy( &keyEvent, &event, sizeof(CEventKey) );
-		ParseKeys( keyEvent.Key, true );
-		break;
-
-	case EVENT_INPUT_TYPE::KEYUP:
-		memcpy( &keyEvent, &event, sizeof(CEventKey) );
-		ParseKeys( keyEvent.Key, false );
-		break;
-
-	case EVENT_INPUT_TYPE::MOUSEMOVEABS:
-		memcpy( &mouseEvent, &event, sizeof(CEventMouse) );
-		ParseMouseMove( mouseEvent.X, mouseEvent.Y );
-		break;
-
-	case EVENT_INPUT_TYPE::CHARPRESS:
-		memcpy( &charEvent, &event, sizeof(CEventChar) );
-		if( Console.IsVisible() && !Console.IsAnimating() )
-			Console.ParseChar( charEvent.Character );
-		break;
-
-	//case EVENT_SCRIPT_TYPE::VAR_SET:
-	//	memcpy( &varEvent, &event, sizeof(CEventVar) );
-	//	if( Screen.IsVarMonitored( varEvent.Name ) )
-	//	{
-	//		std::string value;
-	//		if( ScriptParser.GetVarValue( varEvent.Name, value ) )
-	//			Screen.OnVarChanged( varEvent.Name, value );
-	//	}
-	//	break;
-
-	default:
-		break;
-	}
-}
-
-void	CGUIMain::ParseKeys( const unsigned key, const bool down )
-{
-	if( Console.IsVisible() && !Console.IsAnimating() )
-	{
-		if( key == 192 && down )
-			Console.SetVisible( false, true );
-		else
-			Console.ParseKey( key, down );
-		return;
-	}
-	else
-	{
-		if( key == 192 && down )
-			Console.SetVisible( true, true );
-	}
-
-	switch (Mode)
-	{
-	case GUI_MODE::MENU:
-		if( down )
-		{
-			switch (static_cast<cb::sdl::ScanCode>(key))
-			{
-			case cb::sdl::ScanCode::UP:		Menu.EventMoveUp();		break;
-			case cb::sdl::ScanCode::DOWN:	Menu.EventMoveDown();	break;
-
-			case cb::sdl::ScanCode::RETURN:
-			//case cb::sdl::ScanCode::LBUTTON:
-				{
-					std::string script;
-					if( Menu.EventEnter( script ) )
-						ScriptParser.Execute( script );
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-
-	case GUI_MODE::SCREEN:
-		break;
-
-	default:
-		break;
-	}
+	eventMapper.executeEvent(event);
 }
 
 void	CGUIMain::ParseMouseMove( const int x, const int y )
@@ -192,6 +107,38 @@ void	CGUIMain::ParseMouseMove( const int x, const int y )
 	glm::vec2 pos( (float)x / (float)width, (float)y / (float)ScreenHeight );
 
 	Menu.EventMouseMove( pos );
+}
+
+void CGUIMain::eventMoveUp() {
+	if (Mode != GUI_MODE::MENU)
+		return;
+
+	Menu.EventMoveUp();
+}
+
+void CGUIMain::eventMoveDown() {
+	if (Mode != GUI_MODE::MENU)
+		return;
+
+	Menu.EventMoveDown();
+}
+
+void CGUIMain::eventEnter() {
+	if (Mode != GUI_MODE::MENU)
+		return;
+
+	std::string script;
+	if (Menu.EventEnter(script))
+		ScriptParser.Execute(script);
+}
+
+void CGUIMain::eventBack() {
+}
+
+void CGUIMain::eventPointerX(float value) {
+}
+
+void CGUIMain::eventPointerY(float value) {
 }
 
 /*	Pierwsza metoda wykonuje w³aœciwy silnik GUI, a druga renderuje GUI.

@@ -2,8 +2,11 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
-#include "EventManager.h"
+namespace event {
+	class Manager;
+}
 
 typedef void	(*SCRIPT_FUNC)( void* pUserData, const std::vector<std::string>& params );
 
@@ -34,12 +37,13 @@ public:
 class CScriptParser
 {
 private:
-	CEventManager&	EventManager;
+	std::shared_ptr<event::Manager> eventManager;
 	std::vector<CScriptFunc>	FuncList;
 	std::vector<CScriptVar>		VarList;
 
 public:
-	CScriptParser( CEventManager& eventManager );
+	CScriptParser(std::shared_ptr<event::Manager> eventManager);
+	~CScriptParser();
 
 	void	AddVar( const std::string& name, const std::string& value = "" );
 	void	AddFunc( const std::string& name, SCRIPT_FUNC pFunc, const unsigned minParams, void* pUserData = nullptr );

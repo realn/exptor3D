@@ -21,7 +21,10 @@
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp" />
     <ClCompile Include="src\core_object.cpp" />
-    <ClCompile Include="src\EventManager.cpp" />
+    <ClCompile Include="src\event_InputMapper.cpp" />
+    <ClCompile Include="src\event_Manager.cpp" />
+    <ClCompile Include="src\event_Event.cpp" />
+    <ClCompile Include="src\event_Mapper.cpp" />
     <ClCompile Include="src\FileParser.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\GUIConsole.cpp" />
@@ -46,8 +49,12 @@
     <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\core_object.h" />
     <ClInclude Include="src\EventInput.h" />
-    <ClInclude Include="src\EventManager.h" />
+    <ClInclude Include="src\event_InputMapper.h" />
+    <ClInclude Include="src\event_Manager.h" />
     <ClInclude Include="src\EventScript.h" />
+    <ClInclude Include="src\event_Event.h" />
+    <ClInclude Include="src\event_Mapper.h" />
+    <ClInclude Include="src\event_Observer.h" />
     <ClInclude Include="src\FileParser.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\GUIConsole.h" />

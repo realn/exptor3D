@@ -1,11 +1,13 @@
 #pragma once
 
-#include "EventManager.h"
+#include <event_Mapper.h>
+#include <event_Observer.h>
+
 #include "GameController.h"
 #include "GamePlayer.h"
 
 class CLocalPlayerController :
-	public IEventObserver,
+	public event::IObserver,
 	public IController
 {
 private:
@@ -15,14 +17,12 @@ private:
 	bool		FireWeapon;
 	float		Angle;
 	unsigned	Weapon;
+	event::Mapper mapper;
 
 public:
 	CLocalPlayerController( CPlayer& player );
 	virtual ~CLocalPlayerController();
 
-	void	ProcessEvent( const CEvent& event ) override;
+	void	processEvent(const event::Event& event) override;
 	void	Update() override;
-
-private:
-	void	ProcessKey( const unsigned key, const bool down );
 };
