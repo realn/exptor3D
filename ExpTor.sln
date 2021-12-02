@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelViewer", "ModelViewer\ModelViewer.vcxproj", "{7E57385D-AF79-477E-9BAE-8FD1B6006D84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -34,6 +36,14 @@ Global
 		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|Win32.Build.0 = Release|Win32
 		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|x64.ActiveCfg = Release|x64
 		{C84CA5A5-C4A8-4DF2-9EF8-934734FB5A74}.Release|x64.Build.0 = Release|x64
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Debug|Win32.Build.0 = Debug|Win32
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Debug|x64.ActiveCfg = Debug|x64
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Debug|x64.Build.0 = Debug|x64
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Release|Win32.ActiveCfg = Release|Win32
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Release|Win32.Build.0 = Release|Win32
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Release|x64.ActiveCfg = Release|x64
+		{7E57385D-AF79-477E-9BAE-8FD1B6006D84}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
