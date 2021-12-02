@@ -29,7 +29,7 @@ void CItem::Render()
 	
 	glTranslatef( Pos.x, Pos.y - 3.0f, -Pos.z );
 	glRotatef( Angle, 0.0f, 1.0f, 0.0f );
-	Model->RenderObject( 0 );
+	Model->render( 0 );
 	
 	glPopMatrix();
 }

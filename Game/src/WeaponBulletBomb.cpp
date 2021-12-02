@@ -36,7 +36,7 @@ void CBullBomb::Render()
 	glPushMatrix();
 
 	glTranslatef( Pos.x, Pos.y, Pos.z );
-	Model->RenderObject( 0 );
+	Model->render( 0 );
 
 	glPopMatrix();
 }

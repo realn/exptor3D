@@ -22,8 +22,11 @@ namespace gfx {
     MeshBuilderContext();
     ~MeshBuilderContext();
 
+    void translate(glm::vec3 value);
     void translate(float x, float y, float z);
+    void rotate(float angleDeg, glm::vec3 value);
     void rotate(float angleDeg, float x, float y, float z);
+    void scale(glm::vec3 value);
     void scale(float x, float y, float z);
     void loadIdentity();
 
@@ -38,8 +41,11 @@ namespace gfx {
     void addCylinder(Mesh& mesh, float baseRadius, float topRadius, float height, cb::u32 slices, cb::u32 stacks);
 
     void beginVertexList(VertListType type);
+    void setVertexNormal(glm::vec3 value);
     void setVertexNormal(float x, float y, float z);
+    void setVertexTCoord(glm::vec2 value);
     void setVertexTCoord(float x, float y);
+    void addVertex(glm::vec3 value);
     void addVertex(float x, float y, float z);
     void commitVertexList(Mesh& mesh);
 

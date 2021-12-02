@@ -110,16 +110,28 @@ namespace gfx {
 
   MeshBuilderContext::~MeshBuilderContext() = default;
 
+  void MeshBuilderContext::translate(glm::vec3 value) {
+    matrixCurrent = glm::translate(matrixCurrent, value);
+  }
+
   void MeshBuilderContext::translate(float x, float y, float z) {
-    matrixCurrent = glm::translate(matrixCurrent, { x, y, z });
+    translate({ x, y, z });
+  }
+
+  void MeshBuilderContext::rotate(float angleDeg, glm::vec3 value) {
+    matrixCurrent = glm::rotate(matrixCurrent, glm::radians(angleDeg), value);
   }
 
   void MeshBuilderContext::rotate(float angleDeg, float x, float y, float z) {
-    matrixCurrent = glm::rotate(matrixCurrent, glm::radians(angleDeg), { x, y, z });
+    rotate(angleDeg, { x, y, z });
+  }
+
+  void MeshBuilderContext::scale(glm::vec3 value) {
+    matrixCurrent = glm::scale(matrixCurrent, value);
   }
 
   void MeshBuilderContext::scale(float x, float y, float z) {
-    matrixCurrent = glm::scale(matrixCurrent, { x, y, z });
+    scale({ x, y, z });
   }
 
   void MeshBuilderContext::loadIdentity() {
@@ -329,27 +341,39 @@ namespace gfx {
     vertList->type = type;
   }
 
-  void MeshBuilderContext::setVertexNormal(float x, float y, float z) {
+  void MeshBuilderContext::setVertexNormal(glm::vec3 value) {
     if (vertList) {
-      vertList->normal = { x, y, z };
+      vertList->normal = value;
+    }
+  }
+
+  void MeshBuilderContext::setVertexNormal(float x, float y, float z) {
+    setVertexNormal({ x, y, z });
+  }
+
+  void MeshBuilderContext::setVertexTCoord(glm::vec2 value) {
+    if (vertList) {
+      vertList->tcoord = value;
     }
   }
 
   void MeshBuilderContext::setVertexTCoord(float x, float y) {
-    if (vertList) {
-      vertList->tcoord = { x, y };
-    }
+    setVertexTCoord({ x, y });
   }
 
-  void MeshBuilderContext::addVertex(float x, float y, float z) {
+  void MeshBuilderContext::addVertex(glm::vec3 value) {
     if (vertList) {
       auto vertex = MeshVertex{
-        {x, y, z},
+        value,
         vertList->normal,
         vertList->tcoord
       };
       vertList->vertices.push_back(vertex);
     }
+  }
+
+  void MeshBuilderContext::addVertex(float x, float y, float z) {
+    addVertex({ x, y, z });
   }
 
   void MeshBuilderContext::commitVertexList(Mesh& mesh) {

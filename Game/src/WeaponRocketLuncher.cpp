@@ -56,7 +56,7 @@ void CWeaponRocketLuncher::Render()
 	mat = glm::rotate(mat, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	glLoadMatrixf(glm::value_ptr(mat));
 
-	Model->RenderObject( 0 );
+	Model->render( 0 );
 
 	// Przywracamy Macierz
 	glPopMatrix();

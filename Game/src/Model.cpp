@@ -12,23 +12,65 @@ Opis:	Patrz -> Model.h
 
 #include <CBGL/COpenGL.h>
 
+#include "FileParser.h"
+
+#include "Texture.h"
+
+#include "Mesh.h"
 #include "MeshFuncs.h"
 
 #include "Model.h"
 #include "Log.h"
 #include "StrEx.h"
 
-const unsigned BUFFER_SIZE = 1024;
+struct CModel::Material {
+	cb::string name;
+	glm::vec4 color = glm::vec4(1.0f);
+	CTexture* texture = nullptr;
+};
+
+struct CModel::Mesh {
+	cb::string materialName;
+	gfx::Mesh mesh;
+
+	Mesh() = default;
+	Mesh(Mesh&&) = default;
+	Mesh& operator=(Mesh&&) = default;
+};
+
+struct CModel::Object {
+	using meshes_t = std::vector<CModel::Mesh>;
+
+	cb::string name;
+	meshes_t meshes;
+
+	Object() = default;
+	Object(Object&&) = default;
+	Object& operator=(Object&&) = default;
+};
+
+gfx::MeshBuilderContext::VertListType getVertListFromStr(const cb::string& str) {
+	if (str == L"GL_TRIANGLES")
+		return gfx::MeshBuilderContext::VertListType::TRIANGLES;
+
+	if (str == L"GL_TRIANGLE_STRIP")
+		return gfx::MeshBuilderContext::VertListType::TRIANGLE_STRIP;
+
+	if (str == L"GL_TRIANGLE_FAN")
+		return gfx::MeshBuilderContext::VertListType::TRIANGLE_FAN;
+
+	if (str == L"GL_QUADS")
+		return gfx::MeshBuilderContext::VertListType::QUADS;
+
+	if (str == L"GL_QUAD_STRIP")
+		return gfx::MeshBuilderContext::VertListType::QUAD_STRIP;
+
+	return gfx::MeshBuilderContext::VertListType::TRIANGLES;
+}
 
 /*=====KONSTRUKTOR=====*/
-CModel::CModel() :
-	core::Object(L"Model"),
-	loaded(false),
-	file(L"-"),
-	animation(false),
-	playing(false)
+CModel::CModel() : core::Object(L"Model")
 {
-	mesh = std::make_unique<gfx::Mesh>();
 }
 
 /*=====DESTRUKTOR=====*/
@@ -38,546 +80,193 @@ CModel::~CModel()
 	Free();
 }
 
-/*=====METODA NoSpace=====
-Czyœci podan¹ liniê ze spacji, tablulacji
-i znaków nowej linii.
-*/
-std::string CModel::NoSpace( const std::string &str )
-{
-	std::string result = "";
+bool CModel::loadMaterial(core::FileParser& parser, CTexManager& texManager) {
+	Material matCtx;
 
-	for( unsigned int i = 0; i < str.length(); i++ )
-	{
-		if(IsWhiteSpace(str[i]))
-			continue;
+	matCtx.name = parser.getArg(0);
 
-		result += str[i];
+	while (parser.readLine()) {
+		if (parser.getCmd() == L"ENDMATERIAL") {
+			materials.push_back(std::move(matCtx));
+			return true;
+		}
+
+		if (parser.getCmd() == L"TEXTURE") {
+			matCtx.texture = texManager.Get(cb::toUtf8(parser.getArg(0)));
+		}
+		else if(parser.getCmd() == L"COLOR") {
+			matCtx.color = parser.getVec4FromArgs(0);
+		}
 	}
 
-	return result;
+	return false;
 }
 
-/*=====METODA GetParams=====
-Pobiera dowoln¹ iloœæ parametrów pomiêdzy
-nawiasami ( ) odzielonymi przecinkiem i je
-wpisuje do podanej tablicy.
-*/
-bool CModel::GetParams( const std::string &str, size_t from, std::vector<std::string>& param, const std::string &Com )
-{
-	if( param.size() == 0 )
-		return true;
+bool CModel::loadObject(core::FileParser& parser) {
+	Object obj;
 
-	unsigned curparam = 0;
-	for( auto i = from; i < str.length(); i++ )
-	{
-		if( str[i] == ')' )
-			break;
+	obj.name = parser.getArg(0);
 
-		if( str[i] == ',' )
-		{
-			curparam++;
-			i++;
-
-			if( curparam >= param.size() )
-				break;
+	while (parser.readLine()) {
+		if (parser.getCmd() == L"ENDOBJECT") {
+			objects.push_back(std::move(obj));
+			return true;
 		}
 
-		param[curparam] += str[i];
+		auto cmd = parser.getCmd();
+		if (cmd == L"MESH") {
+			if (!loadMesh(parser, obj)) {
+				error("Failed to load mesh");
+				return false;
+			}
+		}
 	}
 
-	if( curparam > param.size() )
-	{
-		error( "Za du¿o parametrów polecenia: " + Com );
-		return false;
-	}
-	else if( curparam != param.size() - 1 )
-	{
-		error( "Za ma³o parametrów polecenia: " + Com );	
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
-gfx::MeshBuilderContext::VertListType getVertListFromStr(const std::string& str) {
-	if (str == "GL_TRIANGLES")
-		return gfx::MeshBuilderContext::VertListType::TRIANGLES;
+bool CModel::loadMesh(core::FileParser& parser, Object& obj) {
+	gfx::MeshBuilderContext ctx;
+	Mesh mesh;
 
-	if (str == "GL_TRIANGLE_STRIP")
-		return gfx::MeshBuilderContext::VertListType::TRIANGLE_STRIP;
+	mesh.materialName = parser.getArg(0);
 
-	if (str == "GL_TRIANGLE_FAN")
-		return gfx::MeshBuilderContext::VertListType::TRIANGLE_FAN;
-
-	if (str == "GL_QUADS")
-		return gfx::MeshBuilderContext::VertListType::QUADS;
-
-	if (str == "GL_QUAD_STRIP")
-		return gfx::MeshBuilderContext::VertListType::QUAD_STRIP;
-
-	return gfx::MeshBuilderContext::VertListType::TRIANGLES;
-}
-
-/*=====METODA GetConst=====
-Metoda zwraca sta³¹ z OpenGL, w zale¿noœci od nazwy
-i nazwy polecenia, do jakiej jest potrzebna.
-*/
-int CModel::GetConst( const std::string &str, const std::string &Com )
-{
-	if( Com == "gluQuadricNormals" )
-	{
-		if( str == "GLU_NONE" )
-			return GLU_NONE;
-
-		if( str == "GLU_FLAT" )
-			return GLU_FLAT;
-
-		if( str == "GLU_SMOOTH" )
-			return GLU_SMOOTH;
-	}
-	if( Com == "gluQuadricOrientation" )
-	{
-		if( str == "GLU_OUTSIDE" )
-			return GLU_OUTSIDE;
-
-		if( str == "GLU_INSIDE" )
-			return GLU_INSIDE;
-	}
-	if( Com == "gluQuadricTexture" )
-	{
-		if( str == "GL_TRUE" )
-			return GL_TRUE;
-
-		if( str == "GL_FALSE" )
-			return GL_FALSE;
-	}
-
-	error( "Nieznana sta³a ( " + str + " ) w poleceniu: " + Com );
-	return atoi( str.c_str() );
-}
-
-bool	CheckParams(std::vector<std::string>& param)
-{
-	for(unsigned i = 0; i < param.size(); i++)
-	{
-		if(param[i].empty())
-			return false;
-	}
-	return true;
-}
-
-/*=====METODA ParseGLCommand=====
-Analizuje linie, szuka nazwy komendy OpenGL, pobiera
-dla niej argumenty i j¹ wykonuje.
-*/
-void CModel::ParseGLCommand( const std::string &fullstr, gfx::MeshBuilderContext& ctx)
-{
-	std::string param[6], str;
-	bool presult = false;
-	std::string Com = "";
-	size_t i = 0;
-
-	str = ClearWhiteSpace( fullstr );
-
-	i = str.find("(");
-	if( i != std::string::npos )
-		Com = str.substr(0, i);
-	else
-		Com = str;
-
-	if( Com == "glBindTexture" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			auto texId = StrToUInt( param[0] );
-			if( texId < Textures.size() )
-				Textures[texId]->Activate();
-			else 
-				error( "B³êdny parametr polecenia: " + Com );
-			return;
+	while (parser.readLine()) {
+		auto cmd = parser.getCmd();
+		if (cmd == L"ENDMESH") {
+			mesh.mesh.prepare();
+			obj.meshes.push_back(std::move(mesh));
+			return true;
 		}
-	}
-	if( Com == "glRotate" )
-	{
-		std::vector<std::string> param(4);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.rotate(StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToFloat( param[3] ) );
-			return;
+		else if (cmd == L"glRotate") {
+			auto angle = parser.getFloat(0);
+			auto value = parser.getVec3FromArgs(1);
+			ctx.rotate(angle, value);
 		}
-	}
-	if( Com == "glTranslate" )
-	{
-		std::vector<std::string> param(3);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.translate(StrToFloat(param[0]), StrToFloat(param[1]), StrToFloat(param[2]));
-			return;
+		else if (cmd == L"glTranslate") {
+			auto value = parser.getVec3FromArgs(0);
+			ctx.translate(value);
 		}
-	}
-	if( Com == "glScale" )
-	{
-		std::vector<std::string> param(3);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.scale( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
-			return;
+		else if (cmd == L"glScale") {
+			auto value = parser.getVec3FromArgs(0);
+			ctx.scale(value);
 		}
-	}
-	if( Com == "glBegin" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.beginVertexList(getVertListFromStr(param[0]));
-			return;
+		else if (cmd == L"glBegin") {
+			auto value = getVertListFromStr(parser.getArg(0));
+			ctx.beginVertexList(value);
 		}
-	}
-	if( Com == "glEnd" )
-	{
-		std::vector<std::string> param;
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.commitVertexList(*mesh);
-			return;
+		else if (cmd == L"glEnd") {
+			ctx.commitVertexList(mesh.mesh);
 		}
-	}
-	if( Com == "glPushMatrix" )
-	{
-		std::vector<std::string> param;
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
+		else if (cmd == L"glPushMatrix") {
 			ctx.pushMatrix();
-			return;
 		}
-	}
-	if( Com == "glPopMatrix" )
-	{
-		std::vector<std::string> param;
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
+		else if (cmd == L"glPopMatrix") {
 			ctx.popMatrix();
-			return;
 		}
-	}
-	if( Com == "glNormal3" )
-	{
-		std::vector<std::string> param(3);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.setVertexNormal( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
-			return;
+		else if (cmd == L"glNormal3") {
+			ctx.setVertexNormal(parser.getVec3FromArgs(0));
 		}
-	}
-	if( Com == "glTexCoord2" )
-	{
-		std::vector<std::string> param(2);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.setVertexTCoord( StrToFloat( param[0] ), StrToFloat( param[1] ) );
-			return;
+		else if (cmd == L"glTexCoord2") {
+			ctx.setVertexTCoord(parser.getVec2FromArgs(0));
 		}
-	}
-	if( Com == "glVertex3" )
-	{
-		std::vector<std::string> param(3);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.addVertex( StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ) );
-			return;
+		else if (cmd == L"glVertex3") {
+			ctx.addVertex(parser.getVec3FromArgs(0));
 		}
-	}
-	if( Com == "gluQuadricNormals" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			//gluQuadricNormals( obj, GetConst( param[0], Com ) );
-			return;
+		else if (cmd == L"gluQuadricNormals") {
+			// TODO
 		}
-	}
-	if( Com == "gluQuadricOrientation" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.setVerticesInverted(param[0] == "GLU_INSIDE");
-			return;
+		else if (cmd == L"gluQuadricOrientation") {
+			ctx.setVerticesInverted(parser.getArg(0) == L"GLU_INSIDE");
 		}
-	}
-	if( Com == "gluQuadricTexture" )
-	{
-		std::vector<std::string> param(1);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			//gluQuadricTexture( obj, GetConst( param[0], Com ) );
-			return;
+		else if (cmd == L"gluQuadricTexture") {
+			// TODO
 		}
-	}
-	if( Com == "gluSphere" )
-	{
-		std::vector<std::string> param(3);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.addSphere(*mesh, StrToFloat( param[0] ), StrToInt( param[1] ), StrToInt( param[2] ) );
-			return;
+		else if (cmd == L"gluSphere") {
+			ctx.addSphere(mesh.mesh, parser.getFloat(0), parser.getUInt(1), parser.getUInt(2));
 		}
-	}
-	if( Com == "gluCylinder" )
-	{
-		std::vector<std::string> param(5);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.addCylinder( *mesh, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToFloat( param[2] ), StrToInt( param[3] ), StrToInt( param[4] ) );
-			return;
+		else if (cmd == L"gluCylinder") {
+			ctx.addCylinder(mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getFloat(2), parser.getUInt(3), parser.getUInt(4));
 		}
-	}
-	if( Com == "gluDisk" )
-	{
-		std::vector<std::string> param(4);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.addDisk(*mesh, StrToFloat(param[0]), StrToFloat(param[1]), StrToUInt(param[2]), StrToUInt(param[3]));
-			return;
+		else if (cmd == L"gluDisk") {
+			ctx.addDisk(mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3));
 		}
-	}
-	if( Com == "gluPartialDisk" )
-	{
-		std::vector<std::string> param(6);
-		if( GetParams( str, i+1, param, Com ) && CheckParams( param ))
-		{
-			ctx.addPartialDisk( *mesh, StrToFloat( param[0] ), StrToFloat( param[1] ), StrToInt( param[2] ), StrToInt( param[3] ), StrToFloat( param[4] ), StrToFloat( param[5] ) );
-			return;
+		else if (cmd == L"gluPartialDisk") {
+			ctx.addPartialDisk(mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3), parser.getFloat(4), parser.getFloat(5));
 		}
+
 	}
 
-	error( "B³êdne, lub z niew³aœciwymi parametrami polecenie: " + Com + ", oryginalny ci¹g: " + str );
+	return false;
 }
+
 
 /*=====METODA RenderObject=====
 Wywo³uje dan¹ listê wyœwietlania
 */
-void CModel::RenderObject( unsigned int index )
-{
+void CModel::render( unsigned int index ){
 	if( !loaded )
 		return;
 
-	mesh->render();
+	if (objects.empty())
+		return;
+
+	auto& object = *objects.begin();
+	
+	for (auto& mesh : object.meshes) {
+		auto it = std::find_if(materials.begin(), materials.end(), [&](const Material& material) { return material.name == mesh.materialName; });
+		if (it != materials.end()) {
+			if(it->texture)
+				it->texture->Activate();
+		}
+		mesh.mesh.render();
+	}
 }
 
-/*=====METODA ReadHeader=====
-Czyta nag³ówek pliku GLM.
-*/
-const bool	CModel::ReadHeader( std::fstream& fileStream )
-{
-	std::string str, cmd;
+bool CModel::load(CTexManager& texManager, const std::string& filename) {
+	// Sprawdzamy czy ³añcuch nie jest pusty
+	if (filename.empty()) {
+		error("Pusty ci¹g nazwy pliku!");
+		return false;
+	}
 
-	while( fileStream )
-	{
-		str = GetLine( fileStream );
-		if( str.empty() )
-			continue;
+	core::FileParser parser(cb::fromUtf8(filename));
 
-		// Sprawdzamy czy to koniec nag³ówka
-		if( str == "END HEADER" )
-			return true;
+	if (!parser.readLine()) {
+		error("Invalid file " + filename);
+		return false;
+	}
 
-		auto pos = str.find( " " );
-		if( pos == std::string::npos )
-		{
-			error( "Ci¹g nie zawiera spacji: " + str );
-			continue;
-		}
+	if (parser.getCmd() != L"GLM" || parser.getArg(0) != L"100") {
+		error("Invalid header for file " + filename);
+		return false;
+	}
 
-		cmd = str.substr( 0, pos );
-		if( cmd == "TEXCOUNT" )
-		{
-			unsigned texCount = 0;
-			// Pobieramy liczbê tekstur
-			if( !sscanf_s( str.c_str(), "TEXCOUNT %u", &texCount ) )
-			{
-				error( "Nie mo¿na odczytaæ liczby tekstur!" );
-				continue;
-			}
-		}
-		else if( cmd == "ANIMATION" )
-		{
-			// Pobieramy, czy plik ma zapisan¹ animacjê
-			unsigned set = 0;
-			if( !sscanf_s( str.c_str(), "ANIMATION %u", &set ) )
-			{
-				error( "Nie mo¿na odczytaæ animacji!" );
+	Material matCtx;
+	Object objCtx;
+
+	while (parser.readLine()) {
+		if (parser.getCmd() == L"MATERIAL") {
+			if (!loadMaterial(parser, texManager)) {
+				error("Failed to load material");
 				return false;
 			}
-			else
-				animation = set != 0 ? true : false;
 		}
-		else
-			error( "Nierozpoznany ci¹g nag³ówka: " + str );
+		else if (parser.getCmd() == L"OBJECT") {
+			if (!loadObject(parser)) {
+				error("Failed to load object");
+				return false;
+			}
+		}
 	}
 
-	error( "Brak koñca nag³ówka!" );
-	return false;
-}
-
-const bool	CModel::ReadTextures( std::fstream& fileStream, CTexManager& texManager )
-{
-	std::string str;
-	CTexture* pTex = nullptr;
-
-	while( fileStream )
-	{
-		str = GetLine( fileStream );
-		if( str.empty() )
-			continue;
-
-		if( str == "END TEXLIST" )
-			return true;
-
-		pTex = texManager.Get( str );
-		if( pTex == nullptr )
-			error( "B³¹d przy ³adowaniu tekstury!" );
-		Textures.push_back( pTex );
-
-		pTex = nullptr;
-	}
-
-	error( "Brak koñca listy tekstur!" );
-	return false;
-}
-
-const bool	CModel::ReadModel( std::fstream& fileStream, const unsigned modelIndex )
-{
-	std::string str;
-	gfx::MeshBuilderContext context;
-
-	while( fileStream )
-	{
-		str = GetLine( fileStream );
-		if( str.empty() )
-			continue;
-
-		if( str == "END MODEL" )
-			break;
-
-		ParseGLCommand( str, context );
-	}
-
-
-	mesh->prepare();
-
+	loaded = true;
+	report("Loaded new model.");
 	return true;
-}
-
-bool CModel::Load( CTexManager& texManager, const std::string& filename )
-{
-	// Sprawdzamy czy ³añcuch nie jest pusty
-	if( filename.empty() )
-	{
-		error( "Pusty ci¹g nazwy pliku!" );
-		return false;
-	}
-
-	// zmienna tymczasowa, trzymaj¹ca jedn¹ linie z pliku
-	std::string str;
-
-	// zmienna trzymaj¹ca numer wersji pliku
-	int Version = 0;
-
-	// Próbujemy otworzyæ plik
-	std::fstream fileStream(filename, std::ios::in);
-
-	// Sprawdzamy po³¹czenie
-	if( !fileStream )
-	{
-		error( "Plik " + filename + " nie istnieje lub œcie¿ka niew³aœciwa." );
-		return false;
-	}
-
-	// Pobieramy pierwsz¹ linie
-	str = GetLine( fileStream );
-
-	// Skanujemy liniê w poszukiwaniu numeru wersji
-	if( !sscanf_s( str.c_str(), "GLM %d", &Version ) )
-	{
-		error( "Nieprawid³owa pierwsza linia pliku " + filename + "!" );
-		return false;
-	}
-
-
-	// Sprawdzamy wersjê
-	if( Version > GLM_FILE_VERSION )
-	{
-		error( "Zbyt wysoka wersja pliku!" );
-		return false;
-	}
-
-	// Teraz sprawdzamy, czy ju¿ jakiœ obiekt nie by³ za³adowany
-	if( loaded )
-	{
-		report( "Prze³adowanie pliku na " + filename );
-		Free();
-	}
-
-	log( "£adowanie modelu z pliku " + filename );
-	file = cb::fromUtf8(filename);
-
-	while( fileStream )
-	{
-		str = GetLine( fileStream );
-		if( str.empty() )
-			continue;
-
-		if( str == "END GLM" )
-		{
-			loaded = true;
-			return true;
-		}
-
-		if( str == "HEADER" )
-		{
-			// Czytamy nag³ówek
-			if( !ReadHeader( fileStream ) )
-			{
-				error( "B³¹d w nag³ówku!" );
-				continue;
-			}
-		}
-		else if( str == "TEXLIST" )
-		{
-			if( !ReadTextures( fileStream, texManager ) )
-			{
-				error( "B³¹d odczytu listy tekstur." );
-				continue;
-			}
-		}
-		else if( ContainsString( str, "MODEL" ) )
-		{
-			unsigned modelIndex = 0;
-			if( !( sscanf_s( str.c_str(), "MODEL %u", &modelIndex ) && ReadModel( fileStream, modelIndex ) ) )
-			{
-				error( "B³¹d odczytu modelu." );
-				continue;
-			}
-		}
-		else
-			error( "Nierozpoznany ci¹g: " + str );
-	}
-
-	error( "Brak koñca pliku!" );
-	return false;
 }
 
 void CModel::Free()
 {
-	if( Textures.size() > 0 )
-	{
-		Textures.clear();
-	}
-
-	mesh.reset();
-
 	file.clear();
 	loaded = false;
 }
@@ -589,7 +278,7 @@ const std::string CModel::GetFile() const
 
 unsigned int CModel::GetObjCount()
 {
-	return 1;
+	return objects.size();
 }
 
 cb::string CModel::getLogName() const {

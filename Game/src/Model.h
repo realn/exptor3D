@@ -17,10 +17,14 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 
 #include "core_object.h"
 
-#include "Texture.h"	// Naglówek z klasa CTexture
+namespace core {
+	class FileParser;
+}
+namespace gfx {
+	class Mesh;
+}
 
-#include "Mesh.h"
-#include "MeshFuncs.h"
+class CTexManager;
 
 // Numer wersji loader'a
 #define		GLM_FILE_VERSION		100
@@ -28,48 +32,44 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 /*	G³ówna klasa modeli OpenGL
 */
 class CModel : public core::Object {
-private:
-	// Lista tekstur
-	std::vector<CTexture*>	Textures;
-	// Czy model jest za³adowany?
-	bool loaded;
-	// Czy ma animacje?
-	bool animation;
-	// Czy aktualnie trwa animacja
-	bool playing;
-	// Ostatni za³adowany plik
-	cb::string file;
-
-	// Obiekt do rysowania kwadryk ( tymczasowy, ale jest tu, by by³ dostêpny w ca³ej klasie )
-	//GLUquadric* obj;
-
-	std::unique_ptr<gfx::Mesh> mesh;
 
 public:
 	CModel();
-	~CModel();
+	~CModel() override;
 
-	bool Load( CTexManager& texManager, const std::string& filePath );
+	CModel(const CModel&) = delete;
+	CModel(CModel&&) = default;
+	CModel& operator=(const CModel&) = delete;
+	CModel& operator=(CModel&&) = default;
+
+	bool load( CTexManager& texManager, const std::string& filePath );
 
 	void Free();
 	const std::string GetFile() const;
 	unsigned int GetObjCount();
 
-	void RenderObject( unsigned int index );
+	void render( unsigned int index );
 
 protected:
 	virtual cb::string getLogName() const override;
 
 private:
-	std::string NoSpace( const std::string &str );
-	void ParseGLCommand( const std::string &fullstr, gfx::MeshBuilderContext& ctx );
-	bool GetParams( const std::string &str, size_t from, std::vector<std::string>& param, const std::string &Com );
-	int GetConst( const std::string &str, const std::string &Com );
+	struct Material;
+	struct Object;
+	struct Mesh;
 
-	const bool	ReadHeader( std::fstream& fileStream );
-	const bool	ReadTextures( std::fstream& fileStream, CTexManager& texManager );
-	const bool	ReadModel( std::fstream& fileStream, const unsigned modelIndex );
+	using materials_t = std::vector<Material>;
+	using objects_t = std::vector<Object>;
 
-	CModel(const CModel&) = delete;
-	CModel& operator=(const CModel&) = delete;
+	bool loadMaterial(core::FileParser& parser, CTexManager& texManager);
+	bool loadObject(core::FileParser& parser);
+	bool loadMesh(core::FileParser& parser, Object& obj);
+
+	materials_t materials;
+	objects_t objects;
+
+	// Czy model jest za³adowany?
+	bool loaded = false;
+	// Ostatni za³adowany plik
+	cb::string file = L"-";
 };

@@ -1,35 +1,30 @@
-GLM	100
-HEADER
+GLM(100)
+MATERIAL(metal0)
+TEXTURE(metal8c.tga)
+ENDMATERIAL
+MATERIAL(metal1)
+TEXTURE(metal1c.tga)
+ENDMATERIAL
+OBJECT(base)
+  MESH(metal0)
+    glTranslate( 0, 0, -2 )
+    gluCylinder( 0.3, 0.5, 2, 16, 1 )
+    gluQuadricOrientation( GLU_INSIDE )
+    gluCylinder( 0.2, 0.3, 2, 16, 1 )
+    gluDisk( 0.2, 0.3, 16, 1 )
+    gluQuadricOrientation( GLU_OUTSIDE )
+    glTranslate( 0, 0, 2 )
 
-TEXCOUNT	2
-LISTCOUNT	1
-ANIMATION	0
-END HEADER
-TEXLIST
-metal8c.tga
-metal1c.tga
-END TEXLIST
-MODEL	0
-glPushMatrix()
-	glBindTexture( 1 )
-	gluSphere( 0.7, 16, 16 )
+    gluCylinder( 0.5, 0.5, 2, 16, 1 )
+    gluQuadricOrientation( GLU_INSIDE )
+    gluCylinder( 0.3, 0.3, 2, 16, 1 )
+    gluQuadricOrientation( GLU_OUTSIDE )
+    glTranslate( 0, 0, 2 )
+    gluDisk( 0.3, 0.5, 16, 1 )
+    gluQuadricOrientation( GLU_INSIDE )
+  ENDMESH
+  MESH(metal1)
+    gluSphere( 0.7, 16, 16 )
+  ENDMESH
+ENDOBJECT
 
-	glBindTexture( 0 )
-	glTranslate( 0, 0, -2 )
-	gluCylinder( 0.3, 0.5, 2, 16, 1 )
-	gluQuadricOrientation( GLU_INSIDE )
-	gluCylinder( 0.2, 0.3, 2, 16, 1 )
-	gluDisk( 0.2, 0.3, 16, 1 )
-	gluQuadricOrientation( GLU_OUTSIDE )
-	glTranslate( 0, 0, 2 )
-
-	gluCylinder( 0.5, 0.5, 2, 16, 1 )
-	gluQuadricOrientation( GLU_INSIDE )
-	gluCylinder( 0.3, 0.3, 2, 16, 1 )
-	gluQuadricOrientation( GLU_OUTSIDE )
-	glTranslate( 0, 0, 2 )
-	gluDisk( 0.3, 0.5, 16, 1 )
-	gluQuadricOrientation( GLU_INSIDE )
-glPopMatrix()
-END MODEL
-END GLM
