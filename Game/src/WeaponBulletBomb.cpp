@@ -6,7 +6,7 @@
 	KLASA CBullBomb
 	Jest to bomba
 ====================*/
-CBullBomb::CBullBomb( CActor* owner, const float damage, const glm::vec3& pos, const float time, CModelManager& modelManager ) :
+CBullBomb::CBullBomb( CActor* owner, const float damage, const glm::vec3& pos, const float time, gfx::ModelManager& modelManager ) :
 	CProjectile( PROJECTILE_TYPE::BOMB, owner, damage, pos, glm::vec3(), 0.0f )
 {
 	BoomTime = time;

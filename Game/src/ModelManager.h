@@ -1,35 +1,33 @@
 #pragma once
 
-#include "Model.h"
+#include "gfx_Model.h"
 
-class CModelManager
-{
-private:
-	const std::string	DataDir;
-	gfx::TextureRepository&		TexManager;
-	std::vector<CModel*> List;
+namespace gfx {
+	class ModelManager {
+	private:
+		const std::string	DataDir;
+		gfx::TextureRepository& TexManager;
+		std::vector<Model*> List;
 
-public:
-	CModelManager( const std::string& strDataDir, gfx::TextureRepository& texManager );
-	~CModelManager();
+	public:
+		ModelManager(const std::string& strDataDir, gfx::TextureRepository& texManager);
+		~ModelManager();
 
-	gfx::TextureRepository& GetTexMng();
+		gfx::TextureRepository& GetTexMng();
 
-	CModel* Get( const std::string& filename );
-	void AddModel( CModel* Model );
-	CModel* GetModel( unsigned int index );
-	void DeleteModel( unsigned int index );
+		Model* Get(const std::string& filename);
+		void AddModel(Model* Model);
+		Model* GetModel(unsigned int index);
+		void DeleteModel(unsigned int index);
 
-	void Clear();
+		void Clear();
 
-private:
-	CModelManager( const CModelManager& model ) : TexManager( model.TexManager )
-	{
-		throw std::exception( "COPY ERROR" );
-	}
-	void operator=( const CModelManager& model )
-	{
-		throw std::exception( "ASSIGN ERROR" );
-	}
-};
-
+	private:
+		ModelManager(const ModelManager& model) : TexManager(model.TexManager) {
+			throw std::exception("COPY ERROR");
+		}
+		void operator=(const ModelManager& model) {
+			throw std::exception("ASSIGN ERROR");
+		}
+	};
+}

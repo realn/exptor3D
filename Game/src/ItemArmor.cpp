@@ -11,7 +11,7 @@ CItemArmor::~CItemArmor()
 {
 }
 
-const bool	CItemArmor::LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager )
+const bool	CItemArmor::LoadGraphic( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager )
 {
 	Model = modelManager.Get( "rocketlun-model.glm" );
 	GfxLoaded = Model != nullptr;

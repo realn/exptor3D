@@ -11,7 +11,7 @@ CItemHealth::~CItemHealth()
 {
 }
 
-const bool	CItemHealth::LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager )
+const bool	CItemHealth::LoadGraphic( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager )
 {
 	Model = modelManager.Get( "rocketlun-model.glm" );
 	GfxLoaded = Model != nullptr;

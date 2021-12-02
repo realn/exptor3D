@@ -267,7 +267,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //	plików, ale to by siê zesz³o zbyt
 //	d³ugo :P 
 //*/
-//void weSaw::Init( CModelManager& modelManager )
+//void weSaw::Init( gfx::ModelManager& modelManager )
 //{
 //	if( inited ) 
 //		return;
@@ -415,7 +415,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //{
 //}
 //
-//void wePistol::Init( CModelManager& modelManager )
+//void wePistol::Init( gfx::ModelManager& modelManager )
 //{
 //	if( inited ) 
 //		return;
@@ -554,7 +554,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //{
 //}
 //
-//void weMiniPhazer::Init( CModelManager& modelManager )
+//void weMiniPhazer::Init( gfx::ModelManager& modelManager )
 //{
 //	if( inited ) 
 //		return;
@@ -695,7 +695,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //{
 //}
 //
-//void wePhazer::Init( CModelManager& modelManager )
+//void wePhazer::Init( gfx::ModelManager& modelManager )
 //{
 //	if( inited ) 
 //		return;
@@ -833,7 +833,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //{
 //}
 //
-//void weMiniGun::Init( CModelManager& modelManager )
+//void weMiniGun::Init( gfx::ModelManager& modelManager )
 //{
 //	if( inited ) 
 //		return;
@@ -990,7 +990,7 @@ const WEAPON_TYPE	ParseWeapon( const std::string& str )
 //{
 //}
 //
-//void weATOM_BOMBb::Init( CModelManager& modelManager )
+//void weATOM_BOMBb::Init( gfx::ModelManager& modelManager )
 //{
 //	if( inited )
 //		return;

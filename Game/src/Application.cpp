@@ -82,7 +82,7 @@ int	CApplication::Run()
 	cb::gl::initextensions();
 
 	gfx::TextureRepository texManager( "Data/Textures/" );
-	CModelManager modelManager( "Data/Models/", texManager );
+	gfx::ModelManager modelManager( "Data/Models/", texManager );
 	CLevel level( texManager, modelManager );
 	GUI = std::make_unique<CGUIMain>( texManager, ScriptParser, aspectRatio, WindowHeight );
 

@@ -1,82 +1,73 @@
-#include "ModelManager.h"
+
+#include <gfx_Model.h>
+
 #include "Log.h"
+#include "ModelManager.h"
 
-CModelManager::CModelManager( const std::string& strDataDir, gfx::TextureRepository& texManager ) :
-	DataDir( strDataDir ),
-	TexManager( texManager )
-{
-}
-
-CModelManager::~CModelManager()
-{
-	Clear();
-}
-
-gfx::TextureRepository& CModelManager::GetTexMng()
-{
-	return TexManager;
-}
-
-CModel* CModelManager::Get( const std::string& filename )
-{
-	if( filename.empty() )
-	{
-		Log.Error( "MODELMANAGER(): Pusty ci¹g znaków!" );
-		return nullptr;
+namespace gfx {
+	ModelManager::ModelManager(const std::string& strDataDir, gfx::TextureRepository& texManager) :
+		DataDir(strDataDir),
+		TexManager(texManager) {
 	}
 
-	auto path = DataDir + filename;
-
-	CModel* Model;
-	for( unsigned i = 0; i < List.size(); i++ )
-	{
-		Model = GetModel( i );
-		if( Model->GetFile() == path )
-			return Model;
+	ModelManager::~ModelManager() {
+		Clear();
 	}
 
-	Model = new CModel();
-	if( !Model->load( TexManager, path ) )
-	{
-		Log.Error( "MODELMANAGER(): Nieudane za³adowanie modelu: " + filename );
-		delete Model;
-		return nullptr;
+	TextureRepository& ModelManager::GetTexMng() {
+		return TexManager;
 	}
 
-	AddModel( Model );
-	Log.Log( "MODELMANAGER(): Dodano nowy model: " + filename );
-	return Model;
-}
+	Model* ModelManager::Get(const std::string& filename) {
+		if (filename.empty()) {
+			Log.Error("MODELMANAGER(): Pusty ci¹g znaków!");
+			return nullptr;
+		}
 
-void CModelManager::AddModel( CModel *Model )
-{
-	List.push_back( Model );
-}
+		auto path = DataDir + filename;
 
-void CModelManager::DeleteModel( unsigned int index )
-{
-	if( index >= List.size() )
-		return;
+		{
+			auto it = std::find_if(List.begin(), List.end(), [&](Model* model) { return model->GetFile() == path; });
+			if (it != List.end())
+				return *it;
+		}
 
-	delete List[index];
-	List.erase( List.begin() + index );
-}
+		auto model = new Model();
+		if (!model->load(TexManager, path)) {
+			Log.Error("MODELMANAGER(): Nieudane za³adowanie modelu: " + filename);
+			delete model;
+			return nullptr;
+		}
 
-CModel* CModelManager::GetModel( unsigned int index )
-{
-	if( index >= List.size() )
-		return 0;
-
-	return List[index];
-}
-
-void CModelManager::Clear()
-{
-	for(unsigned i = 0; i < List.size(); i++)
-	{
-		CModel* pModel = List[i];
-		delete pModel;
+		AddModel(model);
+		Log.Log("MODELMANAGER(): Dodano nowy model: " + filename);
+		return model;
 	}
-	List.clear();
-}
 
+	void ModelManager::AddModel(Model* Model) {
+		List.push_back(Model);
+	}
+
+	void ModelManager::DeleteModel(unsigned int index) {
+		if (index >= List.size())
+			return;
+
+		delete List[index];
+		List.erase(List.begin() + index);
+	}
+
+	Model* ModelManager::GetModel(unsigned int index) {
+		if (index >= List.size())
+			return 0;
+
+		return List[index];
+	}
+
+	void ModelManager::Clear() {
+		for (unsigned i = 0; i < List.size(); i++) {
+			Model* pModel = List[i];
+			delete pModel;
+		}
+		List.clear();
+	}
+}

@@ -38,7 +38,7 @@
     <ClCompile Include="src\MeshFuncs.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Model.cpp">
+    <ClCompile Include="src\gfx_Model.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx_Texture.cpp">
@@ -76,7 +76,7 @@
     <ClInclude Include="src\MeshVertex.h">
       <Filter>Source Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Model.h">
+    <ClInclude Include="src\gfx_Model.h">
       <Filter>Source Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx_Texture.h">

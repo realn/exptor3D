@@ -15,7 +15,7 @@ KLASA CPlayer
 
 
 =========================*/
-CPlayer::CPlayer( CModelManager& modelManager ) :
+CPlayer::CPlayer( gfx::ModelManager& modelManager ) :
 	CActor( ACTOR_TYPE::ACTOR_PLAYER ),
 	ModelManager( modelManager ),
 	Hand( WEAPON_HAND::RIGHT ),

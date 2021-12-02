@@ -72,7 +72,7 @@ public:
 	CEffectSprite( const glm::vec3& pos, const float R = 1.0f, const float G = 1.0f, const float B = 1.0f );
 	virtual ~CEffectSprite();
 
-	const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager ) override;
+	const bool	LoadGraphic( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager ) override;
 
 	const bool	IsTransparent() const override;
 

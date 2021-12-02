@@ -20,7 +20,7 @@ class CPlayer :
 	public CActor
 {
 private:
-	CModelManager& ModelManager;
+	gfx::ModelManager& ModelManager;
 
 	WEAPON_HAND	Hand;
 
@@ -38,7 +38,7 @@ private:
 	CWeapon* Weapon[WEAPON_COUNT];
 
 public:
-	CPlayer( CModelManager& modelManager );
+	CPlayer( gfx::ModelManager& modelManager );
 	~CPlayer();
 
 	void	OnDie() override;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "3dMath.h"
-#include "Model.h"
+#include "gfx_Model.h"
 #include "ModelManager.h"
 #include "GamePlayer.h"
 
@@ -63,7 +63,7 @@ protected:
 	std::string Name;
 
 	// Lista wyœwietlania, gdy broñ le¿y na ziemi.
-	CModel	*Model;
+	gfx::Model	*Model;
 
 	CPlayer* Owner;
 
@@ -126,7 +126,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //	weSaw();
 //
 //	// Funckja inicjuj¹ca
-//	void Init( CModelManager& modelManager );
+//	void Init( gfx::ModelManager& modelManager );
 //	void Update( const float fTD ) override;
 //	void Render();
 //
@@ -147,7 +147,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //	wePistol();
 //
 //	// Inicjalizacja
-//	void Init( CModelManager& modelManager );
+//	void Init( gfx::ModelManager& modelManager );
 //	void Update( const float fTD ) override;
 //	void Render();
 //
@@ -167,7 +167,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //	weMiniPhazer();
 //
 //	// Inicjalizacja
-//	void Init( CModelManager& modelManager );
+//	void Init( gfx::ModelManager& modelManager );
 //	void Update( const float fTD ) override;
 //	void Render();
 //	void Shot();
@@ -185,7 +185,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //	wePhazer();
 //
 //	// Inicjalizacja
-//	void Init( CModelManager& modelManager );
+//	void Init( gfx::ModelManager& modelManager );
 //	void Update( const float fTD ) override;
 //	void Render();
 //	void Shot();
@@ -202,7 +202,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //public:
 //	weMiniGun();
 //
-//	void Init( CModelManager& modelManager );
+//	void Init( gfx::ModelManager& modelManager );
 //	void Update( const float fTD ) override;
 //	void Render();
 //	void Shot();
@@ -212,7 +212,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //class weATOM_BOMBb : public CWeapon
 //{
 //private:
-//	CModelManager* ModelManager;
+//	gfx::ModelManager* ModelManager;
 //	float Time;
 //	bool armed;
 //	bool puted;
@@ -221,7 +221,7 @@ extern const WEAPON_TYPE	ParseWeapon( const std::string& str );
 //public:
 //	weATOM_BOMBb();
 //
-//	void Init( CModelManager& modelManager );
+//	void Init( gfx::ModelManager& modelManager );
 //	void Update( const float fTD ) override;
 //	void Render();
 //	void Shot();

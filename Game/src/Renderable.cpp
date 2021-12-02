@@ -10,7 +10,7 @@ IRenderable::~IRenderable()
 {
 }
 
-const bool	IRenderable::LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager )
+const bool	IRenderable::LoadGraphic( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager )
 {
 	return true;
 }

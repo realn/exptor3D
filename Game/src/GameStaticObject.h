@@ -1,7 +1,7 @@
 #pragma once
 
 #include "3dMath.h"
-#include "Model.h"
+#include "gfx_Model.h"
 #include "ModelManager.h"
 
 /*	KLASA gameStatObj
@@ -11,7 +11,7 @@
 //	public CObject
 //{
 //private:
-//	CModel*	Model;
+//	gfx::Model*	Model;
 //	std::string	file;
 //
 //	std::string GetStr( FILE* fp );
@@ -22,6 +22,6 @@
 //	void Update( const float fTD ) override;
 //	void Render() override;
 //
-//	bool LoadObj( CModelManager& modelManager, const std::string& filename );
+//	bool LoadObj( gfx::ModelManager& modelManager, const std::string& filename );
 //};
 //

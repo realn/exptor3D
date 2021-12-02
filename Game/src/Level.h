@@ -179,7 +179,7 @@ class CLevel :
 	public CScene
 {
 private:
-	CModelManager&	ModelManager;
+	gfx::ModelManager&	ModelManager;
 	gfx::TextureRepository&	TexManager;
 
 	CRenderList			RenderList;
@@ -222,7 +222,7 @@ private:
 
 public:
 	// Konstruktor i destruktor
-	CLevel( gfx::TextureRepository& texManager, CModelManager& modelManager );
+	CLevel( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager );
 	~CLevel();
 
 	void	Update( const float fTD );

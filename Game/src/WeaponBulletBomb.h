@@ -9,10 +9,10 @@ class CBullBomb : public CProjectile
 private:
 	float BoomTime;
 	float ThisTime;
-	CModel* Model;
+	gfx::Model* Model;
 
 public:
-	CBullBomb( CActor* owner, const float damage, const glm::vec3& pos, const float time, CModelManager& modelManager );
+	CBullBomb( CActor* owner, const float damage, const glm::vec3& pos, const float time, gfx::ModelManager& modelManager );
 
 	void Update( const float fTD ) override;
 	void Render() override;

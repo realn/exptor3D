@@ -25,7 +25,7 @@
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshFuncs.cpp" />
-    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\gfx_Model.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\gfx_Texture.cpp" />
     <ClCompile Include="src\gfx_TextureRepository.cpp" />
@@ -39,7 +39,7 @@
     <ClInclude Include="src\MeshFace.h" />
     <ClInclude Include="src\MeshFuncs.h" />
     <ClInclude Include="src\MeshVertex.h" />
-    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\gfx_Model.h" />
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\gfx_Texture.h" />
     <ClInclude Include="src\gfx_TextureRepository.h" />

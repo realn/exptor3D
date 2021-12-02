@@ -17,7 +17,7 @@ public:
 
 	virtual void	Render() = 0;
 
-	virtual const bool	LoadGraphic( gfx::TextureRepository& texManager, CModelManager& modelManager );
+	virtual const bool	LoadGraphic( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager );
 
 	virtual void	SetVisible( const bool );
 	virtual void	SetGfxLoaded( const bool );

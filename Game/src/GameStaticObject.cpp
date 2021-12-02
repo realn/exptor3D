@@ -34,7 +34,7 @@
 //	glPopMatrix();
 //}
 //
-//bool gameStatObj::LoadObj( CModelManager& modelManager, const std::string& filename )
+//bool gameStatObj::LoadObj( gfx::ModelManager& modelManager, const std::string& filename )
 //{
 //	if( filename == "" )
 //	{

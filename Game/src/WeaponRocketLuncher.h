@@ -6,10 +6,10 @@ class CWeaponRocketLuncher :
 	public CWeapon
 {
 private:
-	CModelManager&	ModelManager;
+	gfx::ModelManager&	ModelManager;
 
 public:
-	CWeaponRocketLuncher( CModelManager& modelManager );
+	CWeaponRocketLuncher( gfx::ModelManager& modelManager );
 	virtual ~CWeaponRocketLuncher();
 
 	void	Render() override;

@@ -27,7 +27,7 @@ const unsigned GAME_VERSION = 100;
 Patrz -> definicja klasy
 */
 /*	KONSTRUKTOR	*/
-CLevel::CLevel( gfx::TextureRepository& texManager, CModelManager& modelManager ) :
+CLevel::CLevel( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager ) :
 	TexManager( texManager ),
 	ModelManager( modelManager ),
 	RenderList( texManager, modelManager ),

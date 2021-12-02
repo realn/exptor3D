@@ -7,7 +7,7 @@
 #include "Level.h"
 
 /*	ROCKET LUNCHER	*/
-CWeaponRocketLuncher::CWeaponRocketLuncher( CModelManager& modelManager ) :
+CWeaponRocketLuncher::CWeaponRocketLuncher( gfx::ModelManager& modelManager ) :
 	CWeapon( WEAPON_TYPE::ROCKET_LUNCHER, "Wyrzutnia Rakiet" ),
 	ModelManager( modelManager )
 {
