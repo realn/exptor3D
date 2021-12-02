@@ -19,6 +19,8 @@ namespace core {
     bool init();
     void mainLoop();
 
+    void render();
+
     std::unique_ptr<cb::sdl::System> system;
     std::unique_ptr<cb::sdl::Window> window;
     std::unique_ptr<cb::sdl::GLContext> glContext;

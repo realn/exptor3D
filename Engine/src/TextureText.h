@@ -2,10 +2,9 @@
 
 #include <glm/vec4.hpp>
 
-#include <gfx_Texture.h>
-#include <gfx_TextureRepository.h>
-
 #include "3dMath.h"
+#include "gfx_Texture.h"
+#include "gfx_TextureRepository.h"
 
 class CTextRenderer
 {

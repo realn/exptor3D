@@ -1,4 +1,6 @@
+
 #include <CBSDL/Events.h>
+#include <CBGL/Rendering.h>
 
 #include "Application.h"
 
@@ -48,8 +50,15 @@ namespace core {
         }
       }
 
+      render();
 
+      glContext->swapWindow(*window);
     }
+  }
+  void Application::render() {
+    cb::gl::clearColor({ 1.0f, 0.5f, 0.5f, 1.0f });
+
+
 
   }
 }

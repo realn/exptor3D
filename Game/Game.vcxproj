@@ -157,7 +157,6 @@
     <ClCompile Include="src\EffectExplosion.cpp" />
     <ClCompile Include="src\EffectRay.cpp" />
     <ClCompile Include="src\EffectSprite.cpp" />
-    <ClCompile Include="src\EventManager.cpp" />
     <ClCompile Include="src\GameActor.cpp" />
     <ClCompile Include="src\GameActorStats.cpp" />
     <ClCompile Include="src\GameController.cpp" />
@@ -166,15 +165,6 @@
     <ClCompile Include="src\GamePlayer.cpp" />
     <ClCompile Include="src\GamePlayerController.cpp" />
     <ClCompile Include="src\GameStaticObject.cpp" />
-    <ClCompile Include="src\GUIConsole.cpp" />
-    <ClCompile Include="src\GUIMenu.cpp" />
-    <ClCompile Include="src\GUIMenuItem.cpp" />
-    <ClCompile Include="src\GUIMenuMain.cpp" />
-    <ClCompile Include="src\GUIScreen.cpp" />
-    <ClCompile Include="src\GUIScreenElement.cpp" />
-    <ClCompile Include="src\GUIScreenTextElement.cpp" />
-    <ClCompile Include="src\GUIScreenValueSync.cpp" />
-    <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\inifile.cpp" />
     <ClCompile Include="src\Item.cpp" />
     <ClCompile Include="src\ItemAmmo.cpp" />
@@ -189,9 +179,7 @@
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\RenderList.cpp" />
     <ClCompile Include="src\Scene.cpp" />
-    <ClCompile Include="src\ScriptParser.cpp" />
     <ClCompile Include="src\Special.cpp" />
-    <ClCompile Include="src\TextureText.cpp" />
     <ClCompile Include="src\UpdateList.cpp" />
     <ClCompile Include="src\Weapon.cpp" />
     <ClCompile Include="src\WeaponProjectile.cpp" />
@@ -208,14 +196,8 @@
     <ClInclude Include="src\CollisionBlock.h" />
     <ClInclude Include="src\CollisionFace.h" />
     <ClInclude Include="src\Effect.h" />
-    <ClInclude Include="src\EventInput.h" />
-    <ClInclude Include="src\EventManager.h" />
-    <ClInclude Include="src\EventScript.h" />
     <ClInclude Include="src\GameController.h" />
     <ClInclude Include="src\GamePlayerController.h" />
-    <ClInclude Include="src\GUIConsole.h" />
-    <ClInclude Include="src\GUIMenu.h" />
-    <ClInclude Include="src\GUIScreen.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneEntity.h" />
     <ClInclude Include="src\GameActor.h" />
@@ -223,7 +205,6 @@
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\GamePlayer.h" />
     <ClInclude Include="src\GameStaticObject.h" />
-    <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\inifile.h" />
     <ClInclude Include="src\Item.h" />
     <ClInclude Include="src\ItemAmmo.h" />
@@ -234,9 +215,7 @@
     <ClInclude Include="src\ModelManager.h" />
     <ClInclude Include="src\Renderable.h" />
     <ClInclude Include="src\RenderList.h" />
-    <ClInclude Include="src\ScriptParser.h" />
     <ClInclude Include="src\Special.h" />
-    <ClInclude Include="src\TextureText.h" />
     <ClInclude Include="src\Updateable.h" />
     <ClInclude Include="src\UpdateList.h" />
     <ClInclude Include="src\Weapon.h" />

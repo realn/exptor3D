@@ -11,8 +11,8 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 ///////////////////////////////////////////////////////*/
 #pragma once
 
-#include <gfx_Texture.h>
-#include <gfx_TextureRepository.h>
+#include "gfx_Texture.h"
+#include "gfx_TextureRepository.h"
 
 #include "Log.h"
 

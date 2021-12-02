@@ -147,53 +147,17 @@
     <ClCompile Include="src\WeaponProjectile.cpp">
       <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextureText.cpp">
-      <Filter>Source\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIMenuMain.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIMenu.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIMenuItem.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ScriptParser.cpp">
-      <Filter>Source\Logic</Filter>
-    </ClCompile>
     <ClCompile Include="src\Application.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Application_Script.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\EventManager.cpp">
-      <Filter>Source\Logic\Events</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameController.cpp">
       <Filter>Source\Game\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="src\GamePlayerController.cpp">
       <Filter>Source\Game\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIConsole.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIScreenElement.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIScreenTextElement.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIScreen.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIScreenValueSync.cpp">
-      <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,44 +254,17 @@
     <ClInclude Include="src\WeaponProjectile.h">
       <Filter>Source\Game\Weapon\Bullets</Filter>
     </ClInclude>
-    <ClInclude Include="src\TextureText.h">
-      <Filter>Source\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gui.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GUIMenu.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ScriptParser.h">
-      <Filter>Source\Logic</Filter>
-    </ClInclude>
     <ClInclude Include="src\Application.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="src\AppSettings.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="src\EventManager.h">
-      <Filter>Source\Logic\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EventInput.h">
-      <Filter>Source\Logic\Events</Filter>
-    </ClInclude>
     <ClInclude Include="src\GameController.h">
       <Filter>Source\Game\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="src\GamePlayerController.h">
       <Filter>Source\Game\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EventScript.h">
-      <Filter>Source\Logic\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GUIScreen.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GUIConsole.h">
-      <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
