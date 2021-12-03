@@ -31,6 +31,8 @@
     <ClCompile Include="src\GUIMenu.cpp" />
     <ClCompile Include="src\GUIMenuItem.cpp" />
     <ClCompile Include="src\GUIMenuMain.cpp" />
+    <ClCompile Include="src\GUIMesh.cpp" />
+    <ClCompile Include="src\GUIRenderContext.cpp" />
     <ClCompile Include="src\GUIScreen.cpp" />
     <ClCompile Include="src\GUIScreenElement.cpp" />
     <ClCompile Include="src\GUIScreenTextElement.cpp" />
@@ -43,7 +45,7 @@
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\gfx_Texture.cpp" />
     <ClCompile Include="src\gfx_TextureRepository.cpp" />
-    <ClCompile Include="src\TextureText.cpp" />
+    <ClCompile Include="src\GUITextPrinter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h" />
@@ -59,7 +61,10 @@
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\GUIConsole.h" />
     <ClInclude Include="src\GUIMenu.h" />
+    <ClInclude Include="src\GUIMesh.h" />
+    <ClInclude Include="src\GUIRenderContext.h" />
     <ClInclude Include="src\GUIScreen.h" />
+    <ClInclude Include="src\GUIVertex.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshFace.h" />
@@ -70,7 +75,7 @@
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\gfx_Texture.h" />
     <ClInclude Include="src\gfx_TextureRepository.h" />
-    <ClInclude Include="src\TextureText.h" />
+    <ClInclude Include="src\GUITextPrinter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -1,8 +1,7 @@
 #include "GUIScreen.h"
 
-CGUITextElement::CGUITextElement( CTextRenderer& textRender ) :
-	CGUIElement( SCREEN_ELEMENT_TYPE::TEXT ),
-	TextRender( textRender )
+CGUITextElement::CGUITextElement() :
+	CGUIElement( SCREEN_ELEMENT_TYPE::TEXT )
 {
 }
 
@@ -11,13 +10,16 @@ CGUITextElement::~CGUITextElement()
 
 }
 
-void	CGUITextElement::Render( const glm::vec2& screenSize )
+void	CGUITextElement::Render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize)
 {
-	glm::vec2 size = TextRender.GetTextSize( Text ) * Scale;
-	glm::vec2 pos = CreatePos( size, screenSize );
+	textSize = printer.getTextSize( Text ) * Scale;
+	glm::vec2 pos = CreatePos( textSize, screenSize );
 
-	TextRender.SetColor( Color );
-	TextRender.Print( pos, Text, Scale );
+	ctx.setColor( Color );
+	ctx.pushMatrix();
+	ctx.scale({ Scale, 1.0f });
+	printer.print(ctx, pos, Text);
+	ctx.popMatrix();
 }
 
 void	CGUITextElement::Update( const float fTD )
@@ -32,7 +34,7 @@ void	CGUITextElement::SetText( const std::string& text )
 
 const glm::vec2	CGUITextElement::GetSize() const
 {
-	return TextRender.GetTextSize( Text ) * Scale;
+	return textSize;
 }
 
 const std::string	CGUITextElement::GetText() const

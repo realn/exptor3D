@@ -1,9 +1,8 @@
-#include "GUIScreen.h"
+	#include "GUIScreen.h"
 #include "StrEx.h"
 #include <fstream>
 
-CGUIScreen::CGUIScreen( CTextRenderer& textRender ) :
-	TextRender( textRender )
+CGUIScreen::CGUIScreen()
 {
 
 }
@@ -15,14 +14,10 @@ CGUIScreen::~CGUIScreen()
 	ElementList.clear();
 }
 
-void	CGUIScreen::Render( const glm::vec2& screenSize )
+void	CGUIScreen::Render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize )
 {
-	TextRender.StartPrint( screenSize.x, screenSize.y );
-
 	for( unsigned i = 0; i < ElementList.size(); i++ )
-		ElementList[i]->Render( screenSize );
-
-	TextRender.EndPrint();
+		ElementList[i]->Render(ctx, printer, screenSize );
 }
 
 void	CGUIScreen::Update( const float fTD )
@@ -38,7 +33,7 @@ void	CGUIScreen::SetMargin( const glm::vec2& margin )
 
 CGUITextElement*	CGUIScreen::AddTextElement( const std::string& text )
 {
-	auto pElement = new CGUITextElement( TextRender );
+	auto pElement = new CGUITextElement();
 
 	if( !text.empty() )
 		pElement->SetText( text );

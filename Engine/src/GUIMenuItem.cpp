@@ -42,13 +42,13 @@ void CMenuItem::Update( const float fTD )
 	}
 }
 
-void CMenuItem::Render( CTextRenderer &TText )
+void CMenuItem::Render(gui::RenderContext& ctx, gui::TextPrinter& printer)
 {
 	if( Size.x == 0.0f || Size.y == 0.0f )
-		Size = TText.GetTextSize( Title );
+		Size = printer.getTextSize(Title);
 
-	TText.SetColor( Color, Color, Color );
-	TText.Print( Pos.x + Scroll.x * ScrollStep.x, Pos.y + Scroll.y * ScrollStep.y, this->Title, 1.0f, 1.0f );
+	ctx.setColor({ Color, Color, Color, 1.0f });
+	printer.print(ctx, Pos + Scroll * ScrollStep, Title);
 }
 
 void	CMenuItem::SetTitle( const std::string& title )

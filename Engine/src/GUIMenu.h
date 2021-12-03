@@ -2,7 +2,8 @@
 
 #include <glm/vec2.hpp>
 
-#include "TextureText.h"
+#include "GUITextPrinter.h"
+#include "GUIRenderContext.h"
 
 enum class MENU_TAG
 {
@@ -45,7 +46,7 @@ public:
 	CMenuItem( const std::string& id );
 
 	void	Update( const float fTD );
-	void	Render( CTextRenderer& TText );
+	void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer);
 
 	void	SetTitle( const std::string& title );
 	void	SetType( const MENU_ITEM_TYPE type );
@@ -78,7 +79,7 @@ public:
 	~CMenu();
 
 	void	Update( const float fTD );
-	void	Render( CTextRenderer& TText );
+	void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer);
 
 	void	EventMouseMove( const glm::vec2& pos );
 	void	EventMoveUp();
@@ -101,8 +102,6 @@ public:
 class CMenuMain
 {
 private:
-	CTextRenderer& TextRender;
-
 	std::vector<CMenu*> List;
 	std::vector<CMenu*>	Stack;
 	std::string file;
@@ -115,7 +114,7 @@ private:
 	const MENU_TAG GetMenuType( std::string str );
 
 public:
-	CMenuMain( CTextRenderer& textRender, const float aspectRatio );
+	CMenuMain(const float aspectRatio );
 	~CMenuMain();
 
 	void	EventMouseMove( const glm::vec2& pos );
@@ -124,7 +123,7 @@ public:
 	const bool	EventEnter( std::string& outScript );
 
 	void	Update( const float fTD );
-	void	Render();
+	void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer);
 
 	bool	Load( const std::string& filename );
 	void	Free();

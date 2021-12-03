@@ -38,11 +38,10 @@ const int ConFuncCount = 27;
 */
 CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRatio, const unsigned height ) :
 	Mode( GUI_MODE::MENU ),
-	TextRender( texManager ),
+	textPrinter(texManager.Get("Font.tga")),
 	ScriptParser( scriptParser ),
-	Menu( TextRender, aspectRatio ),
-	Console( scriptParser, TextRender, height, aspectRatio ),
-	Screen( TextRender ),
+	Menu(aspectRatio),
+	Console( scriptParser, height, aspectRatio ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),
 	FrameTime( 0.0f ),
@@ -178,51 +177,52 @@ void CGUIMain::Update(const float fTD)
 
 void CGUIMain::Render()
 {
+	auto ctx = gui::RenderContext();
 	switch (Mode)
 	{
 	case GUI_MODE::MENU:
 		{
-			this->Menu.Render();
+			this->Menu.Render(ctx, textPrinter);
 
 			float height = (float)ScreenHeight;
 			float width = height * AspectRatio;
 
-			glPushAttrib( GL_ENABLE_BIT );
-			glPushMatrix();
+			//glPushAttrib( GL_ENABLE_BIT );
+			//glPushMatrix();
 
-			{
-				glMatrixMode(GL_PROJECTION);
-				auto mat = glm::ortho(0.0f, width, height, 0.0f);
-				glLoadMatrixf(glm::value_ptr(mat));
-				glMatrixMode(GL_MODELVIEW);
-			}
+			//{
+			//	glMatrixMode(GL_PROJECTION);
+			//	auto mat = glm::ortho(0.0f, width, height, 0.0f);
+			//	glLoadMatrixf(glm::value_ptr(mat));
+			//	glMatrixMode(GL_MODELVIEW);
+			//}
 
-			glEnable( GL_TEXTURE_2D );
-			glEnable( GL_BLEND );
-			glDisable( GL_CULL_FACE );
-			glDisable( GL_DEPTH_TEST );
-			glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-			glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-			Cursor->Activate();
+			//glEnable( GL_TEXTURE_2D );
+			//glEnable( GL_BLEND );
+			//glDisable( GL_CULL_FACE );
+			//glDisable( GL_DEPTH_TEST );
+			//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+			//glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+			//Cursor->Activate();
 
-			glBegin( GL_TRIANGLE_STRIP );
-				glNormal3f( 0.0f, 0.0f, 1.0f );
+			//glBegin( GL_TRIANGLE_STRIP );
+			//	glNormal3f( 0.0f, 0.0f, 1.0f );
 
-				glTexCoord2f( 0.0f, 0.0f );
-				glVertex3f( (float)cursorX, (float)cursorY + 50.0f, -0.1f );
+			//	glTexCoord2f( 0.0f, 0.0f );
+			//	glVertex3f( (float)cursorX, (float)cursorY + 50.0f, -0.1f );
 
-				glTexCoord2f( 0.0f, 1.0f );
-				glVertex3f( (float)cursorX, (float)cursorY, -0.1f );
+			//	glTexCoord2f( 0.0f, 1.0f );
+			//	glVertex3f( (float)cursorX, (float)cursorY, -0.1f );
 
-				glTexCoord2f( 1.0f, 0.0f );
-				glVertex3f( (float)cursorX + 50.0f, (float)cursorY + 50.0f, -0.1f );
+			//	glTexCoord2f( 1.0f, 0.0f );
+			//	glVertex3f( (float)cursorX + 50.0f, (float)cursorY + 50.0f, -0.1f );
 
-				glTexCoord2f( 1.0f, 1.0f );
-				glVertex3f( (float)cursorX + 50.0f, (float)cursorY, -0.1f );
-			glEnd();
+			//	glTexCoord2f( 1.0f, 1.0f );
+			//	glVertex3f( (float)cursorX + 50.0f, (float)cursorY, -0.1f );
+			//glEnd();
 
-			glPopMatrix();
-			glPopAttrib();
+			//glPopMatrix();
+			//glPopAttrib();
 		}
 		break;
 
@@ -261,52 +261,52 @@ void CGUIMain::Render()
 			float height = (float)ScreenHeight;
 			float width = height * AspectRatio;
 
-			Screen.Render( glm::vec2( width, height ) );
+			Screen.Render( ctx, textPrinter, glm::vec2( width, height ) );
 
-			float h = 32.0f;
-			float w = h * AspectRatio;
+			//float h = 32.0f;
+			//float w = h * AspectRatio;
 
-			float x = w / 2.0f;
-			float y = h / 2.0f;
+			//float x = w / 2.0f;
+			//float y = h / 2.0f;
 
-			glPushAttrib( GL_ENABLE_BIT );
-			glPushMatrix();
+			//glPushAttrib( GL_ENABLE_BIT );
+			//glPushMatrix();
 
 
-			{
-				glMatrixMode(GL_PROJECTION);
-				auto mat = glm::ortho(0.0f, w, 0.0f, h);
-				glLoadMatrixf(glm::value_ptr(mat));
-				glMatrixMode(GL_MODELVIEW);
-			}
+			//{
+			//	glMatrixMode(GL_PROJECTION);
+			//	auto mat = glm::ortho(0.0f, w, 0.0f, h);
+			//	glLoadMatrixf(glm::value_ptr(mat));
+			//	glMatrixMode(GL_MODELVIEW);
+			//}
 
-			glLoadIdentity();
+			//glLoadIdentity();
 
-			CH->Activate();
-			
-			glEnable( GL_BLEND );
-			glEnable( GL_TEXTURE_2D );
-			glDisable( GL_DEPTH_TEST );
-			glDisable( GL_CULL_FACE );
-			glBlendFunc( GL_ONE, GL_ONE );
+			//CH->Activate();
+			//
+			//glEnable( GL_BLEND );
+			//glEnable( GL_TEXTURE_2D );
+			//glDisable( GL_DEPTH_TEST );
+			//glDisable( GL_CULL_FACE );
+			//glBlendFunc( GL_ONE, GL_ONE );
 
-			glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-			glBegin( GL_TRIANGLE_STRIP );
-				glTexCoord2f( 1.0f, 0.0f );
-				glVertex3f( x + 1.0f, y - 1.0f, 0.0f );
+			//glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+			//glBegin( GL_TRIANGLE_STRIP );
+			//	glTexCoord2f( 1.0f, 0.0f );
+			//	glVertex3f( x + 1.0f, y - 1.0f, 0.0f );
 
-				glTexCoord2f( 0.0f, 0.0f );
-				glVertex3f( x - 1.0f, y - 1.0f, 0.0f );
+			//	glTexCoord2f( 0.0f, 0.0f );
+			//	glVertex3f( x - 1.0f, y - 1.0f, 0.0f );
 
-				glTexCoord2f( 1.0f, 1.0f );
-				glVertex3f( x + 1.0f, y + 1.0f, 0.0f );
+			//	glTexCoord2f( 1.0f, 1.0f );
+			//	glVertex3f( x + 1.0f, y + 1.0f, 0.0f );
 
-				glTexCoord2f( 0.0f, 1.0f );
-				glVertex3f( x - 1.0f, y + 1.0f, 0.0f );
-			glEnd();
+			//	glTexCoord2f( 0.0f, 1.0f );
+			//	glVertex3f( x - 1.0f, y + 1.0f, 0.0f );
+			//glEnd();
 
-			glPopMatrix();
-			glPopAttrib();
+			//glPopMatrix();
+			//glPopAttrib();
 		}
 		break;
 
@@ -314,7 +314,35 @@ void CGUIMain::Render()
 		break;
 	}
 
-	Console.Render();
+	Console.Render(ctx, textPrinter);
+
+	glPushAttrib( GL_ENABLE_BIT );
+	glPushMatrix();
+
+	float height = (float)ScreenHeight;
+	float width = height * AspectRatio;
+
+	{
+		glMatrixMode(GL_PROJECTION);
+		auto mat = glm::ortho(0.0f, width, height, 0.0f);
+		glLoadMatrixf(glm::value_ptr(mat));
+		glMatrixMode(GL_MODELVIEW);
+	}
+	glLoadIdentity();
+
+	glEnable( GL_TEXTURE_2D );
+	glEnable( GL_BLEND );
+	//glEnable(GL_COLOR_MATERIAL);
+	glDisable( GL_CULL_FACE );
+	glDisable( GL_DEPTH_TEST );
+	glDisable(GL_LIGHTING);
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+
+	ctx.render();
+
+	glPopMatrix();
+	glPopAttrib();
 }
 
 
@@ -404,10 +432,10 @@ void CGUIMain::SendMsg( guiScrMsg msg )
 // DO TESTÓW: metoda bezpoœrednio rysuje na ekranie tekst: NIE PRZEZNACZONA DO U¯YWANIA POZA DEBUG'iem
 void CGUIMain::Print( float x, float y, std::string text, float ScaleX, float ScaleY )
 {
-	TextRender.StartPrint(800.0f, 600.0f);
-	TextRender.SetColor( 1.0f, 1.0f, 1.0f );
-	TextRender.Print( x, y, text, ScaleX, ScaleY );
-	TextRender.EndPrint();
+	//TextRender.StartPrint(800.0f, 600.0f);
+	//TextRender.SetColor( 1.0f, 1.0f, 1.0f );
+	//TextRender.Print( x, y, text, ScaleX, ScaleY );
+	//TextRender.EndPrint();
 }
 
 void	CGUIMain::PrintConsole( const std::string& text )

@@ -19,9 +19,9 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 
 #include "Log.h"
 
-#include "TextureText.h"
 #include "ScriptParser.h"
 
+#include "GUITextPrinter.h"
 #include "GUIMenu.h"
 #include "GUIConsole.h"
 #include "GUIScreen.h"
@@ -68,10 +68,10 @@ class CGUIMain :
 {
 private:
 	event::Mapper eventMapper;
+	gui::TextPrinter textPrinter;
 
-	gfx::Texture *CH;
-	CTextRenderer TextRender;
-	gfx::Texture *Cursor;
+	std::shared_ptr<gfx::Texture> CH;
+	std::shared_ptr<gfx::Texture> Cursor;
 
 	GUI_MODE	Mode;
 	CMenuMain	Menu;

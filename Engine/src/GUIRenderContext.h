@@ -5,12 +5,13 @@
 
 #include <glm/matrix.hpp>
 
+#include "GUIMesh.h"
+
 namespace gfx {
   class Texture;
 }
 
 namespace gui {
-  class Mesh;
   class RenderContext {
   public:
     using textureptr_t = std::shared_ptr<gfx::Texture>;

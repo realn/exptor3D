@@ -3,7 +3,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "TextureText.h"
+#include "GUITextPrinter.h"
+#include "GUIRenderContext.h"
 
 enum class SCREEN_ELEMENT_TYPE
 {
@@ -32,9 +33,9 @@ protected:
 	SCREEN_ELEMENT_TYPE	Type;
 	ELEMENT_HALIGN	AlignH;
 	ELEMENT_VALIGN	AlignV;
-	glm::vec2	Margin;
-	glm::vec2	Scale;
-	glm::vec4	Color;
+	glm::vec2	Margin = glm::vec2(0.0f);
+	glm::vec2	Scale = glm::vec2(1.0f);
+	glm::vec4	Color = glm::vec4(1.0f);
 
 protected:
 	CGUIElement( const SCREEN_ELEMENT_TYPE type );
@@ -42,7 +43,7 @@ protected:
 public:
 	virtual ~CGUIElement();
 
-	virtual void	Render( const glm::vec2& screenSize ) = 0;
+	virtual void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) = 0;
 	virtual void	Update( const float fTD ) = 0;
 
 	void	SetAlign( const ELEMENT_HALIGN alignH, const ELEMENT_VALIGN alignV );
@@ -65,14 +66,14 @@ class CGUITextElement :
 	public CGUIElement
 {
 protected:
-	CTextRenderer&	TextRender;
 	std::string		Text;
+	glm::vec2 textSize;
 
 public:
-	CGUITextElement( CTextRenderer& textRender );
+	CGUITextElement();
 	virtual ~CGUITextElement();
 
-	virtual void	Render( const glm::vec2& screenSize ) override;
+	virtual void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) override;
 	virtual void	Update( const float fTD ) override;
 
 	void	SetText( const std::string& text );
@@ -100,16 +101,15 @@ public:
 class CGUIScreen
 {
 private:
-	CTextRenderer&	TextRender;
 	std::vector<CGUIElement*>	ElementList;
 	std::vector<CValueSync>		SyncList;
 	glm::vec2	Margin;
 
 public:
-	CGUIScreen( CTextRenderer& textRender );
+	CGUIScreen();
 	~CGUIScreen();
 
-	void	Render( const glm::vec2& screenSize );
+	void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize );
 	void	Update( const float fTD );
 
 	void	SetMargin( const glm::vec2& margin );

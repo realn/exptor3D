@@ -46,18 +46,22 @@ void	CMenu::Update( const float fTD )
 	}
 }
 
-void CMenu::Render( CTextRenderer& TText )
+void CMenu::Render(gui::RenderContext& ctx, gui::TextPrinter& printer)
 {
-	TText.StartPrint( Size.x, Size.y );
-	TText.SetColor( 1.0f, 1.0f, 1.0f );
+	ctx.pushMatrix();
+	ctx.setColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
-	glTranslatef( Scroll * Size.x, 0.0f, 0.0f );
-	TText.Print( TitlePos.x, TitlePos.y, Title, 2.5f, 2.5f );
+	ctx.translate({Scroll * Size.x, 0.0f, 0.0f});
 
-	for( unsigned i = 0; i < List.size(); i++ )
-		List[i]->Render( TText );
+	ctx.pushMatrix();
+	ctx.scale({ 2.5f, 2.5f, 1.0f });
+	printer.print(ctx, TitlePos, Title);
+	ctx.popMatrix();
 
-	TText.EndPrint();
+	for (unsigned i = 0; i < List.size(); i++)
+		List[i]->Render(ctx, printer);
+
+	ctx.popMatrix();
 }
 
 void CMenu::EventMouseMove( const glm::vec2& pos )

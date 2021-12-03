@@ -2,18 +2,17 @@
 
 #include <CBGL/COpenGL.h>
 
-#include "GUIMenu.h"
-
+#include "StrEx.h"
 #include "Log.h"
+#include "GUIMenu.h"
 
 
 /*===========================
 	KLASA CMenuMain
 	Steruje g³ównym menu gry.
 ===========================*/
-CMenuMain::CMenuMain( CTextRenderer& textRender, const float aspectRatio ) : 
+CMenuMain::CMenuMain(const float aspectRatio ) : 
 	MenuToShow( nullptr ),
-	TextRender( textRender ),
 	AspectRatio( aspectRatio ),
 	file("-")
 {
@@ -54,12 +53,12 @@ void CMenuMain::Update( const float fTD )
 	pMenu->Update( fTD );
 }
 
-void CMenuMain::Render()
+void CMenuMain::Render(gui::RenderContext& ctx, gui::TextPrinter& printer)
 {
 	if( Stack.empty() )
 		return;
 
-	Stack.back()->Render( TextRender );
+	Stack.back()->Render(ctx, printer);
 }
 
 void	CMenuMain::Push( const std::string& id )

@@ -63,9 +63,9 @@ namespace gui {
   void RenderContext::addTriangle(glm::vec3 v1, glm::vec2 t1, glm::vec3 v2, glm::vec2 t2, glm::vec3 v3, glm::vec2 t3) {
     auto& mesh = getMesh();
 
-    mesh.add({ matrixCurrent * glm::vec4(v1, 1.0f), t1, colorCurrent });
-    mesh.add({ matrixCurrent * glm::vec4(v2, 1.0f), t2, colorCurrent });
-    mesh.add({ matrixCurrent * glm::vec4(v3, 1.0f), t3, colorCurrent });
+    mesh.add({ glm::vec3(matrixCurrent * glm::vec4(v1, 1.0f)), t1, colorCurrent });
+    mesh.add({ glm::vec3(matrixCurrent * glm::vec4(v2, 1.0f)), t2, colorCurrent });
+    mesh.add({ glm::vec3(matrixCurrent * glm::vec4(v3, 1.0f)), t3, colorCurrent });
   }
 
   void RenderContext::addQuad(glm::vec3 v1, glm::vec2 t1, glm::vec3 v2, glm::vec2 t2, glm::vec3 v3, glm::vec2 t3, glm::vec3 v4, glm::vec2 t4) {
@@ -79,10 +79,10 @@ namespace gui {
     auto v3 = v1 + glm::vec3(size, 0.0f);
     auto v4 = v1 + glm::vec3(0.0f, size.y, 0.0f);
 
-    auto t1 = glm::vec3(tpos, 0.0f);
-    auto t2 = t1 + glm::vec3(tsize.x, 0.0f, 0.0f);
-    auto t3 = t1 + glm::vec3(tsize, 0.0f);
-    auto t4 = t1 + glm::vec3(0.0f, tsize.y, 0.0f);
+    auto t1 = tpos;
+    auto t2 = t1 + glm::vec2(tsize.x, 0.0f);
+    auto t3 = t1 + tsize;
+    auto t4 = t1 + glm::vec2(0.0f, tsize.y);
 
     addQuad(v1, t1, v2, t2, v3, t3, v4, t4);
   }
@@ -95,7 +95,7 @@ namespace gui {
 
   Mesh& RenderContext::getMesh() {
     if (meshes.empty()) {
-      meshes.push_back(std::move(Mesh(textureCurrent)));
+      meshes.push_back(Mesh(textureCurrent));
       return *meshes.rbegin();
     }
 
@@ -103,7 +103,7 @@ namespace gui {
     if (mesh.getTexture() == textureCurrent)
       return mesh;
 
-    meshes.push_back(std::move(Mesh(textureCurrent)));
+    meshes.push_back(Mesh(textureCurrent));
     return *meshes.rbegin();
   }
 }

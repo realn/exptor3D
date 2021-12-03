@@ -186,7 +186,7 @@ private:
 	CUpdateList			UpdateList;
 	CCollisionManager	CollisionMng;
 
-	gfx::Texture*		Tex[3];
+	std::shared_ptr<gfx::Texture>		Tex[3];
 
 	CPlayer	Player;
 	std::vector<CItem*>	Items;

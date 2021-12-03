@@ -53,9 +53,6 @@
     <ClCompile Include="src\gfx_TextureRepository.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextureText.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\gui.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
@@ -98,6 +95,15 @@
     <ClCompile Include="src\event_InputMapper.cpp">
       <Filter>Source Files\Events</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUIMesh.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUIRenderContext.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUITextPrinter.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -136,9 +142,6 @@
     <ClInclude Include="src\gfx_TextureRepository.h">
       <Filter>Source Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\TextureText.h">
-      <Filter>Source Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\gui.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
@@ -174,6 +177,18 @@
     </ClInclude>
     <ClInclude Include="src\event_InputMapper.h">
       <Filter>Source Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUIVertex.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUIMesh.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUIRenderContext.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUITextPrinter.h">
+      <Filter>Source Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

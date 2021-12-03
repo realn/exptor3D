@@ -10,7 +10,7 @@ namespace gfx {
 
 	TextureRepository::~TextureRepository() = default;
 
-	Texture* TextureRepository::Get(std::string filename) {
+	std::shared_ptr<Texture> TextureRepository::Get(std::string filename) {
 		if (filename.empty()) {
 			error("Pusty ci¹g znaków!");
 			return nullptr;
@@ -20,22 +20,21 @@ namespace gfx {
 
 		auto it = std::find_if(textures.begin(), textures.end(), [&](textureptr_t& texture) {return texture->GetFile() == path; });
 		if (it != textures.end()) {
-			return it->get();
+			return *it;
 		}
 
-		auto texture = std::make_unique<Texture>(path);
+		auto texture = std::make_shared<Texture>(path);
 		if (!texture->isLoaded()) {
 			error("Nieudane za³adowanie tekstury: " + filename);
 			return nullptr;
 		}
 
-		auto result = texture.get();
-		addTexture(std::move(texture));
+		addTexture(texture);
 		log("Dodano now¹ teksture: " + filename);
-		return result;
+		return texture;
 	}
 
-	void TextureRepository::addTexture(std::unique_ptr<Texture> texture) {
+	void TextureRepository::addTexture(std::shared_ptr<Texture> texture) {
 		textures.push_back(std::move(texture));
 	}
 }

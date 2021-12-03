@@ -5,9 +5,8 @@
 
 #include "GUIConsole.h"
 
-CGUIConsole::CGUIConsole( CScriptParser& scriptParser, CTextRenderer& textRender, const unsigned height, const float aspectRatio ) :
+CGUIConsole::CGUIConsole( CScriptParser& scriptParser, const unsigned height, const float aspectRatio ) :
 	ScriptParser( scriptParser ),
-	TextRender( textRender ),
 	ScreenHeight( height ),
 	AspectRatio( aspectRatio ),
 	Visible( false ),
@@ -16,58 +15,58 @@ CGUIConsole::CGUIConsole( CScriptParser& scriptParser, CTextRenderer& textRender
 
 }
 
-void	CGUIConsole::Render()
+void	CGUIConsole::Render(gui::RenderContext& ctx, gui::TextPrinter& printer)
 {
-	if( !Visible && Scroll <= 0.0f )
-		return;
+	//if( !Visible && Scroll <= 0.0f )
+	//	return;
 
-	glPushAttrib( GL_ENABLE_BIT );
-	glPushMatrix();
+	//glPushAttrib( GL_ENABLE_BIT );
+	//glPushMatrix();
 
-	{
-		glMatrixMode(GL_PROJECTION);
-		auto mat = glm::ortho(0.0f, 1.0f, 1.0f, 0.0f);
-		glLoadMatrixf(glm::value_ptr(mat));
-		glMatrixMode(GL_MODELVIEW);
-	}
-	glLoadIdentity();
+	//{
+	//	glMatrixMode(GL_PROJECTION);
+	//	auto mat = glm::ortho(0.0f, 1.0f, 1.0f, 0.0f);
+	//	glLoadMatrixf(glm::value_ptr(mat));
+	//	glMatrixMode(GL_MODELVIEW);
+	//}
+	//glLoadIdentity();
 
-	glEnable( GL_BLEND );
-	glDisable( GL_TEXTURE_2D );
-	glDisable( GL_DEPTH_TEST );
+	//glEnable( GL_BLEND );
+	//glDisable( GL_TEXTURE_2D );
+	//glDisable( GL_DEPTH_TEST );
 
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glColor4f( 0.0f, 0.0f, 0.0f, 0.8f );
+	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	//glColor4f( 0.0f, 0.0f, 0.0f, 0.8f );
 
-	glBegin( GL_TRIANGLE_STRIP );
-	glVertex2f( 0.0f, -1.0f + Scroll );
-	glVertex2f( 1.0f, -1.0f + Scroll );
-	glVertex2f( 0.0f, -0.5f + Scroll );
-	glVertex2f( 1.0f, -0.5f + Scroll );
-	glEnd();
+	//glBegin( GL_TRIANGLE_STRIP );
+	//glVertex2f( 0.0f, -1.0f + Scroll );
+	//glVertex2f( 1.0f, -1.0f + Scroll );
+	//glVertex2f( 0.0f, -0.5f + Scroll );
+	//glVertex2f( 1.0f, -0.5f + Scroll );
+	//glEnd();
 
-	glPopMatrix();
-	glPopAttrib();
+	//glPopMatrix();
+	//glPopAttrib();
 
-	float height = (float)ScreenHeight;
-	float width = height * AspectRatio;
+	//float height = (float)ScreenHeight;
+	//float width = height * AspectRatio;
 
-	float halfY = height / 2.0f;
+	//float halfY = height / 2.0f;
 
-	TextRender.StartPrint( width, height );
-	TextRender.SetColor( 1.0f, 1.0f, 1.0f );
+	//TextRender.StartPrint( width, height );
+	//TextRender.SetColor( 1.0f, 1.0f, 1.0f );
 
-	glm::vec2 pos( 0.0f, -halfY + Scroll * height - TextRender.GetTextSize( CurrentText ).y );
-	TextRender.Print( pos, CurrentText );
-	pos.y -= TextRender.GetTextSize( CurrentText ).y;
+	//glm::vec2 pos( 0.0f, -halfY + Scroll * height - TextRender.GetTextSize( CurrentText ).y );
+	//TextRender.Print( pos, CurrentText );
+	//pos.y -= TextRender.GetTextSize( CurrentText ).y;
 
-	for( auto it = TextLog.rbegin(); it != TextLog.rend() && pos.y > -halfY; it++ )
-	{
-		TextRender.Print( pos, *it );
-		pos.y -= TextRender.GetTextSize( *it ).y;
-	}
+	//for( auto it = TextLog.rbegin(); it != TextLog.rend() && pos.y > -halfY; it++ )
+	//{
+	//	TextRender.Print( pos, *it );
+	//	pos.y -= TextRender.GetTextSize( *it ).y;
+	//}
 
-	TextRender.EndPrint();
+	//TextRender.EndPrint();
 }
 
 void	CGUIConsole::Update( const float fTD )

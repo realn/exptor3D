@@ -28,7 +28,7 @@ namespace gfx {
   struct Model::Material {
     cb::string name;
     glm::vec4 color = glm::vec4(1.0f);
-    gfx::Texture* texture = nullptr;
+    std::shared_ptr<gfx::Texture> texture;
   };
 
   struct Model::Mesh {

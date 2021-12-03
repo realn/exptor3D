@@ -1,13 +1,14 @@
 #pragma once
 
-#include "TextureText.h"
 #include "ScriptParser.h"
+
+#include "GUITextPrinter.h"
+#include "GUIRenderContext.h"
 
 class CGUIConsole
 {
 private:
 	CScriptParser&	ScriptParser;
-	CTextRenderer&	TextRender;
 	unsigned	ScreenHeight;
 	float		AspectRatio;
 	float		Scroll;
@@ -16,9 +17,9 @@ private:
 	std::string	CurrentText;
 
 public:
-	CGUIConsole( CScriptParser& scriptParser, CTextRenderer& textRender, const unsigned height, const float aspectRatio );
+	CGUIConsole( CScriptParser& scriptParser, const unsigned height, const float aspectRatio );
 
-	void	Render();
+	void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer);
 	void	Update( const float fTD );
 
 	void	SetVisible( const bool set, const bool animate );

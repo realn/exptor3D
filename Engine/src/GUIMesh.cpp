@@ -2,6 +2,7 @@
 #include <CBGL/COpenGL.h>
 #include <CBGL/Buffer.h>
 
+#include "gfx_Texture.h"
 #include "GUIVertex.h"
 #include "GUIMesh.h"
 
@@ -12,9 +13,18 @@ namespace gui {
       auto p = reinterpret_cast<const cb::byte*>(ptr);
       return reinterpret_cast<const void*>(ptr + offset);
     }
+
+    template<class _Type>
+    const void* ptr(const _Type* data) {
+      return reinterpret_cast<const void*>(data);
+    }
+
+    const void* offset(size_t off = 0) {
+      return reinterpret_cast<const void*>(off);
+    }
   }
 
-  Mesh::Mesh(std::shared_ptr<gfx::Texture> texture) {
+  Mesh::Mesh(std::shared_ptr<gfx::Texture> texture) : texture(texture) {
   }
 
   Mesh::~Mesh() = default;
@@ -24,19 +34,27 @@ namespace gui {
   }
 
   void Mesh::render() const {
+    if (vertices.empty())
+      return;
+
+    buffer = std::make_shared<cb::gl::Buffer>();
+    buffer->setData(vertices);
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    auto ptr = vertices.data();
 
-    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), ptroffset(ptr));
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), ptroffset(ptr, sizeof(glm::vec3)));
-    glColorPointer(4, GL_FLOAT, sizeof(Vertex), ptroffset(ptr, sizeof(glm::vec3) + sizeof(glm::vec2)));
+    auto bbind = cb::gl::bind(*buffer);
+    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), offset());
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), offset(sizeof(glm::vec3)));
+    glColorPointer(4, GL_FLOAT, sizeof(Vertex), offset(sizeof(glm::vec2) + sizeof(glm::vec3)));
 
     if (texture) {
-      auto tbind = cb::gl::bind(*texture);
+      texture->Activate();
+      glEnable(GL_TEXTURE_2D);
       cb::gl::drawArrays(cb::gl::PrimitiveType::TRIANGLES, vertices.size());
+      glDisable(GL_TEXTURE_2D);
     }
     else
       cb::gl::drawArrays(cb::gl::PrimitiveType::TRIANGLES, vertices.size());

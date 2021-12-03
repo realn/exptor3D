@@ -63,7 +63,7 @@ class CEffectSprite :
 {
 private:
 	glm::vec3 Pos;
-	gfx::Texture* Texture;
+	std::shared_ptr<gfx::Texture> Texture;
 	float Alpha;
 	float Speed;
 	float C[3];
