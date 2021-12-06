@@ -181,7 +181,7 @@ void	CApplication::UpdateMouse()
 	//CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEDIF, diffX, diffY );
 	//EventManager.AddEvent( *((CEvent*)&MouseEvent) );
 
-	GUI->getScreen().OnVarChanged("debugValue", cb::toUtf8(cb::toStr(diffX)));
+	GUI->getScreen().getValues().onVarChanged("debugValue", cb::toUtf8(cb::toStr(diffX)));
 	window->warpMouse({ (int)halfScreenX, (int)halfScreenY });
 	cb::sdl::getRelativeMouseState();
 }
@@ -319,7 +319,9 @@ void	CApplication::Update( const float fTD )
 
 void	CApplication::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	cb::gl::clearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+	cb::gl::clear(cb::gl::ClearBuffers(cb::gl::ClearBuffer::COLOR) | cb::gl::ClearBuffer::DEPTH);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if( State == GAME_STATE::LEVEL && !GUI->IsMenuAnimating() )
 	{

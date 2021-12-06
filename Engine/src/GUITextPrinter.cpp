@@ -42,14 +42,15 @@ namespace gui {
 
 			auto& glyph = glyphs[idx];
 
-			ctx.addRect(p, glyphSize, glyph.tpos, glyph.tsize);
-			p += advance;
+			ctx.addRect(p, fontInfo.getGlyphSize(item), glyph.tpos, glyph.tsize);
+			p += fontInfo.getGlyphAdvance(item);
 		}
 
 		ctx.popTexture();
 	}
 
-	const glm::vec2 TextPrinter::getTextSize(const std::string& text) const {
-		return glm::vec2(advance.x * text.size() + glyphSize.x - advance.x, glyphSize.y - advance.y);
+	const core::FontInfo& TextPrinter::getFontInfo() const {
+		return fontInfo;
 	}
+
 }

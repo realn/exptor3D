@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp" />
+    <ClCompile Include="src\core_FontInfo.cpp" />
     <ClCompile Include="src\core_object.cpp" />
     <ClCompile Include="src\event_InputMapper.cpp" />
     <ClCompile Include="src\event_Manager.cpp" />
@@ -28,15 +29,15 @@
     <ClCompile Include="src\FileParser.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\GUIConsole.cpp" />
-    <ClCompile Include="src\GUIMenu.cpp" />
-    <ClCompile Include="src\GUIMenuItem.cpp" />
-    <ClCompile Include="src\GUIMenuMain.cpp" />
+    <ClCompile Include="src\gui_Element.cpp" />
+    <ClCompile Include="src\gui_Menu.cpp" />
+    <ClCompile Include="src\gui_MenuItem.cpp" />
+    <ClCompile Include="src\gui_MainMenu.cpp" />
     <ClCompile Include="src\GUIMesh.cpp" />
     <ClCompile Include="src\GUIRenderContext.cpp" />
-    <ClCompile Include="src\GUIScreen.cpp" />
-    <ClCompile Include="src\GUIScreenElement.cpp" />
-    <ClCompile Include="src\GUIScreenTextElement.cpp" />
-    <ClCompile Include="src\GUIScreenValueSync.cpp" />
+    <ClCompile Include="src\gui_Screen.cpp" />
+    <ClCompile Include="src\gui_TextElement.cpp" />
+    <ClCompile Include="src\gui_ValueSync.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshFuncs.cpp" />
@@ -49,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h" />
+    <ClInclude Include="src\core_FontInfo.h" />
     <ClInclude Include="src\core_object.h" />
     <ClInclude Include="src\EventInput.h" />
     <ClInclude Include="src\event_InputMapper.h" />
@@ -60,11 +62,16 @@
     <ClInclude Include="src\FileParser.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\GUIConsole.h" />
-    <ClInclude Include="src\GUIMenu.h" />
+    <ClInclude Include="src\gui_Element.h" />
+    <ClInclude Include="src\gui_Menu.h" />
     <ClInclude Include="src\GUIMesh.h" />
     <ClInclude Include="src\GUIRenderContext.h" />
-    <ClInclude Include="src\GUIScreen.h" />
+    <ClInclude Include="src\gui_Screen.h" />
     <ClInclude Include="src\GUIVertex.h" />
+    <ClInclude Include="src\gui_MainMenu.h" />
+    <ClInclude Include="src\gui_MenuItem.h" />
+    <ClInclude Include="src\gui_TextElement.h" />
+    <ClInclude Include="src\gui_ValueSync.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshFace.h" />

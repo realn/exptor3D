@@ -21,10 +21,11 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 
 #include "ScriptParser.h"
 
+#include "gui_MainMenu.h"
+#include "gui_Screen.h"
+
 #include "GUITextPrinter.h"
-#include "GUIMenu.h"
 #include "GUIConsole.h"
-#include "GUIScreen.h"
 
 enum class GUI_MODE
 {
@@ -63,8 +64,7 @@ struct guiScrMsg
 	float x, y;
 };
 
-class CGUIMain :
-	public event::IObserver
+class CGUIMain : public event::IObserver
 {
 private:
 	event::Mapper eventMapper;
@@ -74,9 +74,9 @@ private:
 	std::shared_ptr<gfx::Texture> Cursor;
 
 	GUI_MODE	Mode;
-	CMenuMain	Menu;
+	gui::MenuMain	menu;
+	gui::Screen screen;
 	CGUIConsole	Console;
-	CGUIScreen	Screen;
 	CScriptParser&	ScriptParser;
 
 	unsigned short Second;
@@ -107,10 +107,10 @@ private:
 	glm::vec2 currentMousePos = glm::vec2(0.0f);
 
 public:
-	CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRation, const unsigned height );
+	CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, float aspectRation, unsigned height );
 	~CGUIMain() override = default;
 
-	void	Update(const float fTD);
+	void	Update(float timeDelta);
 	void	Render();
 
 	void	ShowMenu( const std::string& strID );
@@ -135,11 +135,9 @@ public:
 
 	void	processEvent(const event::Event& event) override;
 
-	CGUIScreen& getScreen() { return Screen; }
+	gui::Screen& getScreen() { return screen; }
 
 private:
-	void	ParseMouseMove( const int x, const int y );
-
 	void eventMoveUp();
 	void eventMoveDown();
 	void eventEnter();

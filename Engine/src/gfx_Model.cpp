@@ -275,7 +275,7 @@ namespace gfx {
   }
 
   unsigned int Model::GetObjCount() {
-    return objects.size();
+    return static_cast<unsigned>(objects.size());
   }
 
   cb::string Model::getLogName() const {

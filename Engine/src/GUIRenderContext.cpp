@@ -4,6 +4,12 @@
 #include "GUIRenderContext.h"
 
 namespace gui {
+  void RenderContext::setProjectionMatrix(glm::mat4 matrix) {
+    matrixProjection = matrix;
+  }
+
+  glm::mat4 RenderContext::getProjectionMatrix() const { return matrixProjection; }
+
   void RenderContext::setTexture(textureptr_t texture) {
     textureCurrent = texture;
   }

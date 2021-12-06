@@ -4,38 +4,11 @@
 #include <CBCore/StringFunctions.h>
 #include <CBCore/StringConvert.h>
 
+#include "StrEx.h"
 #include "FileParser.h"
 
 namespace core {
   namespace {
-    auto whitespaceChars = std::vector<wchar_t>{L' ', L'\t', L'\r', L'\n'};
-    bool isWhitespace(wchar_t value) {
-      return std::find(whitespaceChars.begin(), whitespaceChars.end(), value) != whitespaceChars.end();
-    }
-
-    cb::string trimLeft(cb::string line) {
-      if (line.empty())
-        return cb::string();
-      while (isWhitespace(*line.begin())) {
-        line.erase(line.begin());
-      }
-      return line;
-    }
-
-    cb::string trimRight(cb::string line) {
-      if (line.empty())
-        return cb::string();
-      while (isWhitespace(*line.rbegin())) {
-        line.pop_back();
-      }
-      return line;
-    }
-
-    cb::string trim(cb::string line) {
-      if (line.empty())
-        return cb::string();
-      return trimRight(trimLeft(line));
-    }
 
     cb::string::size_type findNonQuoted(const cb::string& line, cb::string::value_type value, cb::string::size_type begpos = 0) {
       bool quote = false;
@@ -56,6 +29,18 @@ namespace core {
           return pos;
       }
       return cb::string::npos;
+    }
+
+    cb::string removeQuotes(cb::string text) {
+      if (text.empty())
+        return text;
+      if (text.front() == L'"')
+        text.erase(text.begin());
+      if (text.empty())
+        return text;
+      if (text.back() == L'"')
+        text.pop_back();
+      return text;
     }
 
     cb::string parseCmd(const cb::string& line) {
@@ -88,6 +73,7 @@ namespace core {
       do {
         endpos = findNonQuoted(line, ',', pos);
         auto item = line.substr(pos, endpos != cb::string::npos ? endpos - pos : endpos);
+        item = removeQuotes(item);
 
         result.push_back(trim(item));
         if (endpos != cb::string::npos)
@@ -140,48 +126,52 @@ namespace core {
     return args[index];
   }
 
-  float FileParser::getFloat(size_t index) const {
+  cb::utf8string FileParser::getArgUtf8(size_t index, cb::utf8string def) const {
+    return cb::toUtf8(getArg(index, cb::fromUtf8(def)));
+  }
+
+  float FileParser::getFloat(size_t index, float def) const {
     float result;
     if(!cb::fromStr(getArg(index), result))
-      return 0.0f;
+      return def;
     return result;
   }
 
-  cb::s32 FileParser::getInt(size_t index) const {
+  cb::s32 FileParser::getInt(size_t index, cb::s32 def) const {
     cb::s32 result;
     if (!cb::fromStr(getArg(index), result))
-      return 0;
+      return def;
     return result;
   }
 
-  cb::u32 FileParser::getUInt(size_t index) const {
+  cb::u32 FileParser::getUInt(size_t index, cb::u32 def) const {
     cb::u32 result;
     if (!cb::fromStr(getArg(index), result))
-      return 0;
+      return def;
     return result;
   }
 
-  glm::vec2 FileParser::getVec2FromArgs(size_t index) const {
+  glm::vec2 FileParser::getVec2FromArgs(size_t index, glm::vec2 def) const {
     return glm::vec2{
-      getFloat(index + 0),
-      getFloat(index + 1)
+      getFloat(index + 0, def.x),
+      getFloat(index + 1, def.y)
     };
   }
 
-  glm::vec3 FileParser::getVec3FromArgs(size_t index) const {
+  glm::vec3 FileParser::getVec3FromArgs(size_t index, glm::vec3 def) const {
     return glm::vec3{
-      getFloat(index + 0),
-      getFloat(index + 1),
-      getFloat(index + 2)
+      getFloat(index + 0, def.x),
+      getFloat(index + 1, def.y),
+      getFloat(index + 2, def.z)
     };
   }
 
-  glm::vec4 FileParser::getVec4FromArgs(size_t index) const {
+  glm::vec4 FileParser::getVec4FromArgs(size_t index, glm::vec4 def) const {
     return glm::vec4{
-      getFloat(index + 0),
-      getFloat(index + 1),
-      getFloat(index + 2),
-      getFloat(index + 3)
+      getFloat(index + 0, def.x),
+      getFloat(index + 1, def.y),
+      getFloat(index + 2, def.z),
+      getFloat(index + 3, def.w)
     };
   }
 }

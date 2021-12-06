@@ -1,43 +1,43 @@
-MENU=MainMenu
-MENUTITLE=Expert 3D Tournament
-MENUSIZE=600
-MENUMARGIN=40,80
-MENUSTEP=0,60
+MENU(MainMenu)
+MENUTITLE(Expert 3D Tournament)
+MENUSIZE(600)
+MENUMARGIN(40,80)
+MENUSTEP(0,60)
 
-MENUITEM=NewGame
-MENUITEMTITLE=Nowa Gra na Poziomie Testowym
-MENUITEMACTION=LoadLevel(newlevel.txt)
+MENUITEM(NewGame)
+MENUITEMTITLE("Nowa Gra na Poziomie Testowym")
+MENUITEMACTION("LoadLevel(newlevel.txt)")
 
-MENUITEM=Options
-MENUITEMTITLE=Opcje
-MENUITEMACTION=PushMenu(Options)
+MENUITEM(Options)
+MENUITEMTITLE("Opcje")
+MENUITEMACTION("PushMenu(Options)")
 
-MENUITEM=Exit
-MENUITEMTITLE=Wyjscie
-MENUITEMACTION=Quit
+MENUITEM(Exit)
+MENUITEMTITLE("Wyjscie")
+MENUITEMACTION("Quit")
 
-MENU=Options
-MENUTITLE=Opcje
-MENUSIZE=600
-MENUMARGIN=40,80
-MENUSTEP=0,60
+MENU(Options)
+MENUTITLE("Opcje")
+MENUSIZE(600)
+MENUMARGIN(40,80)
+MENUSTEP(0,60)
 
-MENUITEM=Reflections
-MENUITEMTITLE=Odbicia
-MENUITEMACTION=Reflection()
+MENUITEM(Reflections)
+MENUITEMTITLE("Odbicia")
+MENUITEMACTION("Reflection()")
 
-MENUITEM=MotionBlur
-MENUITEMTITLE=Motion Blur
-MENUITEMACTION=MotionBlur()
+MENUITEM(MotionBlur)
+MENUITEMTITLE("Motion Blur")
+MENUITEMACTION("MotionBlur()")
 
-MENUITEM=FullscreenOn
-MENUITEMTITLE=Gra na pelnym ekranie
-MENUITEMACTION=EnableFullScreen()
+MENUITEM(FullscreenOn)
+MENUITEMTITLE("Gra na pelnym ekranie")
+MENUITEMACTION("EnableFullScreen()")
 
-MENUITEM=FullscreenOff
-MENUITEMTITLE=Gra w okienku
-MENUITEMACTION=DisableFullScreen()
+MENUITEM(FullscreenOff)
+MENUITEMTITLE("Gra w okienku")
+MENUITEMACTION("DisableFullScreen()")
 
-MENUITEM=ReturnToMain
-MENUITEMTITLE=Powrot do menu
-MENUITEMACTION=PopMenu()
+MENUITEM(ReturnToMain)
+MENUITEMTITLE("Powrot do menu")
+MENUITEMACTION("PopMenu()")

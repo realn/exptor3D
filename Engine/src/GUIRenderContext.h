@@ -14,7 +14,14 @@ namespace gfx {
 namespace gui {
   class RenderContext {
   public:
+    RenderContext() = default;
+    RenderContext(const RenderContext&) = delete;
+    RenderContext(RenderContext&&) = default;
+
     using textureptr_t = std::shared_ptr<gfx::Texture>;
+
+    void setProjectionMatrix(glm::mat4 matrix);
+    glm::mat4 getProjectionMatrix() const;
 
     void setTexture(textureptr_t texture);
     void setColor(glm::vec4 color);
@@ -37,6 +44,9 @@ namespace gui {
 
     void render() const;
 
+    RenderContext& operator=(const RenderContext&) = delete;
+    RenderContext& operator=(RenderContext&&) = default;
+
   private:
     using meshes_t = std::vector<Mesh>;
     using matrices_t = std::vector<glm::mat4>;
@@ -50,6 +60,7 @@ namespace gui {
     textures_t textureStack;
     colors_t colorStack;
 
+    glm::mat4 matrixProjection = glm::mat4(1.0f);
     glm::mat4 matrixCurrent = glm::mat4(1.0f);
     std::shared_ptr<gfx::Texture> textureCurrent;
     glm::vec4 colorCurrent = glm::vec4(1.0f);

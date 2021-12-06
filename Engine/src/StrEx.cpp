@@ -256,3 +256,32 @@ const bool	ParseNameValue( const std::string& str, std::string& name, std::strin
 
 	return true;
 }
+
+namespace core {
+	auto whitespaceChars = std::vector<wchar_t>{ L' ', L'\t', L'\r', L'\n' };
+
+	bool isWhitespace(wchar_t value) {
+		return std::find(whitespaceChars.begin(), whitespaceChars.end(), value) != whitespaceChars.end();
+	}
+	cb::string trimLeft(cb::string line) {
+		if (line.empty())
+			return cb::string();
+		while (isWhitespace(*line.begin())) {
+			line.erase(line.begin());
+		}
+		return line;
+	}
+	cb::string trimRight(cb::string line) {
+		if (line.empty())
+			return cb::string();
+		while (isWhitespace(*line.rbegin())) {
+			line.pop_back();
+		}
+		return line;
+	}
+	cb::string trim(cb::string line) {
+		if (line.empty())
+			return cb::string();
+		return trimRight(trimLeft(line));
+	}
+}

@@ -14,6 +14,10 @@ Opis:	Dodatkowe funkcje konwertuj¹ce.
 #include <fstream>
 #include <vector>
 
+#include <CBCore/Defines.h>
+
+using namespace std::string_literals;
+
 extern const std::string	IntToStr(const int x);
 extern const std::string	FloatToStr(const float x);
 extern const std::string	DoubleToStr(const double x);
@@ -34,3 +38,13 @@ extern void					SplitString( const std::string& str, const std::string& split, s
 extern const std::string	JoinString( const std::vector<std::string>& list, const std::string& glue = "" );
 extern const std::string	CorrectDirSlashes( const std::string& str );
 extern const bool			ParseNameValue( const std::string& str, std::string& name, std::string& value );
+
+namespace core {
+  bool isWhitespace(wchar_t value);
+
+  cb::string trimLeft(cb::string line);
+
+  cb::string trimRight(cb::string line);
+
+  cb::string trim(cb::string line);
+}

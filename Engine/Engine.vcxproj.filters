@@ -59,25 +59,22 @@
     <ClCompile Include="src\GUIConsole.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUIMenu.cpp">
+    <ClCompile Include="src\gui_Menu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUIMenuItem.cpp">
+    <ClCompile Include="src\gui_MenuItem.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUIMenuMain.cpp">
+    <ClCompile Include="src\gui_MainMenu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUIScreen.cpp">
+    <ClCompile Include="src\gui_Screen.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUIScreenElement.cpp">
+    <ClCompile Include="src\gui_TextElement.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUIScreenTextElement.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GUIScreenValueSync.cpp">
+    <ClCompile Include="src\gui_ValueSync.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\ScriptParser.cpp">
@@ -102,6 +99,12 @@
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\GUITextPrinter.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core_FontInfo.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui_Element.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,10 +151,10 @@
     <ClInclude Include="src\GUIConsole.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\GUIMenu.h">
+    <ClInclude Include="src\gui_Menu.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\GUIScreen.h">
+    <ClInclude Include="src\gui_Screen.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\ScriptParser.h">
@@ -188,6 +191,24 @@
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUITextPrinter.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_MenuItem.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_MainMenu.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core_FontInfo.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_Element.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_TextElement.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_ValueSync.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>

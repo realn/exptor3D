@@ -14,6 +14,7 @@ Opis:	Patrz -> gio.h
 
 #include <CBSDL/Consts.h>
 #include <CBGL/COpenGL.h>
+#include <CBGL/State.h>
 
 #include "event_Event.h"
 
@@ -36,11 +37,11 @@ const int ConFuncCount = 27;
 	tutaj zarz¹dza siê wszystkim i tutaj zakodowana jest konsola.
 	Wiem, wiem, mo¿na to by³o inaczej zrobiæ :/
 */
-CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, const float aspectRatio, const unsigned height ) :
+CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, float aspectRatio, unsigned height ) :
 	Mode( GUI_MODE::MENU ),
 	textPrinter(texManager.Get("Font.tga")),
 	ScriptParser( scriptParser ),
-	Menu(aspectRatio),
+	menu(aspectRatio),
 	Console( scriptParser, height, aspectRatio ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),
@@ -52,8 +53,8 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptPar
 	Cursor = texManager.Get( "Kursor.tga" );
 	CH = texManager.Get( "cel.tga" );
 
-	Menu.Load( "Data/menu.mnu" );
-	Screen.Load( "Data/screen.gui" );
+	menu.load( "Data/menu.mnu" );
+	screen.load( "Data/screen.gui", textPrinter.getFontInfo() );
 
 	Frame = 0;
 	Second = 0;
@@ -72,17 +73,17 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptPar
 
 void	CGUIMain::ShowMenu( const std::string& menuID )
 {
-	Menu.Push( menuID );
+	menu.push( menuID );
 }
 
 void	CGUIMain::HideMenu()
 {
-	Menu.Pop();
+	menu.pop();
 }
 
 const bool	CGUIMain::IsMenuAnimating() const
 {
-	return Menu.IsMenuAnimating();
+	return menu.isMenuAnimating();
 }
 
 void	CGUIMain::SetMode( const GUI_MODE mode )
@@ -95,33 +96,18 @@ void	CGUIMain::processEvent( const event::Event& event )
 	eventMapper.executeEvent(event);
 }
 
-void	CGUIMain::ParseMouseMove( const int x, const int y )
-{
-	if( Mode != GUI_MODE::MENU )
-		return;
-
-	cursorX = x;
-	cursorY = y;
-
-	unsigned width = (unsigned)( (float)ScreenHeight * AspectRatio );
-
-	glm::vec2 pos( (float)x / (float)width, (float)y / (float)ScreenHeight );
-
-	Menu.EventMouseMove( pos );
-}
-
 void CGUIMain::eventMoveUp() {
 	if (Mode != GUI_MODE::MENU)
 		return;
 
-	Menu.EventMoveUp();
+	menu.eventMoveUp();
 }
 
 void CGUIMain::eventMoveDown() {
 	if (Mode != GUI_MODE::MENU)
 		return;
 
-	Menu.EventMoveDown();
+	menu.eventMoveDown();
 }
 
 void CGUIMain::eventEnter() {
@@ -129,7 +115,7 @@ void CGUIMain::eventEnter() {
 		return;
 
 	std::string script;
-	if (Menu.EventEnter(script))
+	if (menu.eventEnter(script))
 		ScriptParser.Execute(script);
 }
 
@@ -140,31 +126,31 @@ void CGUIMain::eventPointerX(float value) {
 	if (Mode != GUI_MODE::MENU)
 		return;
 	currentMousePos.x = value;
-	Menu.EventMouseMove(currentMousePos);
+	menu.eventMouseMove(currentMousePos);
 }
 
 void CGUIMain::eventPointerY(float value) {
 	if (Mode != GUI_MODE::MENU)
 		return;
 	currentMousePos.y = value;
-	Menu.EventMouseMove(currentMousePos);
+	menu.eventMouseMove(currentMousePos);
 }
 
 /*	Pierwsza metoda wykonuje w³aœciwy silnik GUI, a druga renderuje GUI.
 	W³aœciwego silnika nie da siê wy³¹czyæ
 */
-void CGUIMain::Update(const float fTD)
+void CGUIMain::Update(float timeDelta)
 {
 	switch (Mode)
 	{
 	case GUI_MODE::MENU:
-		Menu.Update( fTD );
+		menu.update(timeDelta, textPrinter.getFontInfo());
 		break;
 
 	case GUI_MODE::SCREEN:
-		Screen.Update( fTD );
+		screen.update( timeDelta );
 		if( FScrColor[3] > 0.0f )
-			FScrColor[3] -= 0.1f * fTD;
+			FScrColor[3] -= 0.1f * timeDelta;
 		else FScrColor[3] = 0.0f;
 		break;
 
@@ -172,30 +158,41 @@ void CGUIMain::Update(const float fTD)
 		break;
 	}
 	
-	Console.Update( fTD );
+	Console.Update( timeDelta );
 }
 
 void CGUIMain::Render()
 {
-	auto ctx = gui::RenderContext();
+	auto blendState = cb::gl::getBlendState();
+	auto cullState = cb::gl::getCullState();
+	auto depthState = cb::gl::getDepthState();
+
+	blendState.enabled = true;
+	blendState.setFunc(cb::gl::BlendFactor::SRC_ALPHA, cb::gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
+
+	cullState.enabled = false;
+	depthState.enabled = false;
+
+	cb::gl::setState(blendState);
+	cb::gl::setState(cullState);
+	cb::gl::setState(depthState);
+
 	switch (Mode)
 	{
 	case GUI_MODE::MENU:
 		{
-			this->Menu.Render(ctx, textPrinter);
+			auto ctx = menu.makeRender(textPrinter);
 
-			float height = (float)ScreenHeight;
-			float width = height * AspectRatio;
+			glMatrixMode(GL_PROJECTION);
+			glLoadMatrixf(glm::value_ptr(ctx.getProjectionMatrix()));
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			ctx.render();
 
 			//glPushAttrib( GL_ENABLE_BIT );
 			//glPushMatrix();
 
-			//{
-			//	glMatrixMode(GL_PROJECTION);
-			//	auto mat = glm::ortho(0.0f, width, height, 0.0f);
-			//	glLoadMatrixf(glm::value_ptr(mat));
-			//	glMatrixMode(GL_MODELVIEW);
-			//}
 
 			//glEnable( GL_TEXTURE_2D );
 			//glEnable( GL_BLEND );
@@ -258,10 +255,20 @@ void CGUIMain::Render()
 
 			//TextRender.EndPrint();
 
+			auto ctx = gui::RenderContext();
+
 			float height = (float)ScreenHeight;
 			float width = height * AspectRatio;
+			ctx.setProjectionMatrix(glm::ortho(0.0f, width, height, 0.0f));
 
-			Screen.Render( ctx, textPrinter, glm::vec2( width, height ) );
+			screen.render( ctx, textPrinter, glm::vec2( width, height ) );
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadMatrixf(glm::value_ptr(ctx.getProjectionMatrix()));
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			ctx.render();
 
 			//float h = 32.0f;
 			//float w = h * AspectRatio;
@@ -314,35 +321,35 @@ void CGUIMain::Render()
 		break;
 	}
 
-	Console.Render(ctx, textPrinter);
+	//Console.Render(ctx, textPrinter);
 
-	glPushAttrib( GL_ENABLE_BIT );
-	glPushMatrix();
+	//glPushAttrib( GL_ENABLE_BIT );
+	//glPushMatrix();
 
-	float height = (float)ScreenHeight;
-	float width = height * AspectRatio;
+	//float height = (float)ScreenHeight;
+	//float width = height * AspectRatio;
 
-	{
-		glMatrixMode(GL_PROJECTION);
-		auto mat = glm::ortho(0.0f, width, height, 0.0f);
-		glLoadMatrixf(glm::value_ptr(mat));
-		glMatrixMode(GL_MODELVIEW);
-	}
-	glLoadIdentity();
+	//{
+	//	glMatrixMode(GL_PROJECTION);
+	//	auto mat = glm::ortho(0.0f, width, height, 0.0f);
+	//	glLoadMatrixf(glm::value_ptr(mat));
+	//	glMatrixMode(GL_MODELVIEW);
+	//}
+	//glLoadIdentity();
 
-	glEnable( GL_TEXTURE_2D );
-	glEnable( GL_BLEND );
-	//glEnable(GL_COLOR_MATERIAL);
-	glDisable( GL_CULL_FACE );
-	glDisable( GL_DEPTH_TEST );
-	glDisable(GL_LIGHTING);
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+	//glEnable( GL_TEXTURE_2D );
+	//glEnable( GL_BLEND );
+	////glEnable(GL_COLOR_MATERIAL);
+	//glDisable( GL_CULL_FACE );
+	//glDisable( GL_DEPTH_TEST );
+	//glDisable(GL_LIGHTING);
+	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	//glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 
-	ctx.render();
+	//ctx.render();
 
-	glPopMatrix();
-	glPopAttrib();
+	//glPopMatrix();
+	//glPopAttrib();
 }
 
 

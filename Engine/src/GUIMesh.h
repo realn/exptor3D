@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <CBCore/Defines.h>
+#include <CBGL/Buffer.h>
 
 #include "GUIVertex.h"
 
@@ -27,8 +28,8 @@ namespace gui {
     void render() const;
 
   private:
-
     std::shared_ptr<gfx::Texture> texture;
     vertices_t vertices;
+    mutable std::shared_ptr<cb::gl::Buffer> buffer;
   };
 }
