@@ -29,6 +29,7 @@
     <ClCompile Include="src\FileParser.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\GUIConsole.cpp" />
+    <ClCompile Include="src\gui_ContainerElement.cpp" />
     <ClCompile Include="src\gui_Element.cpp" />
     <ClCompile Include="src\gui_Menu.cpp" />
     <ClCompile Include="src\gui_MenuItem.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="src\GUIMesh.cpp" />
     <ClCompile Include="src\GUIRenderContext.cpp" />
     <ClCompile Include="src\gui_Screen.cpp" />
+    <ClCompile Include="src\gui_StackElement.cpp" />
     <ClCompile Include="src\gui_TextElement.cpp" />
     <ClCompile Include="src\gui_ValueSync.cpp" />
     <ClCompile Include="src\Log.cpp" />
@@ -49,6 +51,7 @@
     <ClCompile Include="src\GUITextPrinter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gui_ContainerElement.h" />
     <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\core_FontInfo.h" />
     <ClInclude Include="src\core_object.h" />
@@ -70,6 +73,7 @@
     <ClInclude Include="src\GUIVertex.h" />
     <ClInclude Include="src\gui_MainMenu.h" />
     <ClInclude Include="src\gui_MenuItem.h" />
+    <ClInclude Include="src\gui_StackElement.h" />
     <ClInclude Include="src\gui_TextElement.h" />
     <ClInclude Include="src\gui_ValueSync.h" />
     <ClInclude Include="src\Log.h" />

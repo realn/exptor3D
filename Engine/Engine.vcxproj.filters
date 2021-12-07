@@ -21,6 +21,9 @@
     <Filter Include="Source Files\Events">
       <UniqueIdentifier>{98edeff7-434e-4789-a5b4-11c31d58c39a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\elements">
+      <UniqueIdentifier>{8151d223-fc1a-4b1a-ba90-440defa114f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -71,9 +74,6 @@
     <ClCompile Include="src\gui_Screen.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui_TextElement.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="src\gui_ValueSync.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
@@ -104,8 +104,17 @@
     <ClCompile Include="src\core_FontInfo.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\gui_ContainerElement.cpp">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClCompile>
     <ClCompile Include="src\gui_Element.cpp">
-      <Filter>Source Files\GUI</Filter>
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui_StackElement.cpp">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui_TextElement.cpp">
+      <Filter>Source Files\GUI\elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,14 +211,20 @@
     <ClInclude Include="src\core_FontInfo.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\gui_Element.h">
-      <Filter>Source Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gui_TextElement.h">
-      <Filter>Source Files\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="src\gui_ValueSync.h">
       <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_ContainerElement.h">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_Element.h">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_StackElement.h">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_TextElement.h">
+      <Filter>Source Files\GUI\elements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

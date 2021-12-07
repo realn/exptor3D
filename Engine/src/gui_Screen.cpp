@@ -4,6 +4,7 @@
 #include "StrEx.h"
 #include "FileParser.h"
 
+#include "gui_StackElement.h"
 #include "gui_Element.h"
 #include "gui_TextElement.h"
 #include "gui_Screen.h"
@@ -63,7 +64,10 @@ namespace gui {
 
     auto parser = core::FileParser(cb::fromUtf8(filename));
 
+    using containers_t = std::vector<std::shared_ptr<ContainerElement>>;
+
     std::shared_ptr<Element> element;
+    containers_t containers;
 
     while (parser.readLine()) {
 
@@ -73,24 +77,46 @@ namespace gui {
         auto ele = std::make_shared<TextElement>(fontInfo);
         ele->setText(cb::toUtf8(parser.getArg(0)));
         element = ele;
-        addElement(element);
-      }
-      else if (cmd == L"ALIGN") {
-        if (element != nullptr)
-          element->setAlign(getElementAlignH(parser.getArg(0)), getElementAlignV(parser.getArg(1)));
-      }
-      else if (cmd == L"MARGIN") {
-        if (element != nullptr)
-          element->setMargin(parser.getVec2FromArgs(0));
-      }
-      else if (cmd == L"SCALE") {
-        if (element != nullptr)
-          element->setScale(parser.getVec2FromArgs(0, glm::vec2(1.0f)));
-      }
-      else if (cmd == L"COLOR") {
-        if (element != nullptr) {
-          element->setColor(parser.getVec4FromArgs(0, glm::vec4(1.0f)));
+        if (containers.empty()) {
+          addElement(element);
         }
+        else {
+          containers.back()->addElement(element);
+        }
+      }
+      else if (cmd == L"STACK") {
+        auto cont = std::make_shared<StackElement>();
+        element = cont;
+        if (containers.empty())
+          addElement(element);
+        else
+          containers.back()->addElement(element);
+        containers.push_back(cont);
+      }
+      else if (cmd == L"END" && !containers.empty()) {
+        containers.pop_back();
+        if(!containers.empty())
+          element = containers.back();
+      }
+      else if (cmd == L"ITEMPADDING" && !containers.empty() ) {
+        auto cont = containers.back();
+        cont->setItemPadding(parser.getVec2FromArgs(0));
+      }
+      else if (cmd == L"ITEMSPACE" && !containers.empty()) {
+        auto cont = containers.back();
+        cont->setItemSpace(parser.getFloat(0));
+      }
+      else if (cmd == L"ALIGN" && element) {
+        element->setAlign(getElementAlignH(parser.getArg(0)), getElementAlignV(parser.getArg(1)));
+      }
+      else if (cmd == L"MARGIN" && element) {
+        element->setMargin(parser.getVec2FromArgs(0));
+      }
+      else if (cmd == L"SCALE" && element) {
+        element->setScale(parser.getVec2FromArgs(0, glm::vec2(1.0f)));
+      }
+      else if (cmd == L"COLOR" && element) {
+        element->setColor(parser.getVec4FromArgs(0, glm::vec4(1.0f)));
       }
       else if (cmd == L"SYNCVALUE") {
         auto holder = std::dynamic_pointer_cast<IValueHolder>(element);

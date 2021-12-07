@@ -44,6 +44,9 @@ namespace core {
     }
 
     cb::string parseCmd(const cb::string& line) {
+      if (trimLeft(line).empty() || trimLeft(line).front() == L'#')
+        return cb::string();
+
       auto pos = line.find(L"(");
       if (pos == cb::string::npos)
         return trim(line);
@@ -94,6 +97,9 @@ namespace core {
   bool FileParser::readLine() {
     if (!file)
       return false;
+
+    cmd = cb::string();
+    args.clear();
 
     do {
       cb::utf8string lineutf8;
