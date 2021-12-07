@@ -53,7 +53,7 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptPar
 	Cursor = texManager.Get( "Kursor.tga" );
 	CH = texManager.Get( "cel.tga" );
 
-	menu.load( "Data/menu.mnu" );
+	menu.load( "Data/menu.mnu", textPrinter.getFontInfo() );
 	screen.load( "Data/screen.gui", textPrinter.getFontInfo() );
 
 	Frame = 0;
@@ -144,7 +144,7 @@ void CGUIMain::Update(float timeDelta)
 	switch (Mode)
 	{
 	case GUI_MODE::MENU:
-		menu.update(timeDelta, textPrinter.getFontInfo());
+		menu.update(timeDelta);
 		break;
 
 	case GUI_MODE::SCREEN:

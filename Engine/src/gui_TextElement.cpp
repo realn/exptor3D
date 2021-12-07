@@ -9,7 +9,7 @@ namespace gui {
 
   TextElement::~TextElement() = default;
 
-  void	TextElement::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) {
+  void	TextElement::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const {
     glm::vec2 pos = createPos(getSize(), screenSize);
 
     ctx.setColor(color);
@@ -27,12 +27,20 @@ namespace gui {
     text = value;
   }
 
+  void	TextElement::setScale(const glm::vec2& value) {
+    scale = value;
+  }
+
   glm::vec2	TextElement::getSize() const {
     return fontInfo.getTextSize(text) * scale;
   }
 
   std::string	TextElement::getText() const {
     return text;
+  }
+
+  glm::vec2	TextElement::getScale() const {
+    return scale;
   }
 
   void TextElement::setSyncValue(const std::string& value) {

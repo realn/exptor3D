@@ -5,22 +5,16 @@
 #include "gui_MenuItem.h"
 
 namespace gui {
-	MenuItem::MenuItem(const std::string& id) :
-		id(id),
-		highlight(false),
-		scrollStep(20.0f, 0.0f),
-		color(1.0f) {
-	}
+	MenuItem::MenuItem(const std::string& id, const core::FontInfo& fontInfo) : id(id), fontInfo(fontInfo) {}
 
-	void MenuItem::update(const float timeDelta, const core::FontInfo& info) {
-		if (size == glm::vec2(0.0f))
-			size = info.getTextSize(title);
+	MenuItem::~MenuItem() = default;
 
+	void MenuItem::update(const float timeDelta) {
 		if (!highlight) {
-			if (color > 0.5f)
-				color -= 1.0f * timeDelta;
+			if (color.a > 0.5f)
+				color.a -= 1.0f * timeDelta;
 			else
-				color = 0.5f;
+				color.a = 0.5f;
 
 			if (scroll.x > 0.0f)
 				scroll.x -= 1.0f * timeDelta;
@@ -28,10 +22,10 @@ namespace gui {
 				scroll.x = 0.0f;
 		}
 		else {
-			if (color < 1.0f)
-				color += 2.0f * timeDelta;
+			if (color.a < 1.0f)
+				color.a += 2.0f * timeDelta;
 			else
-				color = 1.0f;
+				color.a = 1.0f;
 
 			if (scroll.x < 1.0f)
 				scroll.x += 2.0f * timeDelta;
@@ -40,22 +34,17 @@ namespace gui {
 		}
 	}
 
-	void MenuItem::render(gui::RenderContext& ctx, gui::TextPrinter& printer) const {
-		ctx.setColor({ color, color, color, 1.0f });
+	void MenuItem::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const {
+		auto pos = createPos(getSize(), screenSize);
+
+		ctx.pushColor();
+		ctx.setColor(color);
 		printer.print(ctx, pos + scroll * scrollStep, title);
+		ctx.popColor();
 	}
 
 	void	MenuItem::setTitle(const std::string& value) {
 		title = value;
-		size = glm::vec2(0.0f);
-	}
-
-	void	MenuItem::setPos(const glm::vec2& value) {
-		pos = value;
-	}
-
-	void	MenuItem::setSize(const glm::vec2& value) {
-		size = value;
 	}
 
 	void	MenuItem::setHighlight(bool value) {
@@ -66,11 +55,11 @@ namespace gui {
 		script = value;
 	}
 
-	const std::string	MenuItem::getScript() const {
-		return script;
+	glm::vec2 MenuItem::getSize() const {
+		return fontInfo.getTextSize(title);
 	}
 
-	const bool	MenuItem::contains(const glm::vec2& point) const {
-		return point.x > pos.x && point.x < pos.x + size.x && point.y > pos.y && point.y < pos.y + size.y;
+	const std::string	MenuItem::getScript() const {
+		return script;
 	}
 }

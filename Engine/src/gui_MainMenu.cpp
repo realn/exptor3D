@@ -19,7 +19,7 @@ namespace gui {
 
 	MenuMain::~MenuMain() = default;
 
-	void MenuMain::update(float timeDelta, const core::FontInfo& fontInfo) {
+	void MenuMain::update(float timeDelta) {
 		if (menuStack.empty())
 			return;
 
@@ -41,7 +41,7 @@ namespace gui {
 					return;
 			}
 		}
-		pMenu->update(timeDelta, fontInfo);
+		pMenu->update(timeDelta);
 	}
 
 	RenderContext MenuMain::makeRender(TextPrinter& printer) const {
@@ -158,7 +158,7 @@ namespace gui {
 		menuStack.clear();
 	}
 
-	bool MenuMain::load(const std::string& filename) {
+	bool MenuMain::load(const std::string& filename, const core::FontInfo& fontInfo) {
 		if (filename.empty()) {
 			Log.Error("MAINMENU( " + file + " ): Pusty ci¹g znaków w œcie¿ce do pliku");
 			return false;
@@ -179,7 +179,7 @@ namespace gui {
 
 			if (cmd == L"MENU") {
 				menuItem = nullptr;
-				menu = std::make_shared<Menu>(parser.getArgUtf8(0));
+				menu = std::make_shared<Menu>(parser.getArgUtf8(0), fontInfo);
 				menus.push_back(menu);
 			}
 			else if (cmd == L"MENUTITLE" && menu) {
@@ -190,24 +190,24 @@ namespace gui {
 				float width = aspectRatio * height;
 				menu->setSize({ width, height });
 			}
-			else if (cmd == L"MENUMARGIN" && menu) {
-				itemPos = parser.getVec2FromArgs(0);
-			}
-			else if (cmd == L"MENUSTEP" && menu) {
-				itemStep = parser.getVec2FromArgs(0);
-			}
+			//else if (cmd == L"MENUMARGIN" && menu) {
+			//	itemPos = parser.getVec2FromArgs(0);
+			//}
+			//else if (cmd == L"MENUSTEP" && menu) {
+			//	itemStep = parser.getVec2FromArgs(0);
+			//}
 			else if (cmd == L"MENUITEM" && menu) {
-				menuItem = std::make_shared<MenuItem>(parser.getArgUtf8(0));
-				menuItem->setPos(itemPos);
+				menuItem = std::make_shared<MenuItem>(parser.getArgUtf8(0), fontInfo);
+				//menuItem->setPos(itemPos);
 				menu->addMenuItem(menuItem);
-				itemPos += itemStep;
+				//itemPos += itemStep;
 			}
 			else if (cmd == L"MENUITEMTITLE" && menuItem) {
 				menuItem->setTitle(parser.getArgUtf8(0));
 			}
-			else if (cmd == L"MENUITEMPOS" && menuItem) {
-				menuItem->setPos(parser.getVec2FromArgs(0));
-			}
+			//else if (cmd == L"MENUITEMPOS" && menuItem) {
+			//	menuItem->setPos(parser.getVec2FromArgs(0));
+			//}
 			else if (cmd == L"MENUITEMACTION" && menuItem) {
 				menuItem->setScript(parser.getArgUtf8(0));
 			}

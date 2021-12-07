@@ -116,6 +116,9 @@
     <ClCompile Include="src\gui_TextElement.cpp">
       <Filter>Source Files\GUI\elements</Filter>
     </ClCompile>
+    <ClCompile Include="src\gui_Container.cpp">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -224,6 +227,9 @@
       <Filter>Source Files\GUI\elements</Filter>
     </ClInclude>
     <ClInclude Include="src\gui_TextElement.h">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_Container.h">
       <Filter>Source Files\GUI\elements</Filter>
     </ClInclude>
   </ItemGroup>

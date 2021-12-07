@@ -28,10 +28,10 @@ namespace gui {
 		void	eventMoveDown();
 		const bool	eventEnter(std::string& outScript);
 
-		void	update(const float timeDelta, const core::FontInfo& fontInfo);
+		void	update(const float timeDelta);
 		RenderContext	makeRender(gui::TextPrinter& printer) const;
 
-		bool	load(const std::string& filename);
+		bool	load(const std::string& filename, const core::FontInfo& fontInfo);
 		void	free();
 
 		void	push(const std::string& id);

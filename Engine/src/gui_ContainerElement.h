@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 
+#include "gui_Container.h"
 #include "gui_Element.h"
 
 namespace gui {
@@ -11,22 +12,19 @@ namespace gui {
     Vertical = 1
   };
 
-  class ContainerElement : public gui::Element{
+  class ContainerElement : public Element, public Container{
   public:
-    using elementptr_t = std::shared_ptr<Element>;
-
     ~ContainerElement() override;
     
-    void addElement(elementptr_t element);
-    void clear();
-
     void setItemPadding(const glm::vec2& value);
     void setItemSpace(float value);
 
-  protected:
-    using elements_t = std::vector<elementptr_t>;
+    bool elementContainsPoint(elementptr_t element, const glm::vec2& point, const glm::vec2& screenSize, bool searchDown = true) const;
 
-    elements_t elements;
+  protected:
+    glm::vec2 createElementPos(elementptr_t element, const glm::vec2& screenSize) const;
+    virtual glm::vec2 createElementPos(size_t elementIndex, const glm::vec2& screenSize) const = 0;
+
     glm::vec2 padding;
     float itemSpace = 0.0f;
   };

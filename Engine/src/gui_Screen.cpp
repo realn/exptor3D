@@ -38,7 +38,7 @@ namespace gui {
 
   Screen::~Screen() = default;
 
-  void Screen::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) {
+  void Screen::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const {
     for (auto& item : elements) {
       item->render(ctx, printer, screenSize);
     }
@@ -56,6 +56,21 @@ namespace gui {
 
   void Screen::addElement(std::shared_ptr<Element> element) {
     elements.push_back(element);
+  }
+
+  bool Screen::elementContainsPoint(elementptr_t element, const glm::vec2& point, const glm::vec2& screenSize, bool searchDown) const {
+    for (auto item : elements) {
+      if (item == element) {
+        return item->containsPoint(point, screenSize);
+      }
+
+      if (searchDown) {
+        auto cont = std::dynamic_pointer_cast<ContainerElement>(item);
+        if (cont && cont->elementContainsPoint(element, point, screenSize, searchDown))
+          return true;
+      }
+    }
+    return false;
   }
 
   const bool	Screen::load(const std::string& filename, const core::FontInfo& fontInfo) {
@@ -113,7 +128,10 @@ namespace gui {
         element->setMargin(parser.getVec2FromArgs(0));
       }
       else if (cmd == L"SCALE" && element) {
-        element->setScale(parser.getVec2FromArgs(0, glm::vec2(1.0f)));
+        auto text = std::dynamic_pointer_cast<TextElement>(element);
+        if (text) {
+          text->setScale(parser.getVec2FromArgs(0, glm::vec2(1.0f)));
+        }
       }
       else if (cmd == L"COLOR" && element) {
         element->setColor(parser.getVec4FromArgs(0, glm::vec4(1.0f)));

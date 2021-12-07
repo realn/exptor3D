@@ -5,23 +5,43 @@
 #include "GUITextPrinter.h"
 #include "GUIRenderContext.h"
 
+#include "gui_Screen.h"
+#include "gui_TextElement.h"
+#include "gui_StackElement.h"
 #include "gui_MenuItem.h"
 #include "gui_Menu.h"
 
 namespace gui {
-  Menu::Menu(const std::string& id) : id(id) {}
+  Menu::Menu(const std::string& id, const core::FontInfo& fontInfo) : id(id), fontInfo(fontInfo) {
+    screen = std::make_shared<Screen>();
+
+    titleElement = std::make_shared<TextElement>(fontInfo);
+    titleElement->setScale({ 2.0f, 2.0f });
+    itemsElement = std::make_shared<StackElement>();
+    itemsElement->setAlign(HAlign::Left, VAlign::Top);
+    itemsElement->setItemPadding({ 10.0f, 10.0f });
+    itemsElement->setItemSpace(10.0f);
+
+    {
+      auto layout = std::make_shared<StackElement>();
+      layout->setAlign(HAlign::Left, VAlign::Top);
+      layout->setMargin({ 20.0f, 20.0f });
+      layout->setItemSpace(20.0);
+      layout->addElement(titleElement);
+      layout->addElement(itemsElement);
+      screen->addElement(layout);
+    }
+  }
 
   Menu::~Menu() = default;
 
-  void	Menu::update(const float timeDelta, const core::FontInfo& fontInfo) {
+  void	Menu::update(const float timeDelta) {
     if (visible) {
       if (scroll > 0.0f)
         scroll -= timeDelta * 2.0f;
       else {
         scroll = 0.0f;
-        for (auto& item : items) {
-          item->update(timeDelta, fontInfo);
-        }
+        screen->update(timeDelta);
       }
     }
     else {
@@ -37,19 +57,7 @@ namespace gui {
     ctx.setProjectionMatrix(glm::ortho(0.0f, size.x, size.y, 0.0f));
 
     ctx.pushMatrix();
-    ctx.setColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-
-    ctx.translate({ scroll * size.x, 0.0f, 0.0f });
-
-    ctx.pushMatrix();
-    ctx.scale({ 2.5f, 2.5f, 1.0f });
-    printer.print(ctx, titlePos, title);
-    ctx.popMatrix();
-
-    for (auto& item : items) {
-      item->render(ctx, printer);
-    }
-
+    screen->render(ctx, printer, size);
     ctx.popMatrix();
 
     return ctx;
@@ -59,7 +67,7 @@ namespace gui {
     auto screenPos = pos * size;
 
     selectedItem = menuitemptr_t();
-    auto it = std::find_if(items.begin(), items.end(), [&](menuitemptr_t item) {return item->contains(screenPos); });
+    auto it = std::find_if(items.begin(), items.end(), [&](menuitemptr_t item) {return screen->elementContainsPoint(item, screenPos, size); });
     if (it != items.end()) {
       selectedItem = *it;
     }
@@ -111,14 +119,15 @@ namespace gui {
 
   void Menu::addMenuItem(menuitemptr_t item) {
     items.push_back(item);
+    itemsElement->addElement(item);
   }
 
   void	Menu::setTitle(const std::string& value) {
-    title = value;
+    titleElement->setText(value);
   }
 
   void	Menu::setTitlePos(const glm::vec2& value) {
-    titlePos = value;
+    titleElement->setMargin(value);
   }
 
   void	Menu::setSize(const glm::vec2& value) {

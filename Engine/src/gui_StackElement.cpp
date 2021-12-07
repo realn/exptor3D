@@ -8,25 +8,17 @@ namespace gui {
 
   StackElement::~StackElement() = default;
 
-  void StackElement::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) {
-    auto contSize = getSize();
-    auto pos = createPos(contSize, screenSize);
-
-    ctx.pushMatrix();
-    ctx.translate({ pos + padding, 0.0f });
+  void StackElement::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const {
     for (auto element : elements) {
+      ctx.pushMatrix();
+      auto pos = ContainerElement::createElementPos(element, screenSize);
       auto elemSize = element->getSize();
 
-      ctx.pushMatrix();
-      ctx.scale({ scale, 1.0f });
-
+      ctx.translate({ pos, 0.0f });
       element->render(ctx, printer, elemSize);
-      ctx.popMatrix();
 
-      auto step = (elemSize + padding) * getStepMod() + getStepMod() * itemSpace;
-      ctx.translate({ step, 0.0f });
+      ctx.popMatrix();
     }
-    ctx.popMatrix();
   }
 
   void StackElement::update(const float timeDelta) {
@@ -52,7 +44,19 @@ namespace gui {
       size += getStepMod() * itemSpace * num;
     }
 
-    return size * scale;
+    return size;
+  }
+
+  glm::vec2 StackElement::createElementPos(size_t elementIndex, const glm::vec2& screenSize) const {
+    auto contSize = getSize();
+    auto pos = createPos(contSize, screenSize) + padding;
+
+    for (size_t i = 0; i < elementIndex; i++) {
+      auto elemSize = elements[i]->getSize();
+      pos +=  (elemSize + padding) * getStepMod() + getStepMod() * itemSpace;
+    }
+
+    return pos;
   }
 
   glm::vec2 StackElement::getStepMod() const {

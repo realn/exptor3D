@@ -14,10 +14,6 @@ namespace gui {
 		margin = value;
 	}
 
-	void	Element::setScale(const glm::vec2& value) {
-		scale = value;
-	}
-
 	void	Element::setColor(const glm::vec4& value) {
 		color = value;
 	}
@@ -34,8 +30,10 @@ namespace gui {
 		return margin;
 	}
 
-	glm::vec2	Element::getScale() const {
-		return scale;
+	bool Element::containsPoint(const glm::vec2& point, const glm::vec2& screenSize) const {
+		auto size = getSize();
+		auto pos = createPos(size, screenSize);
+		return point.x > pos.x && point.x < pos.x + size.x && point.y > pos.y && point.y < pos.y + size.y;
 	}
 
 	const glm::vec2	Element::createPos(const glm::vec2& size, const glm::vec2& screenSize) const {
