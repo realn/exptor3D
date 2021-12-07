@@ -119,6 +119,9 @@
     <ClCompile Include="src\gui_Container.cpp">
       <Filter>Source Files\GUI\elements</Filter>
     </ClCompile>
+    <ClCompile Include="src\core_Transformer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -231,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="src\gui_Container.h">
       <Filter>Source Files\GUI\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core_Transformer.h">
+      <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

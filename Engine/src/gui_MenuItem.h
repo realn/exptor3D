@@ -4,7 +4,9 @@
 
 #include <CBCore/Defines.h>
 
+#include "core_Transformer.h"
 #include "core_FontInfo.h"
+
 #include "gui_Element.h"
 
 namespace gui {
@@ -35,7 +37,7 @@ namespace gui {
 
 		bool highlight = false;
 
-		glm::vec2	scroll;
-		glm::vec2	scrollStep = glm::vec2(20.0f, 0.0f);
+		core::ValueTransformer<glm::vec4> itemColor;
+		core::ValueTransformer<glm::vec2> scroll;
 	};
 }

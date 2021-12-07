@@ -1,45 +1,39 @@
 
 #include "GUITextPrinter.h"
 #include "GUIRenderContext.h"
+
 #include "core_FontInfo.h"
 #include "gui_MenuItem.h"
 
 namespace gui {
-	MenuItem::MenuItem(const std::string& id, const core::FontInfo& fontInfo) : id(id), fontInfo(fontInfo) {}
+	MenuItem::MenuItem(const std::string& id, const core::FontInfo& fontInfo) 
+		: id(id), fontInfo(fontInfo) 
+	{
+		itemColor.setRange({ 0.8f, 0.8f, 0.8, 0.9f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+		itemColor.setDuration(std::chrono::milliseconds(400));
+		itemColor.setEnabled(true);
+
+		scroll.setRange({ 0.0f, 0.0f }, { 10.0f, 0.0f });
+		scroll.setDuration(std::chrono::milliseconds(400));
+		scroll.setEnabled(true);
+	}
 
 	MenuItem::~MenuItem() = default;
 
 	void MenuItem::update(const float timeDelta) {
-		if (!highlight) {
-			if (color.a > 0.5f)
-				color.a -= 1.0f * timeDelta;
-			else
-				color.a = 0.5f;
+		itemColor.setReverse(!highlight);
+		scroll.setReverse(!highlight);
 
-			if (scroll.x > 0.0f)
-				scroll.x -= 1.0f * timeDelta;
-			else
-				scroll.x = 0.0f;
-		}
-		else {
-			if (color.a < 1.0f)
-				color.a += 2.0f * timeDelta;
-			else
-				color.a = 1.0f;
-
-			if (scroll.x < 1.0f)
-				scroll.x += 2.0f * timeDelta;
-			else
-				scroll.x = 1.0f;
-		}
+		itemColor.update(timeDelta);
+		scroll.update(timeDelta);
 	}
 
 	void MenuItem::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const {
 		auto pos = createPos(getSize(), screenSize);
 
 		ctx.pushColor();
-		ctx.setColor(color);
-		printer.print(ctx, pos + scroll * scrollStep, title);
+		ctx.setColor(itemColor.getValue());
+		printer.print(ctx, pos + scroll.getValue(), title);
 		ctx.popColor();
 	}
 

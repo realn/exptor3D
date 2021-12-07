@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core_Transformer.cpp" />
     <ClCompile Include="src\gui_Container.cpp" />
     <ClCompile Include="src\3dMath.cpp" />
     <ClCompile Include="src\core_FontInfo.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="src\GUITextPrinter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core_Transformer.h" />
     <ClInclude Include="src\gui_Container.h" />
     <ClInclude Include="src\gui_ContainerElement.h" />
     <ClInclude Include="src\3dMath.h" />
