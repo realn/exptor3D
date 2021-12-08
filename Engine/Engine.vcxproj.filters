@@ -178,9 +178,6 @@
     <ClInclude Include="src\EventScript.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EventInput.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\event_Manager.h">
       <Filter>Source Files\Events</Filter>
     </ClInclude>

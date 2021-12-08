@@ -1,10 +1,29 @@
 
+#include <filesystem>
+
+#include <glm/gtc/type_ptr.hpp>
+
+#include <CBCore/StringConvert.h>
 #include <CBSDL/Events.h>
+
 #include <CBGL/Rendering.h>
+#include <CBGL/System.h>
+#include <CBGL/COpenGL.h>
+
+#include <gui_MenuItem.h>
 
 #include "Application.h"
 
-namespace core {
+namespace mdlview {
+  namespace {
+    template<class _Type>
+    float getAspectRatio(const _Type& value) {
+      if (static_cast<float>(value.y) == 0.0f)
+        return 1.0f;
+      return static_cast<float>(value.x) / static_cast<float>(value.y);
+    }
+  }
+
   Application::Application() : Object(L"Application") {
     system = std::make_unique<cb::sdl::System>(cb::sdl::SystemFlag::VIDEO);
   }
@@ -33,6 +52,39 @@ namespace core {
 
     glContext = std::make_unique<cb::sdl::GLContext>(*window);
 
+    cb::gl::initextensions();
+
+    texRepo = std::make_unique<gfx::TextureRepository>("Data/Textures/");
+
+    textPrinter = std::make_shared<gui::TextPrinter>(texRepo->Get("Font.tga"));
+    
+    modelMenu = std::make_shared<gui::Menu>("modelMenu", textPrinter->getFontInfo());
+    modelMenu->setSize({ 1200, 800 });
+    mainMenu = std::make_shared<gui::MenuMain>(getAspectRatio(window->getSize()));
+    mainMenu->addMenu(modelMenu);
+
+    {
+      auto modelPath = std::filesystem::path(L"Data/Models");
+      auto it = std::filesystem::directory_iterator{ modelPath };
+      for (const auto& entry : it) {
+        auto item = std::make_shared<gui::MenuItem>("", textPrinter->getFontInfo());
+        item->setTitle(entry.path().filename().u8string());
+        modelMenu->addMenuItem(item);
+      }
+    }
+
+    mainMenu->push("modelMenu");
+
+    events.addObserver(mainMenu);
+
+    input.addKeyMapping(cb::sdl::ScanCode::UP, L"gui_move_up");
+    input.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");
+    input.addKeyMapping(cb::sdl::ScanCode::RETURN, L"gui_enter");
+    input.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"gui_back");
+    input.addMouseMotionMapping(event::InputMapper::Axis::X, L"gui_pointer_x");
+    input.addMouseMotionMapping(event::InputMapper::Axis::Y, L"gui_pointer_y");
+    input.addMouseMapping(cb::sdl::button::LEFT, L"gui_enter");
+
     return true;
   }
 
@@ -48,17 +100,34 @@ namespace core {
             run = false;
           }
         }
+
+        input.executeEvent(events, event, window->getSize());
       }
+
+      events.processEvents();
+
+      update(1.0f/60.0f);
 
       render();
 
       glContext->swapWindow(*window);
     }
   }
+
+  void Application::update(float timeDelta) {
+    mainMenu->update(timeDelta);
+  }
+
   void Application::render() {
     cb::gl::clearColor({ 1.0f, 0.5f, 0.5f, 1.0f });
 
+    auto ctx = modelMenu->makeRender(*textPrinter);
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(glm::value_ptr(ctx.getProjectionMatrix()));
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-
+    ctx.render();
   }
 }

@@ -138,11 +138,4 @@ public:
 	gui::Screen& getScreen() { return screen; }
 
 private:
-	void eventMoveUp();
-	void eventMoveDown();
-	void eventEnter();
-	void eventBack();
-	void eventPointerX(float value);
-	void eventPointerY(float value);
-
 };

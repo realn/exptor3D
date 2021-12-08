@@ -2,7 +2,7 @@
 #include "Application.h"
 
 int WinMain() {
-  core::Application app;
+  mdlview::Application app;
 
   return app.exec();
 }

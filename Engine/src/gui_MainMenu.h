@@ -7,6 +7,9 @@
 
 #include <CBCore/Defines.h>
 
+#include "event_Observer.h"
+#include "event_Mapper.h"
+
 namespace core {
 	class FontInfo;
 }
@@ -18,15 +21,15 @@ namespace gui {
 
 	enum class MENU_TAG;
 
-	class MenuMain {
+	class MenuMain : public event::IObserver {
 	public:
+		using menuptr_t = std::shared_ptr<Menu>;
+
 		MenuMain(const float aspectRatio);
 		~MenuMain();
 
-		void	eventMouseMove(const glm::vec2& pos);
-		void	eventMoveUp();
-		void	eventMoveDown();
-		const bool	eventEnter(std::string& outScript);
+		void addMenu(menuptr_t menu);
+
 
 		void	update(const float timeDelta);
 		RenderContext	makeRender(gui::TextPrinter& printer) const;
@@ -39,16 +42,26 @@ namespace gui {
 
 		const bool	isMenuAnimating() const;
 
+		void	processEvent(const event::Event& event) override;
+
 	private:
-		using menuptr_t = std::shared_ptr<Menu>;
 		using menus_t = std::vector<menuptr_t>;
 
 		menuptr_t findMenu(const std::string& id);
+		void eventPointerMoveX(float posX);
+		void eventPointerMoveY(float posY);
+		void eventMouseMove(const glm::vec2& pos);
+		void eventMoveUp();
+		void eventMoveDown();
+		void eventEnter();
+		void eventExit();
 
 		std::string file;
 		float	aspectRatio = 0.0f;
 		menus_t menus;
 		menus_t menuStack;
 		menuptr_t menuCurrent;
+		glm::vec2 pointerPos;
+		event::Mapper mapper;
 	};
 }

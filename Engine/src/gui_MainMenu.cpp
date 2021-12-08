@@ -15,9 +15,20 @@ namespace gui {
 	MenuMain::MenuMain(const float aspectRatio) :
 		aspectRatio(aspectRatio),
 		file("-") {
+
+		mapper.addAction(L"gui_move_up", [this](const event::EventAction&) { eventMoveUp(); });
+		mapper.addAction(L"gui_move_down", [this](const event::EventAction&) { eventMoveDown(); });
+		mapper.addAction(L"gui_enter", [this](const event::EventAction&) { eventEnter(); });
+		mapper.addAction(L"gui_exit", [this](const event::EventAction&) { eventExit(); });
+		mapper.addRange(L"gui_pointer_x", [this](const event::EventRange& r) { eventPointerMoveX(r.getValue()); });
+		mapper.addRange(L"gui_pointer_y", [this](const event::EventRange& r) { eventPointerMoveY(r.getValue()); });
 	}
 
 	MenuMain::~MenuMain() = default;
+
+	void MenuMain::addMenu(menuptr_t menu) {
+		menus.push_back(menu);
+	}
 
 	void MenuMain::update(float timeDelta) {
 		if (menuStack.empty())
@@ -80,11 +91,25 @@ namespace gui {
 		return menuStack.back()->isAnimating();
 	}
 
+	void MenuMain::processEvent(const event::Event& event) {
+		mapper.executeEvent(event);
+	}
+
 	MenuMain::menuptr_t MenuMain::findMenu(const std::string& id) {
 		auto it = std::find_if(menus.begin(), menus.end(), [&](menuptr_t menu) { return menu->getId() == id; });
 		if (it != menus.end())
 			return *it;
 		return menuptr_t();
+	}
+
+	void MenuMain::eventPointerMoveX(float posX) {
+		pointerPos.x = posX;
+		eventMouseMove(pointerPos);
+	}
+
+	void MenuMain::eventPointerMoveY(float posY) {
+		pointerPos.y = posY;
+		eventMouseMove(pointerPos);
 	}
 
 	void	MenuMain::eventMouseMove(const glm::vec2& pos) {
@@ -98,21 +123,21 @@ namespace gui {
 		menu->eventMouseMove(pos);
 	}
 
-	const bool	MenuMain::eventEnter(std::string& outScript) {
+	void	MenuMain::eventEnter() {
 		if (menuStack.empty())
-			return false;
+			return;
 
 		auto menu = menuStack.back();
 		if (menu->isAnimating())
-			return false;
+			return;
 
 		std::string script;
 		if (menu->eventEnter(script)) {
-			outScript.clear();
+			//outScript.clear();
 			std::string str = ClearWhiteSpace(script);
 			if (str == "PopMenu()") {
 				pop();
-				return true;
+				return;
 			}
 
 			auto pos = str.find("(");
@@ -120,15 +145,18 @@ namespace gui {
 				auto endpos = str.find(")");
 				if (endpos != std::string::npos) {
 					push(str.substr(pos + 1, endpos - pos - 1));
-					return true;
+					return;
 				}
 			}
 
-			outScript = script;
-			return true;
+			//outScript = script;
+			return;
 		}
 
-		return false;
+		return;
+	}
+
+	void MenuMain::eventExit() {
 	}
 
 	void	MenuMain::eventMoveDown() {

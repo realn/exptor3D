@@ -63,12 +63,6 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptPar
 	ConsoleOn = false;
 	ConsoleScroll = 0.0f;
 	Quit = false;
-
-	eventMapper.addAction(L"gui_move_up", [&](const event::EventAction&) { eventMoveUp(); });
-	eventMapper.addAction(L"gui_move_down", [&](const event::EventAction&) { eventMoveDown(); });
-	eventMapper.addAction(L"gui_enter", [&](const event::EventAction&) {eventEnter(); });
-	eventMapper.addRange(L"gui_pointer_x", [&](const event::EventRange& r) { eventPointerX(r.getValue()); });
-	eventMapper.addRange(L"gui_pointer_y", [&](const event::EventRange& r) { eventPointerY(r.getValue()); });
 }
 
 void	CGUIMain::ShowMenu( const std::string& menuID )
@@ -94,46 +88,9 @@ void	CGUIMain::SetMode( const GUI_MODE mode )
 void	CGUIMain::processEvent( const event::Event& event )
 {
 	eventMapper.executeEvent(event);
-}
-
-void CGUIMain::eventMoveUp() {
 	if (Mode != GUI_MODE::MENU)
 		return;
-
-	menu.eventMoveUp();
-}
-
-void CGUIMain::eventMoveDown() {
-	if (Mode != GUI_MODE::MENU)
-		return;
-
-	menu.eventMoveDown();
-}
-
-void CGUIMain::eventEnter() {
-	if (Mode != GUI_MODE::MENU)
-		return;
-
-	std::string script;
-	if (menu.eventEnter(script))
-		ScriptParser.Execute(script);
-}
-
-void CGUIMain::eventBack() {
-}
-
-void CGUIMain::eventPointerX(float value) {
-	if (Mode != GUI_MODE::MENU)
-		return;
-	currentMousePos.x = value;
-	menu.eventMouseMove(currentMousePos);
-}
-
-void CGUIMain::eventPointerY(float value) {
-	if (Mode != GUI_MODE::MENU)
-		return;
-	currentMousePos.y = value;
-	menu.eventMouseMove(currentMousePos);
+	menu.processEvent(event);
 }
 
 /*	Pierwsza metoda wykonuje w³aœciwy silnik GUI, a druga renderuje GUI.

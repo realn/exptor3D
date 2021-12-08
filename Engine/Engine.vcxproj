@@ -59,7 +59,6 @@
     <ClInclude Include="src\3dMath.h" />
     <ClInclude Include="src\core_FontInfo.h" />
     <ClInclude Include="src\core_object.h" />
-    <ClInclude Include="src\EventInput.h" />
     <ClInclude Include="src\event_InputMapper.h" />
     <ClInclude Include="src\event_Manager.h" />
     <ClInclude Include="src\EventScript.h" />
