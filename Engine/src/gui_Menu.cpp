@@ -13,6 +13,12 @@
 
 namespace gui {
   Menu::Menu(const std::string& id, const core::FontInfo& fontInfo) : id(id), fontInfo(fontInfo) {
+
+    scroll.setRange(0.0f, 1.0f);
+    scroll.setStep(2.0f);
+    scroll.setReverse(true);
+    scroll.setEnabled(true);
+
     screen = std::make_shared<Screen>();
 
     titleElement = std::make_shared<TextElement>(fontInfo);
@@ -36,19 +42,23 @@ namespace gui {
   Menu::~Menu() = default;
 
   void	Menu::update(const float timeDelta) {
-    if (visible) {
-      if (scroll > 0.0f)
-        scroll -= timeDelta * 2.0f;
-      else {
-        scroll = 0.0f;
-        screen->update(timeDelta);
-      }
+    scroll.update(timeDelta);
+
+    if (scroll.isFinished()) {
+      state = MenuState::HIDDEN;
+    }
+    else if (scroll.isOnStart()) {
+      state = MenuState::VISIBLE;
+    }
+    else if (scroll.isReversed()) {
+      state = MenuState::REVEALING;
     }
     else {
-      if (scroll < 1.0f)
-        scroll += timeDelta * 2.0f;
-      else
-        scroll = 1.0f;
+      state = MenuState::HIDING;
+    }
+
+    if (state == MenuState::VISIBLE) {
+      screen->update(timeDelta);
     }
   }
 
@@ -56,9 +66,14 @@ namespace gui {
     auto ctx = RenderContext();
     ctx.setProjectionMatrix(glm::ortho(0.0f, size.x, size.y, 0.0f));
 
-    ctx.pushMatrix();
-    screen->render(ctx, printer, size);
-    ctx.popMatrix();
+    if (state != MenuState::HIDDEN) {
+      ctx.pushMatrix();
+      if (isAnimating()) {
+        ctx.translate({ scroll.getValue() * glm::vec2(0.0f, size.y), 0.0f });
+      }
+      screen->render(ctx, printer, size);
+      ctx.popMatrix();
+    }
 
     return ctx;
   }
@@ -135,15 +150,26 @@ namespace gui {
   }
 
   void	Menu::setVisible(bool value, bool animate) {
-    if (value) {
-      visible = true;
-      if (!animate)
-        scroll = 0.0f;
+    scroll.setReverse(value);
+    if (animate) {
+      if (scroll.isReversed()) {
+        state = MenuState::REVEALING;
+        scroll.finish();
+      }
+      else {
+        state = MenuState::HIDING;
+        scroll.reset();
+      }
     }
     else {
-      visible = false;
-      if (!animate)
-        scroll = 1.0f;
+      if (scroll.isReversed()) {
+        state = MenuState::VISIBLE;
+        scroll.reset();
+      }
+      else {
+        state = MenuState::HIDDEN;
+        scroll.finish();
+      }
     }
   }
 
@@ -152,13 +178,14 @@ namespace gui {
   }
 
   bool	Menu::isVisible() const {
-    return visible;
+    return state == MenuState::VISIBLE;
   }
 
   bool	Menu::isAnimating() const {
-    if (visible)
-      return scroll > 0.0f;
-    else
-      return scroll < 1.0f;
+    return state == MenuState::HIDING || state == MenuState::REVEALING;
+  }
+
+  MenuState Menu::getState() const {
+    return state;
   }
 }

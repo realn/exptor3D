@@ -1,7 +1,6 @@
 #include <CBSDL/Consts.h>
 
 #include "GamePlayerController.h"
-#include "EventInput.h"
 
 enum MOVE_INDEX
 {

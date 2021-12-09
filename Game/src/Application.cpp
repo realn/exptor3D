@@ -15,7 +15,6 @@
 #include <CBGL/System.h>
 
 #include "Application.h"
-#include "EventInput.h"
 #include "GamePlayerController.h"
 
 #include "GUI.h"
@@ -31,7 +30,11 @@ CApplication::CApplication() :
 	GUI( nullptr )
 {
 	eventManager = std::make_shared<event::Manager>();
-	scriptParser = std::make_shared<CScriptParser>(eventManager);
+
+	scriptParser = std::make_shared<logic::ScriptParser>(eventManager);
+	scriptParser->addFunc(L"quit", [this](const core::StrArgList&) { run = false; } );;
+
+	eventManager->addObserver(scriptParser);
 
 	system = std::make_unique<cb::sdl::System>(cb::sdl::SystemFlag::VIDEO);
 	RegScript();
@@ -42,7 +45,7 @@ CApplication::~CApplication()
 	Log.Log( "Koniec pracy Aplikacji" );
 }
 
-int	CApplication::Run()
+int	CApplication::exec()
 {
 	std::srand(static_cast<unsigned>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
@@ -86,7 +89,7 @@ int	CApplication::Run()
 	gfx::TextureRepository texManager( "Data/Textures/" );
 	gfx::ModelManager modelManager( "Data/Models/", texManager );
 	CLevel level( texManager, modelManager );
-	GUI = std::make_shared<CGUIMain>( texManager, *scriptParser, aspectRatio, WindowHeight );
+	GUI = std::make_shared<CGUIMain>( texManager, scriptParser, aspectRatio, WindowHeight );
 
 	pGLevel = &level;
 	//CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
@@ -256,12 +259,11 @@ void	CApplication::MainLoop()
 {
 	const float	TIME_STEP = 0.005f;
 
-	bool	done = false;
 	float	frameTime = 0.0f;
 	cb::sdl::PerformanceTimer timer;
 
 
-	while(!done)									// Pêtla g³ówna (dopuki done nie jest true)
+	while(run)									// Pêtla g³ówna (dopuki done nie jest true)
 	{
 		frameTime += timer.getTimeDelta();
 

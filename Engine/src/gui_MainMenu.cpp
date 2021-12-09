@@ -3,18 +3,24 @@
 #include <CBCore/StringConvert.h>
 #include <CBGL/COpenGL.h>
 
-#include "FileParser.h"
+#include "core_FileParser.h"
 #include "StrEx.h"
 #include "Log.h"
+
+#include "logic_ScriptParser.h"
 
 #include "gui_Menu.h"
 #include "gui_MenuItem.h"
 #include "gui_MainMenu.h"
 
 namespace gui {
-	MenuMain::MenuMain(const float aspectRatio) :
+	MenuMain::MenuMain(const float aspectRatio, std::shared_ptr<logic::ScriptParser> scriptParser) :
+		scriptParser(scriptParser),
 		aspectRatio(aspectRatio),
 		file("-") {
+
+		scriptParser->addFunc(L"pushMenu", [this](const core::StrArgList& args) { push(args.getArgUtf8(0)); });
+		scriptParser->addFunc(L"popMenu", [this](const core::StrArgList& args) { pop(); });
 
 		mapper.addAction(L"gui_move_up", [this](const event::EventAction&) { eventMoveUp(); });
 		mapper.addAction(L"gui_move_down", [this](const event::EventAction&) { eventMoveDown(); });
@@ -30,36 +36,63 @@ namespace gui {
 		menus.push_back(menu);
 	}
 
-	void MenuMain::update(float timeDelta) {
+	MenuMain::menuptr_t MenuMain::getCurrent() const {
 		if (menuStack.empty())
-			return;
+			return menuptr_t();
 
-		auto pMenu = menuStack.back();
-		if (!pMenu->isVisible() && !pMenu->isAnimating()) {
-			if (menuCurrent != nullptr) {
-				menuStack.push_back(menuCurrent);
-				pMenu = menuCurrent;
-				menuCurrent->setVisible(true, true);
-				menuCurrent = nullptr;
+		auto index = glm::clamp(menuIndexCurrent, size_t(0), menuStack.size() - 1);
+		return menuStack[index];
+	}
+
+	void MenuMain::update(float timeDelta) {
+		if (menuPopped) {
+			if (!menuPopped->isAnimating() && menuPopped->isVisible())
+				menuPopped->setVisible(false, true);
+			else if (!menuPopped->isVisible() && !menuPopped->isAnimating()) {
+				menuPopped = nullptr;
 			}
 			else {
-				menuStack.pop_back();
-				if (!menuStack.empty()) {
-					pMenu = menuStack.back();
-					pMenu->setVisible(true, true);
-				}
-				else
-					return;
+				menuPopped->update(timeDelta);
 			}
+			return;
 		}
-		pMenu->update(timeDelta);
+
+		if (menuStack.empty()) {
+			menuIndexCurrent = 0;
+			return;
+		}
+
+		menuIndexCurrent = glm::clamp(menuIndexCurrent, size_t(0), menuStack.size() - 1);
+
+		auto menuCurrent = getCurrent();
+		if (menuIndexCurrent == menuStack.size() - 1) {
+			if (!menuCurrent->isAnimating() && !menuCurrent->isVisible())
+				menuCurrent->setVisible(true, true);
+
+			getCurrent()->update(timeDelta);
+			return;
+		}
+
+		if (!menuCurrent->isAnimating() && menuCurrent->isVisible())
+			menuCurrent->setVisible(false, true);
+
+		if (!menuCurrent->isAnimating() && !menuCurrent->isVisible()) {
+			menuIndexCurrent++;
+			menuCurrent = getCurrent();
+			menuCurrent->setVisible(true, true);
+		}
+
+		getCurrent()->update(timeDelta);
 	}
 
 	RenderContext MenuMain::makeRender(TextPrinter& printer) const {
-		if (menuStack.empty())
+		auto menu = getCurrent();
+		if (menuPopped)
+			menu = menuPopped;
+		if (!menu)
 			return RenderContext();
 
-		return menuStack.back()->makeRender(printer);
+		return menu->makeRender(printer);
 	}
 
 	void	MenuMain::push(const std::string& id) {
@@ -67,21 +100,15 @@ namespace gui {
 		if (menu == nullptr)
 			return;
 
-		if (!menuStack.empty()) {
-			menuStack.back()->setVisible(false, true);
-			menuCurrent = menu;
-		}
-		else {
-			menu->setVisible(true, true);
-			menuStack.push_back(menu);
-		}
+		menuStack.push_back(menu);
 	}
 
 	void	MenuMain::pop() {
 		if (menuStack.empty())
 			return;
 
-		menuStack.back()->setVisible(false, true);
+		menuPopped = menuStack.back();
+		menuStack.pop_back();
 	}
 
 	const bool	MenuMain::isMenuAnimating() const {
@@ -116,7 +143,7 @@ namespace gui {
 		if (menuStack.empty())
 			return;
 
-		auto menu = menuStack.back();
+		auto menu = getCurrent();
 		if (menu->isAnimating())
 			return;
 
@@ -127,43 +154,25 @@ namespace gui {
 		if (menuStack.empty())
 			return;
 
-		auto menu = menuStack.back();
+		auto menu = getCurrent();
 		if (menu->isAnimating())
 			return;
 
 		std::string script;
 		if (menu->eventEnter(script)) {
-			//outScript.clear();
-			std::string str = ClearWhiteSpace(script);
-			if (str == "PopMenu()") {
-				pop();
-				return;
-			}
-
-			auto pos = str.find("(");
-			if (pos != std::string::npos && str.substr(0, pos) == "PushMenu") {
-				auto endpos = str.find(")");
-				if (endpos != std::string::npos) {
-					push(str.substr(pos + 1, endpos - pos - 1));
-					return;
-				}
-			}
-
-			//outScript = script;
-			return;
+			scriptParser->execute(cb::fromUtf8(script));
 		}
-
-		return;
 	}
 
 	void MenuMain::eventExit() {
+		pop();
 	}
 
 	void	MenuMain::eventMoveDown() {
 		if (menuStack.empty())
 			return;
 
-		auto menu = menuStack.back();
+		auto menu = getCurrent();
 		if (menu->isAnimating())
 			return;
 
@@ -174,7 +183,7 @@ namespace gui {
 		if (menuStack.empty())
 			return;
 
-		auto menu = menuStack.back();
+		auto menu = getCurrent();
 		if (menu->isAnimating())
 			return;
 
@@ -218,24 +227,13 @@ namespace gui {
 				float width = aspectRatio * height;
 				menu->setSize({ width, height });
 			}
-			//else if (cmd == L"MENUMARGIN" && menu) {
-			//	itemPos = parser.getVec2FromArgs(0);
-			//}
-			//else if (cmd == L"MENUSTEP" && menu) {
-			//	itemStep = parser.getVec2FromArgs(0);
-			//}
 			else if (cmd == L"MENUITEM" && menu) {
 				menuItem = std::make_shared<MenuItem>(parser.getArgUtf8(0), fontInfo);
-				//menuItem->setPos(itemPos);
 				menu->addMenuItem(menuItem);
-				//itemPos += itemStep;
 			}
 			else if (cmd == L"MENUITEMTITLE" && menuItem) {
 				menuItem->setTitle(parser.getArgUtf8(0));
 			}
-			//else if (cmd == L"MENUITEMPOS" && menuItem) {
-			//	menuItem->setPos(parser.getVec2FromArgs(0));
-			//}
 			else if (cmd == L"MENUITEMACTION" && menuItem) {
 				menuItem->setScript(parser.getArgUtf8(0));
 			}

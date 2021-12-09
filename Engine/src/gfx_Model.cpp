@@ -12,7 +12,7 @@ Opis:	Patrz -> gfx_Model.h
 
 #include <CBGL/COpenGL.h>
 
-#include "FileParser.h"
+#include "core_FileParser.h"
 
 #include "gfx_Texture.h"
 #include "gfx_TextureRepository.h"

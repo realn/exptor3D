@@ -12,7 +12,7 @@ namespace event {
   }
 
   EventAction::EventAction(cb::string name, const cb::strvector& args)
-    : Event(EventType::Action, name), args(args)
+    : Event(EventType::Action, name), StrArgList(args)
   {
   }
 

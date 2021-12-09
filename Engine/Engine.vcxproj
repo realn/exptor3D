@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core_LineParser.cpp" />
+    <ClCompile Include="src\core_StrArgList.cpp" />
     <ClCompile Include="src\core_Transformer.cpp" />
     <ClCompile Include="src\gui_Container.cpp" />
     <ClCompile Include="src\3dMath.cpp" />
@@ -28,7 +30,7 @@
     <ClCompile Include="src\event_Manager.cpp" />
     <ClCompile Include="src\event_Event.cpp" />
     <ClCompile Include="src\event_Mapper.cpp" />
-    <ClCompile Include="src\FileParser.cpp" />
+    <ClCompile Include="src\core_FileParser.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\GUIConsole.cpp" />
     <ClCompile Include="src\gui_ContainerElement.cpp" />
@@ -46,13 +48,14 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshFuncs.cpp" />
     <ClCompile Include="src\gfx_Model.cpp" />
-    <ClCompile Include="src\ScriptParser.cpp" />
+    <ClCompile Include="src\logic_ScriptParser.cpp" />
     <ClCompile Include="src\StrEx.cpp" />
     <ClCompile Include="src\gfx_Texture.cpp" />
     <ClCompile Include="src\gfx_TextureRepository.cpp" />
     <ClCompile Include="src\GUITextPrinter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core_StrArgList.h" />
     <ClInclude Include="src\core_Transformer.h" />
     <ClInclude Include="src\gui_Container.h" />
     <ClInclude Include="src\gui_ContainerElement.h" />
@@ -61,11 +64,10 @@
     <ClInclude Include="src\core_object.h" />
     <ClInclude Include="src\event_InputMapper.h" />
     <ClInclude Include="src\event_Manager.h" />
-    <ClInclude Include="src\EventScript.h" />
     <ClInclude Include="src\event_Event.h" />
     <ClInclude Include="src\event_Mapper.h" />
     <ClInclude Include="src\event_Observer.h" />
-    <ClInclude Include="src\FileParser.h" />
+    <ClInclude Include="src\core_FileParser.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\GUIConsole.h" />
     <ClInclude Include="src\gui_Element.h" />
@@ -79,13 +81,14 @@
     <ClInclude Include="src\gui_StackElement.h" />
     <ClInclude Include="src\gui_TextElement.h" />
     <ClInclude Include="src\gui_ValueSync.h" />
+    <ClInclude Include="src\core_LineParser.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshFace.h" />
     <ClInclude Include="src\MeshFuncs.h" />
     <ClInclude Include="src\MeshVertex.h" />
     <ClInclude Include="src\gfx_Model.h" />
-    <ClInclude Include="src\ScriptParser.h" />
+    <ClInclude Include="src\logic_ScriptParser.h" />
     <ClInclude Include="src\StrEx.h" />
     <ClInclude Include="src\gfx_Texture.h" />
     <ClInclude Include="src\gfx_TextureRepository.h" />

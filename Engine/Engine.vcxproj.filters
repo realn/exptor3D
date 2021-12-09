@@ -24,6 +24,9 @@
     <Filter Include="Source Files\GUI\elements">
       <UniqueIdentifier>{8151d223-fc1a-4b1a-ba90-440defa114f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Logic">
+      <UniqueIdentifier>{27d1dc3a-791a-4631-8a04-7ede23bb5ced}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\3dMath.cpp">
@@ -32,7 +35,7 @@
     <ClCompile Include="src\StrEx.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\FileParser.cpp">
+    <ClCompile Include="src\core_FileParser.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\core_object.cpp">
@@ -77,9 +80,6 @@
     <ClCompile Include="src\gui_ValueSync.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScriptParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\event_Manager.cpp">
       <Filter>Source Files\Events</Filter>
     </ClCompile>
@@ -122,6 +122,15 @@
     <ClCompile Include="src\core_Transformer.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core_LineParser.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic_ScriptParser.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core_StrArgList.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -130,7 +139,7 @@
     <ClInclude Include="src\StrEx.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\FileParser.h">
+    <ClInclude Include="src\core_FileParser.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\core_object.h">
@@ -171,12 +180,6 @@
     </ClInclude>
     <ClInclude Include="src\gui_Screen.h">
       <Filter>Source Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ScriptParser.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EventScript.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\event_Manager.h">
       <Filter>Source Files\Events</Filter>
@@ -233,6 +236,15 @@
       <Filter>Source Files\GUI\elements</Filter>
     </ClInclude>
     <ClInclude Include="src\core_Transformer.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core_LineParser.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic_ScriptParser.h">
+      <Filter>Source Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core_StrArgList.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>

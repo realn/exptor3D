@@ -68,7 +68,9 @@ namespace mdlview {
       auto it = std::filesystem::directory_iterator{ modelPath };
       for (const auto& entry : it) {
         auto item = std::make_shared<gui::MenuItem>("", textPrinter->getFontInfo());
-        item->setTitle(entry.path().filename().u8string());
+        auto filename = entry.path().filename().u8string();
+        item->setTitle(filename);
+        item->setScript("loadModel(\"" + filename + "\")");
         modelMenu->addMenuItem(item);
       }
     }

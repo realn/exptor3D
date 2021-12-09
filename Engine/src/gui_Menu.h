@@ -3,6 +3,8 @@
 #include <glm/vec2.hpp>
 
 #include "core_FontInfo.h"
+#include "core_Transformer.h"
+
 #include "GUIRenderContext.h"
 
 namespace gui {
@@ -13,6 +15,13 @@ namespace gui {
   class Element;
   class TextElement;
   class StackElement;
+
+  enum class MenuState {
+    HIDDEN = 0,
+    VISIBLE,
+    HIDING,
+    REVEALING
+  };
 
   class Menu {
   public:
@@ -39,6 +48,7 @@ namespace gui {
     const std::string& getId() const;
     bool	isVisible() const;
     bool	isAnimating() const;
+    MenuState getState() const;
 
   private:
     using menuitems_t = std::vector<menuitemptr_t>;
@@ -59,7 +69,7 @@ namespace gui {
 
     menuitemptr_t selectedItem;
 
-    bool	visible = true;
-    float	scroll = 0.0f;
+    core::ValueTransformer<float> scroll;
+    MenuState state = MenuState::HIDDEN;
   };
 }

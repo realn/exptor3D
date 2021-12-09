@@ -24,6 +24,9 @@ namespace core {
     bool isEnabled() const;
     bool isReversed() const;
 
+    virtual bool isFinished() const = 0;
+    virtual bool isOnStart() const = 0;
+
   protected:
     bool enabled = false;
     bool reversed = false;
@@ -60,11 +63,11 @@ namespace core {
       value = glm::clamp(value, min, max);
     }
 
-    void reset() {
+    void reset() override {
       value = min;
     }
 
-    void finish() {
+    void finish() override {
       value = max;
     }
 
@@ -73,7 +76,7 @@ namespace core {
     }
 
     void setStep(_Type val) {
-      step = val;
+      step = glm::sign(max - min) * glm::abs(val);
     }
 
     void setDuration(std::chrono::duration<float> seconds) override {
@@ -83,6 +86,14 @@ namespace core {
     void setRange(_Type minVal, _Type maxVal) {
       min = minVal;
       max = maxVal;
+    }
+
+    bool isFinished() const override {
+      return value == max;
+    }
+
+    bool isOnStart() const override {
+      return value == min;
     }
 
   private:

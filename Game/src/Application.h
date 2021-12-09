@@ -34,7 +34,7 @@ private:
 	std::shared_ptr<cb::sdl::GLContext> glContext;
 
 	std::shared_ptr<event::Manager> eventManager;
-	std::shared_ptr<CScriptParser> scriptParser;
+	std::shared_ptr<logic::ScriptParser> scriptParser;
 
 	CControllerList	ControllerList;
 	event::InputMapper inputMapper;
@@ -44,6 +44,7 @@ private:
 	GAME_STATE	State;
 	MOUSE_MODE	MouseMode;
 
+	bool run = true;
 	bool active = true;
 	bool runLoop = true;
 
@@ -51,7 +52,7 @@ public:
 	CApplication();
 	~CApplication();
 
-	int		Run();
+	int		exec();
 	const bool	ProcessEvent( cb::sdl::Event& event );
 	bool ProcessWindowEvent(cb::sdl::WindowEvent& event);
 	bool ProcessTextInput(cb::sdl::TextInputEvent& event);

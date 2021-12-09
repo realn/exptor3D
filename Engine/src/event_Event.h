@@ -2,6 +2,8 @@
 
 #include <CBCore/Defines.h>
 
+#include "core_StrArgList.h"
+
 namespace event {
   enum class EventType {
     Action = 0,
@@ -32,15 +34,10 @@ namespace event {
     cb::string name;
   };
 
-  class EventAction : public Event {
+  class EventAction : public Event, public core::StrArgList {
   public:
     EventAction(cb::string name, const cb::strvector& args = cb::strvector());
     ~EventAction() override = default;
-
-    const cb::strvector& getArgs() const { return args; }
-
-  private:
-    cb::strvector args;
   };
 
   class EventState : public Event {

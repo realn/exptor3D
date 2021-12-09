@@ -21,5 +21,5 @@ int WinMain(void* hInstance,			// Instancja
   Log.Init("main.log", " - Expert 3D Tournament Log");
 
   CApplication app;
-  return app.Run();
+  return app.exec();
 }

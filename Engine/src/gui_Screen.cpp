@@ -2,7 +2,7 @@
 #include <CBCore/StringConvert.h>
 
 #include "StrEx.h"
-#include "FileParser.h"
+#include "core_FileParser.h"
 
 #include "gui_StackElement.h"
 #include "gui_Element.h"

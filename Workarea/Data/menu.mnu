@@ -10,11 +10,11 @@ MENUITEMACTION("LoadLevel(newlevel.txt)")
 
 MENUITEM(Options)
 MENUITEMTITLE("Opcje")
-MENUITEMACTION("PushMenu(Options)")
+MENUITEMACTION("pushMenu(Options)")
 
 MENUITEM(Exit)
 MENUITEMTITLE("Wyjscie")
-MENUITEMACTION("Quit")
+MENUITEMACTION("quit()")
 
 MENU(Options)
 MENUTITLE("Opcje")
@@ -24,20 +24,20 @@ MENUSTEP(0,60)
 
 MENUITEM(Reflections)
 MENUITEMTITLE("Odbicia")
-MENUITEMACTION("Reflection()")
+MENUITEMACTION("toggleReflections(true)")
 
 MENUITEM(MotionBlur)
 MENUITEMTITLE("Motion Blur")
-MENUITEMACTION("MotionBlur()")
+MENUITEMACTION("toggleMotionBlur(true)")
 
 MENUITEM(FullscreenOn)
 MENUITEMTITLE("Gra na pelnym ekranie")
-MENUITEMACTION("EnableFullScreen()")
+MENUITEMACTION("enableFullScreen()")
 
 MENUITEM(FullscreenOff)
 MENUITEMTITLE("Gra w okienku")
-MENUITEMACTION("DisableFullScreen()")
+MENUITEMACTION("disableFullScreen()")
 
 MENUITEM(ReturnToMain)
 MENUITEMTITLE("Powrot do menu")
-MENUITEMACTION("PopMenu()")
+MENUITEMACTION("popMenu()")

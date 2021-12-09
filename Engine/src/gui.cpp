@@ -37,11 +37,11 @@ const int ConFuncCount = 27;
 	tutaj zarz¹dza siê wszystkim i tutaj zakodowana jest konsola.
 	Wiem, wiem, mo¿na to by³o inaczej zrobiæ :/
 */
-CGUIMain::CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, float aspectRatio, unsigned height ) :
+CGUIMain::CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::ScriptParser> scriptParser, float aspectRatio, unsigned height ) :
 	Mode( GUI_MODE::MENU ),
 	textPrinter(texManager.Get("Font.tga")),
 	ScriptParser( scriptParser ),
-	menu(aspectRatio),
+	menu(aspectRatio, scriptParser),
 	Console( scriptParser, height, aspectRatio ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),

@@ -19,7 +19,7 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 
 #include "Log.h"
 
-#include "ScriptParser.h"
+#include "logic_ScriptParser.h"
 
 #include "gui_MainMenu.h"
 #include "gui_Screen.h"
@@ -77,7 +77,7 @@ private:
 	gui::MenuMain	menu;
 	gui::Screen screen;
 	CGUIConsole	Console;
-	CScriptParser&	ScriptParser;
+	std::shared_ptr<logic::ScriptParser>	ScriptParser;
 
 	unsigned short Second;
 	unsigned short Minute;
@@ -107,7 +107,7 @@ private:
 	glm::vec2 currentMousePos = glm::vec2(0.0f);
 
 public:
-	CGUIMain( gfx::TextureRepository& texManager, CScriptParser& scriptParser, float aspectRation, unsigned height );
+	CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::ScriptParser> scriptParser, float aspectRation, unsigned height );
 	~CGUIMain() override = default;
 
 	void	Update(float timeDelta);

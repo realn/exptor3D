@@ -5,7 +5,7 @@
 
 #include "GUIConsole.h"
 
-CGUIConsole::CGUIConsole( CScriptParser& scriptParser, const unsigned height, const float aspectRatio ) :
+CGUIConsole::CGUIConsole( std::shared_ptr<logic::ScriptParser> scriptParser, const unsigned height, const float aspectRatio ) :
 	ScriptParser( scriptParser ),
 	ScreenHeight( height ),
 	AspectRatio( aspectRatio ),

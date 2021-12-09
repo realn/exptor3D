@@ -7,6 +7,7 @@
 
 #include <CBCore/Defines.h>
 
+#include "logic_ScriptParser.h"
 #include "event_Observer.h"
 #include "event_Mapper.h"
 
@@ -21,15 +22,19 @@ namespace gui {
 
 	enum class MENU_TAG;
 
-	class MenuMain : public event::IObserver {
+	class MenuMain 
+		: public std::enable_shared_from_this<MenuMain>
+		, public event::IObserver
+		, public logic::IFuncHolder 
+	{
 	public:
 		using menuptr_t = std::shared_ptr<Menu>;
 
-		MenuMain(const float aspectRatio);
-		~MenuMain();
+		MenuMain(const float aspectRatio, std::shared_ptr<logic::ScriptParser> scriptParser);
+		~MenuMain() override;
 
 		void addMenu(menuptr_t menu);
-
+		menuptr_t getCurrent() const;
 
 		void	update(const float timeDelta);
 		RenderContext	makeRender(gui::TextPrinter& printer) const;
@@ -56,11 +61,13 @@ namespace gui {
 		void eventEnter();
 		void eventExit();
 
+		std::shared_ptr<logic::ScriptParser> scriptParser;
 		std::string file;
 		float	aspectRatio = 0.0f;
 		menus_t menus;
 		menus_t menuStack;
-		menuptr_t menuCurrent;
+		menuptr_t menuPopped;
+		size_t menuIndexCurrent = 0;
 		glm::vec2 pointerPos;
 		event::Mapper mapper;
 	};

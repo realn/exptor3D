@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ScriptParser.h"
+#include "logic_ScriptParser.h"
 
 #include "GUITextPrinter.h"
 #include "GUIRenderContext.h"
@@ -8,7 +8,8 @@
 class CGUIConsole
 {
 private:
-	CScriptParser&	ScriptParser;
+
+	std::shared_ptr<logic::ScriptParser>	ScriptParser;
 	unsigned	ScreenHeight;
 	float		AspectRatio;
 	float		Scroll;
@@ -17,7 +18,7 @@ private:
 	std::string	CurrentText;
 
 public:
-	CGUIConsole( CScriptParser& scriptParser, const unsigned height, const float aspectRatio );
+	CGUIConsole( std::shared_ptr<logic::ScriptParser> scriptParser, const unsigned height, const float aspectRatio );
 
 	void	Render(gui::RenderContext& ctx, gui::TextPrinter& printer);
 	void	Update( const float fTD );
