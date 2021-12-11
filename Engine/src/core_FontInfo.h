@@ -13,7 +13,7 @@ namespace core {
 		const glm::vec2& getGlyphSize(const char value) const;
 		const glm::vec2& getGlyphAdvance(const char value) const;
 
-		const glm::vec2	getTextSize(const std::string& text) const;
+		const glm::vec2	getTextSize(const cb::string& text) const;
 		const glm::vec2 getLineAdvance() const;
 
 	private:

@@ -116,7 +116,7 @@ namespace gfx {
       auto cmd = parser.getCmd();
       if (cmd == L"MESH") {
         if (!loadMesh(parser, obj)) {
-          error("Failed to load mesh");
+          error(L"Failed to load mesh");
           return false;
         }
       }
@@ -223,22 +223,22 @@ namespace gfx {
     }
   }
 
-  bool Model::load(gfx::TextureRepository& texManager, const std::string& filename) {
-    // Sprawdzamy czy ³añcuch nie jest pusty
-    if (filename.empty()) {
-      error("Pusty ci¹g nazwy pliku!");
+  const cb::strvector& Model::getLoadingLog() const {
+    return loadingLog;
+  }
+
+  bool Model::load(gfx::TextureRepository& texManager, const cb::string& filename) {
+
+    core::FileParser parser(filename);
+
+    if (!parser) {
+      error(L"Invalid file " + filename);
       return false;
     }
 
-    core::FileParser parser(cb::fromUtf8(filename));
-
-    if (!parser.readLine()) {
-      error("Invalid file " + filename);
-      return false;
-    }
-
+    parser.readLine();
     if (parser.getCmd() != L"GLM" || parser.getArg(0) != L"100") {
-      error("Invalid header for file " + filename);
+      error(L"Invalid header for file " + filename);
       return false;
     }
 
@@ -248,20 +248,24 @@ namespace gfx {
     while (parser.readLine()) {
       if (parser.getCmd() == L"MATERIAL") {
         if (!loadMaterial(parser, texManager)) {
-          error("Failed to load material");
+          loadingLog = parser.getLogLines();
+          error(L"Failed to load material");
           return false;
         }
       }
       else if (parser.getCmd() == L"OBJECT") {
         if (!loadObject(parser)) {
-          error("Failed to load object");
+          loadingLog = parser.getLogLines();
+          error(L"Failed to load object");
           return false;
         }
       }
     }
 
+    loadingLog = parser.getLogLines();
+    writeLogLines(core::LogType::Info, loadingLog);
     loaded = true;
-    report("Loaded new model.");
+    report(L"Loaded new model.");
     return true;
   }
 

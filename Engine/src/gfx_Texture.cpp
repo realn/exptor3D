@@ -30,7 +30,7 @@ namespace gfx {
 		auto surface = cb::sdl::Surface::loadTGA(file);
 		if (!surface) {
 			loaded = false;
-			error("Failed to load " + filename);
+			error(L"Failed to load " + file);
 			return false;
 		}
 

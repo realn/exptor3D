@@ -15,19 +15,19 @@ namespace gui {
     virtual void	render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const override;
     virtual void	update(const float timeDelta) override;
 
-    void	setText(const std::string& value);
+    void	setText(const cb::string& value);
     void	setScale(const glm::vec2& value);
 
     glm::vec2		getSize() const override;
-    std::string	getText() const;
+    cb::string	getText() const;
     glm::vec2	getScale() const;
 
-    void setSyncValue(const std::string& value) override;
-    const std::string getSyncValue() const override;
+    void setSyncValue(const cb::string& value) override;
+    const cb::string getSyncValue() const override;
 
   protected:
     core::FontInfo fontInfo;
-    std::string		text;
+    cb::string		text;
     glm::vec2	scale = glm::vec2(1.0f);
   };
 

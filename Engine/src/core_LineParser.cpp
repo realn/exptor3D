@@ -40,7 +40,7 @@ namespace core {
     }
 
     cb::string parseCmd(const cb::string& line) {
-      if (trimLeft(line).empty() || trimLeft(line).front() == L'#')
+      if (trimLeft(line).empty())
         return cb::string();
 
       auto pos = line.find(L"(");
@@ -48,20 +48,6 @@ namespace core {
         return trim(line);
 
       return trim(line.substr(0, pos));
-    }
-
-    cb::string parseArgLine(const cb::string& line) {
-      auto pos = line.find(L"(");
-      if (pos == cb::string::npos)
-        return cb::string();
-
-      pos++;
-      auto endpos = findNonQuoted(line, ')', pos);
-      if (endpos == cb::string::npos) {
-        return cb::string();
-      }
-
-      return trim(line.substr(pos, endpos - pos));
     }
 
     cb::strvector parseArgList(const cb::string& line) {
@@ -84,18 +70,56 @@ namespace core {
     }
   }
 
+  LineParser::LineParser() : LogObject(L"LineParser") {}
+
   LineParser::~LineParser() = default;
 
   void LineParser::parse(const cb::string& line) {
     cmd = cb::string();
     args.clear();
 
+    if (line.empty()) {
+      debug(L"empty line, skipping.");
+      return;
+    }
+
+    if (trimLeft(line).front() == L'#') {
+      debug(L"found comment, skipping line.");
+      return;
+    }
+
     cmd = parseCmd(line);
+    if (cmd.empty()) {
+      error(L"command not found on line.");
+      return;
+    }
+
     auto argLine = parseArgLine(line);
     args = parseArgList(argLine);
   }
 
   cb::string LineParser::getCmd() const {
     return cmd;
+  }
+
+  cb::string LineParser::parseArgLine(const cb::string& line) {
+    auto pos = line.find(L"(");
+    if (pos == cb::string::npos) {
+      error(L"no braces for args found on line.");
+      return cb::string();
+    }
+
+    pos++;
+    auto endpos = findNonQuoted(line, ')', pos);
+    if (endpos == cb::string::npos) {
+      warning(L"no closing brace for args found on line.");
+      return cb::string();
+    }
+
+    return trim(line.substr(pos, endpos - pos));
+  }
+
+  void LineParser::converror(const cb::string& msg) const {
+    error(msg);
   }
 }

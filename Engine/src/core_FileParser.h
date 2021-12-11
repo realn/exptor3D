@@ -18,7 +18,16 @@ namespace core {
 
     bool readLine();
 
+    bool isValid() const;
+
+    operator bool() const;
+    bool operator!() const;
+
+  protected:
+    virtual cb::string getLogName() const override;
+
   private:
     std::ifstream file;
+    size_t line = 0;
   };
 }

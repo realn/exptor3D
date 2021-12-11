@@ -19,7 +19,7 @@ namespace gui {
 	public:
 		TextPrinter(std::shared_ptr<gfx::Texture> texture);
 
-		void	print(RenderContext& ctx, const glm::vec2& pos, const std::string& text);
+		void	print(RenderContext& ctx, const glm::vec2& pos, const cb::string& text);
 
 		const core::FontInfo& getFontInfo() const;
 

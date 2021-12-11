@@ -41,9 +41,6 @@
     <ClCompile Include="src\core_object.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Mesh.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -131,6 +128,9 @@
     <ClCompile Include="src\core_StrArgList.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core_Files.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -143,9 +143,6 @@
       <Filter>Source Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\core_object.h">
-      <Filter>Source Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Log.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Mesh.h">
@@ -245,6 +242,9 @@
       <Filter>Source Files\Logic</Filter>
     </ClInclude>
     <ClInclude Include="src\core_StrArgList.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core_Files.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>

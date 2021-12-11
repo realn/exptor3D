@@ -73,11 +73,11 @@ namespace gui {
     return false;
   }
 
-  const bool	Screen::load(const std::string& filename, const core::FontInfo& fontInfo) {
+  const bool	Screen::load(const cb::string& filename, const core::FontInfo& fontInfo) {
     if (filename.empty())
       return false;
 
-    auto parser = core::FileParser(cb::fromUtf8(filename));
+    auto parser = core::FileParser(filename);
 
     using containers_t = std::vector<std::shared_ptr<ContainerElement>>;
 
@@ -90,7 +90,7 @@ namespace gui {
  
       if (cmd == L"TEXT") {
         auto ele = std::make_shared<TextElement>(fontInfo);
-        ele->setText(cb::toUtf8(parser.getArg(0)));
+        ele->setText(parser.getArg(0));
         element = ele;
         if (containers.empty()) {
           addElement(element);
@@ -139,7 +139,7 @@ namespace gui {
       else if (cmd == L"SYNCVALUE") {
         auto holder = std::dynamic_pointer_cast<IValueHolder>(element);
         if (holder != nullptr) {
-          values.addValueSync(holder, parser.getArgUtf8(0), parser.getArgUtf8(1), parser.getArgUtf8(2));
+          values.addValueSync(holder, parser.getArg(0), parser.getArg(1), parser.getArg(2));
         }
       }
     }

@@ -61,8 +61,6 @@ namespace event {
 
     case cb::sdl::EventType::MOUSEMOTION:
       processMouseMove(manager, event.motion(), windowSize);
-
-    default:
       break;
     }
   }

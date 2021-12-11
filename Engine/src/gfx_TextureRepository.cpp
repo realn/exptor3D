@@ -1,4 +1,6 @@
 
+#include <CBCore/StringConvert.h>
+
 #include "gfx_Texture.h"
 #include "gfx_TextureRepository.h"
 
@@ -12,7 +14,7 @@ namespace gfx {
 
 	std::shared_ptr<Texture> TextureRepository::Get(std::string filename) {
 		if (filename.empty()) {
-			error("Pusty ci¹g znaków!");
+			error(L"Pusty ci¹g znaków!");
 			return nullptr;
 		}
 
@@ -25,12 +27,12 @@ namespace gfx {
 
 		auto texture = std::make_shared<Texture>(path);
 		if (!texture->isLoaded()) {
-			error("Nieudane za³adowanie tekstury: " + filename);
+			error(L"Nieudane za³adowanie tekstury: " + cb::fromUtf8(filename));
 			return nullptr;
 		}
 
 		addTexture(texture);
-		log("Dodano now¹ teksture: " + filename);
+		report(L"Dodano nowa teksture: " + cb::fromUtf8(filename));
 		return texture;
 	}
 

@@ -12,7 +12,7 @@
 #include "gui_Menu.h"
 
 namespace gui {
-  Menu::Menu(const std::string& id, const core::FontInfo& fontInfo) : id(id), fontInfo(fontInfo) {
+  Menu::Menu(const cb::string& id, const core::FontInfo& fontInfo) : id(id), fontInfo(fontInfo) {
 
     scroll.setRange(0.0f, 1.0f);
     scroll.setStep(2.0f);
@@ -92,7 +92,7 @@ namespace gui {
     }
   }
 
-  bool	Menu::eventEnter(std::string& outScript) {
+  bool	Menu::eventEnter(cb::string& outScript) {
     if (selectedItem) {
       outScript = selectedItem->getScript();
       return true;
@@ -137,7 +137,7 @@ namespace gui {
     itemsElement->addElement(item);
   }
 
-  void	Menu::setTitle(const std::string& value) {
+  void	Menu::setTitle(const cb::string& value) {
     titleElement->setText(value);
   }
 
@@ -173,7 +173,7 @@ namespace gui {
     }
   }
 
-  const std::string& Menu::getId() const {
+  const cb::string& Menu::getId() const {
     return id;
   }
 

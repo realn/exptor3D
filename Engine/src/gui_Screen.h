@@ -25,7 +25,7 @@ namespace gui {
 
 		bool elementContainsPoint(elementptr_t element, const glm::vec2& point, const glm::vec2& screenSize, bool searchDown = true) const;
 
-		const bool	load(const std::string& filename, const core::FontInfo& fontInfo);
+		const bool	load(const cb::string& filename, const core::FontInfo& fontInfo);
 
 		ValueSyncList& getValues() { return values; }
 

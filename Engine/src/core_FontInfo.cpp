@@ -11,7 +11,7 @@ namespace core {
 		return advance;
 	}
 
-	const glm::vec2 FontInfo::getTextSize(const std::string& text) const {
+	const glm::vec2 FontInfo::getTextSize(const cb::string& text) const {
 		return advance * static_cast<float>(text.size()) + glyphSize - advance;
 	}
 

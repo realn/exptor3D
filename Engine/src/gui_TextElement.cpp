@@ -23,7 +23,7 @@ namespace gui {
 
   }
 
-  void	TextElement::setText(const std::string& value) {
+  void	TextElement::setText(const cb::string& value) {
     text = value;
   }
 
@@ -35,7 +35,7 @@ namespace gui {
     return fontInfo.getTextSize(text) * scale;
   }
 
-  std::string	TextElement::getText() const {
+  cb::string	TextElement::getText() const {
     return text;
   }
 
@@ -43,11 +43,11 @@ namespace gui {
     return scale;
   }
 
-  void TextElement::setSyncValue(const std::string& value) {
+  void TextElement::setSyncValue(const cb::string& value) {
     setText(value);
   }
 
-  const std::string TextElement::getSyncValue() const {
+  const cb::string TextElement::getSyncValue() const {
     return getText();
   }
 }

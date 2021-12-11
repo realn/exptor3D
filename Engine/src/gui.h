@@ -17,8 +17,6 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include "event_Observer.h"
 #include "event_Mapper.h"
 
-#include "Log.h"
-
 #include "logic_ScriptParser.h"
 
 #include "gui_MainMenu.h"
@@ -113,7 +111,7 @@ public:
 	void	Update(float timeDelta);
 	void	Render();
 
-	void	ShowMenu( const std::string& strID );
+	void	ShowMenu( const cb::string& strID );
 	void	HideMenu();
 	const bool	IsMenuAnimating() const;
 	

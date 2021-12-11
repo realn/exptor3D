@@ -28,7 +28,6 @@ namespace gfx {
   class TextureRepository;
 
   class Model : public core::Object {
-
   public:
     Model();
     ~Model() override;
@@ -38,7 +37,9 @@ namespace gfx {
     Model& operator=(const Model&) = delete;
     Model& operator=(Model&&) = default;
 
-    bool load(gfx::TextureRepository& texManager, const std::string& filePath);
+    const cb::strvector& getLoadingLog() const;
+
+    bool load(gfx::TextureRepository& texManager, const cb::string& filePath);
 
     void Free();
     const std::string GetFile() const;
@@ -68,5 +69,6 @@ namespace gfx {
     bool loaded = false;
     // Ostatni za³adowany plik
     cb::string file = L"-";
+    cb::strvector loadingLog;
   };
 }

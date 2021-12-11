@@ -6,7 +6,7 @@
 #include "gui_MenuItem.h"
 
 namespace gui {
-	MenuItem::MenuItem(const std::string& id, const core::FontInfo& fontInfo) 
+	MenuItem::MenuItem(const cb::string& id, const core::FontInfo& fontInfo) 
 		: id(id), fontInfo(fontInfo) 
 	{
 		itemColor.setRange({ 0.8f, 0.8f, 0.8, 0.9f }, { 1.0f, 1.0f, 1.0f, 1.0f });
@@ -37,7 +37,7 @@ namespace gui {
 		ctx.popColor();
 	}
 
-	void	MenuItem::setTitle(const std::string& value) {
+	void	MenuItem::setTitle(const cb::string& value) {
 		title = value;
 	}
 
@@ -45,7 +45,7 @@ namespace gui {
 		highlight = value;
 	}
 
-	void	MenuItem::setScript(const std::string& value) {
+	void	MenuItem::setScript(const cb::string& value) {
 		script = value;
 	}
 
@@ -53,7 +53,7 @@ namespace gui {
 		return fontInfo.getTextSize(title);
 	}
 
-	const std::string	MenuItem::getScript() const {
+	const cb::string	MenuItem::getScript() const {
 		return script;
 	}
 }

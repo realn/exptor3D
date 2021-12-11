@@ -11,7 +11,6 @@ Opis:	Patrz -> 3dMath.h
 #include <glm/glm.hpp>
 
 #include "3dMath.h"
-#include "Log.h"
 
 Planef::Planef() = default;
 

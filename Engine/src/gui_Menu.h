@@ -27,7 +27,7 @@ namespace gui {
   public:
     using menuitemptr_t = std::shared_ptr<MenuItem>;
 
-    Menu(const std::string& id, const core::FontInfo& fontInfo);
+    Menu(const cb::string& id, const core::FontInfo& fontInfo);
     ~Menu();
 
     void	update(const float fTD);
@@ -36,16 +36,16 @@ namespace gui {
     void	eventMouseMove(const glm::vec2& pos);
     void	eventMoveUp();
     void	eventMoveDown();
-    bool	eventEnter(std::string& outScript);
+    bool	eventEnter(cb::string& outScript);
 
     void	addMenuItem(menuitemptr_t item);
 
-    void	setTitle(const std::string& value);
+    void	setTitle(const cb::string& value);
     void	setTitlePos(const glm::vec2& value);
     void	setSize(const glm::vec2& value);
     void	setVisible(bool value, bool animate);
 
-    const std::string& getId() const;
+    const cb::string& getId() const;
     bool	isVisible() const;
     bool	isAnimating() const;
     MenuState getState() const;
@@ -57,7 +57,7 @@ namespace gui {
     using textelementptr_t = std::shared_ptr<TextElement>;
     using stackelementptr_t = std::shared_ptr<StackElement>;
 
-    const std::string	id;
+    const cb::string	id;
     core::FontInfo fontInfo;
 
     screenptr_t screen;

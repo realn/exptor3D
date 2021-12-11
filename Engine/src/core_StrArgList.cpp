@@ -15,8 +15,10 @@ namespace core {
   }
 
   cb::string StrArgList::getArg(size_t index, cb::string def) const {
-    if (index >= args.size())
+    if (index >= args.size()) {
+      converror(L"Requested non existing arg nr " + std::to_wstring(index));
       return def;
+    }
     return args[index];
   }
 
@@ -26,22 +28,28 @@ namespace core {
 
   float StrArgList::getFloat(size_t index, float def) const {
     float result;
-    if (!cb::fromStr(getArg(index), result))
+    if (!cb::fromStr(getArg(index), result)) {
+      converror(L"Failed to convert arg nr " + std::to_wstring(index) + L" to float, returning def value");
       return def;
+    }
     return result;
   }
 
   cb::s32 StrArgList::getInt(size_t index, cb::s32 def) const {
     cb::s32 result;
-    if (!cb::fromStr(getArg(index), result))
+    if (!cb::fromStr(getArg(index), result)) {
+      converror(L"Failed to convert arg nr " + std::to_wstring(index) + L" to int, returning def value");
       return def;
+    }
     return result;
   }
 
   cb::u32 StrArgList::getUInt(size_t index, cb::u32 def) const {
     cb::u32 result;
-    if (!cb::fromStr(getArg(index), result))
+    if (!cb::fromStr(getArg(index), result)) {
+      converror(L"Failed to convert arg nr " + std::to_wstring(index) + L" to unsigned int, returning def value");
       return def;
+    }
     return result;
   }
 
@@ -67,6 +75,9 @@ namespace core {
       getFloat(index + 2, def.z),
       getFloat(index + 3, def.w)
     };
+  }
+
+  void StrArgList::converror(const cb::string& ) const {
   }
 
 }

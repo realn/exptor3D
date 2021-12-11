@@ -1,3 +1,4 @@
+#include <CBCore/StringConvert.h>
 #include <CBGL/COpenGL.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,7 +30,7 @@ namespace gui {
 		}
 	}
 
-	void TextPrinter::print(RenderContext& ctx, const glm::vec2& pos, const std::string& text) {
+	void TextPrinter::print(RenderContext& ctx, const glm::vec2& pos, const cb::string& text) {
 		ctx.pushTexture();
 
 		ctx.setTexture(texture);
@@ -39,6 +40,7 @@ namespace gui {
 			if (idx < 32)
 				continue;
 			idx -= 32;
+			idx = std::min(idx, glyphs.size());
 
 			auto& glyph = glyphs[idx];
 

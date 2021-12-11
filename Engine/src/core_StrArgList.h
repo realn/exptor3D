@@ -27,6 +27,8 @@ namespace core {
     glm::vec4 getVec4FromArgs(size_t index, glm::vec4 def = glm::vec4()) const;
 
   protected:
+    virtual void converror(const cb::string& msg) const;
+
     cb::strvector args;
   };
 }

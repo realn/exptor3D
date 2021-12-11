@@ -49,12 +49,12 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::S
 	cursorX( 0 ),
 	cursorY( 0 )
 {
-	Log.Log( "Inicjalizacja GUI" );
+	//Log.Log( "Inicjalizacja GUI" );
 	Cursor = texManager.Get( "Kursor.tga" );
 	CH = texManager.Get( "cel.tga" );
 
-	menu.load( "Data/menu.mnu", textPrinter.getFontInfo() );
-	screen.load( "Data/screen.gui", textPrinter.getFontInfo() );
+	menu.load( L"Data/menu.mnu", textPrinter.getFontInfo() );
+	screen.load( L"Data/screen.gui", textPrinter.getFontInfo() );
 
 	Frame = 0;
 	Second = 0;
@@ -65,7 +65,7 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::S
 	Quit = false;
 }
 
-void	CGUIMain::ShowMenu( const std::string& menuID )
+void	CGUIMain::ShowMenu( const cb::string& menuID )
 {
 	menu.push( menuID );
 }

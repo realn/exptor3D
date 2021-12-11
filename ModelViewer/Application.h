@@ -8,6 +8,7 @@
 
 #include <event_InputMapper.h>
 #include <event_Manager.h>
+#include <event_Mapper.h>
 
 #include <logic_ScriptParser.h>
 
@@ -20,6 +21,8 @@
 #include <gui_Menu.h>
 
 #include <core_object.h>
+
+#include "ModelViewer.h"
 
 namespace mdlview {
   class Application : public core::Object {
@@ -47,11 +50,11 @@ namespace mdlview {
     std::shared_ptr<event::Manager> events;
     std::shared_ptr<logic::ScriptParser> scriptParser;
 
-    std::unique_ptr<gfx::TextureRepository> texRepo;
+    std::shared_ptr<gfx::TextureRepository> texRepo;
     std::shared_ptr<gui::TextPrinter> textPrinter;
     std::shared_ptr<gui::Menu> modelMenu;
     std::shared_ptr<gui::MenuMain> mainMenu;
 
-    std::shared_ptr<gfx::Model> model;
+    std::shared_ptr<ModelViewer> modelViewer;
   };
 }
