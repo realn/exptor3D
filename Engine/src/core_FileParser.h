@@ -27,7 +27,8 @@ namespace core {
     virtual cb::string getLogName() const override;
 
   private:
+    cb::string filename;
     std::ifstream file;
-    size_t line = 0;
+    size_t linenr = 1;
   };
 }

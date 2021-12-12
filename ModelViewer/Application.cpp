@@ -8,9 +8,11 @@
 
 #include <CBCore/StringConvert.h>
 #include <CBSDL/Events.h>
+#include <CBSDL/Timer.h>
 
 #include <CBGL/Rendering.h>
 #include <CBGL/System.h>
+#include <CBGL/State.h>
 #include <CBGL/COpenGL.h>
 
 #include <gui_MenuItem.h>
@@ -29,6 +31,8 @@ namespace mdlview {
 
   Application::Application() : Object(L"Application") {
     system = std::make_unique<cb::sdl::System>(cb::sdl::SystemFlag::VIDEO);
+
+    mapper.addAction(L"app_showmenu", [this](const event::EventAction&) { showMenu(); });
   }
 
   int Application::exec() {
@@ -38,6 +42,10 @@ namespace mdlview {
     mainLoop();
 
     return 0;
+  }
+
+  void Application::processEvent(const event::Event& event) {
+    mapper.executeEvent(event);
   }
 
   bool Application::init() {
@@ -78,9 +86,17 @@ namespace mdlview {
     input.addMouseMotionMapping(event::InputMapper::Axis::Y, L"gui_pointer_y");
     input.addMouseMapping(cb::sdl::button::LEFT, L"gui_enter");
 
-    input.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"viewer_showmenu");
+    input.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"app_showmenu");
     input.addKeyMapping(cb::sdl::ScanCode::LEFT, L"viewer_rotate_model_left");
     input.addKeyMapping(cb::sdl::ScanCode::RIGHT, L"viewer_rotate_model_right");
+    input.addKeyMapping(cb::sdl::ScanCode::F5, L"viewer_reload_model");
+
+    {
+      auto state = cb::gl::getDepthState();
+      state.enabled = true;
+      state.Func = cb::gl::DepthFunc::LEQUAL;
+      cb::gl::setState(state);
+    }
 
     return true;
   }
@@ -106,6 +122,7 @@ namespace mdlview {
 
   bool Application::initCore() {
     events = std::make_shared<event::Manager>();
+    events->addObserver(shared_from_this());
 
     scriptParser = std::make_shared<logic::ScriptParser>(events);
 
@@ -116,7 +133,7 @@ namespace mdlview {
   }
 
   void Application::mainLoop() {
-
+    cb::sdl::PerformanceTimer timer;
     while (run) {
       cb::sdl::Event event;
 
@@ -133,11 +150,14 @@ namespace mdlview {
 
       events->processEvents();
 
-      update(1.0f / 60.0f);
+
+      update(timer.getTimeDelta());
 
       render();
 
       glContext->swapWindow(*window);
+
+      timer.update();
     }
   }
 
@@ -171,6 +191,12 @@ namespace mdlview {
     glLoadIdentity();
 
     ctx.render();
+  }
+
+  void Application::showMenu() {
+    if (!mainMenu->isMenuVisible()) {
+      mainMenu->push(L"modelMenu");
+    }
   }
 
 }

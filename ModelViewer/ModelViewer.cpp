@@ -10,11 +10,15 @@ namespace mdlview {
 
     mapper.addState(L"viewer_rotate_model_left", [this](const event::EventState& s) { rotateLeft = s.getState(); });
     mapper.addState(L"viewer_rotate_model_right", [this](const event::EventState& s) { rotateRight = s.getState(); });
+    mapper.addAction(L"viewer_reload_model", [this](const event::EventAction&) { reloadModel(); });
   }
 
   ModelViewer::~ModelViewer() = default;
 
   bool ModelViewer::loadModel(cb::string filename) {
+    model = std::make_shared<gfx::Model>();
+    loadedFile = filename;
+
     if (filename.empty())
       return false;
 
@@ -28,11 +32,15 @@ namespace mdlview {
     return true;
   }
 
+  bool ModelViewer::reloadModel() {
+    return loadModel(loadedFile);
+  }
+
   void ModelViewer::update(float timeDelta) {
     if (rotateLeft)
-      modelRotation += glm::radians(20.0f) * timeDelta;
+      modelRotation += glm::radians(rotationSpeed) * timeDelta;
     if (rotateRight)
-      modelRotation -= glm::radians(20.0f) * timeDelta;
+      modelRotation -= glm::radians(rotationSpeed) * timeDelta;
   }
 
   void ModelViewer::render() const {

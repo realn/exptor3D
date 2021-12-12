@@ -17,6 +17,7 @@ namespace mdlview {
     ~ModelViewer() override;
 
     bool loadModel(cb::string filename);
+    bool reloadModel();
 
     void update(float timeDelta);
     void render() const;
@@ -28,8 +29,10 @@ namespace mdlview {
     std::shared_ptr<gfx::TextureRepository> texRepo;
     std::shared_ptr<gfx::Model> model;
 
+    cb::string loadedFile;
     bool rotateLeft = false;
     bool rotateRight = false;
+    float rotationSpeed = 60.0f;
     float modelRotation = 0.0f;
   };
 }

@@ -1,10 +1,10 @@
 GLM(100)
 MATERIAL(metal0)
 TEXTURE(metal8c.tga)
-ENDMATERIAL
+ENDMATERIAL()
 MATERIAL(metal1)
 TEXTURE(metal1c.tga)
-ENDMATERIAL
+ENDMATERIAL()
 OBJECT(base)
   MESH(metal0)
     glTranslate( 0, 0, -2 )
@@ -22,9 +22,9 @@ OBJECT(base)
     glTranslate( 0, 0, 2 )
     gluDisk( 0.3, 0.5, 16, 1 )
     gluQuadricOrientation( GLU_INSIDE )
-  ENDMESH
+  ENDMESH()
   MESH(metal1)
     gluSphere( 0.7, 16, 16 )
-  ENDMESH
-ENDOBJECT
+  ENDMESH()
+ENDOBJECT()
 

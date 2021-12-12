@@ -43,9 +43,9 @@ namespace gfx {
 
     glm::vec2 makeSphereCoord(float angleARad, float angleBRad) {
       return glm::vec2(
-        -glm::cos(angleARad),
-        glm::sin(angleBRad)
-      ) * 0.5f + glm::vec2(0.5f);
+        (glm::cos(angleARad / 2.0f) + 1.0f) * 0.5f,
+        (glm::cos(angleBRad + glm::half_pi<float>()) + 1.0f) * 0.5f
+      );
     }
 
     glm::vec3 makeCylinderNormal(float angleRad, float height, float bottomRadius, float topRadius) {

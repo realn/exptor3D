@@ -10,7 +10,7 @@ int WinMain() {
   auto filename = L"main.log"s;
   logger->addStream(std::make_shared<std::wofstream>(filename, std::ios::out));
 
-  mdlview::Application app;
+  auto app = std::make_shared<mdlview::Application>();
 
-  return app.exec();
+  return app->exec();
 }

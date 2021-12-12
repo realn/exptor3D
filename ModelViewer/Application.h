@@ -20,16 +20,25 @@
 #include <gui_MainMenu.h>
 #include <gui_Menu.h>
 
+#include <event_Observer.h>
+#include <event_Mapper.h>
+
 #include <core_object.h>
 
 #include "ModelViewer.h"
 
 namespace mdlview {
-  class Application : public core::Object {
+  class Application 
+    : public core::Object
+    , public event::IObserver
+    , public std::enable_shared_from_this<Application>
+  {
   public:
     Application();
 
     int exec();
+
+    void processEvent(const event::Event& event) override;
 
   private:
     bool init();
@@ -40,8 +49,11 @@ namespace mdlview {
     void update(float timeDelta);
     void render();
 
+    void showMenu();
+
     bool run = true;
     event::InputMapper input;
+    event::Mapper mapper;
 
     std::unique_ptr<cb::sdl::System> system;
     std::unique_ptr<cb::sdl::Window> window;

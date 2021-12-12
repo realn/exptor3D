@@ -1,22 +1,12 @@
-GLM	100
-HEADER
-TEXCOUNT	1
-LISTCOUNT	1
-ANIMATION	0
-END HEADER
-TEXLIST
-atom.tga
-END TEXLIST
-MODEL	0
-	glPushMatrix()
+GLM(100)
+MATERIAL("atom")
+TEXTURE("atom.tga")
+ENDMATERIAL()
+OBJECT("base")
+  MESH("atom")
+    glRotate( 90.0, 0.0, 1.0, 0.0 )
+    glRotate( 90.0, 1.0, 0.0, 0.0 )
 
-	glBindTexture( 0 )
-
-	glRotate( 90.0, 0.0, 1.0, 0.0 )
-	glRotate( 90.0, 1.0, 0.0, 0.0 )
-
-	gluSphere( 1, 32, 32 )
-
-	glPopMatrix()
-END MODEL
-END GLM
+    gluSphere( 1, 32, 32 )
+  ENDMESH()
+ENDOBJECT()

@@ -9,7 +9,9 @@
 
 namespace core {
   FileParser::FileParser(const cb::string& filePath) 
-    : file(filePath) {
+    : filename(filePath)
+    , file(filePath) 
+  {
     setClassName(L"FileParser");
   }
 
@@ -26,12 +28,12 @@ namespace core {
 
       auto line = cb::fromUtf8(lineutf8);
       parse(line);
+      linenr++;
     } while (cmd.empty() && file);
 
     if (!file)
       return false;
 
-    line++;
     return true;
   }
 
@@ -48,7 +50,7 @@ namespace core {
   }
 
   cb::string FileParser::getLogName() const {
-    return getClassName() + L"(" + std::to_wstring(line) + L"):";
+    return getClassName() + L"(" + filename + L":" + std::to_wstring(linenr) + L"):";
   }
 
 }
