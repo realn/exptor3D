@@ -135,9 +135,6 @@
     <ClCompile Include="src\WeaponRocketLuncher.cpp">
       <Filter>Source\Game\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
-      <Filter>Source\Level</Filter>
-    </ClCompile>
     <ClCompile Include="src\CollisionBlock.cpp">
       <Filter>Source\Logic</Filter>
     </ClCompile>
@@ -235,12 +232,6 @@
     </ClInclude>
     <ClInclude Include="src\WeaponRocketLuncher.h">
       <Filter>Source\Game\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SceneEntity.h">
-      <Filter>Source\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scene.h">
-      <Filter>Source\Level</Filter>
     </ClInclude>
     <ClInclude Include="src\CollisionBlock.h">
       <Filter>Source\Logic</Filter>

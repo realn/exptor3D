@@ -1,8 +1,9 @@
 #pragma once
 
+#include <logic_SceneNode.h>
+
 #include "3dMath.h"
 #include "Updateable.h"
-#include "SceneEntity.h"
 
 enum class ACTOR_TYPE
 {
@@ -98,7 +99,7 @@ class CActor :
 	public CDynamic,
 	public CActorStats,
 	public IUpdateable,
-	public ISceneEntity
+	public logic::SceneNode
 {
 protected:
 	const ACTOR_TYPE	Type;

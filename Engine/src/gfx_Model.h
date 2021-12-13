@@ -17,15 +17,15 @@ Opis:	Zawiera definicje klas do ³adowania i zarz¹dzania
 
 #include "core_object.h"
 
-// Numer wersji loader'a
-#define		GLM_FILE_VERSION		100
-
 namespace core {
   class FileParser;
 }
+
 namespace gfx {
   class Mesh;
+  class Material;
   class TextureRepository;
+  class Frame;
 
   class Model : public core::Object {
   public:
@@ -38,36 +38,30 @@ namespace gfx {
     Model& operator=(Model&&) = default;
 
     const cb::strvector& getLoadingLog() const;
+    const std::string GetFile() const;
 
     bool load(gfx::TextureRepository& texManager, const cb::string& filePath);
 
-    void Free();
-    const std::string GetFile() const;
-    unsigned int GetObjCount();
-
-    void render(unsigned int index);
+    void queueRender(Frame& frame, const cb::string objName) const;
 
   protected:
     virtual cb::string getLogName() const override;
 
   private:
-    struct Material;
     struct Object;
     struct Mesh;
 
-    using materials_t = std::vector<Material>;
+    using materials_t = std::vector<std::shared_ptr<Material>>;
     using objects_t = std::vector<Object>;
 
     bool loadMaterial(core::FileParser& parser, gfx::TextureRepository& texManager);
     bool loadObject(core::FileParser& parser);
     bool loadMesh(core::FileParser& parser, Object& obj);
+    std::shared_ptr<Material> findMaterial(cb::string name) const;
 
     materials_t materials;
     objects_t objects;
 
-    // Czy model jest za³adowany?
-    bool loaded = false;
-    // Ostatni za³adowany plik
     cb::string file = L"-";
     cb::strvector loadingLog;
   };

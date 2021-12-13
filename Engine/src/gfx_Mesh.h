@@ -5,7 +5,7 @@
 #include <CBCore/Defines.h>
 #include <CBGL/Buffer.h>
 
-#include "MeshVertex.h"
+#include "gfx_MeshVertex.h"
 
 namespace gfx {
   class Mesh {
@@ -24,6 +24,10 @@ namespace gfx {
 
     void add(glm::vec3 position, glm::vec3 normal = glm::vec3(), glm::vec2 texCoord = glm::vec2());
     void add(const MeshVertex& vertex);
+
+    cb::gl::Buffer& getVertexBuffer() const { return *vertexBuffer; }
+    cb::gl::Buffer& getIndexBuffer() const { return *indexBuffer; }
+    size_t getNumberOfIndices() const { return indices.size(); }
 
     void prepare();
 

@@ -14,26 +14,20 @@ Opis:	Patrz -> gfx_Model.h
 
 #include "core_FileParser.h"
 
+#include "gfx_Frame.h"
 #include "gfx_Texture.h"
 #include "gfx_TextureRepository.h"
-
-#include "Mesh.h"
-#include "MeshFuncs.h"
-
+#include "gfx_Material.h"
+#include "gfx_Mesh.h"
+#include "gfx_MeshFuncs.h"
 #include "gfx_Model.h"
+
 #include "StrEx.h"
 
 namespace gfx {
-
-  struct Model::Material {
-    cb::string name;
-    glm::vec4 color = glm::vec4(1.0f);
-    std::shared_ptr<gfx::Texture> texture;
-  };
-
   struct Model::Mesh {
     cb::string materialName;
-    gfx::Mesh mesh;
+    std::shared_ptr<gfx::Mesh> mesh;
 
     Mesh() = default;
     Mesh(Mesh&&) = default;
@@ -70,20 +64,12 @@ namespace gfx {
     return gfx::MeshBuilderContext::VertListType::TRIANGLES;
   }
 
-  /*=====KONSTRUKTOR=====*/
-  Model::Model() : core::Object(L"Model") {
-  }
+  Model::Model() : core::Object(L"Model") {}
 
-  /*=====DESTRUKTOR=====*/
-  Model::~Model() {
-    // Zwolnienie pamiêci
-    Free();
-  }
+  Model::~Model() = default;
 
   bool Model::loadMaterial(core::FileParser& parser, gfx::TextureRepository& texManager) {
-    Material matCtx;
-
-    matCtx.name = parser.getArg(0);
+    auto matCtx = std::make_shared<Material>(parser.getArg(0));
 
     while (parser.readLine()) {
       if (parser.getCmd() == L"ENDMATERIAL") {
@@ -92,10 +78,11 @@ namespace gfx {
       }
 
       if (parser.getCmd() == L"TEXTURE") {
-        matCtx.texture = texManager.Get(cb::toUtf8(parser.getArg(0)));
+        auto texture = texManager.Get(cb::toUtf8(parser.getArg(0)));
+        matCtx->setTexture(texture);
       }
       else if (parser.getCmd() == L"COLOR") {
-        matCtx.color = parser.getVec4FromArgs(0);
+        matCtx->setColor(parser.getVec4FromArgs(0));
       }
     }
 
@@ -134,7 +121,7 @@ namespace gfx {
     while (parser.readLine()) {
       auto cmd = parser.getCmd();
       if (cmd == L"ENDMESH") {
-        mesh.mesh.prepare();
+        mesh.mesh->prepare();
         obj.meshes.push_back(std::move(mesh));
         return true;
       }
@@ -156,7 +143,7 @@ namespace gfx {
         ctx.beginVertexList(value);
       }
       else if (cmd == L"glEnd") {
-        ctx.commitVertexList(mesh.mesh);
+        ctx.commitVertexList(*mesh.mesh);
       }
       else if (cmd == L"glPushMatrix") {
         ctx.pushMatrix();
@@ -183,16 +170,16 @@ namespace gfx {
         // TODO
       }
       else if (cmd == L"gluSphere") {
-        ctx.addSphere(mesh.mesh, parser.getFloat(0), parser.getUInt(1), parser.getUInt(2));
+        ctx.addSphere(*mesh.mesh, parser.getFloat(0), parser.getUInt(1), parser.getUInt(2));
       }
       else if (cmd == L"gluCylinder") {
-        ctx.addCylinder(mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getFloat(2), parser.getUInt(3), parser.getUInt(4));
+        ctx.addCylinder(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getFloat(2), parser.getUInt(3), parser.getUInt(4));
       }
       else if (cmd == L"gluDisk") {
-        ctx.addDisk(mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3));
+        ctx.addDisk(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3));
       }
       else if (cmd == L"gluPartialDisk") {
-        ctx.addPartialDisk(mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3), parser.getFloat(4), parser.getFloat(5));
+        ctx.addPartialDisk(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3), parser.getFloat(4), parser.getFloat(5));
       }
 
     }
@@ -200,26 +187,28 @@ namespace gfx {
     return false;
   }
 
+  std::shared_ptr<Material> Model::findMaterial(cb::string name) const {
+    auto it = std::find_if(materials.begin(), materials.end(), [&](std::shared_ptr<Material> m) { return m->getName() == name; });
+    if(it == materials.end())
+      return std::shared_ptr<Material>();
+    return *it;
+  }
+
 
   /*=====METODA RenderObject=====
   Wywo³uje dan¹ listê wyœwietlania
   */
-  void Model::render(unsigned int index) {
-    if (!loaded)
-      return;
-
+  void Model::queueRender(Frame& frame, const cb::string objName) const {
     if (objects.empty())
       return;
 
-    auto& object = *objects.begin();
+    auto it = std::find_if(objects.begin(), objects.end(), [&](const Object& o) {return o.name == objName; });
+    if (it == objects.end())
+      return;
 
-    for (auto& mesh : object.meshes) {
-      auto it = std::find_if(materials.begin(), materials.end(), [&](const Material& material) { return material.name == mesh.materialName; });
-      if (it != materials.end()) {
-        if (it->texture)
-          it->texture->Activate();
-      }
-      mesh.mesh.render();
+    for (auto& mesh : it->meshes) {
+      auto material = findMaterial(mesh.materialName);
+      frame.addMesh(glm::mat4(1.0f), mesh.mesh, material);
     }
   }
 
@@ -242,9 +231,6 @@ namespace gfx {
       return false;
     }
 
-    Material matCtx;
-    Object objCtx;
-
     while (parser.readLine()) {
       if (parser.getCmd() == L"MATERIAL") {
         if (!loadMaterial(parser, texManager)) {
@@ -264,22 +250,12 @@ namespace gfx {
 
     loadingLog = parser.getLogLines();
     writeLogLines(core::LogType::Info, loadingLog);
-    loaded = true;
     report(L"Loaded new model.");
     return true;
   }
 
-  void Model::Free() {
-    file.clear();
-    loaded = false;
-  }
-
   const std::string Model::GetFile() const {
     return cb::toUtf8(file);
-  }
-
-  unsigned int Model::GetObjCount() {
-    return static_cast<unsigned>(objects.size());
   }
 
   cb::string Model::getLogName() const {

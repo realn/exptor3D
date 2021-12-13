@@ -15,13 +15,10 @@
 #include <CBGL/System.h>
 
 #include <core_IniFile.h>
+#include <gui.h>
 
+#include "ModelManager.h"
 #include "Application.h"
-#include "GamePlayerController.h"
-
-#include "GUI.h"
-#include "GamePlayer.h"
-#include "Level.h"
 
 namespace e3dt {
 	Application::Application() 
@@ -81,10 +78,10 @@ namespace e3dt {
 
 		gfx::TextureRepository texManager("Data/Textures/");
 		gfx::ModelManager modelManager("Data/Models/", texManager);
-		CLevel level(texManager, modelManager);
+		//CLevel level(texManager, modelManager);
 		GUI = std::make_shared<CGUIMain>(texManager, scriptParser, aspectRatio, WindowHeight);
 
-		pGLevel = &level;
+		//pGLevel = &level;
 		//CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
 		//ControllerList.AddController( pController );
 
@@ -300,9 +297,9 @@ namespace e3dt {
 			MouseMode = MOUSE_MODE::GAME;
 		}
 
-		ControllerList.Update();
+		//ControllerList.Update();
 
-		pGLevel->Update(fTD);
+		//pGLevel->Update(fTD);
 	}
 
 	void	Application::Render() {
@@ -319,11 +316,11 @@ namespace e3dt {
 			}
 			glLoadIdentity();
 
-			glRotatef(pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f);
-			glTranslatef(-pGLevel->GetPlayer().Pos.x, 0, pGLevel->GetPlayer().Pos.z);
+			//glRotatef(pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f);
+			//glTranslatef(-pGLevel->GetPlayer().Pos.x, 0, pGLevel->GetPlayer().Pos.z);
 
 			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			pGLevel->Render();
+			//pGLevel->Render();
 
 			{
 				auto pers = glm::perspective(glm::radians(45.0f), (4.0f / 3.0f), 1.0f, 10.0f);
@@ -334,17 +331,17 @@ namespace e3dt {
 			}
 			glClear(GL_DEPTH_BUFFER_BIT);
 			glLoadIdentity();
-			pGLevel->GetPlayer().Render();
+			//pGLevel->GetPlayer().Render();
 		}
 
 		GUI->Render();
 	}
 
 	void	Application::LoadLevel(const std::string& filename) {
-		if (pGLevel->LoadLevel(filename)) {
-			GUI->HideMenu();
-			State = GAME_STATE::LEVEL;
-		}
+		//if (pGLevel->LoadLevel(filename)) {
+		//	GUI->HideMenu();
+		//	State = GAME_STATE::LEVEL;
+		//}
 	}
 
 	void	Application::Print(const std::string& text) {

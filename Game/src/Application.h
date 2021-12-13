@@ -13,8 +13,7 @@
 #include <event_Manager.h>
 #include <event_InputMapper.h>
 
-#include "GameController.h"
-#include "gui.h"
+#include <gui.h>
 
 enum class GAME_STATE
 {
@@ -60,7 +59,7 @@ namespace e3dt {
 		std::shared_ptr<event::Manager> eventManager;
 		std::shared_ptr<logic::ScriptParser> scriptParser;
 
-		CControllerList	ControllerList;
+		//CControllerList	ControllerList;
 		event::InputMapper inputMapper;
 
 		std::shared_ptr<CGUIMain>	GUI;

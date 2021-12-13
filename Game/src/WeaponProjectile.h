@@ -5,7 +5,6 @@
 #include "3dMath.h"
 #include "GameActor.h"
 #include "Renderable.h"
-#include "SceneEntity.h"
 
 enum class PROJECTILE_TYPE
 {

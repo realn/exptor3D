@@ -1,11 +1,11 @@
 #pragma once
 
 #include "3dMath.h"
-#include "gfx_Model.h"
+#include <gfx_Model.h>
+#include <logic_SceneNode.h>
 
 #include "Renderable.h"
 #include "Updateable.h"
-#include "SceneEntity.h"
 
 enum class ITEM_TYPE
 {
@@ -20,7 +20,7 @@ class CItem :
 	public CObject,
 	public IRenderable,
 	public IUpdateable,
-	public ISceneEntity
+	public logic::SceneNode
 {
 protected:
 	const ITEM_TYPE Type;

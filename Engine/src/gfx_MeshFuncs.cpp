@@ -2,10 +2,11 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "gfx_MeshVertex.h"
+#include "gfx_Mesh.h"
+#include "gfx_MeshFuncs.h"
+
 #include "3dMath.h"
-#include "MeshVertex.h"
-#include "Mesh.h"
-#include "MeshFuncs.h"
 
 namespace gfx {
   namespace {
