@@ -77,12 +77,6 @@ private:
 	CGUIConsole	Console;
 	std::shared_ptr<logic::ScriptParser>	ScriptParser;
 
-	unsigned short Second;
-	unsigned short Minute;
-	unsigned short Hour;
-
-	float	FrameTime;
-	float	CurrentTD;
 	float	AspectRatio;
 	float	ConsoleScroll;
 	float	FScrColor[4];
@@ -90,7 +84,6 @@ private:
 	float	ThisWLScrTime;
 	float	WLScrColor[4];
 
-	unsigned	Frame;
 	unsigned	ScreenHeight;
 	unsigned	cursorX, cursorY;
 
@@ -118,11 +111,6 @@ public:
 	void	SetMode( const GUI_MODE mode );
 
 	bool	GetQuit();
-
-	void	UpdateCounter( const float fTD );
-	const unsigned	GetTime( const GUI_TIME type ) const;
-	const unsigned	GetFrameRate() const;
-	const unsigned	GetMiliSecPas() const;
 
 	void	ActiveFScrColor( float R, float G, float B, float Alpha = 0.5f );
 

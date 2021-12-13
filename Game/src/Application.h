@@ -9,11 +9,16 @@
 
 #include <gfx_Texture.h>
 #include <gfx_TextureRepository.h>
+#include <gfx_RenderSystem.h>
+
+#include <logic_Scene.h>
 
 #include <event_Manager.h>
 #include <event_InputMapper.h>
 
 #include <gui.h>
+
+#include "ModelManager.h"
 
 enum class GAME_STATE
 {
@@ -34,23 +39,25 @@ namespace e3dt {
 		~Application() override;
 
 		int		exec();
-		const bool	ProcessEvent(cb::sdl::Event& event);
-		bool ProcessWindowEvent(cb::sdl::WindowEvent& event);
-		bool ProcessTextInput(cb::sdl::TextInputEvent& event);
+
+		float getAspectRatio() const;
 
 	private:
-		void	RegScript();
-		void	InitGraphics(gfx::TextureRepository& texManager);
+		bool init();
+		bool initBase();
+		bool initCore();
+		bool initGraphics();
+		bool initGame();
 
-		void	MainLoop();
+		void mainLoop();
 
-		void	UpdateMouse();
-		void	Update(const float fTD);
-		void	Render();
+		void processAppEvents();
+		bool processEvent(cb::sdl::Event& event);
+		bool processWindowEvent(cb::sdl::WindowEvent& event);
 
-	public:
-		void	LoadLevel(const std::string& filename);
-		void	Print(const std::string& text);
+		void updateTimeStep(float timeDelta);
+		void update(float timeDelta);
+		void render();
 
 		std::unique_ptr<cb::sdl::System> system;
 		std::shared_ptr<cb::sdl::Window> window;
@@ -59,17 +66,18 @@ namespace e3dt {
 		std::shared_ptr<event::Manager> eventManager;
 		std::shared_ptr<logic::ScriptParser> scriptParser;
 
+		std::shared_ptr<gfx::TextureRepository> textureRepository;
+		std::shared_ptr<gfx::ModelManager> modelManager;
 		//CControllerList	ControllerList;
 		event::InputMapper inputMapper;
 
 		std::shared_ptr<CGUIMain>	GUI;
 
-		GAME_STATE	State = GAME_STATE::MAINMENU;
-		MOUSE_MODE	MouseMode = MOUSE_MODE::MENU;
+		gfx::RenderSystem renderSystem;
+		logic::Scene scene;
 
+		float frameTime = 0.0f;
 		bool run = true;
 		bool active = true;
-		bool runLoop = true;
-
 	};
 }

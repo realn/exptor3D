@@ -117,6 +117,7 @@ namespace gfx {
     Mesh mesh;
 
     mesh.materialName = parser.getArg(0);
+    mesh.mesh = std::make_shared<gfx::Mesh>();
 
     while (parser.readLine()) {
       auto cmd = parser.getCmd();
@@ -189,7 +190,7 @@ namespace gfx {
 
   std::shared_ptr<Material> Model::findMaterial(cb::string name) const {
     auto it = std::find_if(materials.begin(), materials.end(), [&](std::shared_ptr<Material> m) { return m->getName() == name; });
-    if(it == materials.end())
+    if (it == materials.end())
       return std::shared_ptr<Material>();
     return *it;
   }
@@ -208,7 +209,7 @@ namespace gfx {
 
     for (auto& mesh : it->meshes) {
       auto material = findMaterial(mesh.materialName);
-      frame.addMesh(glm::mat4(1.0f), mesh.mesh, material);
+      frame.addMesh(mesh.mesh, material);
     }
   }
 
@@ -254,8 +255,8 @@ namespace gfx {
     return true;
   }
 
-  const std::string Model::GetFile() const {
-    return cb::toUtf8(file);
+  const cb::string Model::GetFile() const {
+    return file;
   }
 
   cb::string Model::getLogName() const {

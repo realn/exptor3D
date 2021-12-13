@@ -1,4 +1,7 @@
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <CBGL/COpenGL.h>
 
 #include "gfx_Texture.h"
@@ -9,11 +12,18 @@
 namespace gfx {
   void RenderSystem::render(const Frame& frame) {
 
+    auto proj = frame.getProjectionMatrix();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(glm::value_ptr(proj));
+    glMatrixMode(GL_MODELVIEW);
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     for (auto element : frame.elements) {
+      glLoadMatrixf(glm::value_ptr(element.modelview));
 
       if (element.material->getTexture()) {
         element.material->getTexture()->Activate();

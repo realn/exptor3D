@@ -1,17 +1,21 @@
 #pragma once
 
+#include "gfx_MatrixStack.h"
 #include "gfx_FrameElement.h"
 
 namespace gfx {
-  class Frame {
+  class Frame : public MatrixStack {
   public:
-
-    void addMesh(glm::mat4 modelview, std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
+    ~Frame() override;
 
     using elements_t = std::vector<FrameElement>;
 
+    void addMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
+
     glm::uvec2 size = glm::vec2(1);
-    glm::mat4 projection = glm::mat4(1.0f);
     elements_t elements;
+
+  private:
+
   };
 }

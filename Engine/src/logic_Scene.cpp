@@ -1,4 +1,5 @@
 
+#include "gfx_Frame.h"
 #include "logic_Scene.h"
 
 namespace logic {
@@ -26,17 +27,29 @@ namespace logic {
     if (!rootNode)
       return;
 
-    SceneNode::nodes_t nodes;
-    nodes.push_back(rootNode);
+    queueNodeRender(*rootNode, frame);
+  }
 
-    do {
-      auto node = nodes.back();
-      nodes.pop_back();
+  void Scene::setRootNode(SceneNode::nodeptr_t value) {
+    rootNode = value;
+  }
 
-      node->queueRender(frame);
+  SceneNode::nodeptr_t Scene::getRootNode() const {
+    return rootNode;
+  }
 
-      nodes.insert(nodes.end(), node->getNodes().begin(), node->getNodes().end());
+  void Scene::queueNodeRender(const SceneNode& node, gfx::Frame& frame) const {
+    frame.pushMatrix();
+    
+    frame.translate(node.getPosition());
+    frame.rotate(node.getRotation());
 
-    } while (!nodes.empty());
+    node.queueRender(frame);
+
+    for (auto& subNode : node.getNodes()) {
+      queueNodeRender(*subNode, frame);
+    }
+
+    frame.popMatrix();
   }
 }

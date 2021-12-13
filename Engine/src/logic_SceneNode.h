@@ -3,6 +3,9 @@
 #include <vector>
 #include <memory>
 
+#include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 namespace gfx {
   class Frame;
 }
@@ -18,7 +21,14 @@ namespace logic {
     virtual ~SceneNode();
 
     void addNode(nodeptr_t node);
+
+    void setPosition(glm::vec3 value);
+    void setRotation(glm::quat value);
+
+    glm::vec3 getPosition() const;
+    glm::quat getRotation() const;
     nodes_t& getNodes();
+    const nodes_t getNodes() const;
 
     virtual void update(float timeDelta);
     virtual void queueRender(gfx::Frame& frame) const;
@@ -26,5 +36,8 @@ namespace logic {
   protected:
     nodeweakptr_t parent;
     nodes_t nodes;
+
+    glm::vec3 position;
+    glm::quat rotation;
   };
 }

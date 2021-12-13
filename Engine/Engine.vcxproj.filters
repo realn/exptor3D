@@ -149,6 +149,9 @@
     <ClCompile Include="src\logic_Scene.cpp">
       <Filter>Source Files\Logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx_MatrixStack.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -282,6 +285,9 @@
     </ClInclude>
     <ClInclude Include="src\logic_SceneNode.h">
       <Filter>Source Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx_MatrixStack.h">
+      <Filter>Source Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

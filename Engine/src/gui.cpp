@@ -45,7 +45,6 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::S
 	Console( scriptParser, height, aspectRatio ),
 	AspectRatio( aspectRatio ),
 	ScreenHeight( height ),
-	FrameTime( 0.0f ),
 	cursorX( 0 ),
 	cursorY( 0 )
 {
@@ -56,10 +55,6 @@ CGUIMain::CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::S
 	menu.load( L"Data/menu.mnu", textPrinter.getFontInfo() );
 	screen.load( L"Data/screen.gui", textPrinter.getFontInfo() );
 
-	Frame = 0;
-	Second = 0;
-	Minute = 0;
-	Hour = 0;
 	ConsoleOn = false;
 	ConsoleScroll = 0.0f;
 	Quit = false;
@@ -313,62 +308,6 @@ void CGUIMain::Render()
 bool CGUIMain::GetQuit()
 {
 	return Quit;
-}
-
-// Wylicza czas, klatki na sekunde, minuty, godziny, milisekundy, itp.
-void CGUIMain::UpdateCounter( const float fTD )
-{
-	FrameTime += fTD;
-	CurrentTD = fTD;
-	Frame++;
-
-	if( FrameTime > 1.0f )
-	{
-		unsigned sec = (unsigned)FrameTime;
-		FrameTime -= (float)sec;
-
-		Second += sec;
-		if( Second >= 60 )
-		{
-			Minute += Second / 60;
-			Second -= 60;
-			if( Minute >= 60 )
-			{
-				Hour += Minute / 60;
-				Minute -= 60;
-			}
-		}
-	}
-}
-
-// Dalsze trzy metody zwracaj¹ czas poziomu, klatki na sekunde i milisekundy
-const unsigned CGUIMain::GetTime( const GUI_TIME type ) const
-{
-	switch( type )
-	{
-	case GUI_TIME::SECONDS :
-		return Second;
-	case GUI_TIME::MINUTES :
-		return Minute;
-	case GUI_TIME::HOUR :
-		return Hour;
-
-	case GUI_TIME::MILISECONDS:
-	default:
-		return GetMiliSecPas();
-	}
-}
-
-const unsigned  CGUIMain::GetFrameRate() const
-{
-	if( CurrentTD != 0.0f )
-		return (unsigned)( 1.0f / CurrentTD );
-	return 1;
-}
-
-const unsigned CGUIMain::GetMiliSecPas() const
-{
-	return (unsigned)( CurrentTD * 1000.0f );
 }
 
 // Wys³anie wiadomoœci

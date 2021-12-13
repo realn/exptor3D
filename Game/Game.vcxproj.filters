@@ -57,7 +57,7 @@
     <ClCompile Include="src\GameEnemy.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameStaticObject.cpp">
+    <ClCompile Include="src\game_Object.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Weapon.cpp">
@@ -144,9 +144,6 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application_Script.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameController.cpp">
       <Filter>Source\Game\Controllers</Filter>
     </ClCompile>
@@ -167,7 +164,7 @@
     <ClInclude Include="src\Level.h">
       <Filter>Source\Level</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameStaticObject.h">
+    <ClInclude Include="src\game_Object.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\Weapon.h">

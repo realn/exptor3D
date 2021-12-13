@@ -38,7 +38,7 @@ namespace gfx {
     Model& operator=(Model&&) = default;
 
     const cb::strvector& getLoadingLog() const;
-    const std::string GetFile() const;
+    const cb::string GetFile() const;
 
     bool load(gfx::TextureRepository& texManager, const cb::string& filePath);
 

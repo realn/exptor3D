@@ -4,11 +4,7 @@
 #include "GUIRenderContext.h"
 
 namespace gui {
-  void RenderContext::setProjectionMatrix(glm::mat4 matrix) {
-    matrixProjection = matrix;
-  }
-
-  glm::mat4 RenderContext::getProjectionMatrix() const { return matrixProjection; }
+  RenderContext::~RenderContext() = default;
 
   void RenderContext::setTexture(textureptr_t texture) {
     textureCurrent = texture;
@@ -18,24 +14,12 @@ namespace gui {
     colorCurrent = color;
   }
 
-  void RenderContext::pushMatrix() {
-    matrixStack.push_back(matrixCurrent);
-  }
-
   void RenderContext::pushTexture() {
     textureStack.push_back(textureCurrent);
   }
 
   void RenderContext::pushColor() {
     colorStack.push_back(colorCurrent);
-  }
-
-  void RenderContext::popMatrix() {
-    if (matrixStack.empty())
-      return;
-
-    matrixCurrent = *matrixStack.rbegin();
-    matrixStack.pop_back();
   }
 
   void RenderContext::popTexture() {
@@ -52,18 +36,6 @@ namespace gui {
 
     colorCurrent = *colorStack.rbegin();
     colorStack.pop_back();
-  }
-
-  void RenderContext::translate(glm::vec3 value) {
-    matrixCurrent = glm::translate(matrixCurrent, value);
-  }
-
-  void RenderContext::rotate(float angleDeg, glm::vec3 axis) {
-    matrixCurrent = glm::rotate(matrixCurrent, glm::radians(angleDeg), axis);
-  }
-
-  void RenderContext::scale(glm::vec3 value) {
-    matrixCurrent = glm::scale(matrixCurrent, value);
   }
 
   void RenderContext::addTriangle(glm::vec3 v1, glm::vec2 t1, glm::vec3 v2, glm::vec2 t2, glm::vec3 v3, glm::vec2 t3) {

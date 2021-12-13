@@ -1,4 +1,3 @@
-
 #include <CBCore/StringConvert.h>
 #include <CBCore/Log.h>
 

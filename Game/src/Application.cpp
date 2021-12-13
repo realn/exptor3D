@@ -16,335 +16,296 @@
 
 #include <core_IniFile.h>
 #include <gui.h>
+#include <gfx_Frame.h>
+
+#include "game_Object.h"
 
 #include "ModelManager.h"
 #include "Application.h"
 
 namespace e3dt {
-	Application::Application() 
-		: core::Object(L"Application")
-	{
-		eventManager = std::make_shared<event::Manager>();
+  Application::Application()
+    : core::Object(L"Application") {
+    eventManager = std::make_shared<event::Manager>();
 
-		scriptParser = std::make_shared<logic::ScriptParser>(eventManager);
-		scriptParser->addFunc(L"quit", [this](const core::StrArgList&) { run = false; });;
+    scriptParser = std::make_shared<logic::ScriptParser>(eventManager);
+    scriptParser->addFunc(L"quit", [this](const core::StrArgList&) { run = false; });;
 
-		eventManager->addObserver(scriptParser);
+    eventManager->addObserver(scriptParser);
 
-		system = std::make_unique<cb::sdl::System>(cb::sdl::SystemFlag::VIDEO);
+    system = std::make_unique<cb::sdl::System>(cb::sdl::SystemFlag::VIDEO);
+  }
 
-		RegScript();
-	}
+  Application::~Application() {
+    report(L"Koniec pracy Aplikacji");
+  }
 
-	Application::~Application() {
-		report(L"Koniec pracy Aplikacji");
-	}
+  int	Application::exec() {
+    if (!init()) {
+      fatal(L"Application initialization failed.");
+      return -1;
+    }
 
-	int	Application::exec() {
-		std::srand(static_cast<unsigned>(std::chrono::steady_clock::now().time_since_epoch().count()));
+    mainLoop();
+    return 0;
+  }
 
-		// Czytamy plik ini, by odpowiednio wszystko ustawiæ
-		core::IniFile ini(L"config.ini");
-		int WindowWidth = ini.getValue<int>(L"GRAPHIC", L"WIDTH", 640);
-		int WindowHeight = ini.getValue<int>(L"GRAPHIC", L"HEIGHT", 480);
-		bool fullscreen = ini.getValue<bool>(L"GRAPHIC", L"FULLSCREEN", false);
+  float Application::getAspectRatio() const {
+    auto size = window->getSize();
+    return static_cast<float>(size.x) / static_cast<float>(size.y);
+  }
 
-		float aspectRatio = (float)WindowWidth / (float)WindowHeight;
+  bool Application::init() {
+    if (!initBase()) {
+      fatal(L"Failed to initialize basics.");
+      return false;
+    }
 
-		cb::sdl::GLAttributeMapT attribs = {
-			{cb::sdl::GLAttribute::BUFFER_SIZE, 32},
-			{cb::sdl::GLAttribute::DEPTH_SIZE, 24},
-			{cb::sdl::GLAttribute::STENCIL_SIZE, 8},
-			{cb::sdl::GLAttribute::DOUBLEBUFFER, 1}
-		};
+    if (!initCore()) {
+      fatal(L"Failed to initialize core.");
+      return false;
+    }
 
-		cb::sdl::setContextCreationAttributes(attribs);
+    if (!initGraphics()) {
+      fatal(L"Failed to initialize graphics.");
+      return false;
+    }
 
-		window = std::make_shared<cb::sdl::Window>(L"Expert 3D Tournament", cb::sdl::Window::PosCentered, glm::uvec2{ WindowWidth, WindowHeight }, cb::sdl::WindowFlag::OPENGL);
-		if (window == nullptr) {
-			fatal(L"Nie uda³o siê stworzyæ okna!");
-			return 0;
-		}
+    if (!initGame()) {
+      fatal(L"failed to initialize game.");
+      return false;
+    }
 
-		glContext = std::make_shared<cb::sdl::GLContext>(*window);
-		if (glContext == nullptr) {
-			fatal(L"Nie uda³o siê stworzyæ kontekstu OpenGL!");
-			return 0;									// WyjdŸ je¿eli nie zosta³o stworzone
-		}
+    return true;
+  }
 
-		window->show();
+  bool Application::initBase() {
+    std::srand(static_cast<unsigned>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
-		cb::gl::initextensions();
+    // Czytamy plik ini, by odpowiednio wszystko ustawiæ
+    core::IniFile ini(L"config.ini");
+    int WindowWidth = ini.getValue<int>(L"GRAPHIC", L"WIDTH", 640);
+    int WindowHeight = ini.getValue<int>(L"GRAPHIC", L"HEIGHT", 480);
+    bool fullscreen = ini.getValue<bool>(L"GRAPHIC", L"FULLSCREEN", false);
 
-		gfx::TextureRepository texManager("Data/Textures/");
-		gfx::ModelManager modelManager("Data/Models/", texManager);
-		//CLevel level(texManager, modelManager);
-		GUI = std::make_shared<CGUIMain>(texManager, scriptParser, aspectRatio, WindowHeight);
+    cb::sdl::GLAttributeMapT attribs = {
+      {cb::sdl::GLAttribute::BUFFER_SIZE, 32},
+      {cb::sdl::GLAttribute::DEPTH_SIZE, 24},
+      {cb::sdl::GLAttribute::STENCIL_SIZE, 8},
+      {cb::sdl::GLAttribute::DOUBLEBUFFER, 1}
+    };
 
-		//pGLevel = &level;
-		//CLocalPlayerController* pController = new CLocalPlayerController( level.GetPlayer() );
-		//ControllerList.AddController( pController );
+    cb::sdl::setContextCreationAttributes(attribs);
 
-		//eventManager->AddObserver( pController );
-		eventManager->addObserver(GUI);
+    window = std::make_shared<cb::sdl::Window>(L"Expert 3D Tournament", cb::sdl::Window::PosCentered, glm::uvec2{ WindowWidth, WindowHeight }, cb::sdl::WindowFlag::OPENGL);
+    if (window == nullptr) {
+      fatal(L"Nie uda³o siê stworzyæ okna!");
+      return false;
+    }
 
-		inputMapper.addKeyMapping(cb::sdl::ScanCode::UP, L"gui_move_up");
-		inputMapper.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");
-		inputMapper.addKeyMapping(cb::sdl::ScanCode::RETURN, L"gui_enter");
-		inputMapper.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"gui_back");
-		inputMapper.addMouseMotionMapping(event::InputMapper::Axis::X, L"gui_pointer_x");
-		inputMapper.addMouseMotionMapping(event::InputMapper::Axis::Y, L"gui_pointer_y");
-		inputMapper.addMouseMapping(cb::sdl::button::LEFT, L"gui_enter");
+    glContext = std::make_shared<cb::sdl::GLContext>(*window);
+    if (glContext == nullptr) {
+      fatal(L"Nie uda³o siê stworzyæ kontekstu OpenGL!");
+      return false;									// WyjdŸ je¿eli nie zosta³o stworzone
+    }
 
-		log(L"Inicjalizacja OpenGL");
+    window->show();
 
-		InitGraphics(texManager);
+    cb::gl::initextensions();
+    return true;
+  }
 
-		GUI->ShowMenu(L"MainMenu");
-		GUI->SetMode(GUI_MODE::MENU);
+  bool Application::initCore() {
+    inputMapper.addKeyMapping(cb::sdl::ScanCode::UP, L"gui_move_up");
+    inputMapper.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");
+    inputMapper.addKeyMapping(cb::sdl::ScanCode::RETURN, L"gui_enter");
+    inputMapper.addKeyMapping(cb::sdl::ScanCode::ESCAPE, L"gui_back");
+    inputMapper.addMouseMotionMapping(event::InputMapper::Axis::X, L"gui_pointer_x");
+    inputMapper.addMouseMotionMapping(event::InputMapper::Axis::Y, L"gui_pointer_y");
+    inputMapper.addMouseMapping(cb::sdl::button::LEFT, L"gui_enter");
 
-		MainLoop();
-		return 0;
-	}
+    textureRepository = std::make_shared<gfx::TextureRepository>("Data/Textures/");
+    modelManager = std::make_shared<gfx::ModelManager>(L"Data/Models/", textureRepository);
 
-	bool Application::ProcessWindowEvent(cb::sdl::WindowEvent& event) {
-		switch (event.getType()) {
-		case cb::sdl::WindowEventType::FOCUS_GAINED:
-			active = true;
-			return true;
+    GUI = std::make_shared<CGUIMain>(*textureRepository, scriptParser, getAspectRatio(), window->getSize().y);
+    eventManager->addObserver(GUI);
 
-		case cb::sdl::WindowEventType::FOCUS_LOST:
-			active = false;
-			return true;
+    GUI->ShowMenu(L"MainMenu");
+    GUI->SetMode(GUI_MODE::SCREEN);
 
-		case cb::sdl::WindowEventType::CLOSE:
-			runLoop = false;
-			return true;
+    return true;
+  }
 
-		case cb::sdl::WindowEventType::SIZE_CHANGED:
-			return true;
+  bool Application::initGraphics() {
+    log(L"Inicjalizacja OpenGL");
+    {
+      auto state = cb::gl::getDepthState();
+      state.Func = cb::gl::DepthFunc::LEQUAL;
+      cb::gl::setState(state);
+    }
+    {
+      auto state = cb::gl::getBlendState();
+      state.setFunc(cb::gl::BlendFactor::SRC_ALPHA, cb::gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
+      cb::gl::setState(state);
+    }
+    glEnable(GL_TEXTURE_2D);
+    //GUI->SetLoadLevelFunc( LoadLevel );
+    //GUI->SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
+    //GUI->SendConMsg( "STEROWNIK: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
+    //GUI->SendConMsg( "WERSJA: " + GLRender.GetRndInfo( RENDER_VERSION ), false );
+    //GUI->SendConMsg( "INICJALIZACJA GLOWNA", false );
 
-		default:
-			return false;
-		}
-	}
+    //GUI->SendConMsg( "Ustawianie OpenGL...", false );
+    glShadeModel(GL_SMOOTH);			    //Ustawienie £adnego cieniowania
 
-	bool Application::ProcessTextInput(cb::sdl::TextInputEvent& event) {
+    cb::gl::clearColor({ 0.0f, 0.0f, 0.0f, 0.5f });
+    cb::gl::clearDepth(1.0f);
+    cb::gl::setStateEnabled(cb::gl::State::DEPTH_TEST, true);
 
-		//TODO CONSOLE EDITING
-		return false;
-	}
+    cb::gl::setHint(cb::gl::HintTarget::LINE_SMOOTH, cb::gl::HintMode::NICEST);
+    cb::gl::setHint(cb::gl::HintTarget::POINT_SMOOTH, cb::gl::HintMode::NICEST);
+    cb::gl::setHint(cb::gl::HintTarget::POLYGON_SMOOTH, cb::gl::HintMode::NICEST);
 
-	const bool	Application::ProcessEvent(cb::sdl::Event& event) {
-		switch (event.getType())									// SprawdŸ komunikaty
-		{
-		case cb::sdl::EventType::WINDOWEVENT:
-			return ProcessWindowEvent(event.window());
+    //double p1[] = { 0.0, 1.0, 0.0, -glm::vec3( 0.0f, -5.01f, 0.0f ).Dot( glm::vec3( 0.0f, 1.0f, 0.0f ) ) };
+    //double p2[] = { 0.0, -1.0, 0.0, -glm::vec3( 0.0f, -5.01f, 0.0f ).Dot( glm::vec3( 0.0f, -1.0f, 0.0f ) ) };
+    //glClipPlane( GL_CLIP_PLANE0, p1 );
+    //glClipPlane( GL_CLIP_PLANE1, p2 );
 
-		case cb::sdl::EventType::TEXTINPUT:
-			return ProcessTextInput(event.text());
-
-		case cb::sdl::EventType::QUIT:
-			runLoop = false;
-			return true;
-		}
-
-		inputMapper.executeEvent(*eventManager, event, window->getSize());
-		return false;
-	}
-
-	void	Application::UpdateMouse() {
-		if (MouseMode != MOUSE_MODE::GAME)
-			return;
-
-		unsigned halfScreenX = window->getSize().x / 2;
-		unsigned halfScreenY = window->getSize().y / 2;
-
-		glm::ivec2 mouseRel;
-		cb::sdl::getRelativeMouseState(mouseRel);
-
-		int diffX = mouseRel.x;
-		int diffY = mouseRel.y;
-
-		if (diffX == 0 && diffY == 0)
-			return;
-
-		//CEventMouse MouseEvent( EVENT_INPUT_TYPE::MOUSEMOVEDIF, diffX, diffY );
-		//EventManager.AddEvent( *((CEvent*)&MouseEvent) );
-
-		GUI->getScreen().getValues().onVarChanged(L"debugValue", cb::toStr(diffX));
-		window->warpMouse({ (int)halfScreenX, (int)halfScreenY });
-		cb::sdl::getRelativeMouseState();
-	}
-
-	void	Application::InitGraphics(gfx::TextureRepository& texManager) {
-		{
-			auto state = cb::gl::getDepthState();
-			state.Func = cb::gl::DepthFunc::LEQUAL;
-			cb::gl::setState(state);
-		}
-		{
-			auto state = cb::gl::getBlendState();
-			state.setFunc(cb::gl::BlendFactor::SRC_ALPHA, cb::gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
-			cb::gl::setState(state);
-		}
-		glEnable(GL_TEXTURE_2D);
-		//GUI->SetLoadLevelFunc( LoadLevel );
-		//GUI->SendConMsg( "=====EXPERT 3D TOURNAMENT ENGINE=====", false );
-		//GUI->SendConMsg( "STEROWNIK: " + GLRender.GetRndInfo( RENDER_RENDERER ), false );
-		//GUI->SendConMsg( "WERSJA: " + GLRender.GetRndInfo( RENDER_VERSION ), false );
-		//GUI->SendConMsg( "INICJALIZACJA GLOWNA", false );
-
-		//GUI->SendConMsg( "Ustawianie OpenGL...", false );
-		glShadeModel(GL_SMOOTH);			    //Ustawienie £adnego cieniowania
-
-		cb::gl::clearColor({ 0.0f, 0.0f, 0.0f, 0.5f });
-		cb::gl::clearDepth(1.0f);
-		cb::gl::setStateEnabled(cb::gl::State::DEPTH_TEST, true);
-
-		cb::gl::setHint(cb::gl::HintTarget::LINE_SMOOTH, cb::gl::HintMode::NICEST);
-		cb::gl::setHint(cb::gl::HintTarget::POINT_SMOOTH, cb::gl::HintMode::NICEST);
-		cb::gl::setHint(cb::gl::HintTarget::POLYGON_SMOOTH, cb::gl::HintMode::NICEST);
-
-		//double p1[] = { 0.0, 1.0, 0.0, -glm::vec3( 0.0f, -5.01f, 0.0f ).Dot( glm::vec3( 0.0f, 1.0f, 0.0f ) ) };
-		//double p2[] = { 0.0, -1.0, 0.0, -glm::vec3( 0.0f, -5.01f, 0.0f ).Dot( glm::vec3( 0.0f, -1.0f, 0.0f ) ) };
-		//glClipPlane( GL_CLIP_PLANE0, p1 );
-		//glClipPlane( GL_CLIP_PLANE1, p2 );
-
-		//glEnable( GL_CLIP_PLANE0 );
-		glEnable(GL_COLOR_MATERIAL);
-		//glDisable( GL_CULL_FACE );
-		glDisable(GL_LIGHTING);
+    //glEnable( GL_CLIP_PLANE0 );
+    glEnable(GL_COLOR_MATERIAL);
+    //glDisable( GL_CULL_FACE );
+    glDisable(GL_LIGHTING);
 
 #ifdef LIGHT_TEST
-		float lDiffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
-		float lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float lAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, lDiffuse);
-		glLightfv(GL_LIGHT1, GL_AMBIENT, lAmbient);
-		glLightfv(GL_LIGHT1, GL_SPECULAR, lSpecular);
-		glEnable(GL_LIGHTING);
+    float lDiffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+    float lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float lAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, lDiffuse);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, lAmbient);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, lSpecular);
+    glEnable(GL_LIGHTING);
 #endif
 
-		//GUI->SendConMsg( "Zakonczono", false );
+    //GUI->SendConMsg( "Zakonczono", false );
 
-		//GUI->SendConMsg( "Inicjalizacja silnika...", false );
-		////SMBlur.Init();
-		////MenuModel = modelManager.Get( "menumodel.glm" );
-		////MainPlayer.SetArmor( 100.0f );
-		////SEManager.MaxSpec = 100;
+    //GUI->SendConMsg( "Inicjalizacja silnika...", false );
+    ////SMBlur.Init();
+    ////MenuModel = modelManager.Get( "menumodel.glm" );
+    ////MainPlayer.SetArmor( 100.0f );
+    ////SEManager.MaxSpec = 100;
 
-		//GUI->SendConMsg( "Zakonczono", false );
-		//GUI->SendConMsg( "INICJALIZACJA GLOWNA ZAKONCZONA", false );
+    //GUI->SendConMsg( "Zakonczono", false );
+    //GUI->SendConMsg( "INICJALIZACJA GLOWNA ZAKONCZONA", false );
 
-	}
+    return true;
+  }
 
-	void	Application::MainLoop() {
-		const float	TIME_STEP = 0.005f;
+  bool Application::initGame() {
 
-		float	frameTime = 0.0f;
-		cb::sdl::PerformanceTimer timer;
+    auto obj = std::make_shared<game::Object>(nullptr);
 
+    obj->setPosition({ 0.0f, 0.0f, -10.0f });
+    obj->setModel(modelManager->get(L"rocketlun-model.glm"));
 
-		while (run)									// Pêtla g³ówna (dopuki done nie jest true)
-		{
-			frameTime += timer.getTimeDelta();
+    scene.setRootNode(obj);
 
-			cb::sdl::Event event;
-			for (unsigned i = 0; i < 20 && cb::sdl::Event::poll(event); i++)	// Czy otrzymano komunikat?
-			{
-				ProcessEvent(event);
-			}
+    return true;
+  }
 
-			// Rysujemy scene
-			if (active)								// Program jest aktywny?
-			{
-				GUI->UpdateCounter(timer.getTimeDelta());
-				UpdateMouse();
+  void	Application::mainLoop() {
+    cb::sdl::PerformanceTimer timer;
 
-				Render();						// Rysujemy scene
+    while (run) {
+      processAppEvents();
 
-				eventManager->processEvents();
+      if (active) {
+        eventManager->processEvents();
 
-				for (unsigned i = 0; i < 100 && frameTime > TIME_STEP; i++) {
-					Update(TIME_STEP);
-					frameTime -= TIME_STEP;
-				}
+        updateTimeStep(timer.getTimeDelta());
 
-				glContext->swapWindow(*window);
-			}
-			//else
-				//cb::sdl::Event::waitFor();
+        render();
 
-			timer.update();
-		}
-	}
+        glContext->swapWindow(*window);
+      }
 
+      timer.update();
+    }
+  }
 
-	void	Application::Update(const float fTD) {
-		GUI->Update(fTD);
+  void Application::processAppEvents() {
+    cb::sdl::Event event;
+    for (unsigned i = 0; i < 20 && cb::sdl::Event::poll(event); i++) {
+      processEvent(event);
+    }
+  }
 
-		if (State != GAME_STATE::LEVEL)
-			return;
+  bool Application::processEvent(cb::sdl::Event& event) {
+    switch (event.getType())									// SprawdŸ komunikaty
+    {
+    case cb::sdl::EventType::WINDOWEVENT:
+      return processWindowEvent(event.window());
 
-		if (GUI->IsMenuAnimating())
-			return;
-		else {
-			GUI->SetMode(GUI_MODE::SCREEN);
-			MouseMode = MOUSE_MODE::GAME;
-		}
+    case cb::sdl::EventType::QUIT:
+      run = false;
+      return true;
+    }
 
-		//ControllerList.Update();
+    inputMapper.executeEvent(*eventManager, event, window->getSize());
+    return false;
+  }
 
-		//pGLevel->Update(fTD);
-	}
+  bool Application::processWindowEvent(cb::sdl::WindowEvent& event) {
+    switch (event.getType()) {
+    case cb::sdl::WindowEventType::FOCUS_GAINED:
+      active = true;
+      return true;
 
-	void	Application::Render() {
-		cb::gl::clearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
-		cb::gl::clear(cb::gl::ClearBuffers(cb::gl::ClearBuffer::COLOR) | cb::gl::ClearBuffer::DEPTH);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    case cb::sdl::WindowEventType::FOCUS_LOST:
+      active = false;
+      return true;
 
-		if (State == GAME_STATE::LEVEL && !GUI->IsMenuAnimating()) {
-			{
-				auto pers = glm::perspective(glm::radians(60.0f), (4.0f / 3.0f), 1.0f, 100.0f);
-				glMatrixMode(GL_PROJECTION);
-				glLoadMatrixf(glm::value_ptr(pers));
-				glMatrixMode(GL_MODELVIEW);
-			}
-			glLoadIdentity();
+    case cb::sdl::WindowEventType::CLOSE:
+      run = false;
+      return true;
 
-			//glRotatef(pGLevel->GetPlayer().GetAngle(), 0.0f, 1.0f, 0.0f);
-			//glTranslatef(-pGLevel->GetPlayer().Pos.x, 0, pGLevel->GetPlayer().Pos.z);
+    case cb::sdl::WindowEventType::SIZE_CHANGED:
+      return true;
 
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			//pGLevel->Render();
+    default:
+      return false;
+    }
+  }
 
-			{
-				auto pers = glm::perspective(glm::radians(45.0f), (4.0f / 3.0f), 1.0f, 10.0f);
-				glMatrixMode(GL_PROJECTION);
-				glLoadMatrixf(glm::value_ptr(pers));
-				glMatrixMode(GL_MODELVIEW);
+  void Application::updateTimeStep(float timeDelta) {
+    const float	TIME_STEP = 0.005f;
 
-			}
-			glClear(GL_DEPTH_BUFFER_BIT);
-			glLoadIdentity();
-			//pGLevel->GetPlayer().Render();
-		}
+    frameTime += timeDelta;
+    for (unsigned i = 0; i < 100 && frameTime > TIME_STEP; i++) {
+      update(TIME_STEP);
+      frameTime -= TIME_STEP;
+    }
+  }
 
-		GUI->Render();
-	}
+  void	Application::update(float timeDelta) {
+    scene.update(timeDelta);
 
-	void	Application::LoadLevel(const std::string& filename) {
-		//if (pGLevel->LoadLevel(filename)) {
-		//	GUI->HideMenu();
-		//	State = GAME_STATE::LEVEL;
-		//}
-	}
+    GUI->Update(timeDelta);
+  }
 
-	void	Application::Print(const std::string& text) {
-		GUI->PrintConsole(text);
-	}
+  void	Application::render() {
+    cb::gl::clearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+    cb::gl::clear(cb::gl::ClearBuffers(cb::gl::ClearBuffer::COLOR) | cb::gl::ClearBuffer::DEPTH);
+
+    gfx::Frame frame;
+    frame.setProjectionMatrix(glm::perspective(glm::radians(60.0f), getAspectRatio(), 1.0f, 100.0f));
+
+    scene.queueRender(frame);
+
+    renderSystem.render(frame);
+
+    GUI->Render();
+  }
 }

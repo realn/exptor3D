@@ -4,27 +4,23 @@
 #include <gfx_Model.h>
 
 namespace gfx {
-	class ModelManager : core::Object {
-	private:
-		const std::string	DataDir;
-		gfx::TextureRepository& TexManager;
-		std::vector<Model*> List;
+  class ModelManager : core::Object {
+  public:
+    using modelptr_t = std::shared_ptr<Model>;
 
-	public:
-		ModelManager(const std::string& strDataDir, gfx::TextureRepository& texManager);
-		~ModelManager();
+    ModelManager(const cb::string& dataDir, std::shared_ptr<TextureRepository> texRepo);
+    ~ModelManager() override;
 
-		gfx::TextureRepository& GetTexMng();
+    modelptr_t get(const cb::string& filename);
 
-		Model* Get(const std::string& filename);
-		void AddModel(Model* Model);
-		Model* GetModel(unsigned int index);
-		void DeleteModel(unsigned int index);
+  private:
+    using models_t = std::vector<modelptr_t>;
 
-		void Clear();
+    ModelManager(const ModelManager&) = delete;
+    ModelManager& operator=(const ModelManager&) = delete;
 
-	private:
-		ModelManager(const ModelManager&) = delete;
-		ModelManager& operator=(const ModelManager&) = delete;
-	};
+    const cb::string	dataDir;
+    std::shared_ptr<TextureRepository> textureRepository;
+    models_t models;
+  };
 }
