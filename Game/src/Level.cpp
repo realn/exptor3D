@@ -27,7 +27,8 @@ const unsigned GAME_VERSION = 100;
 Patrz -> definicja klasy
 */
 /*	KONSTRUKTOR	*/
-CLevel::CLevel( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager ) :
+CLevel::CLevel( gfx::TextureRepository& texManager, gfx::ModelManager& modelManager ) 
+	: core::Object(L"Level"),
 	TexManager( texManager ),
 	ModelManager( modelManager ),
 	RenderList( texManager, modelManager ),
@@ -157,7 +158,7 @@ const bool CLevel::LoadLevel( const std::string &filename )
 {
 	if( filename == "" )
 	{
-		Log.Error( "GLEVEL( " + file + " ): £añcuch znaków jest pusty!" );
+		error( L"£añcuch znaków jest pusty!" );
 		return false;
 	}
 
@@ -166,7 +167,7 @@ const bool CLevel::LoadLevel( const std::string &filename )
 
 	if( !stream )
 	{
-		Log.Error( "GLEVEL( " + file + " ): Plik nie istnieje, lub podana œcie¿ka jest b³êdna: " + filename );
+		error( L"Plik nie istnieje, lub podana œcie¿ka jest b³êdna: " + cb::fromUtf8(filename) );
 		return false;
 	}
 
@@ -177,13 +178,13 @@ const bool CLevel::LoadLevel( const std::string &filename )
 	str = GetClearLine( stream );
 	if( !sscanf_s( str.c_str(), "E3DTLEV=%u", &Version ) )
 	{
-		Log.Error( "GLEVEL( " + file + " ): Nieprawid³owy plik poziomu!" );
+		error( L"Nieprawid³owy plik poziomu!" );
 		return false;
 	}
 
 	if( Version > GAME_VERSION )
 	{
-		Log.Error( "GLEVEL( " + file + " ): Zbyt wysoka wersja pliku!" );
+		error( L"Zbyt wysoka wersja pliku!" );
 		return false;
 	}
 
@@ -197,12 +198,12 @@ const bool CLevel::LoadLevel( const std::string &filename )
 	*/
 	if( loaded )
 	{
-		Log.Report( "GLEVEL( " + file + " ): Prze³adowanie poziomu na : " + filename );
+		report( L"Prze³adowanie poziomu na : " + cb::fromUtf8(filename) );
 		Free();
 		Player.Reset();
 	}
 
-	Log.Log( "GLEVEL( " + file + " ): Wczytywanie poziomu: " + filename );
+	log( L"Wczytywanie poziomu: " + cb::fromUtf8(filename) );
 	//GUI.SendConMsg( "Wczytywanie poziomu: " + filename, false );
 	file = filename;
 
@@ -219,7 +220,7 @@ const bool CLevel::LoadLevel( const std::string &filename )
 		{
 			if( !LoadHeader( stream ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): B³¹d odczytu nag³ówka!" );
+				error( L"B³¹d odczytu nag³ówka!" );
 				continue;
 			}
 		}
@@ -227,7 +228,7 @@ const bool CLevel::LoadLevel( const std::string &filename )
 		{
 			if( !LoadTextures( stream ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): B³¹d odczytu tekstur!" );
+				error( L"B³¹d odczytu tekstur!" );
 				continue;
 			}
 		}
@@ -235,7 +236,7 @@ const bool CLevel::LoadLevel( const std::string &filename )
 		{
 			if( !LoadWalls( stream ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): B³¹d odczytu œcian!" );
+				error( L"B³¹d odczytu œcian!" );
 				continue;
 			}
 		}
@@ -243,12 +244,12 @@ const bool CLevel::LoadLevel( const std::string &filename )
 		{
 			if( !LoadItemList( stream ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): B³¹d odczytu listy przedmiotów!" );
+				error( L"B³¹d odczytu listy przedmiotów!" );
 				continue;
 			}
 		}
 		else
-			Log.Error( "GLEVEL( " + file + " ): Nierozpoznany ci¹g " + str + "!" );
+			error( L"Nierozpoznany ci¹g " + cb::fromUtf8(str) + L"!" );
 	}
 
 	for( unsigned row = 0; row < Rows; row++ )
@@ -561,7 +562,7 @@ const bool	CLevel::ParseItem(const std::string& str, int& x, int& y, ITEM_TYPE& 
 
 const bool	CLevel::LoadHeader( std::fstream& stream )
 {
-	Log.Log( "GLEVEL( " + file + " ): £adowanie nag³ówka.");
+	log( L"£adowanie nag³ówka.");
 
 	std::string str, name, value;
 	while( stream )
@@ -573,7 +574,7 @@ const bool	CLevel::LoadHeader( std::fstream& stream )
 
 		if( !ParseNameValue( str, name, value ) )
 		{
-			Log.Error( "GLEVEL( " + file + " ): Nieprawid³owy ci¹g w nag³ówku: " + str + "." );
+			error( L"Nieprawid³owy ci¹g w nag³ówku: " + cb::fromUtf8(str) + L"." );
 			continue;
 		}
 
@@ -584,16 +585,16 @@ const bool	CLevel::LoadHeader( std::fstream& stream )
 		else if( name == "COLS" )
 			Cols = StrToUInt( value );
 		else 
-			Log.Error( "GLEVEL( " + file + " ): Nierozpoznana wartoœæ " + name + " w ci¹gu: " + str + "." );
+			error( L"Nierozpoznana wartoœæ " + cb::fromUtf8(name) + L" w ci¹gu: " + cb::fromUtf8(str) + L"." );
 	}
 
-	Log.Error( "GLEVEL( " + file + " ): Brak koñca nag³ówka." );
+	error( L"Brak koñca nag³ówka." );
 	return false;
 }
 
 const bool	CLevel::LoadTextures( std::fstream& stream )
 {
-	Log.Log( "GLEVEL( " + file + " ): £adowanie tekstur.");
+	log( L"£adowanie tekstur.");
 
 	std::string str, name, value;
 	while( stream )
@@ -605,14 +606,14 @@ const bool	CLevel::LoadTextures( std::fstream& stream )
 
 		if( !ParseNameValue( str, name, value ) )
 		{
-			Log.Error( "GLEVEL( " + file + " ): Nieprawid³owy ci¹g w liœcie tekstur: " + str + "." );
+			error( L"Nieprawid³owy ci¹g w liœcie tekstur: " + cb::fromUtf8(str) + L"." );
 			continue;
 		}
 		else if( name == "WALL" )
 		{
 			if( !( Tex[0] = TexManager.Get( value ) ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): Nie uda³o siê za³adowaæ tekstury œcian!" );
+				error( L"Nie uda³o siê za³adowaæ tekstury œcian!" );
 				continue;
 			}
 		}
@@ -620,7 +621,7 @@ const bool	CLevel::LoadTextures( std::fstream& stream )
 		{
 			if( !( Tex[1] = TexManager.Get( value ) ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): Nie uda³o siê za³adowaæ tekstury sufitu!" );
+				error( L"Nie uda³o siê za³adowaæ tekstury sufitu!" );
 				continue;
 			}
 		}
@@ -628,19 +629,19 @@ const bool	CLevel::LoadTextures( std::fstream& stream )
 		{
 			if( !( Tex[2] = TexManager.Get( value ) ) )
 			{
-				Log.Error( "GLEVEL( " + file + " ): Nie uda³o siê za³adowaæ tekstury pod³ogi!" );
+				error( L"Nie uda³o siê za³adowaæ tekstury pod³ogi!" );
 				continue;
 			}
 		}
 	}
 
-	Log.Error( "GLEVEL( " + file + " ): Brak zakoñczenia liczby tesktur!" );
+	error( L"Brak zakoñczenia liczby tesktur!" );
 	return false;
 }
 
 const bool	CLevel::LoadWalls( std::fstream& stream )
 {
-	Log.Log( "GLEVEL( " + file + " ): £adowanie œcian.");
+	log( L"£adowanie œcian.");
 
 	std::string str;
 	block.resize( static_cast<size_t>(Rows) * Cols );
@@ -671,7 +672,7 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 	str = GetLine( stream );
 	if( str != "END WALLS" )
 	{
-		Log.Error( "GLEVEL( " + file + " ): Brak koñca listy œcian!" );
+		error( L"Brak koñca listy œcian!" );
 		Free();
 		return false;
 	}
@@ -681,7 +682,7 @@ const bool	CLevel::LoadWalls( std::fstream& stream )
 
 const bool	CLevel::LoadItemList( std::fstream& stream )
 {
-	Log.Log( "GLEVEL( " + file + " ): £adowanie listy przedmiotów.");
+	log( L"£adowanie listy przedmiotów.");
 
 	std::string str;
 	std::vector<std::string> params;
@@ -722,7 +723,7 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 
 			case ITEM_TYPE::UNKNOWN:
 			default:
-				Log.Error("GLEVEL( " + file + " ): B³¹d parsowania przedmiotu, nieznany typ z parsowania ci¹gu: " + str + ".");
+				error(L"B³¹d parsowania przedmiotu, nieznany typ z parsowania ci¹gu: " + cb::fromUtf8(str) + L".");
 				break;
 			}
 
@@ -735,11 +736,11 @@ const bool	CLevel::LoadItemList( std::fstream& stream )
 		}
 		else
 		{
-			Log.Error("GLEVEL( " + file + " ): B³¹d parsowania przedmiotu dla ci¹gu: " + str + ".");
+			error(L"B³¹d parsowania przedmiotu dla ci¹gu: " + cb::fromUtf8(str) + L".");
 		}
 	}
 
-	Log.Error( "GLEVEL( " + file + " ): Brak koñca listy przedmiotów!" );
+	error( L"Brak koñca listy przedmiotów!" );
 	return false;
 }
 

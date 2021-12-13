@@ -38,6 +38,7 @@ namespace gfx {
     void addDisk(Mesh& mesh, float innerRadius, float outerRadius, cb::u32 slices, cb::u32 loops);
     void addPartialDisk(Mesh& mesh, float innerRadius, float outerRadius, cb::u32 slices, cb::u32 loops, float startAngleDeg, float sweepAngleDeg);
     void addSphere(Mesh& mesh, float radius, cb::u32 slices, cb::u32 stacks);
+    void addPartialSphere(Mesh& mesh, float radius, cb::u32 slices, cb::u32 stacks, float startAngleSlicesDeg, float sweepAngleSlicesDeg, float startAngleStackDeg, float sweepAngleStackDeg);
     void addCylinder(Mesh& mesh, float baseRadius, float topRadius, float height, cb::u32 slices, cb::u32 stacks);
 
     void beginVertexList(VertListType type);

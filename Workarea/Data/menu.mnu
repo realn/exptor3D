@@ -6,7 +6,7 @@ MENUSTEP(0,60)
 
 MENUITEM(NewGame)
 MENUITEMTITLE("Nowa Gra na Poziomie Testowym")
-MENUITEMACTION("LoadLevel(newlevel.txt)")
+MENUITEMACTION("loadLevel(newlevel.txt)")
 
 MENUITEM(Options)
 MENUITEMTITLE("Opcje")

@@ -45,6 +45,7 @@
     <ClCompile Include="src\gui_StackElement.cpp" />
     <ClCompile Include="src\gui_TextElement.cpp" />
     <ClCompile Include="src\gui_ValueSync.cpp" />
+    <ClCompile Include="src\core_IniFile.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshFuncs.cpp" />
     <ClCompile Include="src\gfx_Model.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="src\gui_TextElement.h" />
     <ClInclude Include="src\gui_ValueSync.h" />
     <ClInclude Include="src\core_LineParser.h" />
+    <ClInclude Include="src\core_IniFile.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshFace.h" />
     <ClInclude Include="src\MeshFuncs.h" />

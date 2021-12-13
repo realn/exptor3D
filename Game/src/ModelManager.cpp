@@ -1,11 +1,12 @@
 
+#include <CBCore/StringConvert.h>
 #include <gfx_Model.h>
 
-#include "Log.h"
 #include "ModelManager.h"
 
 namespace gfx {
 	ModelManager::ModelManager(const std::string& strDataDir, gfx::TextureRepository& texManager) :
+		core::Object(L"ModelManager"),
 		DataDir(strDataDir),
 		TexManager(texManager) {
 	}
@@ -20,7 +21,7 @@ namespace gfx {
 
 	Model* ModelManager::Get(const std::string& filename) {
 		if (filename.empty()) {
-			Log.Error("MODELMANAGER(): Pusty ci¹g znaków!");
+			error(L"Pusty ci¹g znaków!");
 			return nullptr;
 		}
 
@@ -33,14 +34,14 @@ namespace gfx {
 		}
 
 		auto model = new Model();
-		if (!model->load(TexManager, path)) {
-			Log.Error("MODELMANAGER(): Nieudane za³adowanie modelu: " + filename);
+		if (!model->load(TexManager, cb::fromUtf8(path))) {
+			error(L"Nieudane za³adowanie modelu: " + cb::fromUtf8(filename));
 			delete model;
 			return nullptr;
 		}
 
 		AddModel(model);
-		Log.Log("MODELMANAGER(): Dodano nowy model: " + filename);
+		log(L"Dodano nowy model: " + cb::fromUtf8(filename));
 		return model;
 	}
 

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "gfx_Model.h"
+#include <core_object.h>
+#include <gfx_Model.h>
 
 namespace gfx {
-	class ModelManager {
+	class ModelManager : core::Object {
 	private:
 		const std::string	DataDir;
 		gfx::TextureRepository& TexManager;
@@ -23,11 +24,7 @@ namespace gfx {
 		void Clear();
 
 	private:
-		ModelManager(const ModelManager& model) : TexManager(model.TexManager) {
-			throw std::exception("COPY ERROR");
-		}
-		void operator=(const ModelManager& model) {
-			throw std::exception("ASSIGN ERROR");
-		}
+		ModelManager(const ModelManager&) = delete;
+		ModelManager& operator=(const ModelManager&) = delete;
 	};
 }

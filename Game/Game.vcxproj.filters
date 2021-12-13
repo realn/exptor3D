@@ -39,9 +39,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\inifile.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -161,9 +158,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\inifile.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="src\GameActor.h">
       <Filter>Source\Game</Filter>
     </ClInclude>

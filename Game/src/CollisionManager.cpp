@@ -1,7 +1,6 @@
 #include <glm/glm.hpp>
 
 #include "CollisionManager.h"
-#include "Log.h"
 
 CCollisionManager::CCollisionManager() : 
 	Cols( 0 ),

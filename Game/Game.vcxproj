@@ -165,7 +165,6 @@
     <ClCompile Include="src\GamePlayer.cpp" />
     <ClCompile Include="src\GamePlayerController.cpp" />
     <ClCompile Include="src\GameStaticObject.cpp" />
-    <ClCompile Include="src\inifile.cpp" />
     <ClCompile Include="src\Item.cpp" />
     <ClCompile Include="src\ItemAmmo.cpp" />
     <ClCompile Include="src\ItemArmor.cpp" />
@@ -205,7 +204,6 @@
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\GamePlayer.h" />
     <ClInclude Include="src\GameStaticObject.h" />
-    <ClInclude Include="src\inifile.h" />
     <ClInclude Include="src\Item.h" />
     <ClInclude Include="src\ItemAmmo.h" />
     <ClInclude Include="src\ItemArmor.h" />

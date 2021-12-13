@@ -1,5 +1,4 @@
 #include "GameStaticObject.h"
-#include "Log.h"
 
 /*======================
 	KLASA gameStatObj

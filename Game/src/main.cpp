@@ -11,6 +11,8 @@ Opis:	Znajduj¹ tu siê g³ówne funkcje które program inicjalizuj¹
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
+#include <CBCore/Logger.h>
+
 #include "Application.h"
 
 int WinMain(void* hInstance,			// Instancja
@@ -18,8 +20,9 @@ int WinMain(void* hInstance,			// Instancja
             char* lpCmdLine,			// Parametry
             int			nCmdShow)			// Tryb widocznoœci okna
 {
-  Log.Init("main.log", " - Expert 3D Tournament Log");
+  auto logger = cb::Logger::getInstance();
+  logger->addStream(std::make_shared<std::wofstream>("main.log"));
 
-  CApplication app;
+  e3dt::Application app;
   return app.exec();
 }

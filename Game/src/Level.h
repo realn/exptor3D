@@ -18,13 +18,14 @@ Opis:	Definicja klas i struktur do zarz¹dzania poziomem
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+#include <core_object.h>
+
 #include <gfx_Texture.h>
 #include <gfx_TextureRepository.h>
 
 #include "StrEx.h"
 #include "ModelManager.h"
 
-#include "Log.h"
 #include "3dMath.h"	// patrz-> nag³ówek 3dMath.h i plik 3dMath.cpp
 
 #include "Item.h"
@@ -175,8 +176,9 @@ public:
 	pliki txt z poziomami, i
 	tworz¹ ich wizualn¹ wersjê.
 */
-class CLevel :
-	public CScene
+class CLevel 
+	: public core::Object
+	, public CScene
 {
 private:
 	gfx::ModelManager&	ModelManager;

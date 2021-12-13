@@ -1,7 +1,6 @@
 #include "GameEnemy.h"
 
 #include "Weapon.h"
-#include "Log.h"
 
 #include "WeaponBulletRay.h"
 #include "WeaponBulletRocket.h"

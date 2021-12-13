@@ -104,3 +104,10 @@ float	pythagoreanTheorem( const float A, const float B);
 glm::vec3		ClosestPoint( const glm::vec3& V1, const glm::vec3 &V2, const glm::vec3 &Point );
 float		GetAngle( const glm::vec3& V1, const glm::vec3 &V2 );
 float	SwapAngle( float degAngle );
+
+namespace core {
+	template<class _Type>
+	bool beetween(_Type value, _Type minValue, _Type maxValue) {
+		return minValue < value&& value < maxValue;
+	}
+}

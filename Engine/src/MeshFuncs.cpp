@@ -222,10 +222,8 @@ namespace gfx {
         if (sliceAngleBeg > endAngle && sliceAngleEnd > endAngle)
           continue;
 
-        if (sliceAngleBeg < startAngle)
-          sliceAngleBeg = startAngle;
-        if (sliceAngleEnd > endAngle)
-          sliceAngleEnd = endAngle;
+        sliceAngleBeg = glm::max(sliceAngleBeg, startAngle);
+        sliceAngleEnd = glm::min(sliceAngleEnd, endAngle);
 
         auto innerBegPos = matrixCurrent * makeCirclePos(sliceAngleBeg, innerR);
         auto outerBegPos = matrixCurrent * makeCirclePos(sliceAngleBeg, outerR);
@@ -291,6 +289,73 @@ namespace gfx {
       }
     }
   }
+
+  void MeshBuilderContext::addPartialSphere(Mesh& mesh, float radius, cb::u32 slices, cb::u32 stacks, float startAngleSlicesDeg, float sweepAngleSlicesDeg, float startAngleStackDeg, float sweepAngleStackDeg) {
+    if (slices < 3 || stacks < 3)
+      return;
+
+    auto startAngleSlices = glm::radians(startAngleSlicesDeg);
+    auto endAngleSlices = glm::radians(startAngleSlicesDeg + sweepAngleSlicesDeg);
+
+    auto startAngleStack = glm::radians(startAngleStackDeg);
+    auto endAngleStack = glm::radians(startAngleStackDeg + sweepAngleStackDeg);
+
+    auto sliceStep = glm::two_pi<float>() / slices;
+    auto stackStep = glm::pi<float>() / stacks;
+
+    auto matrixRot = glm::mat3(matrixCurrent);
+    for (auto stack = 0u; stack < stacks; stack++) {
+      auto angleBBeg = -glm::half_pi<float>() + stackStep * stack;
+      auto angleBEnd = -glm::half_pi<float>() + stackStep * (stack + 1);
+
+      if (angleBBeg < startAngleStack && angleBEnd < startAngleStack)
+        continue;
+      if (angleBBeg > endAngleStack && angleBEnd > endAngleStack)
+        continue;
+
+      angleBBeg = glm::max(angleBBeg, startAngleStack);
+      angleBEnd = glm::min(angleBEnd, endAngleStack);
+
+      for (auto slice = 0u; slice < slices; slice++) {
+        auto angleABeg = sliceStep * slice;
+        auto angleAEnd = sliceStep * (slice + 1);
+
+        if (angleABeg < startAngleSlices && angleAEnd < startAngleSlices)
+          continue;
+        if (angleABeg > endAngleSlices && angleAEnd > endAngleSlices)
+          continue;
+
+        angleABeg = glm::max(angleABeg, startAngleSlices);
+        angleAEnd = glm::min(angleAEnd, endAngleSlices);
+
+        auto AAPos = matrixCurrent * makeSpherePos(angleABeg, angleBBeg, radius);
+        auto BAPos = matrixCurrent * makeSpherePos(angleAEnd, angleBBeg, radius);
+
+        auto ABPos = matrixCurrent * makeSpherePos(angleABeg, angleBEnd, radius);
+        auto BBPos = matrixCurrent * makeSpherePos(angleAEnd, angleBEnd, radius);
+
+        auto AANor = matrixRot * makeSphereNormal(angleABeg, angleBBeg);
+        auto BANor = matrixRot * makeSphereNormal(angleAEnd, angleBBeg);
+
+        auto ABNor = matrixRot * makeSphereNormal(angleABeg, angleBEnd);
+        auto BBNor = matrixRot * makeSphereNormal(angleAEnd, angleBEnd);
+
+        auto AACrd = makeSphereCoord(angleABeg, angleBBeg);
+        auto BACrd = makeSphereCoord(angleAEnd, angleBBeg);
+
+        auto ABCrd = makeSphereCoord(angleABeg, angleBEnd);
+        auto BBCrd = makeSphereCoord(angleAEnd, angleBEnd);
+
+        auto v1 = MeshVertex{ AAPos, AANor, AACrd };
+        auto v2 = MeshVertex{ BAPos, BANor, BACrd };
+        auto v3 = MeshVertex{ BBPos, BBNor, BBCrd };
+        auto v4 = MeshVertex{ ABPos, ABNor, ABCrd };
+
+        addMeshQuadAsTriangles(mesh, v1, v2, v3, v4);
+      }
+    }
+  }
+
   void MeshBuilderContext::addCylinder(Mesh& mesh, float baseRadius, float topRadius, float height, cb::u32 slices, cb::u32 stacks) {
     if (slices < 3 || stacks < 1)
       return;

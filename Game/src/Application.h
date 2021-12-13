@@ -5,6 +5,8 @@
 #include <CBSDL/GLContext.h>
 #include <CBSDL/Events.h>
 
+#include <core_object.h>
+
 #include <gfx_Texture.h>
 #include <gfx_TextureRepository.h>
 
@@ -26,48 +28,49 @@ enum class MOUSE_MODE
 	GAME,
 };
 
-class CApplication
-{
-private:
-	std::unique_ptr<cb::sdl::System> system;
-	std::shared_ptr<cb::sdl::Window> window;
-	std::shared_ptr<cb::sdl::GLContext> glContext;
+namespace e3dt {
+	class Application : public core::Object {
+	public:
+		Application();
+		~Application() override;
 
-	std::shared_ptr<event::Manager> eventManager;
-	std::shared_ptr<logic::ScriptParser> scriptParser;
+		int		exec();
+		const bool	ProcessEvent(cb::sdl::Event& event);
+		bool ProcessWindowEvent(cb::sdl::WindowEvent& event);
+		bool ProcessTextInput(cb::sdl::TextInputEvent& event);
 
-	CControllerList	ControllerList;
-	event::InputMapper inputMapper;
+	private:
+		void	RegScript();
+		void	InitGraphics(gfx::TextureRepository& texManager);
 
-	std::shared_ptr<CGUIMain>	GUI;
+		void	MainLoop();
 
-	GAME_STATE	State;
-	MOUSE_MODE	MouseMode;
+		void	UpdateMouse();
+		void	Update(const float fTD);
+		void	Render();
 
-	bool run = true;
-	bool active = true;
-	bool runLoop = true;
+	public:
+		void	LoadLevel(const std::string& filename);
+		void	Print(const std::string& text);
 
-public:
-	CApplication();
-	~CApplication();
+		std::unique_ptr<cb::sdl::System> system;
+		std::shared_ptr<cb::sdl::Window> window;
+		std::shared_ptr<cb::sdl::GLContext> glContext;
 
-	int		exec();
-	const bool	ProcessEvent( cb::sdl::Event& event );
-	bool ProcessWindowEvent(cb::sdl::WindowEvent& event);
-	bool ProcessTextInput(cb::sdl::TextInputEvent& event);
+		std::shared_ptr<event::Manager> eventManager;
+		std::shared_ptr<logic::ScriptParser> scriptParser;
 
-private:
-	void	RegScript();
-	void	InitGraphics( gfx::TextureRepository& texManager );
+		CControllerList	ControllerList;
+		event::InputMapper inputMapper;
 
-	void	MainLoop();
+		std::shared_ptr<CGUIMain>	GUI;
 
-	void	UpdateMouse();
-	void	Update( const float fTD );
-	void	Render();
+		GAME_STATE	State = GAME_STATE::MAINMENU;
+		MOUSE_MODE	MouseMode = MOUSE_MODE::MENU;
 
-public:
-	void	LoadLevel( const std::string& filename );
-	void	Print( const std::string& text );
-};
+		bool run = true;
+		bool active = true;
+		bool runLoop = true;
+
+	};
+}
