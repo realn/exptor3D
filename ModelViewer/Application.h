@@ -14,6 +14,7 @@
 
 #include <gfx_TextureRepository.h>
 #include <gfx_Model.h>
+#include <gfx_RenderSystem.h>
 
 #include <GUITextPrinter.h>
 
@@ -44,12 +45,19 @@ namespace mdlview {
     bool init();
     bool initBase();
     bool initCore();
+    bool initMenu();
     void mainLoop();
+
+    void processAppEvents();
 
     void update(float timeDelta);
     void render();
 
     void showMenu();
+
+    void loadModelList();
+    void loadModel(cb::string filename);
+    void loadObjectList();
 
     bool run = true;
     event::InputMapper input;
@@ -65,8 +73,11 @@ namespace mdlview {
     std::shared_ptr<gfx::TextureRepository> texRepo;
     std::shared_ptr<gui::TextPrinter> textPrinter;
     std::shared_ptr<gui::Menu> modelMenu;
+    std::shared_ptr<gui::Menu> objectMenu;
     std::shared_ptr<gui::MenuMain> mainMenu;
 
     std::shared_ptr<ModelViewer> modelViewer;
+
+    gfx::RenderSystem renderSystem;
   };
 }

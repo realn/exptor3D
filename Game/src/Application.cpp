@@ -299,6 +299,8 @@ namespace e3dt {
     cb::gl::clearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
     cb::gl::clear(cb::gl::ClearBuffers(cb::gl::ClearBuffer::COLOR) | cb::gl::ClearBuffer::DEPTH);
 
+    cb::gl::setStateEnabled(cb::gl::State::DEPTH_TEST, true);
+
     gfx::Frame frame;
     frame.setProjectionMatrix(glm::perspective(glm::radians(60.0f), getAspectRatio(), 1.0f, 100.0f));
 

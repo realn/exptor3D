@@ -1,4 +1,6 @@
-E3DTLEV=100
+E3DTLEV(100)
+NAME("Test Level")
+
 	HEADER
 		NAME=Test Level
 		ROWS=4

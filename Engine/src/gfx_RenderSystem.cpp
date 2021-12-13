@@ -4,6 +4,7 @@
 
 #include <CBGL/COpenGL.h>
 
+#include "GUIRenderContext.h"
 #include "gfx_Texture.h"
 #include "gfx_Frame.h"
 #include "gfx_FrameElement.h"
@@ -41,5 +42,13 @@ namespace gfx {
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  }
+  void RenderSystem::render(const gui::RenderContext& ctx) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(glm::value_ptr(ctx.getProjectionMatrix()));
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    ctx.render();
   }
 }

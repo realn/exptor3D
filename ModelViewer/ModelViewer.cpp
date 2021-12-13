@@ -3,6 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <gfx_Frame.h>
+
 #include "ModelViewer.h"
 
 namespace mdlview {
@@ -18,6 +20,7 @@ namespace mdlview {
   bool ModelViewer::loadModel(cb::string filename) {
     model = std::make_shared<gfx::Model>();
     loadedFile = filename;
+    currentObjName = L"base";
 
     if (filename.empty())
       return false;
@@ -36,6 +39,10 @@ namespace mdlview {
     return loadModel(loadedFile);
   }
 
+  void ModelViewer::selectObjName(cb::string objName) {
+    currentObjName = objName;
+  }
+
   void ModelViewer::update(float timeDelta) {
     if (rotateLeft)
       modelRotation += glm::radians(rotationSpeed) * timeDelta;
@@ -43,21 +50,27 @@ namespace mdlview {
       modelRotation -= glm::radians(rotationSpeed) * timeDelta;
   }
 
-  void ModelViewer::render() const {
+  void ModelViewer::render(gfx::Frame& frame) const {
     if (model) {
-      auto mat = glm::mat4(1.0f);
-      
-      mat = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-      mat = glm::rotate(mat, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+      frame.pushMatrix();
 
-      glLoadMatrixf(glm::value_ptr(mat));
+      frame.translate({ 0.0f, 0.0f, -5.0f });
+      frame.rotate(modelRotation, { 0.0f, 1.0f, 0.0f });
 
-      model->render(0);
+      model->queueRender(frame, currentObjName);
+
+      frame.popMatrix();
     }
   }
 
   void ModelViewer::processEvent(const event::Event& event) {
     mapper.executeEvent(event);
+  }
+
+  cb::strvector ModelViewer::getObjectNames() const {
+    if (model)
+      return model->getObjectNames();
+    return cb::strvector();
   }
 
 }

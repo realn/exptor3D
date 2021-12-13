@@ -259,6 +259,13 @@ namespace gfx {
     return file;
   }
 
+  const cb::strvector Model::getObjectNames() const {
+    auto result = cb::strvector();
+    for (auto& obj : objects)
+      result.push_back(obj.name);
+    return result;
+  }
+
   cb::string Model::getLogName() const {
     return getClassName() + L"(" + file + L"):";
   }

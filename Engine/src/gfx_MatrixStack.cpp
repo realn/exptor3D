@@ -39,8 +39,12 @@ namespace gfx {
     matrixCurrent = glm::translate(matrixCurrent, value);
   }
 
-  void MatrixStack::rotate(float angleDeg, glm::vec3 axis) {
+  void MatrixStack::rotateDeg(float angleDeg, glm::vec3 axis) {
     matrixCurrent = glm::rotate(matrixCurrent, glm::radians(angleDeg), axis);
+  }
+
+  void MatrixStack::rotate(float angle, glm::vec3 axis) {
+    matrixCurrent = glm::rotate(matrixCurrent, angle, axis);
   }
 
   void MatrixStack::rotate(glm::quat value) {

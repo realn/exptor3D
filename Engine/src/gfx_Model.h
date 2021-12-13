@@ -39,6 +39,7 @@ namespace gfx {
 
     const cb::strvector& getLoadingLog() const;
     const cb::string GetFile() const;
+    const cb::strvector getObjectNames() const;
 
     bool load(gfx::TextureRepository& texManager, const cb::string& filePath);
 

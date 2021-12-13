@@ -173,6 +173,22 @@ namespace gui {
     }
   }
 
+  Menu::menuitemptr_t Menu::addMenuItem(cb::string id, cb::string title, cb::string script) {
+    auto item = std::make_shared<MenuItem>(id, fontInfo);
+    item->setTitle(title);
+    item->setScript(script);
+    addMenuItem(item);
+    return item;
+  }
+
+  Menu::menuitemptr_t Menu::addMenuItemPush(cb::string id, cb::string title, cb::string menuId) {
+    return addMenuItem(id, title, L"pushMenu(\"" + menuId + L"\")");
+  }
+
+  Menu::menuitemptr_t Menu::addMenuItemPop(cb::string id, cb::string title) {
+    return addMenuItem(id, title, L"popMenu()");
+  }
+
   const cb::string& Menu::getId() const {
     return id;
   }
@@ -183,6 +199,11 @@ namespace gui {
 
   bool	Menu::isAnimating() const {
     return state == MenuState::HIDING || state == MenuState::REVEALING;
+  }
+
+  void Menu::clearItems() {
+    itemsElement->clear();
+    items.clear();
   }
 
   MenuState Menu::getState() const {

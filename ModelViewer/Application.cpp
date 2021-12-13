@@ -16,6 +16,7 @@
 #include <CBGL/COpenGL.h>
 
 #include <gui_MenuItem.h>
+#include <gfx_Frame.h>
 
 #include "Application.h"
 
@@ -53,30 +54,18 @@ namespace mdlview {
       return false;
     if (!initCore())
       return false;
+    if (!initMenu())
+      return false;
 
     modelViewer = std::make_shared<ModelViewer>(texRepo);
     events->addObserver(modelViewer);
 
-    scriptParser->addFunc(L"loadModel", [this](const core::StrArgList& args) { modelViewer->loadModel(args.getArg(0)); mainMenu->pop(true); });
+    scriptParser->addFunc(L"loadModel", [this](const core::StrArgList& args) { loadModel(args.getArg(0)); });
 
-    modelMenu = std::make_shared<gui::Menu>(L"modelMenu", textPrinter->getFontInfo());
-    modelMenu->setSize({ 1200, 800 });
-    mainMenu = std::make_shared<gui::MenuMain>(getAspectRatio(window->getSize()), scriptParser);
-    mainMenu->addMenu(modelMenu);
 
     {
-      auto modelPath = std::filesystem::path(L"Data/Models");
-      auto files = core::getFileList(L"Data/Models", { L".glm" });
-      for (const auto& filename : files) {
-        auto item = std::make_shared<gui::MenuItem>(L"", textPrinter->getFontInfo());
-        item->setTitle(filename);
-        item->setScript(L"loadModel(\"" + filename + L"\")");
-        modelMenu->addMenuItem(item);
-      }
     }
 
-    mainMenu->push(L"modelMenu");
-    events->addObserver(mainMenu);
 
     input.addKeyMapping(cb::sdl::ScanCode::UP, L"gui_move_up");
     input.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");
@@ -132,24 +121,40 @@ namespace mdlview {
     return true;
   }
 
+  bool Application::initMenu() {
+    auto size = glm::uvec2(1200, 800);
+    mainMenu = std::make_shared<gui::MenuMain>(getAspectRatio(window->getSize()), scriptParser);
+
+    auto menu = std::make_shared<gui::Menu>(L"main", textPrinter->getFontInfo());
+    menu->setSize(size);
+    menu->addMenuItemPush(L"modelLoadFromFile", L"Load model from file", L"modelMenu");
+    menu->addMenuItemPush(L"modelSelectObject", L"Select object from Model", L"objectMenu");
+
+    modelMenu = std::make_shared<gui::Menu>(L"modelMenu", textPrinter->getFontInfo());
+    modelMenu->setSize(size);
+
+    objectMenu = std::make_shared<gui::Menu>(L"objectMenu", textPrinter->getFontInfo());
+    objectMenu->setSize(size);
+
+    mainMenu->addMenu(menu);
+    mainMenu->addMenu(modelMenu);
+    mainMenu->addMenu(objectMenu);
+
+    mainMenu->push(L"main");
+    events->addObserver(mainMenu);
+
+    loadModelList();
+
+    return true;
+  }
+
   void Application::mainLoop() {
     cb::sdl::PerformanceTimer timer;
+
     while (run) {
-      cb::sdl::Event event;
-
-      while (cb::sdl::Event::poll(event)) {
-        if (event.getType() == cb::sdl::EventType::WINDOWEVENT) {
-          auto win = event.window();
-          if (win.getType() == cb::sdl::WindowEventType::CLOSE) {
-            run = false;
-          }
-        }
-
-        input.executeEvent(*events, event, window->getSize());
-      }
+      processAppEvents();
 
       events->processEvents();
-
 
       update(timer.getTimeDelta());
 
@@ -161,8 +166,20 @@ namespace mdlview {
     }
   }
 
-  void Application::update(float timeDelta) {
+  void Application::processAppEvents() {
+    cb::sdl::Event event;
+    while (cb::sdl::Event::poll(event)) {
+      if (event.getType() == cb::sdl::EventType::WINDOWEVENT) {
+        auto win = event.window();
+        if (win.getType() == cb::sdl::WindowEventType::CLOSE) {
+          run = false;
+        }
+      }
+      input.executeEvent(*events, event, window->getSize());
+    }
+  }
 
+  void Application::update(float timeDelta) {
     if (!mainMenu->isMenuVisible()) {
       modelViewer->update(timeDelta);
     }
@@ -174,29 +191,54 @@ namespace mdlview {
     cb::gl::clearColor({ 1.0f, 0.5f, 0.5f, 1.0f });
     cb::gl::clear(cb::gl::ClearBuffers(cb::gl::ClearBuffer::COLOR) | cb::gl::ClearBuffer::DEPTH);
 
-    auto mat = glm::perspective(glm::radians(90.0f), getAspectRatio(window->getSize()), 0.1f, 100.0f);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(glm::value_ptr(mat));
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    modelViewer->render();
+    gfx::Frame frame;
+    frame.setProjectionMatrix(glm::perspective(glm::radians(90.0f), getAspectRatio(window->getSize()), 0.1f, 100.0f));
+    modelViewer->render(frame);
 
     auto ctx = mainMenu->makeRender(*textPrinter);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(glm::value_ptr(ctx.getProjectionMatrix()));
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    cb::gl::setStateEnabled(cb::gl::State::DEPTH_TEST, true);
 
-    ctx.render();
+    renderSystem.render(frame);
+
+    cb::gl::setStateEnabled(cb::gl::State::DEPTH_TEST, false);
+
+    renderSystem.render(ctx);
   }
 
   void Application::showMenu() {
     if (!mainMenu->isMenuVisible()) {
-      mainMenu->push(L"modelMenu");
+      mainMenu->push(L"main");
     }
+    else {
+      mainMenu->pop(true);
+    }
+  }
+
+  void Application::loadModelList() {
+    auto modelPath = std::filesystem::path(L"Data/Models");
+    auto files = core::getFileList(L"Data/Models", { L".glm" });
+
+    modelMenu->clearItems();
+    for (const auto& filename : files) {
+      modelMenu->addMenuItem(L"", filename, L"loadModel(\"" + filename + L"\")");
+    }
+    modelMenu->addMenuItemPop(L"return", L"Return");
+  }
+
+  void Application::loadModel(cb::string filename) {
+    modelViewer->loadModel(filename); 
+    loadObjectList();
+    mainMenu->pop(true);
+  }
+
+  void Application::loadObjectList() {
+    auto names = modelViewer->getObjectNames();
+    objectMenu->clearItems();
+    for (const auto& name : names) {
+      objectMenu->addMenuItem(L"", name, L"selectObject(\"" + name + L"\")");
+    }
+    objectMenu->addMenuItemPop(L"return", L"Return");
   }
 
 }

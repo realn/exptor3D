@@ -20,7 +20,8 @@ namespace gfx {
     void popMatrix();
 
     void translate(glm::vec3 value);
-    void rotate(float angleDeg, glm::vec3 axis);
+    void rotateDeg(float angleDeg, glm::vec3 axis);
+    void rotate(float angle, glm::vec3 axis);
     void rotate(glm::quat value);
     void scale(glm::vec3 value);
     void loadIdentity();

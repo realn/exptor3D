@@ -39,6 +39,11 @@ namespace gui {
     bool	eventEnter(cb::string& outScript);
 
     void	addMenuItem(menuitemptr_t item);
+    menuitemptr_t addMenuItem(cb::string id, cb::string title = cb::string(), cb::string script = cb::string());
+    menuitemptr_t addMenuItemPush(cb::string id, cb::string title, cb::string menuId);
+    menuitemptr_t addMenuItemPop(cb::string id, cb::string title);
+
+    void clearItems();
 
     void	setTitle(const cb::string& value);
     void	setTitlePos(const glm::vec2& value);
