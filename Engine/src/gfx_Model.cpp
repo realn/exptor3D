@@ -19,6 +19,7 @@ Opis:	Patrz -> gfx_Model.h
 #include "gfx_TextureRepository.h"
 #include "gfx_Material.h"
 #include "gfx_Mesh.h"
+#include "gfx_BufferedMesh.h"
 #include "gfx_MeshFuncs.h"
 #include "gfx_Model.h"
 
@@ -27,11 +28,7 @@ Opis:	Patrz -> gfx_Model.h
 namespace gfx {
   struct Model::Mesh {
     cb::string materialName;
-    std::shared_ptr<gfx::Mesh> mesh;
-
-    Mesh() = default;
-    Mesh(Mesh&&) = default;
-    Mesh& operator=(Mesh&&) = default;
+    std::shared_ptr<gfx::BufferedMesh> mesh;
   };
 
   struct Model::Object {
@@ -39,10 +36,6 @@ namespace gfx {
 
     cb::string name;
     meshes_t meshes;
-
-    Object() = default;
-    Object(Object&&) = default;
-    Object& operator=(Object&&) = default;
   };
 
   gfx::MeshBuilderContext::VertListType getVertListFromStr(const cb::string& str) {
@@ -114,16 +107,17 @@ namespace gfx {
 
   bool Model::loadMesh(core::FileParser& parser, Object& obj) {
     gfx::MeshBuilderContext ctx;
-    Mesh mesh;
+    Mesh result;
 
-    mesh.materialName = parser.getArg(0);
-    mesh.mesh = std::make_shared<gfx::Mesh>();
+    gfx::Mesh mesh;
+
+    result.materialName = parser.getArg(0);
 
     while (parser.readLine()) {
       auto cmd = parser.getCmd();
       if (cmd == L"ENDMESH") {
-        mesh.mesh->prepare();
-        obj.meshes.push_back(std::move(mesh));
+        result.mesh = std::make_shared<BufferedMesh>(mesh);
+        obj.meshes.push_back(std::move(result));
         return true;
       }
       else if (cmd == L"glRotate") {
@@ -144,7 +138,7 @@ namespace gfx {
         ctx.beginVertexList(value);
       }
       else if (cmd == L"glEnd") {
-        ctx.commitVertexList(*mesh.mesh);
+        ctx.commitVertexList(mesh);
       }
       else if (cmd == L"glPushMatrix") {
         ctx.pushMatrix();
@@ -171,19 +165,19 @@ namespace gfx {
         // TODO
       }
       else if (cmd == L"gluSphere") {
-        ctx.addSphere(*mesh.mesh, parser.getFloat(0), parser.getUInt(1), parser.getUInt(2));
+        ctx.addSphere(mesh, parser.getFloat(0), parser.getUInt(1), parser.getUInt(2));
       }
       else if (cmd == L"gluCylinder") {
-        ctx.addCylinder(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getFloat(2), parser.getUInt(3), parser.getUInt(4));
+        ctx.addCylinder(mesh, parser.getFloat(0), parser.getFloat(1), parser.getFloat(2), parser.getUInt(3), parser.getUInt(4));
       }
       else if (cmd == L"gluDisk") {
-        ctx.addDisk(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3));
+        ctx.addDisk(mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3));
       }
       else if (cmd == L"gluPartialDisk") {
-        ctx.addPartialDisk(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3), parser.getFloat(4), parser.getFloat(5));
+        ctx.addPartialDisk(mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3), parser.getFloat(4), parser.getFloat(5));
       }
       else if (cmd == L"glPlane") {
-        ctx.addPlane(*mesh.mesh, parser.getVec2FromArgs(0), parser.getVec2FromArgs(2, glm::vec2(1.0f)));
+        ctx.addPlane(mesh, parser.getVec2FromArgs(0), parser.getVec2FromArgs(2, glm::vec2(1.0f)));
       }
       else {
         warning(L"unrecognized file command: " + cmd);

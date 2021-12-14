@@ -6,13 +6,6 @@
 #include "gfx_Mesh.h"
 
 namespace gfx {
-  Mesh Mesh::copy() const {
-    auto mesh = Mesh();
-    mesh.indices = indices;
-    mesh.vertices = vertices;
-    return mesh;
-  }
-
   void Mesh::add(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord) {
     add(MeshVertex{ position, normal, texCoord });
   }
@@ -35,38 +28,14 @@ namespace gfx {
     vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
     indices.reserve(indices.size() + mesh.indices.size());
     for (auto& idx : mesh.indices)
-      indices.push_back(baseIndex + idx);
+      indices.push_back(static_cast<cb::u16>(baseIndex) + idx);
   }
 
-  void Mesh::prepare() {
-    vertexBuffer = std::make_unique<cb::gl::Buffer>();
-    {
-      auto vbind = cb::gl::bind(*vertexBuffer);
-      vertexBuffer->setData(vertices);
-    }
-
-    indexBuffer = std::make_unique<cb::gl::Buffer>(cb::gl::BufferTarget::ELEMENT_ARRAY);
-    {
-      auto bbind = cb::gl::bind(*indexBuffer);
-      indexBuffer->setData(indices);
-    }
+  const Mesh::vertices_t& Mesh::getVertices() const {
+    return vertices;
   }
 
-  void Mesh::render() {
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    auto vbind = cb::gl::bind(*vertexBuffer);
-    glVertexPointer(3, GL_FLOAT, sizeof(MeshVertex), nullptr);
-    glNormalPointer(GL_FLOAT, sizeof(MeshVertex), reinterpret_cast<const void*>(sizeof(glm::vec3)));
-    glTexCoordPointer(2, GL_FLOAT, sizeof(MeshVertex), reinterpret_cast<const void*>(2 * sizeof(glm::vec3)));
-
-    auto ibind = cb::gl::bind(*indexBuffer);
-    cb::gl::drawElements(cb::gl::PrimitiveType::TRIANGLES, indices.size());
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  const Mesh::indices_t& Mesh::getIndices() const {
+    return indices;
   }
 }

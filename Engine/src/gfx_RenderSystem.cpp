@@ -6,6 +6,7 @@
 #include <CBGL/State.h>
 
 #include "GUIRenderContext.h"
+#include "gfx_MeshVertex.h"
 #include "gfx_Texture.h"
 #include "gfx_Frame.h"
 #include "gfx_FrameElement.h"
@@ -37,7 +38,7 @@ namespace gfx {
       glTexCoordPointer(2, GL_FLOAT, sizeof(MeshVertex), reinterpret_cast<const void*>(2 * sizeof(glm::vec3)));
 
       auto ibind = cb::gl::bind(element.mesh->getIndexBuffer());
-      cb::gl::drawElements(cb::gl::PrimitiveType::TRIANGLES, element.mesh->getNumberOfIndices());
+      cb::gl::drawElements(cb::gl::PrimitiveType::TRIANGLES, static_cast<unsigned>(element.mesh->getNumberOfIndices()));
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);

@@ -23,6 +23,7 @@
     <ClCompile Include="src\core_LineParser.cpp" />
     <ClCompile Include="src\core_StrArgList.cpp" />
     <ClCompile Include="src\core_Transformer.cpp" />
+    <ClCompile Include="src\gfx_BufferedMesh.cpp" />
     <ClCompile Include="src\gfx_Frame.cpp" />
     <ClCompile Include="src\gfx_Material.cpp" />
     <ClCompile Include="src\gfx_MatrixStack.cpp" />
@@ -65,6 +66,7 @@
     <ClInclude Include="src\core_Files.h" />
     <ClInclude Include="src\core_StrArgList.h" />
     <ClInclude Include="src\core_Transformer.h" />
+    <ClInclude Include="src\gfx_BufferedMesh.h" />
     <ClInclude Include="src\gfx_Frame.h" />
     <ClInclude Include="src\gfx_FrameElement.h" />
     <ClInclude Include="src\gfx_Material.h" />

@@ -10,7 +10,7 @@ namespace gfx {
 
     using elements_t = std::vector<FrameElement>;
 
-    void addMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
+    void addMesh(std::shared_ptr<BufferedMesh> mesh, std::shared_ptr<Material> material);
 
     glm::uvec2 size = glm::vec2(1);
     elements_t elements;
