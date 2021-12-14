@@ -182,7 +182,12 @@ namespace gfx {
       else if (cmd == L"gluPartialDisk") {
         ctx.addPartialDisk(*mesh.mesh, parser.getFloat(0), parser.getFloat(1), parser.getUInt(2), parser.getUInt(3), parser.getFloat(4), parser.getFloat(5));
       }
-
+      else if (cmd == L"glPlane") {
+        ctx.addPlane(*mesh.mesh, parser.getVec2FromArgs(0), parser.getVec2FromArgs(2, glm::vec2(1.0f)));
+      }
+      else {
+        warning(L"unrecognized file command: " + cmd);
+      }
     }
 
     return false;

@@ -3,6 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <CBGL/COpenGL.h>
+#include <CBGL/State.h>
 
 #include "GUIRenderContext.h"
 #include "gfx_Texture.h"
@@ -44,6 +45,11 @@ namespace gfx {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   }
   void RenderSystem::render(const gui::RenderContext& ctx) {
+    auto state = cb::gl::getBlendState();
+    state.enabled = true;
+    state.setFunc(cb::gl::BlendFactor::SRC_ALPHA, cb::gl::BlendFactor::ONE_MINUS_SRC_ALPHA);
+    cb::gl::setState(state);
+
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(ctx.getProjectionMatrix()));
     glMatrixMode(GL_MODELVIEW);

@@ -35,6 +35,7 @@ namespace gfx {
 
     void setVerticesInverted(bool value);
 
+    void addPlane(Mesh& mesh, glm::vec2 size, glm::vec2 texCoordSize);
     void addDisk(Mesh& mesh, float innerRadius, float outerRadius, cb::u32 slices, cb::u32 loops);
     void addPartialDisk(Mesh& mesh, float innerRadius, float outerRadius, cb::u32 slices, cb::u32 loops, float startAngleDeg, float sweepAngleDeg);
     void addSphere(Mesh& mesh, float radius, cb::u32 slices, cb::u32 stacks);

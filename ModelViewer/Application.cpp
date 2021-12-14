@@ -61,11 +61,7 @@ namespace mdlview {
     events->addObserver(modelViewer);
 
     scriptParser->addFunc(L"loadModel", [this](const core::StrArgList& args) { loadModel(args.getArg(0)); });
-
-
-    {
-    }
-
+    scriptParser->addFunc(L"selectObject", [this](const core::StrArgList& args) { modelViewer->selectObjName(args.getArg(0)); });
 
     input.addKeyMapping(cb::sdl::ScanCode::UP, L"gui_move_up");
     input.addKeyMapping(cb::sdl::ScanCode::DOWN, L"gui_move_down");

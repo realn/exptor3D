@@ -39,6 +39,7 @@ namespace gfx {
 
 		texture = std::make_unique<cb::gl::Texture>(surface.getSize(), cb::gl::TextureFormat::RGBA8);
 		texture->setData(cb::gl::InputFormat::RGBA, surface.getPixels());
+		texture->setWrap(cb::gl::TextureWrap::REPEAT, cb::gl::TextureWrap::REPEAT);
 
 		loaded = true;
 		return true;

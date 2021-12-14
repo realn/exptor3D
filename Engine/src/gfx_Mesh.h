@@ -22,8 +22,11 @@ namespace gfx {
     Mesh& operator=(const Mesh&) = delete;
     Mesh& operator=(Mesh&&) = default;
 
+    Mesh copy() const;
+
     void add(glm::vec3 position, glm::vec3 normal = glm::vec3(), glm::vec2 texCoord = glm::vec2());
     void add(const MeshVertex& vertex);
+    void add(const Mesh& mesh);
 
     cb::gl::Buffer& getVertexBuffer() const { return *vertexBuffer; }
     cb::gl::Buffer& getIndexBuffer() const { return *indexBuffer; }

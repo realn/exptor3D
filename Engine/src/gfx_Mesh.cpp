@@ -6,6 +6,13 @@
 #include "gfx_Mesh.h"
 
 namespace gfx {
+  Mesh Mesh::copy() const {
+    auto mesh = Mesh();
+    mesh.indices = indices;
+    mesh.vertices = vertices;
+    return mesh;
+  }
+
   void Mesh::add(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord) {
     add(MeshVertex{ position, normal, texCoord });
   }
@@ -21,6 +28,14 @@ namespace gfx {
       index = static_cast<cb::u16>(std::distance(vertices.begin(), it));
     }
     indices.push_back(index);
+  }
+
+  void Mesh::add(const Mesh& mesh) {
+    auto baseIndex = vertices.size();
+    vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
+    indices.reserve(indices.size() + mesh.indices.size());
+    for (auto& idx : mesh.indices)
+      indices.push_back(baseIndex + idx);
   }
 
   void Mesh::prepare() {

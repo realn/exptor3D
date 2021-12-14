@@ -154,6 +154,29 @@ namespace gfx {
     inverted = value;
   }
 
+  void MeshBuilderContext::addPlane(Mesh& mesh, glm::vec2 size, glm::vec2 texCoordSize) {
+    auto half = size / 2.0f;
+
+    auto normal = glm::vec3(0.0f, 0.0f, 1.0f);
+
+    auto p1 = matrixCurrent * glm::vec4(-half, 0.0f, 01.0f);
+    auto p2 = matrixCurrent * glm::vec4(half.x, -half.y, 0.0f, 1.0f);
+    auto p3 = matrixCurrent * glm::vec4(half, 0.0f, 1.0f);
+    auto p4 = matrixCurrent * glm::vec4(-half.x, half.y, 0.0f, 1.0f);
+
+    auto t1 = glm::vec2(0.0f, 0.0f);
+    auto t2 = glm::vec2(texCoordSize.x, 0.0f);
+    auto t3 = glm::vec2(texCoordSize.x, texCoordSize.y);
+    auto t4 = glm::vec2(0.0f, texCoordSize.y);
+
+    auto v1 = MeshVertex{ p1, normal, t1 };
+    auto v2 = MeshVertex{ p2, normal, t2 };
+    auto v3 = MeshVertex{ p3, normal, t3 };
+    auto v4 = MeshVertex{ p4, normal, t4 };
+
+    addMeshQuadAsTriangles(mesh, v1, v2, v3, v4);
+  }
+
   void MeshBuilderContext::addDisk(Mesh& mesh, float innerRadius, float outerRadius, cb::u32 slices, cb::u32 loops) {
     if (slices < 3 || loops < 1)
       return;
