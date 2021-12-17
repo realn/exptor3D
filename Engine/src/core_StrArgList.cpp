@@ -53,6 +53,15 @@ namespace core {
     return result;
   }
 
+  bool StrArgList::getBool(size_t index, bool def) const {
+    bool result;
+    if (!cb::fromStr(getArg(index), result)) {
+      converror(L"Failed to convert arg nr " + std::to_wstring(index) + L" to bool, returning def value");
+      return def;
+    }
+    return result;
+  }
+
   glm::vec2 StrArgList::getVec2FromArgs(size_t index, glm::vec2 def) const {
     return glm::vec2{
       getFloat(index + 0, def.x),

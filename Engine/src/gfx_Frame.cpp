@@ -3,7 +3,7 @@
 namespace gfx {
   Frame::~Frame() = default;
 
-  void Frame::addMesh(std::shared_ptr<BufferedMesh> mesh, std::shared_ptr<Material> material) {
+  void Frame::addMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) {
     elements.push_back({mesh, material, matrixCurrent});
   }
 }
