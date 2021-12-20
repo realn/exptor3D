@@ -16,6 +16,9 @@ namespace gui {
   public:
     ~ContainerElement() override;
     
+    virtual void eventPointerMove(const glm::vec2& pointerPos, const glm::vec2& screenSize) override;
+    virtual void eventProcess(GuiEventType type) override;
+
     void setItemPadding(const glm::vec2& value);
     void setItemSpace(float value);
 

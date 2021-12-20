@@ -5,6 +5,12 @@ namespace gui {
 
 	Element::~Element() = default;
 
+	void Element::eventPointerMove(const glm::vec2& pointerPos, const glm::vec2& screenSize) {
+	}
+
+	void Element::eventProcess(GuiEventType type) {
+	}
+
 	void	Element::setAlign(const HAlign hor, const VAlign ver) {
 		alignH = hor;
 		alignV = ver;
@@ -16,6 +22,10 @@ namespace gui {
 
 	void	Element::setColor(const glm::vec4& value) {
 		color = value;
+	}
+
+	void Element::setFocus(bool value) {
+		focus = value;
 	}
 
 	HAlign Element::getAlignH() const {

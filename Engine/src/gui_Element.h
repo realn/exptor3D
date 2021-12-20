@@ -16,6 +16,15 @@ namespace gui {
 		Bottom,
 	};
 
+	enum class GuiEventType {
+		Enter,
+		Back,
+		Up,
+		Down,
+		Left,
+		Right
+	};
+
 	class RenderContext;
 	class TextPrinter;
 
@@ -29,9 +38,13 @@ namespace gui {
 		virtual void	render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const = 0;
 		virtual void	update(const float timeDelta) = 0;
 
-		void	setAlign(const HAlign hor, const VAlign ver);
-		void	setMargin(const glm::vec2& value);
-		void	setColor(const glm::vec4& value);
+		virtual void eventPointerMove(const glm::vec2& pointerPos, const glm::vec2& screenSize);
+		virtual void eventProcess(GuiEventType type);
+
+		void setAlign(const HAlign hor, const VAlign ver);
+		void setMargin(const glm::vec2& value);
+		void setColor(const glm::vec4& value);
+		void setFocus(bool value);
 
 		HAlign	getAlignH() const;
 		VAlign	getAlignV() const;
@@ -48,6 +61,7 @@ namespace gui {
 		glm::vec2	margin = glm::vec2(0.0f);
 		glm::vec4	color = glm::vec4(1.0f);
 
+		bool focus = false;
 	};
 
 }

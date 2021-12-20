@@ -7,7 +7,8 @@
 
 namespace gui {
 	MenuItem::MenuItem(const cb::string& id, const core::FontInfo& fontInfo) 
-		: id(id), fontInfo(fontInfo) 
+		: ButtonElement(fontInfo)
+		, id(id) 
 	{
 		itemColor.setRange({ 0.8f, 0.8f, 0.8, 0.9f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 		itemColor.setDuration(std::chrono::milliseconds(400));
@@ -21,8 +22,8 @@ namespace gui {
 	MenuItem::~MenuItem() = default;
 
 	void MenuItem::update(const float timeDelta) {
-		itemColor.setReverse(!highlight);
-		scroll.setReverse(!highlight);
+		itemColor.setReverse(!focus);
+		scroll.setReverse(!focus);
 
 		itemColor.update(timeDelta);
 		scroll.update(timeDelta);
@@ -33,24 +34,13 @@ namespace gui {
 
 		ctx.pushColor();
 		ctx.setColor(itemColor.getValue());
-		printer.print(ctx, pos + scroll.getValue(), title);
+		printer.print(ctx, pos + scroll.getValue(), text);
 		ctx.popColor();
 	}
 
-	void	MenuItem::setTitle(const cb::string& value) {
-		title = value;
-	}
-
-	void	MenuItem::setHighlight(bool value) {
-		highlight = value;
-	}
 
 	void	MenuItem::setScript(const cb::string& value) {
 		script = value;
-	}
-
-	glm::vec2 MenuItem::getSize() const {
-		return fontInfo.getTextSize(title);
 	}
 
 	const cb::string	MenuItem::getScript() const {

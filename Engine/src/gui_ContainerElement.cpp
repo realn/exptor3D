@@ -4,6 +4,28 @@
 namespace gui {
   ContainerElement::~ContainerElement() = default;
 
+  void ContainerElement::eventPointerMove(const glm::vec2 & pointerPos, const glm::vec2 & screenSize) {
+    if (!containsPoint(pointerPos, screenSize)) {
+      for (auto item : elements) {
+        item->setFocus(false);
+      }
+      return;
+    }
+
+    for (auto item : elements) {
+      auto newPos = pointerPos - createElementPos(item, screenSize);
+
+      item->setFocus(item->containsPoint(newPos, item->getSize()));
+      item->eventPointerMove(newPos, getSize());
+    }
+  }
+
+  void ContainerElement::eventProcess(GuiEventType type) {
+    for (auto item : elements) {
+      item->eventProcess(type);
+    }
+  }
+
   void ContainerElement::setItemPadding(const glm::vec2& value) {
     padding = value;
   }

@@ -43,6 +43,7 @@ namespace gui {
 
 	void MenuMain::addMenu(menuptr_t menu) {
 		menus.push_back(menu);
+		menu->setEnterFunction([this](Menu::menuitemptr_t item) { invokeScript(item->getScript()); });
 	}
 
 	MenuMain::menuptr_t MenuMain::getCurrent() const {
@@ -179,14 +180,15 @@ namespace gui {
 		if (menu->isAnimating())
 			return;
 
-		cb::string script;
-		if (menu->eventEnter(script)) {
-			scriptParser->execute(script);
-		}
+		menu->eventEnter();
 	}
 
 	void MenuMain::eventExit() {
 		pop();
+	}
+
+	void MenuMain::invokeScript(cb::string script) {
+		scriptParser->execute(script);
 	}
 
 	void	MenuMain::eventMoveDown() {
@@ -231,7 +233,7 @@ namespace gui {
 			if (cmd == L"MENU") {
 				menuItem = nullptr;
 				menu = std::make_shared<Menu>(parser.getArg(0), fontInfo);
-				menus.push_back(menu);
+				addMenu(menu);
 			}
 			else if (cmd == L"MENUTITLE" && menu) {
 				menu->setTitle(parser.getArg(0));
@@ -242,11 +244,10 @@ namespace gui {
 				menu->setSize({ width, height });
 			}
 			else if (cmd == L"MENUITEM" && menu) {
-				menuItem = std::make_shared<MenuItem>(parser.getArg(0), fontInfo);
-				menu->addMenuItem(menuItem);
+				menuItem = menu->addMenuItem(parser.getArg(0));
 			}
 			else if (cmd == L"MENUITEMTITLE" && menuItem) {
-				menuItem->setTitle(parser.getArg(0));
+				menuItem->setText(parser.getArg(0));
 			}
 			else if (cmd == L"MENUITEMACTION" && menuItem) {
 				menuItem->setScript(parser.getArg(0));

@@ -29,6 +29,7 @@
     <ClCompile Include="src\gfx_Material.cpp" />
     <ClCompile Include="src\gfx_MatrixStack.cpp" />
     <ClCompile Include="src\gfx_RenderSystem.cpp" />
+    <ClCompile Include="src\gui_ButtonElement.cpp" />
     <ClCompile Include="src\gui_Container.cpp" />
     <ClCompile Include="src\3dMath.cpp" />
     <ClCompile Include="src\core_FontInfo.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="src\gfx_Material.h" />
     <ClInclude Include="src\gfx_MatrixStack.h" />
     <ClInclude Include="src\gfx_RenderSystem.h" />
+    <ClInclude Include="src\gui_ButtonElement.h" />
     <ClInclude Include="src\gui_Container.h" />
     <ClInclude Include="src\gui_ContainerElement.h" />
     <ClInclude Include="src\3dMath.h" />

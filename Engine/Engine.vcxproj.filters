@@ -158,6 +158,9 @@
     <ClCompile Include="src\core_Id.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\gui_ButtonElement.cpp">
+      <Filter>Source Files\GUI\elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3dMath.h">
@@ -300,6 +303,9 @@
     </ClInclude>
     <ClInclude Include="src\core_Id.h">
       <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui_ButtonElement.h">
+      <Filter>Source Files\GUI\elements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

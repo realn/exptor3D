@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <glm/vec2.hpp>
 
 #include "core_FontInfo.h"
@@ -26,6 +28,8 @@ namespace gui {
   class Menu {
   public:
     using menuitemptr_t = std::shared_ptr<MenuItem>;
+    using menuitemweakptr_t = std::weak_ptr<MenuItem>;
+    using func_t = std::function<void(menuitemptr_t)>;
 
     Menu(const cb::string& id, const core::FontInfo& fontInfo);
     ~Menu();
@@ -36,7 +40,7 @@ namespace gui {
     void	eventMouseMove(const glm::vec2& pos);
     void	eventMoveUp();
     void	eventMoveDown();
-    bool	eventEnter(cb::string& outScript);
+    void	eventEnter();
 
     void	addMenuItem(menuitemptr_t item);
     menuitemptr_t addMenuItem(cb::string id, cb::string title = cb::string(), cb::string script = cb::string());
@@ -45,10 +49,11 @@ namespace gui {
 
     void clearItems();
 
-    void	setTitle(const cb::string& value);
-    void	setTitlePos(const glm::vec2& value);
-    void	setSize(const glm::vec2& value);
-    void	setVisible(bool value, bool animate);
+    void setTitle(const cb::string& value);
+    void setTitlePos(const glm::vec2& value);
+    void setSize(const glm::vec2& value);
+    void setVisible(bool value, bool animate);
+    void setEnterFunction(func_t func);
 
     const cb::string& getId() const;
     bool	isVisible() const;
@@ -61,6 +66,8 @@ namespace gui {
     using elementptr_t = std::shared_ptr<Element>;
     using textelementptr_t = std::shared_ptr<TextElement>;
     using stackelementptr_t = std::shared_ptr<StackElement>;
+
+    void invokeEnter(menuitemptr_t item);
 
     const cb::string	id;
     core::FontInfo fontInfo;
@@ -76,5 +83,7 @@ namespace gui {
 
     core::ValueTransformer<float> scroll;
     MenuState state = MenuState::HIDDEN;
+
+    func_t enterFunction;
   };
 }

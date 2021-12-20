@@ -141,6 +141,8 @@ namespace mdlview {
 
     loadModelList();
 
+
+
     return true;
   }
 
@@ -188,7 +190,7 @@ namespace mdlview {
     cb::gl::clear(cb::gl::ClearBuffers(cb::gl::ClearBuffer::COLOR) | cb::gl::ClearBuffer::DEPTH);
 
     gfx::Frame frame;
-    frame.setProjectionMatrix(glm::perspective(glm::radians(90.0f), getAspectRatio(window->getSize()), 0.1f, 100.0f));
+    frame.setProjectionMatrix(glm::perspective(glm::radians(110.0f), getAspectRatio(window->getSize()), 0.1f, 100.0f));
     modelViewer->render(frame);
 
     auto ctx = mainMenu->makeRender(*textPrinter);

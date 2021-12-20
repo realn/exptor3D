@@ -31,6 +31,7 @@ namespace gui {
 	{
 	public:
 		using menuptr_t = std::shared_ptr<Menu>;
+		using menuweakptr_t = std::weak_ptr<Menu>;
 
 		MenuMain(const float aspectRatio, std::shared_ptr<logic::ScriptParser> scriptParser);
 		~MenuMain() override;
@@ -64,6 +65,8 @@ namespace gui {
 		void eventMoveDown();
 		void eventEnter();
 		void eventExit();
+
+		void invokeScript(cb::string script);
 
 		cb::string loadedFile;
 		std::shared_ptr<logic::ScriptParser> scriptParser;

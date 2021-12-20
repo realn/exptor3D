@@ -80,24 +80,11 @@ namespace gui {
 
   void Menu::eventMouseMove(const glm::vec2& pos) {
     auto screenPos = pos * size;
-
-    selectedItem = menuitemptr_t();
-    auto it = std::find_if(items.begin(), items.end(), [&](menuitemptr_t item) {return screen->elementContainsPoint(item, screenPos, size); });
-    if (it != items.end()) {
-      selectedItem = *it;
-    }
-
-    for (auto& item : items) {
-      item->setHighlight(item == selectedItem);
-    }
+    screen->eventPointerMove(screenPos, size);
   }
 
-  bool	Menu::eventEnter(cb::string& outScript) {
-    if (selectedItem) {
-      outScript = selectedItem->getScript();
-      return true;
-    }
-    return false;
+  void Menu::eventEnter() {
+    screen->eventProcess(GuiEventType::Enter);
   }
 
   void	Menu::eventMoveUp() {
@@ -112,7 +99,7 @@ namespace gui {
     selectedItem = it != items.rend() ? *it : menuitemptr_t();
 
     for (auto& item : items) {
-      item->setHighlight(item == selectedItem);
+      item->setFocus(item == selectedItem);
     }
   }
 
@@ -128,13 +115,15 @@ namespace gui {
     selectedItem = it != items.end() ? *it : menuitemptr_t();
 
     for (auto& item : items) {
-      item->setHighlight(item == selectedItem);
+      item->setFocus(item == selectedItem);
     }
   }
 
   void Menu::addMenuItem(menuitemptr_t item) {
     items.push_back(item);
     itemsElement->addElement(item);
+    auto sender = menuitemweakptr_t(item);
+    item->setOnClick([this, sender]() { invokeEnter(sender.lock()); });
   }
 
   void	Menu::setTitle(const cb::string& value) {
@@ -175,7 +164,7 @@ namespace gui {
 
   Menu::menuitemptr_t Menu::addMenuItem(cb::string id, cb::string title, cb::string script) {
     auto item = std::make_shared<MenuItem>(id, fontInfo);
-    item->setTitle(title);
+    item->setText(title);
     item->setScript(script);
     addMenuItem(item);
     return item;
@@ -208,5 +197,13 @@ namespace gui {
 
   MenuState Menu::getState() const {
     return state;
+  }
+
+  void Menu::setEnterFunction(func_t func) {
+    enterFunction = func;
+  }
+
+  void Menu::invokeEnter(menuitemptr_t item) {
+    enterFunction(item);
   }
 }
