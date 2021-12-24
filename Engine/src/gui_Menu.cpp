@@ -41,7 +41,7 @@ namespace gui {
 
   Menu::~Menu() = default;
 
-  void	Menu::update(const float timeDelta) {
+  void	Menu::update(float timeDelta) {
     scroll.update(timeDelta);
 
     if (scroll.isFinished()) {
@@ -62,25 +62,21 @@ namespace gui {
     }
   }
 
-  RenderContext Menu::makeRender(gui::TextPrinter& printer) const {
-    auto ctx = RenderContext();
-    ctx.setProjectionMatrix(glm::ortho(0.0f, size.x, size.y, 0.0f));
+  void Menu::render(RenderContext& ctx, gui::TextPrinter& printer, glm::vec2 screenSize) const {
+    //ctx.setProjectionMatrix(glm::ortho(0.0f, size.x, size.y, 0.0f));
 
     if (state != MenuState::HIDDEN) {
       ctx.pushMatrix();
       if (isAnimating()) {
-        ctx.translate({ scroll.getValue() * glm::vec2(0.0f, size.y), 0.0f });
+        ctx.translate({ scroll.getValue() * glm::vec2(0.0f, screenSize.y), 0.0f });
       }
-      screen->render(ctx, printer, size);
+      screen->render(ctx, printer, screenSize);
       ctx.popMatrix();
     }
-
-    return ctx;
   }
 
-  void Menu::eventMouseMove(const glm::vec2& pos) {
-    auto screenPos = pos * size;
-    screen->eventPointerMove(screenPos, size);
+  void Menu::eventMouseMove(const glm::vec2& pos, const glm::vec2& screenSize) {
+    screen->eventPointerMove(pos, screenSize);
   }
 
   void Menu::eventEnter() {
@@ -132,10 +128,6 @@ namespace gui {
 
   void	Menu::setTitlePos(const glm::vec2& value) {
     titleElement->setMargin(value);
-  }
-
-  void	Menu::setSize(const glm::vec2& value) {
-    size = value;
   }
 
   void	Menu::setVisible(bool value, bool animate) {

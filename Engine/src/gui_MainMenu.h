@@ -7,6 +7,7 @@
 
 #include <CBCore/Defines.h>
 
+#include "gui_Screen.h"
 #include "core_object.h"
 #include "logic_ScriptParser.h"
 #include "event_Observer.h"
@@ -25,9 +26,9 @@ namespace gui {
 
 	class MenuMain 
 		: public std::enable_shared_from_this<MenuMain>
-		, public event::IObserver
 		, public logic::IFuncHolder 
 		, public core::Object
+		, public IScreen
 	{
 	public:
 		using menuptr_t = std::shared_ptr<Menu>;
@@ -36,13 +37,16 @@ namespace gui {
 		MenuMain(const float aspectRatio, std::shared_ptr<logic::ScriptParser> scriptParser);
 		~MenuMain() override;
 
+		void update(float timeDelta) override;
+		void render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const override;
+
+		void eventPointerMove(const glm::vec2& pointerPos, const glm::vec2& screenSize) override;
+		void eventProcess(GuiEventType type) override;
+
 		cb::string getLogName() const override;
 
 		void addMenu(menuptr_t menu);
 		menuptr_t getCurrent() const;
-
-		void	update(const float timeDelta);
-		RenderContext	makeRender(gui::TextPrinter& printer) const;
 
 		bool	load(const cb::string& filename, const core::FontInfo& fontInfo);
 
@@ -52,15 +56,10 @@ namespace gui {
 		bool isMenuAnimating() const;
 		bool isMenuVisible() const;
 
-		void	processEvent(const event::Event& event) override;
-
 	private:
 		using menus_t = std::vector<menuptr_t>;
 
 		menuptr_t findMenu(const cb::string& id);
-		void eventPointerMoveX(float posX);
-		void eventPointerMoveY(float posY);
-		void eventMouseMove(const glm::vec2& pos);
 		void eventMoveUp();
 		void eventMoveDown();
 		void eventEnter();
@@ -75,7 +74,5 @@ namespace gui {
 		menus_t menuStack;
 		menuptr_t menuPopped;
 		size_t menuIndexCurrent = 0;
-		glm::vec2 pointerPos;
-		event::Mapper mapper;
 	};
 }

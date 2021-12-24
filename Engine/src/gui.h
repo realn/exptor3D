@@ -5,7 +5,7 @@ Autor:	Real_Noname (real_noname@wp.pl)
 (C):	CODE RULERS (Real_Noname)
 WWW:	www.coderulers.prv.pl
 Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
-		z graczem. 
+    z graczem.
 
 /////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////*/
@@ -14,8 +14,9 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include "gfx_Texture.h"
 #include "gfx_TextureRepository.h"
 
-#include "event_Observer.h"
-#include "event_Mapper.h"
+#include "core_object.h"
+
+#include "event_MappedObserver.h"
 
 #include "logic_ScriptParser.h"
 
@@ -25,103 +26,47 @@ Opis:	Definicje klas do zarz¹dzania programem oraz komunikacj¹
 #include "GUITextPrinter.h"
 #include "GUIConsole.h"
 
-enum class GUI_MODE
-{
-	MENU,
-	SCREEN,
-};
+namespace gui {
+  class Main 
+    : public core::Object
+    , public event::MappedObserver
+  {
+  public:
+    using screenptr_t = std::shared_ptr<Screen>;
+    using screens_t = std::vector<screenptr_t>;
 
-enum class GUI_TIME
-{
-	MILISECONDS,
-	SECONDS,
-	MINUTES,
-	HOUR,
-};
+    Main(gfx::TextureRepository& texManager, std::shared_ptr<logic::ScriptParser> scriptParser, glm::vec2 screenSize);
+    ~Main() override = default;
 
-struct guiPlayerInfo
-{
-	float HEALTH;
-	float ARMOR;
-	int AMMO;
-	int CLIPS;
-	int FRAGS;
-	std::string Name;
-	float angle;
-	std::string WeapName;
-};
+    void	update(float timeDelta);
+    void	render() const;
 
-struct guiScrMsg
-{
-	std::string msg;
-	float Alpha;
-	unsigned int Time;
-	unsigned int ThisTime;
-	float C[3];
-	float S[2];
-	float x, y;
-};
+    void	Print(float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f);
+    void	PrintConsole(const std::string& text);
 
-class CGUIMain : public event::IObserver
-{
-private:
-	event::Mapper eventMapper;
-	gui::TextPrinter textPrinter;
+  private:
+    void eventPointerMoveX(float posX);
+    void eventPointerMoveY(float posY);
+    void eventMouseMove(const glm::vec2& pos);
+    void eventProcess(GuiEventType type);
 
-	std::shared_ptr<gfx::Texture> CH;
-	std::shared_ptr<gfx::Texture> Cursor;
+    glm::vec2 getScreenSize() const;
+    float getAspectRatio() const;
 
-	GUI_MODE	Mode;
-	gui::MenuMain	menu;
-	gui::Screen screen;
-	CGUIConsole	Console;
-	std::shared_ptr<logic::ScriptParser>	ScriptParser;
+    std::shared_ptr<TextPrinter> textPrinter;
+    std::shared_ptr<logic::ScriptParser>	ScriptParser;
 
-	float	AspectRatio;
-	float	ConsoleScroll;
-	float	FScrColor[4];
-	float	ShowWLScrTime;
-	float	ThisWLScrTime;
-	float	WLScrColor[4];
+    std::shared_ptr<gfx::Texture> CH;
+    std::shared_ptr<gfx::Texture> Cursor;
 
-	unsigned	ScreenHeight;
-	unsigned	cursorX, cursorY;
+    std::shared_ptr<MenuMain> menu;
 
-	bool	ConsoleOn;
-	bool	Quit;
+    screens_t screenStack;
 
-	std::vector< std::string >	ConsoleLMsg;
-	std::string		ConsoleCMsg;
-	std::vector< guiScrMsg >	ScrMsg;
-	std::vector< std::string >	PFL;
+    glm::vec2 screenSize;
 
-	glm::vec2 currentMousePos = glm::vec2(0.0f);
+    unsigned	cursorX, cursorY;
 
-public:
-	CGUIMain( gfx::TextureRepository& texManager, std::shared_ptr<logic::ScriptParser> scriptParser, float aspectRation, unsigned height );
-	~CGUIMain() override = default;
-
-	void	Update(float timeDelta);
-	void	Render();
-
-	void	ShowMenu( const cb::string& strID );
-	void	HideMenu();
-	const bool	IsMenuAnimating() const;
-	
-	void	SetMode( const GUI_MODE mode );
-
-	bool	GetQuit();
-
-	void	ActiveFScrColor( float R, float G, float B, float Alpha = 0.5f );
-
-	void	SendMsg( std::string msg, unsigned int Time = 2000, float X = -1.0f, float Y = -1.0f, float SclX = 1.0f, float SclY = 1.0f, float R = 1.0f, float G = 1.0f, float B = 1.0f );
-	void	SendMsg( guiScrMsg msg );
-	void	Print( float x, float y, std::string text, float ScaleX = 1.0f, float ScaleY = 1.0f );
-	void	PrintConsole( const std::string& text );
-
-	void	processEvent(const event::Event& event) override;
-
-	gui::Screen& getScreen() { return screen; }
-
-private:
-};
+    glm::vec2 pointerPos;
+  };
+}

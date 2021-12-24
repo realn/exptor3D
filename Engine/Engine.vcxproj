@@ -69,6 +69,7 @@
     <ClInclude Include="src\core_Id.h" />
     <ClInclude Include="src\core_StrArgList.h" />
     <ClInclude Include="src\core_Transformer.h" />
+    <ClInclude Include="src\event_MappedObserver.h" />
     <ClInclude Include="src\gfx_BufferedMesh.h" />
     <ClInclude Include="src\gfx_Frame.h" />
     <ClInclude Include="src\gfx_FrameElement.h" />

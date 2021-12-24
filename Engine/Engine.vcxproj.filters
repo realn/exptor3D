@@ -307,5 +307,8 @@
     <ClInclude Include="src\gui_ButtonElement.h">
       <Filter>Source Files\GUI\elements</Filter>
     </ClInclude>
+    <ClInclude Include="src\event_MappedObserver.h">
+      <Filter>Source Files\Events</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

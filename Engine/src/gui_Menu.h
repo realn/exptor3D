@@ -34,10 +34,10 @@ namespace gui {
     Menu(const cb::string& id, const core::FontInfo& fontInfo);
     ~Menu();
 
-    void	update(const float fTD);
-    RenderContext	makeRender(gui::TextPrinter& printer) const;
+    void update(float timeDelta);
+    void render(RenderContext& ctx, gui::TextPrinter& printer, glm::vec2 screenSize) const;
 
-    void	eventMouseMove(const glm::vec2& pos);
+    void	eventMouseMove(const glm::vec2& pos, const glm::vec2& screenSize);
     void	eventMoveUp();
     void	eventMoveDown();
     void	eventEnter();
@@ -51,7 +51,6 @@ namespace gui {
 
     void setTitle(const cb::string& value);
     void setTitlePos(const glm::vec2& value);
-    void setSize(const glm::vec2& value);
     void setVisible(bool value, bool animate);
     void setEnterFunction(func_t func);
 
@@ -77,7 +76,6 @@ namespace gui {
     stackelementptr_t itemsElement;
 
     menuitems_t items;
-    glm::vec2	size;
 
     menuitemptr_t selectedItem;
 

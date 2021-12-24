@@ -23,15 +23,6 @@ namespace gui {
 		scriptParser->addFunc(L"pushMenu", [this](const core::StrArgList& args) { push(args.getArg(0)); });
 		scriptParser->addFunc(L"popMenu", [this](const core::StrArgList& args) { pop(); });
 		report(L"functions added.");
-		
-		log(L"adding event mappings.");
-		mapper.addAction(L"gui_move_up", [this](const event::EventAction&) { eventMoveUp(); });
-		mapper.addAction(L"gui_move_down", [this](const event::EventAction&) { eventMoveDown(); });
-		mapper.addAction(L"gui_enter", [this](const event::EventAction&) { eventEnter(); });
-		mapper.addAction(L"gui_exit", [this](const event::EventAction&) { eventExit(); });
-		mapper.addRange(L"gui_pointer_x", [this](const event::EventRange& r) { eventPointerMoveX(r.getValue()); });
-		mapper.addRange(L"gui_pointer_y", [this](const event::EventRange& r) { eventPointerMoveY(r.getValue()); });
-		report(L"mappings added.");
 		report(L"menu system initialized.");
 	}
 
@@ -95,14 +86,34 @@ namespace gui {
 		getCurrent()->update(timeDelta);
 	}
 
-	RenderContext MenuMain::makeRender(TextPrinter& printer) const {
+	void MenuMain::render(gui::RenderContext& ctx, gui::TextPrinter& printer, const glm::vec2& screenSize) const {
 		auto menu = getCurrent();
 		if (menuPopped)
 			menu = menuPopped;
 		if (!menu)
-			return RenderContext();
+			return;
 
-		return menu->makeRender(printer);
+		menu->render(ctx, printer, screenSize);
+	}
+
+	void MenuMain::eventPointerMove(const glm::vec2& pointerPos, const glm::vec2& screenSize) {
+		if (menuStack.empty())
+			return;
+
+		auto menu = getCurrent();
+		if (menu->isAnimating())
+			return;
+
+		menu->eventMouseMove(pointerPos, screenSize);
+	}
+
+	void MenuMain::eventProcess(GuiEventType type) {
+		switch (type) {
+		case gui::GuiEventType::Enter: eventEnter(); break;
+		case gui::GuiEventType::Back: eventExit(); break;
+		case gui::GuiEventType::Up: eventMoveUp(); break;
+		case gui::GuiEventType::Down: eventMoveDown(); break;
+		}
 	}
 
 	void	MenuMain::push(const cb::string& id) {
@@ -140,36 +151,11 @@ namespace gui {
 		return true;
 	}
 
-	void MenuMain::processEvent(const event::Event& event) {
-		mapper.executeEvent(event);
-	}
-
 	MenuMain::menuptr_t MenuMain::findMenu(const cb::string& id) {
 		auto it = std::find_if(menus.begin(), menus.end(), [&](menuptr_t menu) { return menu->getId() == id; });
 		if (it != menus.end())
 			return *it;
 		return menuptr_t();
-	}
-
-	void MenuMain::eventPointerMoveX(float posX) {
-		pointerPos.x = posX;
-		eventMouseMove(pointerPos);
-	}
-
-	void MenuMain::eventPointerMoveY(float posY) {
-		pointerPos.y = posY;
-		eventMouseMove(pointerPos);
-	}
-
-	void	MenuMain::eventMouseMove(const glm::vec2& pos) {
-		if (menuStack.empty())
-			return;
-
-		auto menu = getCurrent();
-		if (menu->isAnimating())
-			return;
-
-		menu->eventMouseMove(pos);
 	}
 
 	void	MenuMain::eventEnter() {
@@ -237,11 +223,6 @@ namespace gui {
 			}
 			else if (cmd == L"MENUTITLE" && menu) {
 				menu->setTitle(parser.getArg(0));
-			}
-			else if (cmd == L"MENUSIZE" && menu) {
-				float height = parser.getFloat(0);
-				float width = aspectRatio * height;
-				menu->setSize({ width, height });
 			}
 			else if (cmd == L"MENUITEM" && menu) {
 				menuItem = menu->addMenuItem(parser.getArg(0));
