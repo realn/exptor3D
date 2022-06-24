@@ -16,7 +16,7 @@
 #include <event_Manager.h>
 #include <event_InputMapper.h>
 
-#include <gui.h>
+#include <gui_Main.h>
 
 #include "ModelManager.h"
 
@@ -71,7 +71,7 @@ namespace e3dt {
 		//CControllerList	ControllerList;
 		event::InputMapper inputMapper;
 
-		std::shared_ptr<CGUIMain>	GUI;
+		std::shared_ptr<gui::Main>	GUI;
 
 		gfx::RenderSystem renderSystem;
 		logic::Scene scene;

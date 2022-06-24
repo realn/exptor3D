@@ -20,6 +20,7 @@
 
 #include <gui_MainMenu.h>
 #include <gui_Menu.h>
+#include <gui_Main.h>
 
 #include <event_Observer.h>
 #include <event_Mapper.h>
@@ -75,6 +76,8 @@ namespace mdlview {
     std::shared_ptr<gui::Menu> modelMenu;
     std::shared_ptr<gui::Menu> objectMenu;
     std::shared_ptr<gui::MenuMain> mainMenu;
+
+    std::shared_ptr<gui::Main> guiMain;
 
     std::shared_ptr<ModelViewer> modelViewer;
 

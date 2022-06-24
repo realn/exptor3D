@@ -56,7 +56,7 @@
     <ClCompile Include="src\gfx_TextureRepository.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui.cpp">
+    <ClCompile Include="src\gui_Main.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\GUIConsole.cpp">
@@ -193,7 +193,7 @@
     <ClInclude Include="src\gfx_TextureRepository.h">
       <Filter>Source Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\gui.h">
+    <ClInclude Include="src\gui_Main.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUIConsole.h">

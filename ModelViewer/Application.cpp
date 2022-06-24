@@ -114,6 +114,10 @@ namespace mdlview {
     texRepo = std::make_unique<gfx::TextureRepository>("Data/Textures/");
     textPrinter = std::make_shared<gui::TextPrinter>(texRepo->Get("Font.tga"));
 
+    guiMain = std::make_shared<gui::Main>(texRepo, scriptParser, window->getSize());
+
+    
+
     return true;
   }
 
@@ -122,22 +126,18 @@ namespace mdlview {
     mainMenu = std::make_shared<gui::MenuMain>(getAspectRatio(window->getSize()), scriptParser);
 
     auto menu = std::make_shared<gui::Menu>(L"main", textPrinter->getFontInfo());
-    menu->setSize(size);
     menu->addMenuItemPush(L"modelLoadFromFile", L"Load model from file", L"modelMenu");
     menu->addMenuItemPush(L"modelSelectObject", L"Select object from Model", L"objectMenu");
 
     modelMenu = std::make_shared<gui::Menu>(L"modelMenu", textPrinter->getFontInfo());
-    modelMenu->setSize(size);
 
     objectMenu = std::make_shared<gui::Menu>(L"objectMenu", textPrinter->getFontInfo());
-    objectMenu->setSize(size);
 
     mainMenu->addMenu(menu);
     mainMenu->addMenu(modelMenu);
     mainMenu->addMenu(objectMenu);
 
     mainMenu->push(L"main");
-    events->addObserver(mainMenu);
 
     loadModelList();
 

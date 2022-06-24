@@ -1,13 +1,3 @@
-/*///////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-Plik:	gui.cpp
-Autor:	Real_Noname (real_noname@wp.pl)
-(C):	CODE RULERS (Real_Noname)
-WWW:	www.coderulers.prv.pl
-Opis:	Patrz -> gio.h
-
-/////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////*/
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,7 +11,7 @@ Opis:	Patrz -> gio.h
 #include "gui_Element.h"
 #include "event_Event.h"
 
-#include "gui.h"
+#include "gui_Main.h"
 #include "StrEx.h"
 
 //const std::string ConFunc[] = { "Speed", "MotionBlur", "MBKeyFrames", "Reflection",

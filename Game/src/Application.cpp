@@ -15,7 +15,7 @@
 #include <CBGL/System.h>
 
 #include <core_IniFile.h>
-#include <gui.h>
+#include <gui_Main.h>
 #include <gfx_Frame.h>
 
 #include "game_Object.h"
@@ -127,11 +127,11 @@ namespace e3dt {
     textureRepository = std::make_shared<gfx::TextureRepository>("Data/Textures/");
     modelManager = std::make_shared<gfx::ModelManager>(L"Data/Models/", textureRepository);
 
-    GUI = std::make_shared<CGUIMain>(*textureRepository, scriptParser, getAspectRatio(), window->getSize().y);
+    GUI = std::make_shared<gui::Main>(*textureRepository, scriptParser, window->getSize());
     eventManager->addObserver(GUI);
 
-    GUI->ShowMenu(L"MainMenu");
-    GUI->SetMode(GUI_MODE::SCREEN);
+    //GUI->ShowMenu(L"MainMenu");
+    //GUI->SetMode(GUI_MODE::SCREEN);
 
     return true;
   }
@@ -292,7 +292,7 @@ namespace e3dt {
   void	Application::update(float timeDelta) {
     scene.update(timeDelta);
 
-    GUI->Update(timeDelta);
+    GUI->update(timeDelta);
   }
 
   void	Application::render() {
@@ -308,6 +308,6 @@ namespace e3dt {
 
     renderSystem.render(frame);
 
-    GUI->Render();
+    GUI->render();
   }
 }
